@@ -1,0 +1,21 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.fqm</groupId>
+		<artifactId>fqm-common</artifactId>
+		<version>${project.version}</version>
+	</parent>
+	<artifactId>fqm-multilevel-cache</artifactId>
+	<packaging>pom</packaging>
+	<name>fqm-multilevel-cache</name>
+	<description>a Java cache abstraction which provides consistent use for
+		various caching solutions</description>
+	<url></url>
+	
+	
+	<modules>
+		<module>fqm-multilevel-cache-core</module>
+	</modules>
+</project>
