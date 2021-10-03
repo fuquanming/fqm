@@ -7,24 +7,25 @@
 		<artifactId>fqm-multilevel-cache</artifactId>
 		<version>${project.version}</version>
 	</parent>
-	<artifactId>fqm-multilevel-cache-core</artifactId>
-	
+	<artifactId>fqm-spring-boot-starter-multilevel-cache-redis</artifactId>
 	
 	<dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-cache</artifactId>
+            <artifactId>spring-boot-starter</artifactId>
         </dependency>
-        <!-- 一级缓存 -->
-        <dependency> 
-            <groupId>com.github.ben-manes.caffeine</groupId>
-            <artifactId>caffeine</artifactId>
-        </dependency>
-        <!-- @Value功能 -->
-        <dependency> 
+
+        <dependency>
             <groupId>com.fqm</groupId>
-            <artifactId>fqm-common-spring</artifactId>
+            <artifactId>fqm-multiLevel-cache-redis</artifactId>
+            <version>${project.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.fqm</groupId>
+            <artifactId>fqm-common-redis</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
     </dependencies>
-	
 </project>

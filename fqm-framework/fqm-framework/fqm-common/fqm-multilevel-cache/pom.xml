@@ -17,5 +17,8 @@
 	
 	<modules>
 		<module>fqm-multilevel-cache-core</module>
+		<module>fqm-multiLevel-cache-redis</module>
+		<module>fqm-spring-boot-starter-multilevel-cache-redis</module>
+		<module>fqm-spring-boot-starter-multilevel-cache-redisson</module>
 	</modules>
 </project>
