@@ -1,15 +1,16 @@
-# 增强文档开启权限验证，访问路径:/doc.html
-knife4j:
-  enable: true
-  basic:
-    enable: true
-    username: fqm
-    password: 123456
-
-# 文档配置，访问路径:/swagger-ui/index.html
-swagger:
-  title: 付接口文档
-  description: 本文档描述了接口定义
-  version: 1.0.0
+## 增强文档开启权限验证，访问路径:/doc.html
+#knife4j:
+#  enable: true
+#  basic:
+#    enable: true
+#    username: fqm
+#    password: 123456
+#
+## 文档配置，访问路径:/swagger-ui/index.html
+#swagger:
+#  enable: true
+#  title: 付接口文档
+#  description: 本文档描述了接口定义
+#  version: 1.0.0
 
         

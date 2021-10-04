@@ -1,3 +1,3 @@
 #starter自动装配
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.fqm.framework.common.cache.spring.config.MultilevelCacheManagerRedisConfig
+com.fqm.framework.common.cache.spring.config.MultilevelCacheManagerRedisAutoConfig

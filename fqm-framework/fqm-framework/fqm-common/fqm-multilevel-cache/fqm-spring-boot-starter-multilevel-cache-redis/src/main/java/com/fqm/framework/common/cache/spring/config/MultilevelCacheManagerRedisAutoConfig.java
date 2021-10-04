@@ -23,7 +23,7 @@ import com.fqm.framework.common.redis.listener.spring.RedisKeyDeleteListener;
  * @author 傅泉明
  */
 @Configuration
-public class MultilevelCacheManagerRedisConfig extends ApplicationObjectSupport {
+public class MultilevelCacheManagerRedisAutoConfig extends ApplicationObjectSupport {
     
     @Bean
     @ConditionalOnMissingBean(value = RedisCacheConfiguration.class)

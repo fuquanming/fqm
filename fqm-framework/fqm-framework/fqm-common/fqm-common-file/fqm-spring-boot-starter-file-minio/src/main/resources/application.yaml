@@ -1,0 +1,9 @@
+## 文件服务
+#minio:
+#  enable: true
+#  endpoint: 127.0.0.1
+#  port: 9000
+#  accessKey: admin
+#  secretKey: 12345678
+#  secure: false
+#  bucketDefaultName: file 

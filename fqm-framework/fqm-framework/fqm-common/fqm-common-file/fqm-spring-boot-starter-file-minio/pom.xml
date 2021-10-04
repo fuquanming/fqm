@@ -1,0 +1,31 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.fqm</groupId>
+		<artifactId>fqm-common-file</artifactId>
+		<version>${project.version}</version>
+	</parent>
+	<artifactId>fqm-spring-boot-starter-file-minio</artifactId>
+	
+	<dependencies>
+        <!-- Spring 核心 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- 文件 相关 -->
+        <dependency>
+            <groupId>com.fqm</groupId>
+            <artifactId>fqm-common-file-minio</artifactId>
+        </dependency>
+    </dependencies>
+</project>

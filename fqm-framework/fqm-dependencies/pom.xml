@@ -305,6 +305,21 @@
                 <version>${project.version}</version>
             </dependency>
             
+            <dependency>
+                <groupId>com.fqm</groupId>
+                <artifactId>fqm-common-file-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fqm</groupId>
+                <artifactId>fqm-common-file-minio</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fqm</groupId>
+                <artifactId>fqm-spring-boot-starter-file-minio</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             
         </dependencies>
     </dependencyManagement>

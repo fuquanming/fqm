@@ -1,9 +1,9 @@
-# 关闭swagger文档
-springfox:
-  documentation:
-    swagger-ui:
-      enabled: false
-      
-# 关闭knife4j文档
-knife4j:
-  production: true
+## 关闭swagger文档
+#springfox:
+#  documentation:
+#    swagger-ui:
+#      enabled: false
+#      
+## 关闭knife4j文档
+#knife4j:
+#  production: true

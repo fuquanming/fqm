@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.fqm.framework.swagger.config.Swagger3AutoConfig
+  com.fqm.framework.common.file.minio.config.MinioAutoConfig

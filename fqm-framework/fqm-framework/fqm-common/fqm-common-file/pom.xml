@@ -1,26 +1,17 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.fqm</groupId>
-		<artifactId>fqm-framework</artifactId>
+		<artifactId>fqm-common</artifactId>
 		<version>${project.version}</version>
 	</parent>
-	<artifactId>fqm-common</artifactId>
+	<artifactId>fqm-common-file</artifactId>
 	<packaging>pom</packaging>
-
-	<description></description>
-	<url></url>
-
 	<modules>
-		<module>fqm-common-core</module>
-		<module>fqm-common-http</module>
-		<module>fqm-multilevel-cache</module>
-		<module>fqm-common-spring</module>
-		<module>fqm-common-cache</module>
-		<module>fqm-common-file</module>
+		<module>fqm-common-file-core</module>
+		<module>fqm-common-file-minio</module>
+		<module>fqm-spring-boot-starter-file-minio</module>
 	</modules>
-
 </project>

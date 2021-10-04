@@ -87,9 +87,10 @@ import springfox.documentation.spring.web.plugins.Docket;
 @EnableOpenApi
 @EnableKnife4j
 @ConditionalOnClass({Docket.class, ApiInfoBuilder.class})
-@ConditionalOnProperty(prefix = "swagger", value = "enable", matchIfMissing = true) // 允许使用 swagger.enable=false 禁用 Swagger
+//name=enable 且值为true，时才加载，matchIfMissing=true 缺失也加载
+@ConditionalOnProperty(prefix = "swagger", value = "enable", havingValue = "true") // 允许使用 swagger.enable=false 禁用 Swagger
 @EnableConfigurationProperties(SwaggerProperties.class)
-public class Swagger3Config {
+public class Swagger3AutoConfig {
     
     @Bean
     @ConditionalOnMissingBean
