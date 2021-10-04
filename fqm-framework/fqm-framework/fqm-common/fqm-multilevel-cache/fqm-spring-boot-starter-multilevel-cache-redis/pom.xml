@@ -11,21 +11,18 @@
 	
 	<dependencies>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>com.fqm</groupId>
-            <artifactId>fqm-multiLevel-cache-redis</artifactId>
-            <version>${project.version}</version>
+            <artifactId>fqm-multilevel-cache-redis</artifactId>
         </dependency>
 
         <dependency>
             <groupId>com.fqm</groupId>
             <artifactId>fqm-common-redis</artifactId>
-            <version>${project.version}</version>
         </dependency>
-
+        
+        <dependency>
+            <groupId>com.fqm</groupId>
+            <artifactId>fqm-common-cache-redis-spring</artifactId>
+        </dependency>
     </dependencies>
 </project>

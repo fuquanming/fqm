@@ -7,25 +7,19 @@
 		<artifactId>fqm-multilevel-cache</artifactId>
 		<version>${project.version}</version>
 	</parent>
-	<artifactId>fqm-multiLevel-cache-redis</artifactId>
+	<artifactId>fqm-multilevel-cache-redis</artifactId>
 
 	<dependencies>
 		<dependency>
 			<groupId>com.fqm</groupId>
 			<artifactId>fqm-multilevel-cache-core</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.fqm</groupId>
 			<artifactId>fqm-common-redis</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 
-		<!-- <dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-pool2</artifactId>
-		</dependency> -->
 	</dependencies>
 
 </project>

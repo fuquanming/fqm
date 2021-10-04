@@ -267,6 +267,45 @@
                 <artifactId>fqm-common-spring</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            
+            <dependency>
+                <groupId>com.fqm</groupId>
+                <artifactId>fqm-common-redis</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fqm</groupId>
+                <artifactId>fqm-common-cache-spring</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fqm</groupId>
+                <artifactId>fqm-common-cache-redis-spring</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>com.fqm</groupId>
+                <artifactId>fqm-multilevel-cache-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fqm</groupId>
+                <artifactId>fqm-multilevel-cache-redis</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fqm</groupId>
+                <artifactId>fqm-spring-boot-starter-multilevel-cache-redis</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fqm</groupId>
+                <artifactId>fqm-spring-boot-starter-multilevel-cache-redisson</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            
+            
         </dependencies>
     </dependencyManagement>
     

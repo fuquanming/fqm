@@ -4,21 +4,20 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.fqm</groupId>
-		<artifactId>fqm-multilevel-cache</artifactId>
+		<artifactId>fqm-common-cache</artifactId>
 		<version>${project.version}</version>
 	</parent>
-	<artifactId>fqm-multilevel-cache-core</artifactId>
+	<artifactId>fqm-common-cache-spring</artifactId>
 	
 	<dependencies>
         <dependency>
-            <groupId>com.fqm</groupId>
-            <artifactId>fqm-common-cache-spring</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-cache</artifactId>
         </dependency>
-        
-        <!-- @Value功能 -->
+        <!-- 一级缓存 -->
         <dependency> 
-            <groupId>com.fqm</groupId>
-            <artifactId>fqm-common-spring</artifactId>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
         </dependency>
     </dependencies>
 	

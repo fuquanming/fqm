@@ -4,22 +4,20 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.fqm</groupId>
-		<artifactId>fqm-multilevel-cache</artifactId>
+		<artifactId>fqm-common-cache</artifactId>
 		<version>${project.version}</version>
 	</parent>
-	<artifactId>fqm-multilevel-cache-core</artifactId>
+	<artifactId>fqm-common-cache-redis-spring</artifactId>
 	
 	<dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        
         <dependency>
             <groupId>com.fqm</groupId>
             <artifactId>fqm-common-cache-spring</artifactId>
         </dependency>
-        
-        <!-- @Value功能 -->
-        <dependency> 
-            <groupId>com.fqm</groupId>
-            <artifactId>fqm-common-spring</artifactId>
-        </dependency>
     </dependencies>
-	
 </project>

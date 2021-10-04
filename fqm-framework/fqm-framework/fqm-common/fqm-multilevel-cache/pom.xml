@@ -13,11 +13,11 @@
 	<description>a Java cache abstraction which provides consistent use for
 		various caching solutions</description>
 	<url></url>
-	
-	
+
+
 	<modules>
 		<module>fqm-multilevel-cache-core</module>
-		<module>fqm-multiLevel-cache-redis</module>
+		<module>fqm-multilevel-cache-redis</module>
 		<module>fqm-spring-boot-starter-multilevel-cache-redis</module>
 		<module>fqm-spring-boot-starter-multilevel-cache-redisson</module>
 	</modules>
