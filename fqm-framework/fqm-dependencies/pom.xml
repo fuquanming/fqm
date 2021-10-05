@@ -50,7 +50,8 @@
 
         <!-- 监控相关 -->
         <skywalking.version>8.7.0</skywalking.version>
-        <sentry.version>1.7.30</sentry.version><!-- 实时事件的日志聚合平台 -->
+        <!-- <sentry.version>1.7.30</sentry.version> --><!-- 实时事件的日志聚合平台 -->
+        <sentry.version>5.2.1</sentry.version>
         <!-- 工具类相关 -->
         <ant.version>1.10.9</ant.version><!-- zip 压缩 -->
         <commons-io.version>2.8.0</commons-io.version>

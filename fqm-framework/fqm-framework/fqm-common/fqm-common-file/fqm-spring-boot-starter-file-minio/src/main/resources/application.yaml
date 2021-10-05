@@ -2,7 +2,7 @@
 #minio:
 #  enable: true
 #  endpoint: 127.0.0.1
-#  port: 9000
+#  port: 11000
 #  accessKey: admin
 #  secretKey: 12345678
 #  secure: false
