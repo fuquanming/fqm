@@ -3,6 +3,7 @@ package com.fqm.framework.sentry.resolver;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.web.servlet.ModelAndView;
 
 import io.sentry.IHub;
@@ -16,7 +17,7 @@ import io.sentry.spring.SentryExceptionResolver;
  */
 public class DoNothingExceptionResolver extends SentryExceptionResolver {
 
-    public DoNothingExceptionResolver(IHub hub, int order) {
+    public DoNothingExceptionResolver(@NotNull IHub hub, int order) {
         super(hub, order);
     }
 

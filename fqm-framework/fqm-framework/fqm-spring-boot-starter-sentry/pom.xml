@@ -23,6 +23,13 @@
 			<groupId>io.sentry</groupId>
 			<artifactId>sentry-logback</artifactId>
 		</dependency>
+		
+		<!-- 非空判断 -->
+		<dependency>
+		    <groupId>org.jetbrains</groupId>
+		    <artifactId>annotations</artifactId>
+		</dependency>
+				
 	</dependencies>
 
 </project>
