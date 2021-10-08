@@ -17,7 +17,7 @@ public class SwaggerProperties {
     /**
      * 是否开启，默认为 true 关闭
      */
-    private Boolean enable = true;
+    private Boolean enabled = true;
     
     private String title = "接口文档";
     private String description = "本文档描述了接口定义";
@@ -35,12 +35,12 @@ public class SwaggerProperties {
     private String contactUrl = "http://www.fqm.com/";
     private String contactEmail = "67837343@qq.com";
 
-    public Boolean getEnable() {
-        return enable;
+    public Boolean getEnabled() {
+        return enabled;
     }
 
-    public void setEnable(Boolean enable) {
-        this.enable = enable;
+    public void setEnable(Boolean enabled) {
+        this.enabled = enabled;
     }
     
     public String getTitle() {

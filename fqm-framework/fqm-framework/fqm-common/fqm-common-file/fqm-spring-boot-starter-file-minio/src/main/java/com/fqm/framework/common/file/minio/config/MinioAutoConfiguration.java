@@ -21,13 +21,13 @@ import io.minio.MinioClient;
 @Configuration
 @ConditionalOnClass(MinioClient.class)
 // name=enable 且值为true，时才加载，matchIfMissing=true 缺失也加载
-@ConditionalOnProperty(prefix = "minio", name = "enable", havingValue = "true")
+@ConditionalOnProperty(prefix = "minio", name = "enabled", havingValue = "true")
 @EnableConfigurationProperties({MinioProperties.class})
-public class MinioAutoConfig {
+public class MinioAutoConfiguration {
 
     private final MinioProperties properties;
 
-    public MinioAutoConfig(MinioProperties properties) {
+    public MinioAutoConfiguration(MinioProperties properties) {
         this.properties = properties;
     }
     

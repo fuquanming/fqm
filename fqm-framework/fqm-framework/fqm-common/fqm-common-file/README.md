@@ -39,7 +39,7 @@ spring boot application.yml config:
 ```yaml
 # 文件服务  
 minio:
-  enable: true			# 是否开启文件服务
+  enabled: true			# 是否开启文件服务
   endpoint: 127.0.0.1
   port: 11000			# 文件服务端口
   accessKey: admin

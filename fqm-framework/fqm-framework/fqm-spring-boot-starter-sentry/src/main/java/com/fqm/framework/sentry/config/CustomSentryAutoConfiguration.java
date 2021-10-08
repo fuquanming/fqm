@@ -22,7 +22,7 @@ import io.sentry.spring.boot.SentryAutoConfiguration;
  */
 @ConditionalOnClass({HandlerExceptionResolver.class, SentryExceptionResolver.class})
 @ConditionalOnWebApplication
-@ConditionalOnProperty(name = "sentry.enable", havingValue = "true")
+@ConditionalOnProperty(name = "sentry.enabled", havingValue = "true")
 @Configuration(proxyBeanMethods = false)
 public class CustomSentryAutoConfiguration {
 

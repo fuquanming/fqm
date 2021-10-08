@@ -1,6 +1,6 @@
 ## 文件服务
 #minio:
-#  enable: true
+#  enabled: true
 #  endpoint: 127.0.0.1
 #  port: 11000
 #  accessKey: admin

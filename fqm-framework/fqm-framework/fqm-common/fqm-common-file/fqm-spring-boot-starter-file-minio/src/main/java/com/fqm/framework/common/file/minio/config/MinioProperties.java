@@ -13,7 +13,7 @@ public class MinioProperties {
     /**
      * 是否开启，默认为 true 关闭
      */
-    private Boolean enable = true;
+    private Boolean enabled = true;
     /**
      * endPoint是一个URL，域名，IPv4或者IPv6地址
      */
@@ -46,12 +46,12 @@ public class MinioProperties {
     
     
 
-    public Boolean getEnable() {
-        return enable;
+    public Boolean getEnabled() {
+        return enabled;
     }
 
-    public void setEnable(Boolean enable) {
-        this.enable = enable;
+    public void setEnable(Boolean enabled) {
+        this.enabled = enabled;
     }
 
     public String getEndpoint() {
