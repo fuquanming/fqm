@@ -17,9 +17,10 @@
 	<modules>
 		<module>fqm-common-core</module>
 		<module>fqm-common-http</module>
-		<module>fqm-multilevel-cache</module>
-		<module>fqm-common-spring</module>
+		<module>fqm-common-redis</module>
 		<module>fqm-common-cache</module>
+		<module>fqm-common-spring</module>
+		<module>fqm-multilevel-cache</module>
 		<module>fqm-common-file</module>
 	</modules>
 

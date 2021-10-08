@@ -78,5 +78,12 @@
             <artifactId>hibernate-validator</artifactId>
         </dependency>
     
+        <!-- 日志 -->
+		<dependency>
+		    <groupId>org.slf4j</groupId>
+		    <artifactId>slf4j-api</artifactId>
+		</dependency>
+		        
+        
     </dependencies>
 </project>
