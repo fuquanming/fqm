@@ -1,0 +1,62 @@
+#spring:
+#  # 数据源配置
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://127.0.0.1:3306/test?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&serverTimezone=GMT%2B8
+#    username: root
+#    password: 123456
+#    type: com.alibaba.druid.pool.DruidDataSource　　 # MYSQL 5 驱动：com.mysql.jdbc.Driver，MYSQL 6+ 驱动：com.mysql.cj.jdbc.Driver
+#    # 连接池配置
+#    druid:
+#      # 初始化大小，最小，最大
+#      initial-size: 5
+#      min-idle: 5
+#      max-active: 20
+#      # 配置获取连接等待超时的时间
+#      max-wait: 60000
+#      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位毫秒
+#      time-between-eviction-runs-millis: 60000
+#      # 配置一个连接在池中最小生存时间
+#      min-evictable-idle-time-millis: 300000
+#      validation-query: SELECT 1 FROM sys_user
+#      test-while-idle: true
+#      test-on-borrow: false
+#      test-on-return: false
+#      # 打开 PSCache，并且指定每个连接上 PSCache 的大小
+#      pool-prepared-statements: true
+#      max-pool-prepared-statement-per-connection-size: 20
+#      # 配置监控统计拦截的 Filter，去掉后监控界面 SQL 无法统计，wall 用于防火墙，log4j需要添加apache的log4j
+#      filters: stat,wall,log4j
+#      # 通过 connection-properties 属性打开 mergeSql 功能；慢 SQL 记录
+#      connection-properties: druid.stat.mergeSql\=true;druid.stat.slowSqlMillis\=5000
+#      # 配置 DruidStatFilter
+#      web-stat-filter:
+#        enabled: true
+#        url-pattern: /*
+#        exclusions: .js,*.gif,*.jpg,*.bmp,*.png,*.css,*.ico,/druid/*
+#      # 配置 DruidStatViewServlet，访问页面 /druid/login.html
+#      stat-view-servlet:
+#        enabled: true
+#        url-pattern: /druid/*
+#        # IP 白名单，没有配置或者为空，则允许所有访问
+#        allow: 127.0.0.1
+#        # IP 黑名单，若白名单也存在，则优先使用
+#        deny: 192.168.31.253
+#        # 禁用 HTML 中 Reset All 按钮
+#        reset-enable: false
+#        # 登录用户名/密码
+#        login-username: admin
+#        login-password: 123456
+
+
+#mybatis-plus:
+#  type-aliases-package: com.fqm.test.model
+#  mapper-locations: classpath:mapper/*.xml
+#  # log-impl 只能在开发开启，sql语句打印到控制台，不打印到日志！
+#  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#    
+## 将sql打印到日志中，
+#logging:
+#  level:
+#    com.fqm.test.dao: debug  

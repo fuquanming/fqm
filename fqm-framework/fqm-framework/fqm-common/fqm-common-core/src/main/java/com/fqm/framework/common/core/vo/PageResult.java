@@ -19,6 +19,14 @@ public class PageResult<T> {
     @ApiModelProperty(value = "总量", required = true)
     private Long total;
 
+    public PageResult() {
+    }
+
+    public PageResult(List<T> rows, Long total) {
+        this.rows = rows;
+        this.total = total;
+    }
+    
     public List<T> getRows() {
         return rows;
     }

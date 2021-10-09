@@ -31,7 +31,7 @@
         <shiro.version>1.7.1</shiro.version>
         <!-- DB 相关 -->
         <mysql.version>5.1.39</mysql.version>
-        <druid.version>1.2.6</druid.version>
+        <druid.version>1.2.8</druid.version>
         <mybatis-plus.version>3.4.3</mybatis-plus.version>
         <!-- es client -->
         <spring-boot-starter-data-jest.version>3.3.4.RELEASE</spring-boot-starter-data-jest.version>
@@ -141,11 +141,18 @@
                 <version>${mybatis-plus.version}</version>
             </dependency>
 
-            <dependency>
+            <!-- <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>druid</artifactId>
                 <version>${druid.version}</version>
-            </dependency>
+            </dependency> -->
+            
+			<dependency>
+			    <groupId>com.alibaba</groupId>
+			    <artifactId>druid-spring-boot-starter</artifactId>
+			    <version>${druid.version}</version>
+			</dependency>
+			            
             
             <!-- Redis 相关 -->
             <dependency>
