@@ -336,6 +336,17 @@
                 <version>${project.version}</version>
             </dependency>
             
+            <dependency>
+                <groupId>com.fqm</groupId>
+                <artifactId>fqm-common-lock-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fqm</groupId>
+                <artifactId>fqm-spring-boot-starter-lock</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            
         </dependencies>
     </dependencyManagement>
     
