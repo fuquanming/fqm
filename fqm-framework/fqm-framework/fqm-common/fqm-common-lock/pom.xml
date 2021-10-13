@@ -13,6 +13,10 @@
     <modules>
         <module>fqm-common-lock-core</module>
         <module>fqm-spring-boot-starter-lock</module>
+        <module>fqm-common-lock-redisson</module>
+        <module>fqm-spring-boot-starter-lock-redisson</module>
+        <module>fqm-common-lock-zookeeper</module>
+        <module>fqm-spring-boot-starter-lock-zookeeper</module>
     </modules>	
 	
 </project>

@@ -156,6 +156,11 @@
             
             <!-- Redis 相关 -->
             <dependency>
+	            <groupId>org.redisson</groupId>
+	            <artifactId>redisson</artifactId>
+	            <version>${redisson.version}</version>
+	        </dependency>
+            <dependency>
                 <groupId>org.redisson</groupId>
                 <artifactId>redisson-spring-boot-starter</artifactId>
                 <version>${redisson.version}</version>
@@ -344,6 +349,26 @@
             <dependency>
                 <groupId>com.fqm</groupId>
                 <artifactId>fqm-spring-boot-starter-lock</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fqm</groupId>
+                <artifactId>fqm-common-lock-redisson</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fqm</groupId>
+                <artifactId>fqm-spring-boot-starter-lock-redisson</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fqm</groupId>
+                <artifactId>fqm-common-lock-zookeeper</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fqm</groupId>
+                <artifactId>fqm-spring-boot-starter-lock-zookeeper</artifactId>
                 <version>${project.version}</version>
             </dependency>
             
