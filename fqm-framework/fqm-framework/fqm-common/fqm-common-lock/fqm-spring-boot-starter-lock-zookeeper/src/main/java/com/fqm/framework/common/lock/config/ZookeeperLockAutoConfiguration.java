@@ -18,6 +18,10 @@ import com.fqm.framework.common.lock.template.ZookeeperLockTemplate;
 /**
  * Redisson 锁自动装配
  * 使用spring.cloud.zookeeper配置文件
+ * zookeeper建立连接采用异步操作，连接操作后，并不能保证zk连接已成功。
+ * connectionTimeout 默认15秒，加大该值
+ * 如果zookeeper连接成功之前访问zookeeper，会出现错误：
+ * org.apache.zookeeper.KeeperException$ConnectionLossException: KeeperErrorCode = ConnectionLoss
  * 
  * @version 
  * @author 傅泉明
@@ -32,13 +36,18 @@ public class ZookeeperLockAutoConfiguration {
     /** 会话超时时间 */
     private int sessionTimeout = 30000;
     /** 连接超时时间 */
-    private int connectionTimeout = 5000;
+    private int connectionTimeout = 15000;
     /** 初始休眠时间 */
     private int baseSleepTimeMs = 1000;
     /** 最大重试次数 */
     private int maxRetries = 3;
     /** 最大休眠时间 */
     private int maxSleepMs = 10000;
+    
+//    /** 获取连接阻塞时超时时间单位 */
+//    private TimeUnit blockUntilConnectedUnit; 
+//    /** 获取连接阻塞时超时时间 */
+//    private int blockUntilConnectedWait = 10000;
     
 //    connect-string: 
 //    connection-timeout: 
@@ -55,6 +64,7 @@ public class ZookeeperLockAutoConfiguration {
     @Bean(initMethod = "start", destroyMethod = "close")
     @ConditionalOnMissingBean(CuratorFramework.class)
     public CuratorFramework curatorFramework() {
+        if (this.connectionTimeout < 15000) this.connectionTimeout = 15000;// 必须大于15秒
         RetryPolicy retryPolicy = new ExponentialBackoffRetry(this.baseSleepTimeMs, this.maxRetries, this.maxSleepMs);
         return CuratorFrameworkFactory.builder()
                 .connectString(this.connectString)

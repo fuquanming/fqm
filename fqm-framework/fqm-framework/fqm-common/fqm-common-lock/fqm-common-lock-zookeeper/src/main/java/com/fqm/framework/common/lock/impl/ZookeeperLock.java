@@ -6,9 +6,7 @@ import org.apache.curator.framework.recipes.locks.InterProcessMutex;
 
 import com.fqm.framework.common.lock.Lock;
 /**
- * Zookeeper锁，zookeeper建立连接采用异步操作，连接操作后，并不能保证zk连接已成功。
- * 如果zookeeper连接成功之前访问zookeeper，会出现错误：
- * org.apache.zookeeper.KeeperException$ConnectionLossException: KeeperErrorCode = ConnectionLoss
+ * Zookeeper锁
  * 
  * @version 
  * @author 傅泉明
