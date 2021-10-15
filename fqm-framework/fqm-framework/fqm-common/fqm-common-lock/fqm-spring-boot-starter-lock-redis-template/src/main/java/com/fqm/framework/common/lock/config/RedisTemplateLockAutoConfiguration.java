@@ -28,7 +28,7 @@ public class RedisTemplateLockAutoConfiguration {
     public RedisTemplateLockTemplate redisTemplateLockTemplate(
             LockFactory lockFactory,
             StringRedisTemplate stringRedisTemplate) {
-        RedisTemplateLockTemplate redisTemplateLockTemplate = new RedisTemplateLockTemplate(stringRedisTemplate);
+        RedisTemplateLockTemplate redisTemplateLockTemplate = new RedisTemplateLockTemplate(stringRedisTemplate, lockFactory);
         lockFactory.addLockTemplate(redisTemplateLockTemplate);
         return redisTemplateLockTemplate;
     }
