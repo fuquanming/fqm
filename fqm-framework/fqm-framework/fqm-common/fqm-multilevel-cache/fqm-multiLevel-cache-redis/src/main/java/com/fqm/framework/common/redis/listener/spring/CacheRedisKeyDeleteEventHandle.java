@@ -6,18 +6,18 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
-import org.springframework.data.redis.connection.Message;
-import org.springframework.data.redis.listener.RedisMessageListenerContainer;
+import org.springframework.context.event.EventListener;
 
 import com.fqm.framework.common.cache.spring.MultilevelCacheManager;
 
 /**
- * 监听 Redis 删除key 事件 -> 删除本地缓存
+ * 监听Redis 删除key事件 -> 删除本地缓存
+ * 
  * @version 
  * @author 傅泉明
  */
-public class RedisKeyDeleteListener extends KeyEventMessageListener {
-    
+public class CacheRedisKeyDeleteEventHandle {
+
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     // user|12|9|::cache_user_id_89
@@ -25,14 +25,13 @@ public class RedisKeyDeleteListener extends KeyEventMessageListener {
     
     private MultilevelCacheManager cacheManager;
     
-    public RedisKeyDeleteListener(RedisMessageListenerContainer listenerContainer, MultilevelCacheManager cacheManager) {
-        super(listenerContainer, TopicManager.getDeleteTopic());
+    public CacheRedisKeyDeleteEventHandle(MultilevelCacheManager cacheManager) {
         this.cacheManager = cacheManager;
     }
 
-    @Override
-    public void handleMessage(Message message, byte[] pattern) {
-        String deleteKey = message.toString();
+    @EventListener
+    public void eventHandle(RedisKeyDeleteEvent event) {
+        String deleteKey = new String(event.getSource());
 //        logger.info("RedisKeyDelete=" + deleteKey);
         
         Matcher m = p.matcher(deleteKey);

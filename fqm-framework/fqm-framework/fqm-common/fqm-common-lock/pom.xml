@@ -17,6 +17,7 @@
         <module>fqm-spring-boot-starter-lock-redisson</module>
         <module>fqm-common-lock-zookeeper</module>
         <module>fqm-spring-boot-starter-lock-zookeeper</module>
+        <module>fqm-spring-boot-starter-lock-redis-template</module>
     </modules>	
 	
 </project>

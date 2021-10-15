@@ -15,7 +15,8 @@ import com.fqm.framework.common.cache.spring.MultilevelCacheManager;
 import com.fqm.framework.common.cache.spring.builder.CacheBuilder;
 import com.fqm.framework.common.cache.spring.builder.CaffeineCacheBuilders;
 import com.fqm.framework.common.cache.spring.builder.RedisCacheBuilders;
-import com.fqm.framework.common.redis.listener.spring.RedisKeyDeleteListener;
+import com.fqm.framework.common.redis.listener.spring.CacheRedisKeyDeleteEventHandle;
+import com.fqm.framework.common.redis.listener.spring.KeyDeleteEventMessageListener;
 
 /**
  * 
@@ -23,7 +24,7 @@ import com.fqm.framework.common.redis.listener.spring.RedisKeyDeleteListener;
  * @author 傅泉明
  */
 @Configuration
-public class MultilevelCacheManagerRedisAutoConfig extends ApplicationObjectSupport {
+public class MultilevelCacheManagerRedisAutoConfiguration extends ApplicationObjectSupport {
     
     @Bean
     @ConditionalOnMissingBean(value = RedisCacheConfiguration.class)
@@ -55,9 +56,27 @@ public class MultilevelCacheManagerRedisAutoConfig extends ApplicationObjectSupp
         return container;
     }
     
+    /**
+     * 监听Redis删除key事件
+     * @param listenerContainer
+     * @param cacheManager
+     * @return
+     */
     @Bean
-    @ConditionalOnMissingBean(value = RedisKeyDeleteListener.class)
-    RedisKeyDeleteListener redisKeyDeleteListener(RedisMessageListenerContainer listenerContainer, MultilevelCacheManager cacheManager) {
-        return new RedisKeyDeleteListener(listenerContainer, cacheManager);
+    @ConditionalOnMissingBean(value = KeyDeleteEventMessageListener.class)
+    KeyDeleteEventMessageListener keyDeleteEventMessageListener(RedisMessageListenerContainer listenerContainer) {
+        return new KeyDeleteEventMessageListener(listenerContainer);
+    }
+    
+    /**
+     * 缓存处理 监听Redis删除key事件
+     * @param listenerContainer
+     * @param cacheManager
+     * @return
+     */
+    @Bean
+    @ConditionalOnMissingBean(value = CacheRedisKeyDeleteEventHandle.class)
+    CacheRedisKeyDeleteEventHandle cacheRedisKeyDeleteEventHandle(MultilevelCacheManager cacheManager) {
+        return new CacheRedisKeyDeleteEventHandle(cacheManager);
     }
 }
