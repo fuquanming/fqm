@@ -33,7 +33,7 @@ public @interface Lock4j {
     String key() default "";
     
     /**
-     * 是否阻塞线程，调用{@link Lock.lock()}方法
+     * 是否阻塞线程，true则调用{@link Lock.lock()}方法
      * @return
      */
     boolean block() default false;
@@ -45,6 +45,7 @@ public @interface Lock4j {
      *     过期时间一定是要长于业务的执行时间. 未设置则为默认时间3秒
      * </pre>
      */
+    @Deprecated
     long expire() default 3000;
 
     /**

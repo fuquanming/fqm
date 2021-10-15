@@ -28,17 +28,17 @@ public class LockRedisKeyDeleteEventHandle {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     @EventListener
-    public void eventHandle(RedisKeyDeleteEvent event) {
+    public void deleteEventHandle(RedisKeyDeleteEvent event) {
         String deleteKey = new String(event.getSource());
         
         if (deleteKey.startsWith(Constants.PREFIX_KEY)) {
-            logger.info("Delete lockKey=" + deleteKey);
+            logger.debug("Delete lockKey=" + deleteKey);
             Set<Thread> blockThreads = RedisTemplateLock.BLOCK_THREADS.get(deleteKey);
             if (blockThreads == null) return;
             // 唤醒一个被阻塞的线程
             for (Iterator<Thread> iterator = blockThreads.iterator(); iterator.hasNext();) {
                 Thread thread = iterator.next();
-                logger.info("lockKey->{},unpark->{}", deleteKey, thread);
+                logger.debug("lockKey->{},unpark->{}", deleteKey, thread);
                 LockSupport.unpark(thread);
                 break;
             }
