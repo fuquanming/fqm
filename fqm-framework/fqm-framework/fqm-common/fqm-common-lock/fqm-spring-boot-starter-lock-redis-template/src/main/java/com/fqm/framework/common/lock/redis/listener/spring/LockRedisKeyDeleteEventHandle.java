@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
 
 import com.fqm.framework.common.lock.constant.Constants;
+import com.fqm.framework.common.lock.executor.BlockLockThreadExecutor;
 import com.fqm.framework.common.lock.impl.RedisTemplateLock;
 import com.fqm.framework.common.redis.listener.spring.RedisKeyDeleteEvent;
 /**
@@ -32,14 +33,15 @@ public class LockRedisKeyDeleteEventHandle {
         String deleteKey = new String(event.getSource());
         
         if (deleteKey.startsWith(Constants.PREFIX_KEY)) {
-            logger.debug("Delete lockKey=" + deleteKey);
-            Set<Thread> blockThreads = RedisTemplateLock.BLOCK_THREADS.get(deleteKey);
+            logger.info("Delete lockKey=" + deleteKey);
+            Set<BlockLockThreadExecutor> blockThreads = RedisTemplateLock.BLOCK_THREADS.get(deleteKey);
             if (blockThreads == null) return;
-            // 唤醒一个被阻塞的线程
-            for (Iterator<Thread> iterator = blockThreads.iterator(); iterator.hasNext();) {
-                Thread thread = iterator.next();
+            // 唤醒一个被阻塞的线程，标识删除通知唤醒
+            for (Iterator<BlockLockThreadExecutor> iterator = blockThreads.iterator(); iterator.hasNext();) {
+                BlockLockThreadExecutor thread = iterator.next();
                 logger.debug("lockKey->{},unpark->{}", deleteKey, thread);
-                LockSupport.unpark(thread);
+                thread.setDeleteNotify(true);
+                LockSupport.unpark(thread.getBlockThread());
                 break;
             }
         }

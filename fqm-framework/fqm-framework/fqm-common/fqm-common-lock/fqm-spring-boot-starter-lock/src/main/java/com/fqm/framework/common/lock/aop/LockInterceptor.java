@@ -111,12 +111,12 @@ public class LockInterceptor implements MethodInterceptor {
             return null;
         } finally {
             if (lock != null && block) {
-                lock.unlock();
-                logger.info("lock->unlock()->{},{}", lockName, key);
+                boolean flag = lock.unlock();
+                logger.info("lock->unlock()->{},{},{}", lockName, key, flag);
             }
             if (lock != null && tryLockFlag && tryLockStatus) {
-                lock.unlock();
-                logger.info("tryLock->unlock()->{},{}", lockName, key);
+                boolean flag = lock.unlock();
+                logger.info("tryLock->unlock()->{},{},{}", lockName, key, flag);
             }
         }
     }
