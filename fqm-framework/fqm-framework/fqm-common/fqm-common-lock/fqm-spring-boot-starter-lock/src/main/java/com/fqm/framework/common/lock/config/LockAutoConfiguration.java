@@ -9,7 +9,6 @@ import org.springframework.core.Ordered;
 import com.fqm.framework.common.lock.LockFactory;
 import com.fqm.framework.common.lock.aop.LockAnnotationAdvisor;
 import com.fqm.framework.common.lock.aop.LockInterceptor;
-import com.fqm.framework.common.lock.template.SimpleLockTemplate;
 
 /**
  *
@@ -24,7 +23,6 @@ public class LockAutoConfiguration {
     @ConditionalOnMissingBean
     public LockFactory lockFactory() {
         LockFactory lockFactory = new LockFactory();
-        lockFactory.addLockTemplate(new SimpleLockTemplate());
         return lockFactory;
     }
     

@@ -31,7 +31,8 @@ public class LockFactory {
     
     @SuppressWarnings("rawtypes")
     public LockTemplate<?> getLockTemplate(Class<? extends LockTemplate> lockTemplateClass) {
-        if (lockTemplateClass == null || lockTemplateClass == LockTemplate.class) {
+        if (lockTemplateClass == null || lockTemplateClass == LockTemplate.class
+                || lockTemplateClass == SimpleLockTemplate.class) {
             // 获取默认lockTemplate
             return memoryLockTemplate;
         }

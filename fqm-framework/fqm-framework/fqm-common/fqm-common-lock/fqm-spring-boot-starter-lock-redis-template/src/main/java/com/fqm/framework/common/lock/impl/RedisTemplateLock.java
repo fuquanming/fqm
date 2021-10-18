@@ -60,7 +60,7 @@ public class RedisTemplateLock implements Lock {
 
     private final String lockValue;
     /** 锁超时时间，单位：毫秒 */
-    private static final long LOCK_KEY_TIMEOUT = 3000;
+    private static final long LOCK_KEY_TIMEOUT = 30000;
     
     /** 使用JVM锁 */
     private LockFactory lockFactory;

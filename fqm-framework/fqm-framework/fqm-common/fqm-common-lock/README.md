@@ -26,6 +26,7 @@ fqm-common-lock的全部功能：
 ~~~java
 // SimpleLockTemplate, 单机锁，基于ReentrantLock
 // RedissonLockTemplate，分布式锁，基于org.redisson.api.RLock
+// RedisTemplateLockTemplate，分布式锁，基于RedisTemplate
 // ZookeeperLockTemplate，分布式锁，基于org.apache.curator.framework.recipes.locks.InterProcessMutex
 
 public void testLock() {
@@ -88,6 +89,11 @@ public void testTryLockTime() {
 ~~~
 
 ~~~java
+// 调用tryLock()，尝试获取一次锁
+@Lock4j(key = "userId", lockTemplate = RedisTemplateLockTemplate.class)
+~~~
+
+~~~java
 // 调用tryLock(timeout, TimeUtil.MILLISECONDS)，尝试在指定时间内获取一次锁
 // acquireTimeout：获取锁的超时时间
 @Lock4j(key = "userId", acquireTimeout = 2000, lockTemplate = ZookeeperLockTemplate.class)
@@ -140,6 +146,47 @@ LockFactory lockFactory;
 
 public User getUser() {
 	LockTemplate<?> lockTemplate = lockFactory.getLockTemplate(RedissonLockTemplate.class);
+    Lock lock = lockTemplate.getLock("123");
+    // 参考上述编程式代码
+    // dosomething...
+}
+
+// 可以自定义RedissonClient
+```
+
+spring boot application.yml config:
+
+```yaml
+# redis或自定义其他属性
+spring:
+  redis
+    host: 127.0.0.1
+    port: 6379
+    database: 0
+#    password: 123456
+    timeout: 6000
+```
+
+### RedisTemplateLock
+
+pom:
+
+```xml
+<dependency>
+    <groupId>com.fqm</groupId>
+    <artifactId>fqm-spring-boot-starter-lock-redis-template</artifactId>
+    <version>${latest.version}</version>
+</dependency>
+```
+
+App class:
+
+```java
+@Resource
+LockFactory lockFactory;
+
+public User getUser() {
+	LockTemplate<?> lockTemplate = lockFactory.getLockTemplate(RedisTemplateLockTemplate.class);
     Lock lock = lockTemplate.getLock("123");
     // 参考上述编程式代码
     // dosomething...
