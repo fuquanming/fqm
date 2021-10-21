@@ -77,10 +77,21 @@ public void testTryLockTime() {
 
 ## 注解式
 
+编码指定LockTemplate：使用lockTemplate 指定class
+
 ~~~java
 // block=true：调用lock()，阻塞线程，直到获取到锁为止，默认值为false
 // key：支持表达式及配置文件，基于spring的@Value
-@Lock4j(key = "${lock.user}", block = true, lockTemplate = SimplateLockTemplate.class)
+@Lock4j(key = "${lock.user.key}", block = true, lockTemplate = SimpleLockTemplate.class)
+~~~
+
+使用配置文件加载LockTemplate：使用lockMode读取配置文件的枚举值（SIMPLE,REDISSON,REDISTEMPLATE,ZOOKEEPER）
+
+~~~java
+// lockMode：支持表达式及配置文件，基于spring的@Value，枚举值（SIMPLE,REDISSON,REDISTEMPLATE,ZOOKEEPER）
+// 优先级大于lockTemplate 属性
+@Lock4j(key = "${lock.user.key}", block = true, lockMode = "{lock.user.lockMode}")
+@Lock4j(key = "${lock.user.key}", block = true, lockMode = "REDISSON")
 ~~~
 
 ~~~java
@@ -101,7 +112,7 @@ public void testTryLockTime() {
 
 ## Spring Boot 配置
 
-### SimplteLock
+### SimpleLock
 
 pom:
 

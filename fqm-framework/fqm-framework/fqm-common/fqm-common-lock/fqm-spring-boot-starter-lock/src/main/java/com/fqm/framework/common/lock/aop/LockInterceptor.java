@@ -29,6 +29,7 @@ import org.springframework.util.Assert;
 
 import com.fqm.framework.common.lock.Lock;
 import com.fqm.framework.common.lock.LockFactory;
+import com.fqm.framework.common.lock.LockMode;
 import com.fqm.framework.common.lock.annotation.Lock4j;
 import com.fqm.framework.common.lock.template.LockTemplate;
 import com.fqm.framework.common.spring.util.ValueUtil;
@@ -70,17 +71,29 @@ public class LockInterceptor implements MethodInterceptor {
         String key = null;// 锁的key
         
         try {
+            ConfigurableBeanFactory factory = (ConfigurableBeanFactory) this.applicationContext.getAutowireCapableBeanFactory();
+            
             lock4j = invocation.getMethod().getAnnotation(Lock4j.class);
             
             block = lock4j.block();// 是否调用lock
             
-            LockTemplate<?> lockTemplate = lockFactory.getLockTemplate(lock4j.lockTemplate());
+            String lockModeStr = lock4j.lockMode();// 锁的方式
+            
+            lockModeStr = ValueUtil.resolveExpression(factory, lockModeStr).toString();
+            
+            LockMode lockMode = LockMode.getLockMode(lockModeStr);
+            
+            LockTemplate<?> lockTemplate = lockFactory.getLockTemplate(lockMode);
+            
+            if (lockTemplate == null) {
+                lockTemplate = lockFactory.getLockTemplate(lock4j.lockTemplate());
+            }
             
             long acquireTimeout = lock4j.acquireTimeout();// 获取锁超时时间
             
             key = lock4j.key();// 锁的key
             
-            key = ValueUtil.resolveExpression((ConfigurableBeanFactory) this.applicationContext.getAutowireCapableBeanFactory(), key).toString();
+            key = ValueUtil.resolveExpression(factory, key).toString();
             
             Assert.hasText(key, "lock key must be not empty");
             

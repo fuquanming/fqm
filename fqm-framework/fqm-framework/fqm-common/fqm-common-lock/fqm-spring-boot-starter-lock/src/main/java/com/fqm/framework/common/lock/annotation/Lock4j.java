@@ -5,6 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.fqm.framework.common.lock.LockMode;
 import com.fqm.framework.common.lock.template.LockTemplate;
 
 /**
@@ -24,6 +25,13 @@ public @interface Lock4j {
      */
     @SuppressWarnings("rawtypes")
     Class<? extends LockTemplate> lockTemplate() default LockTemplate.class;
+    
+    /**
+     * 锁方式，优先级大于锁模板
+     * {@link LockMode}
+     * @return
+     */
+    String lockMode() default "";
 
     /**
      * support SPEL expresion 锁的key
