@@ -22,7 +22,7 @@ import com.fqm.framework.common.redis.listener.spring.KeyDeleteEventMessageListe
 @Configuration
 public class RedisTemplateLockAutoConfiguration {
     
-    @Bean
+    @Bean(destroyMethod = "destory")
     @ConditionalOnMissingBean
     @Order(300)
     public RedisTemplateLockTemplate redisTemplateLockTemplate(

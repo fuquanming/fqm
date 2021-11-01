@@ -209,7 +209,7 @@ public class RedisTemplateLock implements Lock {
         }, LOCK_KEY_TIMEOUT / 3, TimeUnit.MILLISECONDS);
     }
     /** 延时任务 */
-    public static class HashedWheelTimerInstance {
+    private static class HashedWheelTimerInstance {
         
         public static HashedWheelTimer instance = null;
         
@@ -219,7 +219,7 @@ public class RedisTemplateLock implements Lock {
         
     }
     
-    private static HashedWheelTimer getHashedWheelTimer() {
+    public static HashedWheelTimer getHashedWheelTimer() {
         return HashedWheelTimerInstance.instance;
     }
     
