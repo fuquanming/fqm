@@ -20,7 +20,6 @@ public class LockFactory {
     private Logger logger = LoggerFactory.getLogger(getClass());
     
     private Map<String, LockTemplate<?>> lockTemplateMap = new ConcurrentHashMap<>();
-    private Map<LockMode, LockTemplate<?>> lockModeTemplateMap = new ConcurrentHashMap<>();
     
     private SimpleLockTemplate memoryLockTemplate = new SimpleLockTemplate();
     
@@ -29,14 +28,16 @@ public class LockFactory {
         String lockTemplateName = lockTemplate.getClass().getName();
         lockTemplateMap.put(lockTemplateName, lockTemplate);
         
-        if (lockTemplateName.toUpperCase().contains(LockMode.SIMPLE.name())) {
-            lockModeTemplateMap.put(LockMode.SIMPLE, lockTemplate);
-        } else if (lockTemplateName.toUpperCase().contains(LockMode.REDISSON.name())) {
-            lockModeTemplateMap.put(LockMode.REDISSON, lockTemplate);
-        } else if (lockTemplateName.toUpperCase().contains(LockMode.REDISTEMPLATE.name())) {
-            lockModeTemplateMap.put(LockMode.REDISTEMPLATE, lockTemplate);
-        } else if (lockTemplateName.toUpperCase().contains(LockMode.ZOOKEEPER.name())) {
-            lockModeTemplateMap.put(LockMode.ZOOKEEPER, lockTemplate);
+        String lockTemlateSimpleName = lockTemplate.getClass().getSimpleName();
+        
+        if (lockTemlateSimpleName.equals(LockMode.simple.name())) {
+            lockTemplateMap.put(LockMode.simple.name(), lockTemplate);
+        } else if (lockTemlateSimpleName.equals(LockMode.redisson.name())) {
+            lockTemplateMap.put(LockMode.redisson.name(), lockTemplate);
+        } else if (lockTemlateSimpleName.equals(LockMode.redisTemplate.name())) {
+            lockTemplateMap.put(LockMode.redisTemplate.name(), lockTemplate);
+        } else if (lockTemlateSimpleName.equals(LockMode.zookeeper.name())) {
+            lockTemplateMap.put(LockMode.zookeeper.name(), lockTemplate);
         }
         
         return this;
@@ -55,10 +56,19 @@ public class LockFactory {
     public LockTemplate<?> getLockTemplate(LockMode lockMode) {
         if (lockMode == null) {
             return null;
-        } else if (LockMode.SIMPLE == lockMode) {
+        } else if (LockMode.simple == lockMode) {
             return memoryLockTemplate;
         }
-        return lockModeTemplateMap.get(lockMode);
+        return lockTemplateMap.get(lockMode.name());
+    }
+    
+    public LockTemplate<?> getLockTemplate(String lockMode) {
+        if (lockMode == null) {
+            return null;
+        } else if (LockMode.simple.name().equalsIgnoreCase(lockMode)) {
+            return memoryLockTemplate;
+        }
+        return lockTemplateMap.get(lockMode);
     }
     
 }

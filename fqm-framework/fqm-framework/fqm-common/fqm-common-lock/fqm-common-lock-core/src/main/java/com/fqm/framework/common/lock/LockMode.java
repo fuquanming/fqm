@@ -7,13 +7,13 @@ package com.fqm.framework.common.lock;
  */
 public enum LockMode {
     /** 单机内存锁 */
-    SIMPLE,
+    simple,
     /** 分布式Redisson */
-    REDISSON,
+    redisson,
     /** 分布式RedisTemplate */
-    REDISTEMPLATE,
+    redisTemplate,
     /** 分布式Zookeeper */
-    ZOOKEEPER;
+    zookeeper;
     
     public static LockMode getLockMode(String mode) {
         if (mode == null || "".equals(mode)) {
