@@ -14,5 +14,8 @@
 		<module>fqm-common-mq-redis</module>
 		<module>fqm-spring-boot-starter-mq</module>
 		<module>fqm-spring-boot-starter-mq-redis</module>
+		<module>fqm-common-mq-rabbit</module>
+		<module>fqm-common-mq-kafka</module>
+		<module>fqm-spring-boot-starter-mq-kafka</module>
 	</modules>
 </project>

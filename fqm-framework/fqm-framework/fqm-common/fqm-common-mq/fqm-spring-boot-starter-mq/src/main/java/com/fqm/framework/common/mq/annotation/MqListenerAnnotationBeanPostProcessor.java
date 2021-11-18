@@ -58,12 +58,9 @@ public class MqListenerAnnotationBeanPostProcessor implements BeanPostProcessor,
                         String groupStr = ValueUtil.resolveExpression((ConfigurableBeanFactory)beanFactory, group).toString();
                         String binderStr = ValueUtil.resolveExpression((ConfigurableBeanFactory)beanFactory, binder).toString();
                         MqListenerParam param = new MqListenerParam();
-                        param.setDestination(destinationStr);
-                        param.setGroup(groupStr);
-                        param.setBinder(binderStr);
-                        param.setBean(bean);
-                        param.setMethod(method.method);
-                        param.setConcurrentConsumers(mqListener.concurrentConsumers() <= 0 ? 1 : mqListener.concurrentConsumers());
+                        param.setDestination(destinationStr).setGroup(groupStr)
+                        .setBinder(binderStr).setBean(bean).setMethod(method.method)
+                        .setConcurrentConsumers(mqListener.concurrentConsumers() <= 0 ? 1 : mqListener.concurrentConsumers());
                         listeners.add(param);
                     }
                 }

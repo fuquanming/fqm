@@ -18,10 +18,10 @@ import java.lang.annotation.Target;
 public @interface MqListener {
     /** 设置当前的消费者数量 */
     int concurrentConsumers() default 1;
-    /** mq类型 kafka，rabbit，rocket，redis */
+    /** @MqMode 类型:kafka,rabbit,redis,rocket,zookeeper */
     String binder() default "";
     /** 主题topic */
     String destination() default "";
-    /** 分组 */
+    /** 消费分组 */
     String group() default "";
 }

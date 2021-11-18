@@ -388,6 +388,12 @@
 	            <artifactId>fqm-spring-boot-starter-mq</artifactId>
 	            <version>${project.version}</version>
 	        </dependency>
+	        
+	        <dependency>
+	            <groupId>com.fqm</groupId>
+	            <artifactId>fqm-common-mq-kafka</artifactId>
+	            <version>${project.version}</version>
+	        </dependency>
             
         </dependencies>
     </dependencyManagement>

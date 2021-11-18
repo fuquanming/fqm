@@ -10,7 +10,7 @@ import com.fqm.framework.common.mq.template.MqTemplate;
 
 
 /**
- * 消息队列工程
+ * 消息队列工厂
  * 
  * @version 
  * @author 傅泉明
@@ -27,9 +27,17 @@ public class MqFactory {
         mqTemplateMap.put(mqTemplateName, mqTemplate);
 
         String mqName = mqTemplate.getClass().getSimpleName().toLowerCase();
-        if (mqName.contains(MqMode.redis.name().toLowerCase())) {
+        if (mqName.contains(MqMode.kafka.name().toLowerCase())) {
+            mqTemplateMap.put(MqMode.kafka.name(), mqTemplate);
+        } else if (mqName.contains(MqMode.rabbit.name().toLowerCase())) {
+            mqTemplateMap.put(MqMode.rabbit.name(), mqTemplate);
+        } else if (mqName.contains(MqMode.redis.name().toLowerCase())) {
             mqTemplateMap.put(MqMode.redis.name(), mqTemplate);
-        }
+        } else if (mqName.contains(MqMode.rocket.name().toLowerCase())) {
+            mqTemplateMap.put(MqMode.rocket.name(), mqTemplate);
+        } else if (mqName.contains(MqMode.zookeeper.name().toLowerCase())) {
+            mqTemplateMap.put(MqMode.zookeeper.name(), mqTemplate);
+        } 
 
         return this;
     }

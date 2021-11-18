@@ -7,8 +7,11 @@ package com.fqm.framework.common.mq;
  */
 public enum MqMode {
     
-    /** 消息队列Redis */
-    redis;
+    kafka,
+    rabbit,
+    redis,
+    rocket,
+    zookeeper;
     
     public static MqMode getLockMode(String mode) {
         if (mode == null || "".equals(mode)) {

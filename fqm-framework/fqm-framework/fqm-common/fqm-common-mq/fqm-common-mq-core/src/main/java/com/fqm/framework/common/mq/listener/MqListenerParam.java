@@ -20,38 +20,44 @@ public class MqListenerParam {
     public String getBinder() {
         return binder;
     }
-    public void setBinder(String binder) {
+    public MqListenerParam setBinder(String binder) {
         this.binder = binder;
+        return this;
     }
     public String getDestination() {
         return destination;
     }
-    public void setDestination(String destination) {
+    public MqListenerParam setDestination(String destination) {
         this.destination = destination;
+        return this;
     }
     public String getGroup() {
         return group;
     }
-    public void setGroup(String group) {
+    public MqListenerParam setGroup(String group) {
         this.group = group;
+        return this;
     }
     public int getConcurrentConsumers() {
         return concurrentConsumers;
     }
-    public void setConcurrentConsumers(int concurrentConsumers) {
+    public MqListenerParam setConcurrentConsumers(int concurrentConsumers) {
         this.concurrentConsumers = concurrentConsumers;
+        return this;
     }
     public Object getBean() {
         return bean;
     }
-    public void setBean(Object bean) {
+    public MqListenerParam setBean(Object bean) {
         this.bean = bean;
+        return this;
     }
     public Method getMethod() {
         return method;
     }
-    public void setMethod(Method method) {
+    public MqListenerParam setMethod(Method method) {
         this.method = method;
+        return this;
     }
 
 }
