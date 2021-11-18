@@ -36,7 +36,7 @@
         <!-- es client -->
         <spring-boot-starter-data-jest.version>3.3.4.RELEASE</spring-boot-starter-data-jest.version>
         <!-- Redis 相关 -->
-        <redisson.version>3.14.0</redisson.version>
+        <redisson.version>3.15.1</redisson.version><!-- 支持springboot2.4.1 -->
         <!-- MQ 相关 -->
         <!-- Job 相关 -->
         <xxl-job.version>2.3.0</xxl-job.version>
@@ -371,6 +371,23 @@
                 <artifactId>fqm-spring-boot-starter-lock-zookeeper</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            
+            
+            <dependency>
+                <groupId>com.fqm</groupId>
+                <artifactId>fqm-common-mq-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fqm</groupId>
+                <artifactId>fqm-common-mq-redis</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+	            <groupId>com.fqm</groupId>
+	            <artifactId>fqm-spring-boot-starter-mq</artifactId>
+	            <version>${project.version}</version>
+	        </dependency>
             
         </dependencies>
     </dependencyManagement>
