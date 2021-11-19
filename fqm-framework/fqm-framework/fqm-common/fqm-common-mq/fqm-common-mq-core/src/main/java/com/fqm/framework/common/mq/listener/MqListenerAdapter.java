@@ -29,6 +29,11 @@ public class MqListenerAdapter<T> implements MqListener<T> {
         this.bean = bean;
     }
     
+    public MqListenerAdapter(Method method, Object bean) {
+        this.method = method;
+        this.bean = bean;
+    }
+
     @Override
     public void receiveMessage(T message) throws Exception {
         method.invoke(bean, message);

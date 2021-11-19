@@ -26,8 +26,7 @@ public class RedisMqListener extends MqListenerAdapter<String> implements Stream
     
     public RedisMqListener(Object bean, Method method, 
             StringRedisTemplate redisTemplate, String destination, String group) {
-        setBean(bean);
-        setMethod(method);
+        super(method, bean);
         this.redisTemplate = redisTemplate;
         this.destination = destination;
         this.group = group;

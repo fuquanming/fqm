@@ -17,5 +17,7 @@
 		<module>fqm-common-mq-rabbit</module>
 		<module>fqm-common-mq-kafka</module>
 		<module>fqm-spring-boot-starter-mq-kafka</module>
+		<module>fqm-common-mq-rocket</module>
+		<module>fqm-spring-boot-starter-mq-rocket</module>
 	</modules>
 </project>

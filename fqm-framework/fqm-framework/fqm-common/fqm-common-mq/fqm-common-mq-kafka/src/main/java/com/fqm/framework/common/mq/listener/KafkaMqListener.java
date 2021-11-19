@@ -15,8 +15,7 @@ import org.springframework.kafka.support.Acknowledgment;
 public class KafkaMqListener extends MqListenerAdapter<String> implements AcknowledgingMessageListener<String, String> {
 
     public KafkaMqListener(Object bean, Method method) {
-        setBean(bean);
-        setMethod(method);
+        super(method, bean);
     }
 
     @Override
