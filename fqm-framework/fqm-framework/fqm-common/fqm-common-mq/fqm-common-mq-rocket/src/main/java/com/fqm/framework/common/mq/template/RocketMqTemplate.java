@@ -7,8 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.support.MessageBuilder;
 
-import com.fqm.framework.common.core.util.JsonUtil;
-
 /**
  * Rocket消息队列
  * 
@@ -27,7 +25,7 @@ public class RocketMqTemplate implements MqTemplate {
     
     @Override
     public boolean syncSend(String topic, Object msg) {
-        String str = JsonUtil.toJsonStr(msg);
+        String str = getJsonStr(msg);
         try {
             SendResult sendResult = rocketMqTemplate.syncSend(topic, MessageBuilder.withPayload(str).build());
             if (sendResult.getSendStatus() == SendStatus.SEND_OK) {

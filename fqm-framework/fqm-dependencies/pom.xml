@@ -39,6 +39,7 @@
         <redisson.version>3.15.1</redisson.version><!-- 支持springboot2.4.1 -->
         <!-- MQ 相关 -->
         <rocketmq.version>2.2.1</rocketmq.version>
+        <curator.version>5.1.0</curator.version><!-- Zookeeper客户端 -->
         
         <!-- Job 相关 -->
         <xxl-job.version>2.3.0</xxl-job.version>
@@ -173,6 +174,12 @@
 	            <groupId>org.apache.rocketmq</groupId>
 	            <artifactId>rocketmq-spring-boot-starter</artifactId>
 	            <version>${rocketmq.version}</version>
+	        </dependency>
+	        <dependency>
+                <!-- Zookeeper客户端 -->
+	            <groupId>org.apache.curator</groupId>
+	            <artifactId>curator-recipes</artifactId>
+	            <version>${curator.version}</version>
 	        </dependency>
 
             <!-- Job 相关 -->
@@ -395,16 +402,19 @@
 	            <artifactId>fqm-spring-boot-starter-mq</artifactId>
 	            <version>${project.version}</version>
 	        </dependency>
-	        
 	        <dependency>
 	            <groupId>com.fqm</groupId>
 	            <artifactId>fqm-common-mq-kafka</artifactId>
 	            <version>${project.version}</version>
 	        </dependency>
-	        
 	        <dependency>
 	            <groupId>com.fqm</groupId>
 	            <artifactId>fqm-common-mq-rocket</artifactId>
+	            <version>${project.version}</version>
+	        </dependency>
+	        <dependency>
+	            <groupId>com.fqm</groupId>
+	            <artifactId>fqm-common-mq-zookeeper</artifactId>
 	            <version>${project.version}</version>
 	        </dependency>
             

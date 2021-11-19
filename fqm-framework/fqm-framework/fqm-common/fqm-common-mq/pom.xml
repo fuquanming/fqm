@@ -19,5 +19,7 @@
 		<module>fqm-spring-boot-starter-mq-kafka</module>
 		<module>fqm-common-mq-rocket</module>
 		<module>fqm-spring-boot-starter-mq-rocket</module>
+		<module>fqm-common-mq-zookeeper</module>
+		<module>fqm-spring-boot-starter-mq-zookeeper</module>
 	</modules>
 </project>

@@ -14,5 +14,9 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.fqm</groupId>
+            <artifactId>fqm-common-core</artifactId>
+        </dependency>
     </dependencies>
 </project>

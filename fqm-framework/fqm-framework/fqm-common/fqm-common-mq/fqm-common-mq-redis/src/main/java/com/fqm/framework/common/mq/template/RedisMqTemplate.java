@@ -6,8 +6,6 @@ import org.springframework.data.redis.connection.stream.RecordId;
 import org.springframework.data.redis.connection.stream.StreamRecords;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
-import com.fqm.framework.common.core.util.JsonUtil;
-
 /**
  * Redis消息队列
  * 
@@ -28,7 +26,7 @@ public class RedisMqTemplate implements MqTemplate {
     public boolean syncSend(String topic, Object msg) {
         String str = null;
         try {
-            str = JsonUtil.toJsonStr(msg);
+            str = getJsonStr(msg);
             logger.info("RedisMqProducer->{},{}", topic, str);
             /**
              * 查看数据：XRANGE topic - +

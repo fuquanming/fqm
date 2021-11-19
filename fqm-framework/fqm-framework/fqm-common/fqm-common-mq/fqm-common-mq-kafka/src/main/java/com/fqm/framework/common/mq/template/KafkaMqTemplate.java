@@ -7,8 +7,6 @@ import org.springframework.kafka.support.SendResult;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 
-import com.fqm.framework.common.core.util.JsonUtil;
-
 /**
  * Kafka消息队列
  * 
@@ -28,7 +26,7 @@ public class KafkaMqTemplate implements MqTemplate {
     
     @Override
     public boolean syncSend(String topic, Object msg) {
-        String str = JsonUtil.toJsonStr(msg);
+        String str = getJsonStr(msg);
         final boolean[] flag = {true};
         try {
 //            logger.info("KafkaMqProducer->{},{}", topic, str);
