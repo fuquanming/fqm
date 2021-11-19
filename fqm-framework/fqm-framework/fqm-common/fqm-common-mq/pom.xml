@@ -21,5 +21,6 @@
 		<module>fqm-spring-boot-starter-mq-rocket</module>
 		<module>fqm-common-mq-zookeeper</module>
 		<module>fqm-spring-boot-starter-mq-zookeeper</module>
+		<module>fqm-spring-boot-starter-mq-rabbit</module>
 	</modules>
 </project>

@@ -417,6 +417,11 @@
 	            <artifactId>fqm-common-mq-zookeeper</artifactId>
 	            <version>${project.version}</version>
 	        </dependency>
+	        <dependency>
+	            <groupId>com.fqm</groupId>
+	            <artifactId>fqm-common-mq-rabbit</artifactId>
+	            <version>${project.version}</version>
+	        </dependency>
             
         </dependencies>
     </dependencyManagement>
