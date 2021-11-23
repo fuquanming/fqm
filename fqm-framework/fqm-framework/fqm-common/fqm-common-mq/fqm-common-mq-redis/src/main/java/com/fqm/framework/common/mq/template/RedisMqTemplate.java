@@ -39,7 +39,10 @@ public class RedisMqTemplate implements MqTemplate {
             RecordId recordId1 = stringRedisTemplate.opsForStream().add(
                     StreamRecords.newRecord().ofObject(str).withStreamKey(topic));
             if (recordId1.getSequence() != null) {
+                logger.info("RedisMqProducer.success->topic=[{}],message=[{}],offset=[{}]", topic, str, recordId1.getSequence());
                 return true;
+            } else {
+                logger.error("RedisMqProducer.error->topic=[{}],message=[{}],offset=[{}]", topic, str, recordId1);
             }
         } catch (Exception e) {
             logger.error("RedisMqProducer-error->" + topic + "," + str, e);

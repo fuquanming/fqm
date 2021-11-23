@@ -7,6 +7,8 @@ import org.springframework.kafka.support.SendResult;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 
+import com.fqm.framework.common.mq.client.producer.SendCallback;
+
 /**
  * Kafka消息队列
  * 
@@ -50,6 +52,30 @@ public class KafkaMqTemplate implements MqTemplate {
             e.printStackTrace();
         }
         return false;
+    }
+    
+    @Override
+    public void asyncSend(String topic, Object msg, SendCallback sendCallback) {
+        String str = getJsonStr(msg);
+        try {
+            ListenableFuture future = kafkaTemplate.send(topic, str);
+            future.addCallback(new ListenableFutureCallback<SendResult<String, String>>() {
+                @Override
+                public void onFailure(Throwable e) {
+                    logger.error("KafkaMqProducer.error->topic=[" + topic + "],message=[" + str + "]", e);
+                    sendCallback.onException(e);
+                    e.printStackTrace();
+                }
+                @Override
+                public void onSuccess(SendResult<String, String> result) {
+                    logger.info("KafkaMqProducer.success->topic=[{}],message=[{}],offset=[{}]", topic, str, result.getRecordMetadata().offset());
+                    sendCallback.onSuccess(null);
+                }
+            });
+        } catch (Exception e) {
+            logger.error("KafkaMqProducer.error->topic=[" + topic + "],message=[" + str + "]", e);
+            e.printStackTrace();
+        }
     }
 
 }
