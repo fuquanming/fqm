@@ -1,6 +1,5 @@
 package com.fqm.framework.common.mq.callback;
 
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 
 import org.slf4j.Logger;
@@ -12,8 +11,9 @@ import com.fqm.framework.common.mq.client.producer.SendCallback;
 import com.fqm.framework.common.mq.client.producer.SendResult;
 
 /**
- * 设置确认回调
+ * 设置确认回调，单线程轮训监听通知
  * 
+ * extends WeakReference
  * @version 
  * @author 傅泉明
  */
@@ -25,7 +25,9 @@ public class RabbitListenableFutureCallback implements ListenableFutureCallback<
     /** 消息ID */
     private String id;
     /** 是否异常 */
-    private volatile Boolean msgError = false;
+    private volatile boolean error = false;
+    /** 异常信息 */
+    private volatile String errorMsg;
     /** ack回调线程 */
     private Thread callbackThread;
     
@@ -46,7 +48,8 @@ public class RabbitListenableFutureCallback implements ListenableFutureCallback<
     public void onFailure(Throwable ex) {
         logger.error("Throwable", ex);
         // 设置确认回调失败时触发
-        msgError = true;
+        error = true;
+        errorMsg = "ERROR exchange onFailure";
         LockSupport.unpark(productThread);
         if (sendCallback != null) {// 同步消息
             sendCallback.onException(ex);
@@ -57,33 +60,21 @@ public class RabbitListenableFutureCallback implements ListenableFutureCallback<
         // @RabbitPropertiesBeanPostProcessor 参考
         // 设置确认回调 ACK
         callbackThread = Thread.currentThread();
-        logger.info(callbackThread.getId() + ",onSuccess,ack=" + confirm.isAck() + "\t" + productThread.getId());
+//        logger.info(callbackThread.getId() + ",onSuccess,ack=" + confirm.isAck() + "\t" + productThread.getId());
         if (!confirm.isAck()) {// 入交换机失败
-            msgError = true;
+            error = true;
+            errorMsg = "ERROR exchange ack";
         }
-        // 等待入队列异常通知，最多等待1毫秒 
-        // TODO 性能，在无异常时白损耗1毫秒
+        // 等待入队列异常通知，不处理
         if (sendCallback == null) {// 同步消息
-            LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(1));
-            if (msgError) {// 入队列异常
-                logger.info("msgError=" + msgError);
-            } else if (confirm.isAck()) {
-                // 消息ack成功，队列成功
-                // 业务处理
-            }
             LockSupport.unpark(productThread);
         } else {// 异步消息
-            if (msgError) {// 入交换机失败
-                sendCallback.onException(new RuntimeException("ERROR exchange"));
-            }
-            LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(2));
-            if (confirm.isAck() && !msgError) {
-                // 消息ack成功，队列成功
-                // 业务处理
+            if (error) {
+                sendCallback.onException(new RuntimeException(errorMsg));
+            } else {
                 sendCallback.onSuccess(new SendResult().setId(id));
             }
         }
-        
     }
     
     public Thread getProductThread() {
@@ -101,13 +92,21 @@ public class RabbitListenableFutureCallback implements ListenableFutureCallback<
     public void setId(String id) {
         this.id = id;
     }
-
-    public boolean isMsgError() {
-        return msgError;
+    
+    public boolean isError() {
+        return error;
     }
 
-    public void setMsgError(boolean msgError) {
-        this.msgError = msgError;
+    public void setError(boolean error) {
+        this.error = error;
+    }
+
+    public String getErrorMsg() {
+        return errorMsg;
+    }
+
+    public void setErrorMsg(String errorMsg) {
+        this.errorMsg = errorMsg;
     }
 
     public Thread getCallbackThread() {

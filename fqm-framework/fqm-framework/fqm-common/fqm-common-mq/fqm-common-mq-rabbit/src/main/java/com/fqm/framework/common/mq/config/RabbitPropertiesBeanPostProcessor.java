@@ -21,6 +21,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.PriorityOrdered;
 
 import com.fqm.framework.common.mq.callback.RabbitListenableFutureCallback;
+import com.fqm.framework.common.mq.callback.RabbitReturnsCallback;
 import com.fqm.framework.common.mq.template.RabbitMqTemplate;
 
 /**
@@ -35,8 +36,6 @@ import com.fqm.framework.common.mq.template.RabbitMqTemplate;
  */
 public class RabbitPropertiesBeanPostProcessor implements BeanPostProcessor, PriorityOrdered, BeanFactoryAware {
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
-    
     private BeanFactory beanFactory;
     
     @Override
@@ -51,8 +50,10 @@ public class RabbitPropertiesBeanPostProcessor implements BeanPostProcessor, Pri
             properties.getTemplate().setMandatory(true);//开启强制委托模式
         } else if (targetClass == RabbitTemplate.class) {/** 设置rabbitTemplate的回调函数 */
             RabbitTemplate rabbitTemplate = (RabbitTemplate) bean;
-            /** 设置确认回调，可以用发送添加CcorrelationData对象，
-             * 使用 correlationData.getFuture().addCallback 替代 */
+            /** 设置确认回调，多线程回调。可以用发送添加CcorrelationData对象，
+             * 使用 correlationData.getFuture().addCallback 替代
+             * addCallback 优于该ConfirmCallback前回调
+             *  */
 //            rabbitTemplate.setConfirmCallback(new ConfirmCallback() {
 //                /**
 //                 * @param ccorrelationData  消息唯一关联数据（发送时带该对象，则返回时有该对象）
@@ -65,38 +66,9 @@ public class RabbitPropertiesBeanPostProcessor implements BeanPostProcessor, Pri
 //                }
 //            });
                     
-            /** 消息抵达队列失败回调 */
-            rabbitTemplate.setReturnsCallback(new ReturnsCallback() {
-                /**
-                 * ReturnedMessage:
-                 * message：投递失败的消息;
-                 * replyCode：回复的状态码;
-                 * replyText：回复的文本内容;
-                 * exchange：当时这个消息发给那个交换机;
-                 * routingKey：当时这个消息用哪个路由键
-                 */
-                @Override
-                public void returnedMessage(ReturnedMessage returned) {
-                    logger.info(Thread.currentThread().getId() + ",Fail Message[" + returned.getMessage() + "],replyCode=[" + returned.getReplyCode() + "],replyText=[" + returned.getReplyText() + "],exchange=[" + returned.getExchange() + "],routingKey=[" + returned.getRoutingKey() + "]");
-                    
-                    RabbitMqTemplate rabbitMqTemplate = beanFactory.getBean(RabbitMqTemplate.class);
-                    String id = returned.getMessage().getMessageProperties().getHeader("spring_returned_message_correlation");
-                    if (id != null) {
-                        Map<String, RabbitListenableFutureCallback> callbackMap = rabbitMqTemplate.getFutureCallbackMap();
-                        RabbitListenableFutureCallback futureCallback = callbackMap.get(id);
-                        if (futureCallback != null) {
-                            if (futureCallback.getSendCallback() != null) {// 异步消息
-                                futureCallback.setMsgError(true);
-                                LockSupport.unpark(futureCallback.getCallbackThread());
-                                futureCallback.getSendCallback().onException(new RuntimeException(returned.getReplyText()));
-                            } else {// 同步消息
-                                futureCallback.setMsgError(true);
-                                LockSupport.unpark(futureCallback.getCallbackThread());
-                            }
-                        }
-                    }
-                }
-            });
+            /** 消息抵达队列失败回调，多线程回调 */
+            RabbitMqTemplate rabbitMqTemplate = beanFactory.getBean(RabbitMqTemplate.class);
+            rabbitTemplate.setReturnsCallback(new RabbitReturnsCallback(rabbitMqTemplate));
         }
         return bean;
     }
