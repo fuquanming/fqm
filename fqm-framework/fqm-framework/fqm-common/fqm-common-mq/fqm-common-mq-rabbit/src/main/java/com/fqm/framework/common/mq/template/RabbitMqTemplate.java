@@ -33,7 +33,11 @@ public class RabbitMqTemplate implements MqTemplate {
     
     private Set<String> topicSet = new HashSet<>();
     
-    private AtomicLong atomicLong = new AtomicLong(); 
+    private AtomicLong atomicLong = new AtomicLong();
+    
+    private String hostAddress = SystemUtil.getHostInfo().getAddress();
+    
+    private long pid = SystemUtil.getCurrentPID();
     
     public RabbitMqTemplate(RabbitTemplate rabbitTemplate, AmqpAdmin amqpAdmin) {
         this.rabbitTemplate = rabbitTemplate;
@@ -53,8 +57,7 @@ public class RabbitMqTemplate implements MqTemplate {
      * @return
      */
     private String getId() {
-        return String.format("%s@%d@%s", SystemUtil.getHostInfo().getAddress(), 
-                SystemUtil.getCurrentPID(), atomicLong.incrementAndGet());
+        return String.format("%s@%d@%s", hostAddress, pid, atomicLong.incrementAndGet());
     }
     
     @Override
@@ -71,14 +74,14 @@ public class RabbitMqTemplate implements MqTemplate {
             
             LockSupport.parkNanos(TimeUnit.SECONDS.toNanos(3));// 最多等3秒
             if (callback.isError()) {
-                logger.info(Thread.currentThread().getId() + ",RabbitMqProducer.error->topic=[{}],message=[{}]", topic, str);
+                logger.info("RabbitMqProducer.error->topic=[{}],message=[{}]", topic, str);
                 return false;
             } else {
-                logger.info(Thread.currentThread().getId() + ",RabbitMqProducer.success->topic=[{}],message=[{}]", topic, str);
+                logger.info("RabbitMqProducer.success->topic=[{}],message=[{}]", topic, str);
                 return true;
             }
         } catch (Exception e) {
-            logger.error(Thread.currentThread().getId() + ",RabbitMqProducer.error->topic=[" + topic + "],message=[" + str + "]", e);
+            logger.error("RabbitMqProducer.error->topic=[" + topic + "],message=[" + str + "]", e);
             e.printStackTrace();
         }
         return false;
@@ -97,9 +100,9 @@ public class RabbitMqTemplate implements MqTemplate {
             
             rabbitTemplate.convertAndSend("", topic, str, correlationData);
             
-            logger.info(Thread.currentThread().getId() + ",RabbitMqProducer->topic=[{}],message=[{}]", topic, str);
+            logger.info("RabbitMqProducer->topic=[{}],message=[{}]", topic, str);
         } catch (Exception e) {
-            logger.error(Thread.currentThread().getId() + ",RabbitMqProducer.error->topic=[" + topic + "],message=[" + str + "]", e);
+            logger.error("RabbitMqProducer.error->topic=[" + topic + "],message=[" + str + "]", e);
             e.printStackTrace();
         }
     }

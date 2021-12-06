@@ -36,7 +36,7 @@ public class RabbitReturnsCallback implements ReturnsCallback {
      */
     @Override
     public void returnedMessage(ReturnedMessage returned) {
-        logger.info(Thread.currentThread().getId() + ",RabbitMqProducer.error->Fail Message[" + returned.getMessage() + "],replyCode=[" + returned.getReplyCode() + "],replyText=[" + returned.getReplyText() + "],exchange=[" + returned.getExchange() + "],routingKey=[" + returned.getRoutingKey() + "]");
+        logger.info("RabbitMqProducer.error->Fail Message[" + returned.getMessage() + "],replyCode=[" + returned.getReplyCode() + "],replyText=[" + returned.getReplyText() + "],exchange=[" + returned.getExchange() + "],routingKey=[" + returned.getRoutingKey() + "]");
 //        String id = returned.getMessage().getMessageProperties().getHeader("spring_returned_message_correlation");
 //        if (id != null) {
 //            Map<String, RabbitListenableFutureCallback> callbackMap = rabbitMqTemplate.getFutureCallbackMap();
