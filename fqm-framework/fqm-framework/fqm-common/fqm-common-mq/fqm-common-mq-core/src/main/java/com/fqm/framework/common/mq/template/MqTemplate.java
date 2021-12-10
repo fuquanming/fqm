@@ -24,6 +24,16 @@ public interface MqTemplate {
     public boolean syncSend(String topic, Object msg);
     
     /**
+     * 同步发送延迟消息，对象使用json保存到队列中
+     * @param topic         主题
+     * @param msg           消息
+     * @param delayTime     延迟时间单位毫秒
+     * @return
+     */
+    public default boolean syncDelaySend(String topic, Object msg, Integer delayTime) {
+        throw new com.fqm.framework.common.core.exception.ServiceException(12, "未实现同步延迟消息发送");
+    }
+    /**
      * 异步发送消息，对象使用json保存到队列中 
      * @param topic
      * @param msg

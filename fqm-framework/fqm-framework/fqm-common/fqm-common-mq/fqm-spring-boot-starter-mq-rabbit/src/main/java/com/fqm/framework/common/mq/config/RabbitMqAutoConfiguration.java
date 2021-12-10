@@ -67,7 +67,7 @@ public class RabbitMqAutoConfiguration {
             DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory) configurableApplicationContext.getBeanFactory();
             if (!applicationContext.containsBean(name)) {
                 if (MqMode.rabbit.name().equals(v.getBinder())) {
-                    rabbitMqTemplate.initTopic(v.getDestination());
+                    rabbitMqTemplate.initTopic(v.getDestination(), false);
                     
                     // 通过BeanDefinitionBuilder创建bean定义
                     BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder
