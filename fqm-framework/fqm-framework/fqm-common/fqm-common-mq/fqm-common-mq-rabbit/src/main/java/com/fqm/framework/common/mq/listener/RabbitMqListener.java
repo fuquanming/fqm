@@ -6,6 +6,7 @@ import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.listener.api.ChannelAwareMessageListener;
 
 import com.fqm.framework.common.mq.template.RabbitMqTemplate;
+import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 
 /**
@@ -42,7 +43,12 @@ public class RabbitMqListener extends MqListenerAdapter<String> implements Chann
             /** 进入死信队列 */
             String deadTopic = destination + ".DLQ";
             rabbitMqTemplate.initTopic(deadTopic, false);
-            channel.basicPublish("", deadTopic, null, body);
+            
+            AMQP.BasicProperties.Builder builder = new AMQP.BasicProperties.Builder();
+            // 消息持久化
+            builder.contentType("text/plain").deliveryMode(2);
+            channel.basicPublish("", deadTopic, builder.build(), body);
+            
             /** 手动发送Reject不收消息，不放回队列 */
             channel.basicReject(deliveryTag, false);
             throw e;

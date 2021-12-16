@@ -109,7 +109,7 @@ public class RabbitMqTemplate implements MqTemplate {
             ImmutablePair<CorrelationData, RabbitListenableFutureCallback> params = getCorrelationData();
             CorrelationData correlationData = params.left;
             RabbitListenableFutureCallback callback = params.right;
-            
+            // 使用默认交换机（默认持久化），默认消息持久化
             rabbitTemplate.convertAndSend("", topic, str, correlationData);
             
             LockSupport.parkNanos(TimeUnit.SECONDS.toNanos(3));// 最多等3秒
@@ -141,7 +141,7 @@ public class RabbitMqTemplate implements MqTemplate {
             ImmutablePair<CorrelationData, RabbitListenableFutureCallback> params = getCorrelationData();
             CorrelationData correlationData = params.left;
             RabbitListenableFutureCallback callback = params.right;
-            
+            // 使用默认交换机（默认持久化），默认消息持久化
             rabbitTemplate.convertAndSend(topic, topic, str, message ->{
                 message.getMessageProperties().setDelay(delayTime);
                 // 标识消息是延迟任务，RabbitReturnsCallback判断如果是延迟任务则不认为是异常
@@ -172,7 +172,7 @@ public class RabbitMqTemplate implements MqTemplate {
             
             ImmutablePair<CorrelationData, RabbitListenableFutureCallback> params = getCorrelationData();
             CorrelationData correlationData = params.left;
-            
+            // 使用默认交换机（默认持久化），默认消息持久化
             rabbitTemplate.convertAndSend("", topic, str, correlationData);
             
             logger.info("RabbitMqProducer.asyncSend->topic=[{}],message=[{}]", topic, str);
