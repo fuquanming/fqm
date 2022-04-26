@@ -106,7 +106,8 @@ public class RedisMqAutoConfiguration {
 //                if (!stream.isExists()) {
 //                    StringRecord stringRecord = StreamRecords.string(
 //                            Collections.singletonMap("test", "testData")).withStreamKey(v.getDestination());
-//                    stringRedisTemplate.opsForStream().add(stringRecord);
+//                    RecordId recordId = stringRedisTemplate.opsForStream().add(stringRecord);
+//                    stringRedisTemplate.opsForStream().delete(v.getDestination(), recordId);// 删除测试消息
 //                }
 //                List<StreamGroup> groups = stream.listGroups();
 //                if (groups != null) {
