@@ -55,4 +55,8 @@ public class MqFactory {
         if (mqMode == null) return null;
         return mqTemplateMap.get(mqMode);
     }
+    
+    public MqTemplate getMqTemplate() {
+        return mqTemplateMap.isEmpty() ? null : mqTemplateMap.values().iterator().next();
+    }
 }

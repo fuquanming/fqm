@@ -92,10 +92,10 @@ public class RabbitMqTemplate implements MqTemplate {
         return String.format("%s@%d@%s", hostAddress, pid, atomicLong.incrementAndGet());
     }
     
-    private ImmutablePair<CorrelationData, RabbitListenableFutureCallback> getCorrelationData() {
+    private ImmutablePair<CorrelationData, RabbitListenableFutureCallback> getCorrelationData(SendCallback sendCallback) {
         String id = getId();
         CorrelationData correlationData = new CorrelationData(id);
-        RabbitListenableFutureCallback callback = new RabbitListenableFutureCallback(Thread.currentThread(), id);
+        RabbitListenableFutureCallback callback = new RabbitListenableFutureCallback(Thread.currentThread(), id, sendCallback);
         correlationData.getFuture().addCallback(callback);
         return ReturnParamUtil.of(correlationData, callback);
     }
@@ -106,7 +106,7 @@ public class RabbitMqTemplate implements MqTemplate {
         try {
             initTopic(topic, false);
             
-            ImmutablePair<CorrelationData, RabbitListenableFutureCallback> params = getCorrelationData();
+            ImmutablePair<CorrelationData, RabbitListenableFutureCallback> params = getCorrelationData(null);
             CorrelationData correlationData = params.left;
             RabbitListenableFutureCallback callback = params.right;
             // 使用默认交换机（默认持久化），默认消息持久化
@@ -114,14 +114,14 @@ public class RabbitMqTemplate implements MqTemplate {
             
             LockSupport.parkNanos(TimeUnit.SECONDS.toNanos(3));// 最多等3秒
             if (callback.isError()) {
-                logger.info("RabbitMqProducer.asyncSend.error->topic=[{}],message=[{}]", topic, str);
+                logger.info("RabbitMqProducer.syncSend.error->topic=[{}],message=[{}]", topic, str);
                 return false;
             } else {
-                logger.info("RabbitMqProducer.asyncSend.success->topic=[{}],message=[{}]", topic, str);
+                logger.info("RabbitMqProducer.syncSend.success->topic=[{}],message=[{}]", topic, str);
                 return true;
             }
         } catch (Exception e) {
-            logger.error("RabbitMqProducer.asyncSend.error->topic=[" + topic + "],message=[" + str + "]", e);
+            logger.error("RabbitMqProducer.syncSend.error->topic=[" + topic + "],message=[" + str + "]", e);
             e.printStackTrace();
         }
         return false;
@@ -129,36 +129,37 @@ public class RabbitMqTemplate implements MqTemplate {
     
     /**
      * 需要安装x-delayed-message延迟插件
-     * @see com.fqm.framework.common.mq.template.MqTemplate#syncDelaySend(java.lang.String, java.lang.Object, java.lang.Integer)
+     * @see com.fqm.framework.common.mq.template.MqTemplate#syncDelaySend(java.lang.String, java.lang.Object, int, java.util.concurrent.TimeUnit)
      *
      */
     @Override
-    public boolean syncDelaySend(String topic, Object msg, Integer delayTime) {
+    public boolean syncDelaySend(String topic, Object msg, int delayTime, TimeUnit timeUnit) {
         String str = getJsonStr(msg);
         try {
             initTopic(topic, true);
             
-            ImmutablePair<CorrelationData, RabbitListenableFutureCallback> params = getCorrelationData();
+            ImmutablePair<CorrelationData, RabbitListenableFutureCallback> params = getCorrelationData(null);
             CorrelationData correlationData = params.left;
             RabbitListenableFutureCallback callback = params.right;
             // 使用默认交换机（默认持久化），默认消息持久化
             rabbitTemplate.convertAndSend(topic, topic, str, message ->{
-                message.getMessageProperties().setDelay(delayTime);
+                int time = (int)timeUnit.toMillis(delayTime);
+                message.getMessageProperties().setDelay(time);
                 // 标识消息是延迟任务，RabbitReturnsCallback判断如果是延迟任务则不认为是异常
-                message.getMessageProperties().getHeaders().put(HEADER_DELAY, delayTime);
+                message.getMessageProperties().getHeaders().put(HEADER_DELAY, time);
                 return message;
             }, correlationData);
             
             LockSupport.parkNanos(TimeUnit.SECONDS.toNanos(3));// 最多等3秒
             if (callback.isError()) {
-                logger.info("RabbitMqProducer.syncDelaySend.error->topic=[{}],message=[{}],delayTime=[{}]", topic, str, delayTime);
+                logger.info("RabbitMqProducer.syncDelaySend.error->topic=[{}],message=[{}],delayTime=[{}],timeUnit=[{}]", topic, str, delayTime, timeUnit);
                 return false;
             } else {
-                logger.info("RabbitMqProducer.syncDelaySend.success->topic=[{}],message=[{}],delayTime=[{}]", topic, str, delayTime);
+                logger.info("RabbitMqProducer.syncDelaySend.success->topic=[{}],message=[{}],delayTime=[{}],timeUnit=[{}]", topic, str, delayTime, timeUnit);
                 return true;
             }
         } catch (Exception e) {
-            logger.error("RabbitMqProducer.syncDelaySend.error->topic=[" + topic + "],message=[" + str + "],delayTime=[" + delayTime + "]", e);
+            logger.error("RabbitMqProducer.syncDelaySend.error->topic=[" + topic + "],message=[" + str + "],delayTime=[" + delayTime + "],timeUnit=[" + timeUnit + "]", e);
             e.printStackTrace();
         }
         return false;
@@ -170,7 +171,7 @@ public class RabbitMqTemplate implements MqTemplate {
         try {
             initTopic(topic, false);
             
-            ImmutablePair<CorrelationData, RabbitListenableFutureCallback> params = getCorrelationData();
+            ImmutablePair<CorrelationData, RabbitListenableFutureCallback> params = getCorrelationData(sendCallback);
             CorrelationData correlationData = params.left;
             // 使用默认交换机（默认持久化），默认消息持久化
             rabbitTemplate.convertAndSend("", topic, str, correlationData);

@@ -28,7 +28,7 @@ public class KeyExpiredEventMessageListener extends KeyspaceEventMessageListener
     @Override
     protected void doRegister(RedisMessageListenerContainer listenerContainer) {
         /** 监听的主题 */
-        listenerContainer.addMessageListener(this, TopicManager.getUpdateTopic());
+        listenerContainer.addMessageListener(this, TopicManager.getExpiredTopic());
     }
 
     @Override

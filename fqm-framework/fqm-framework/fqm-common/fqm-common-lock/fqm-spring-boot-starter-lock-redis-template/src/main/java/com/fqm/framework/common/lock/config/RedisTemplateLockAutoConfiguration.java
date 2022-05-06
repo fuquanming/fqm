@@ -54,8 +54,6 @@ public class RedisTemplateLockAutoConfiguration {
     
     /**
      * 锁处理 监听Redis删除key事件
-     * @param listenerContainer
-     * @param cacheManager
      * @return
      */
     @Bean

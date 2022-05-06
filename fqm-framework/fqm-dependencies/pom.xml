@@ -6,7 +6,7 @@
 	
 	<groupId>com.fqm</groupId>
     <artifactId>fqm-dependencies</artifactId>
-    <version>${project.version}</version>
+    <version>1.0.0</version>
     <packaging>pom</packaging>
 
 	<name>${artifactId}</name>
@@ -289,138 +289,138 @@
             <dependency>
 	            <groupId>com.fqm</groupId>
 	            <artifactId>fqm-common-core</artifactId>
-                <version>${project.version}</version>
+                <version>1.0.0</version>
 	        </dependency>
 	        <dependency>
                 <groupId>com.fqm</groupId>
                 <artifactId>fqm-common-http</artifactId>
-                <version>${project.version}</version>
+                <version>1.0.0</version>
             </dependency>
             <dependency>
                 <groupId>com.fqm</groupId>
                 <artifactId>fqm-common-spring</artifactId>
-                <version>${project.version}</version>
+                <version>1.0.0</version>
             </dependency>
             
             <dependency>
                 <groupId>com.fqm</groupId>
                 <artifactId>fqm-common-redis</artifactId>
-                <version>${project.version}</version>
+                <version>1.0.0</version>
             </dependency>
             <dependency>
                 <groupId>com.fqm</groupId>
                 <artifactId>fqm-common-cache-spring</artifactId>
-                <version>${project.version}</version>
+                <version>1.0.0</version>
             </dependency>
             <dependency>
                 <groupId>com.fqm</groupId>
                 <artifactId>fqm-common-cache-redis-spring</artifactId>
-                <version>${project.version}</version>
+                <version>1.0.0</version>
             </dependency>
             
             <dependency>
                 <groupId>com.fqm</groupId>
                 <artifactId>fqm-multilevel-cache-core</artifactId>
-                <version>${project.version}</version>
+                <version>1.0.0</version>
             </dependency>
             <dependency>
                 <groupId>com.fqm</groupId>
                 <artifactId>fqm-multilevel-cache-redis</artifactId>
-                <version>${project.version}</version>
+                <version>1.0.0</version>
             </dependency>
             <dependency>
                 <groupId>com.fqm</groupId>
                 <artifactId>fqm-spring-boot-starter-multilevel-cache-redis</artifactId>
-                <version>${project.version}</version>
+                <version>1.0.0</version>
             </dependency>
             <dependency>
                 <groupId>com.fqm</groupId>
                 <artifactId>fqm-spring-boot-starter-multilevel-cache-redisson</artifactId>
-                <version>${project.version}</version>
+                <version>1.0.0</version>
             </dependency>
             
             <dependency>
                 <groupId>com.fqm</groupId>
                 <artifactId>fqm-common-file-core</artifactId>
-                <version>${project.version}</version>
+                <version>1.0.0</version>
             </dependency>
             <dependency>
                 <groupId>com.fqm</groupId>
                 <artifactId>fqm-common-file-minio</artifactId>
-                <version>${project.version}</version>
+                <version>1.0.0</version>
             </dependency>
             <dependency>
                 <groupId>com.fqm</groupId>
                 <artifactId>fqm-spring-boot-starter-file-minio</artifactId>
-                <version>${project.version}</version>
+                <version>1.0.0</version>
             </dependency>
             
             <dependency>
                 <groupId>com.fqm</groupId>
                 <artifactId>fqm-common-lock-core</artifactId>
-                <version>${project.version}</version>
+                <version>1.0.0</version>
             </dependency>
             <dependency>
                 <groupId>com.fqm</groupId>
                 <artifactId>fqm-spring-boot-starter-lock</artifactId>
-                <version>${project.version}</version>
+                <version>1.0.0</version>
             </dependency>
             <dependency>
                 <groupId>com.fqm</groupId>
                 <artifactId>fqm-common-lock-redisson</artifactId>
-                <version>${project.version}</version>
+                <version>1.0.0</version>
             </dependency>
             <dependency>
                 <groupId>com.fqm</groupId>
                 <artifactId>fqm-spring-boot-starter-lock-redisson</artifactId>
-                <version>${project.version}</version>
+                <version>1.0.0</version>
             </dependency>
             <dependency>
                 <groupId>com.fqm</groupId>
                 <artifactId>fqm-common-lock-zookeeper</artifactId>
-                <version>${project.version}</version>
+                <version>1.0.0</version>
             </dependency>
             <dependency>
                 <groupId>com.fqm</groupId>
                 <artifactId>fqm-spring-boot-starter-lock-zookeeper</artifactId>
-                <version>${project.version}</version>
+                <version>1.0.0</version>
             </dependency>
             
             
             <dependency>
                 <groupId>com.fqm</groupId>
                 <artifactId>fqm-common-mq-core</artifactId>
-                <version>${project.version}</version>
+                <version>1.0.0</version>
             </dependency>
             <dependency>
                 <groupId>com.fqm</groupId>
                 <artifactId>fqm-common-mq-redis</artifactId>
-                <version>${project.version}</version>
+                <version>1.0.0</version>
             </dependency>
             <dependency>
 	            <groupId>com.fqm</groupId>
 	            <artifactId>fqm-spring-boot-starter-mq</artifactId>
-	            <version>${project.version}</version>
+	            <version>1.0.0</version>
 	        </dependency>
 	        <dependency>
 	            <groupId>com.fqm</groupId>
 	            <artifactId>fqm-common-mq-kafka</artifactId>
-	            <version>${project.version}</version>
+	            <version>1.0.0</version>
 	        </dependency>
 	        <dependency>
 	            <groupId>com.fqm</groupId>
 	            <artifactId>fqm-common-mq-rocket</artifactId>
-	            <version>${project.version}</version>
+	            <version>1.0.0</version>
 	        </dependency>
 	        <dependency>
 	            <groupId>com.fqm</groupId>
 	            <artifactId>fqm-common-mq-zookeeper</artifactId>
-	            <version>${project.version}</version>
+	            <version>1.0.0</version>
 	        </dependency>
 	        <dependency>
 	            <groupId>com.fqm</groupId>
 	            <artifactId>fqm-common-mq-rabbit</artifactId>
-	            <version>${project.version}</version>
+	            <version>1.0.0</version>
 	        </dependency>
             
         </dependencies>

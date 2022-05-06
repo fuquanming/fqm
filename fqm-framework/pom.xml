@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.fqm</groupId>
     <artifactId>fqm</artifactId>
-    <version>${project.version}</version>
+    <version>1.0.0</version>
     <packaging>pom</packaging>
     
     <modules>
@@ -39,7 +39,7 @@
             <dependency>
                 <groupId>com.fqm</groupId>
                 <artifactId>fqm-dependencies</artifactId>
-                <version>${project.version}</version>
+                <version>1.0.0</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

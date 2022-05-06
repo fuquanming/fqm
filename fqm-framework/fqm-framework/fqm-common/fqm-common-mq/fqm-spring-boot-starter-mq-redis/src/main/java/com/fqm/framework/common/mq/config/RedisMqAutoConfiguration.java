@@ -1,7 +1,9 @@
 package com.fqm.framework.common.mq.config;
 
 import java.time.Duration;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 //import org.redisson.api.RStream;
 //import org.redisson.api.RedissonClient;
@@ -14,14 +16,14 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.stream.Consumer;
 import org.springframework.data.redis.connection.stream.MapRecord;
 import org.springframework.data.redis.connection.stream.ReadOffset;
-import org.springframework.data.redis.connection.stream.StreamInfo.XInfoGroup;
-//import org.springframework.data.redis.connection.stream.StreamInfo.XInfoGroups;
-import org.springframework.data.redis.connection.stream.StreamOffset;
+//import org.springframework.data.redis.connection.stream.StreamInfo.XInfoGroup;
 //import org.springframework.data.redis.connection.stream.StreamRecords;
 //import org.springframework.data.redis.connection.stream.StringRecord;
 //import org.springframework.data.redis.connection.stream.StreamInfo.XInfoGroup;
-import org.springframework.data.redis.connection.stream.StreamInfo.XInfoGroups;
+//import org.springframework.data.redis.connection.stream.StreamInfo.XInfoGroups;
+import org.springframework.data.redis.connection.stream.StreamOffset;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.data.redis.stream.StreamMessageListenerContainer;
 import org.springframework.data.redis.stream.StreamMessageListenerContainer.StreamMessageListenerContainerOptions;
@@ -31,8 +33,14 @@ import com.fqm.framework.common.mq.MqFactory;
 import com.fqm.framework.common.mq.MqMode;
 import com.fqm.framework.common.mq.annotation.MqListenerAnnotationBeanPostProcessor;
 import com.fqm.framework.common.mq.listener.MqListenerParam;
+import com.fqm.framework.common.mq.listener.MqRedisKeyExpiredEventHandle;
 import com.fqm.framework.common.mq.listener.RedisMqListener;
+import com.fqm.framework.common.mq.redis.StreamInfo.XInfoGroup;
+import com.fqm.framework.common.mq.redis.StreamInfo.XInfoGroups;
+import com.fqm.framework.common.mq.scripts.LuaScriptUtil;
+import com.fqm.framework.common.mq.tasker.RedisMqDeadMessageTasker;
 import com.fqm.framework.common.mq.template.RedisMqTemplate;
+import com.fqm.framework.common.redis.listener.spring.KeyExpiredEventMessageListener;
 
 import cn.hutool.system.SystemUtil;
 
@@ -121,8 +129,25 @@ public class RedisMqAutoConfiguration {
                 /** spring-boot->2.2.0.RELEASE,redisson-spring-boot-starter->3.13.1，初始化数据 */
                 
                 /** spring-boot->2.4.2,redisson-spring-boot-starter->3.15.1，使用新API */
+//                try {
+//                    XInfoGroups gs = stringRedisTemplate.opsForStream().groups(v.getDestination());
+//                    if (gs != null) {
+//                        for (Iterator<XInfoGroup> it = gs.iterator(); it.hasNext();) {
+//                            XInfoGroup g = it.next();
+//                            if (g.groupName().equals(v.getGroup())) {
+//                                createGroup = false;// 
+//                                break;
+//                            }
+//                        }
+//                    }
+//                } catch (Exception e) {
+//                    createGroup = true;
+//                }
+                /** spring-boot->2.4.2,redisson-spring-boot-starter->3.15.1，使用新API */
+                
+                // Lua获取消费者组
                 try {
-                    XInfoGroups gs = stringRedisTemplate.opsForStream().groups(v.getDestination());
+                    XInfoGroups gs = LuaScriptUtil.getXInfoGroups(v.getDestination());
                     if (gs != null) {
                         for (Iterator<XInfoGroup> it = gs.iterator(); it.hasNext();) {
                             XInfoGroup g = it.next();
@@ -135,7 +160,7 @@ public class RedisMqAutoConfiguration {
                 } catch (Exception e) {
                     createGroup = true;
                 }
-                /** spring-boot->2.4.2,redisson-spring-boot-starter->3.15.1，使用新API */
+                
                 
                 if (createGroup) {
                     try {
@@ -159,7 +184,22 @@ public class RedisMqAutoConfiguration {
         }
         return container;
     }
-
+    
+    /**
+     * redis消息队列，未消费成功入死信队列的任务
+     * @param mq
+     * @param stringRedisTemplate
+     * @return
+     */
+    @Bean(initMethod = "start", destroyMethod = "stop")
+    public RedisMqDeadMessageTasker redisMqDeadMessageTasker(MqListenerAnnotationBeanPostProcessor mq, StringRedisTemplate stringRedisTemplate) {
+        Set<String> topics = new HashSet<>();
+        for (MqListenerParam v : mq.getListeners()) {
+            topics.add(v.getDestination());
+        }
+        return new RedisMqDeadMessageTasker(stringRedisTemplate, topics, 1, 60);
+    }
+    
     /**
      * 构建消费者名字，使用本地 IP + 进程编号的方式。
      *
@@ -168,6 +208,35 @@ public class RedisMqAutoConfiguration {
     private static String buildConsumerName() {
 //        return "consumer-1";
         return String.format("%s@%d", SystemUtil.getHostInfo().getAddress(), SystemUtil.getCurrentPID());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(value = RedisMessageListenerContainer.class)
+    RedisMessageListenerContainer container(RedisConnectionFactory connectionFactory) {
+        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+        container.setConnectionFactory(connectionFactory);
+        return container;
+    }
+    
+    /**
+     * 监听Redis过期key事件
+     * @param listenerContainer
+     * @return
+     */
+    @Bean
+    @ConditionalOnMissingBean(value = KeyExpiredEventMessageListener.class)
+    KeyExpiredEventMessageListener keyExpiredEventMessageListener(RedisMessageListenerContainer listenerContainer) {
+        return new KeyExpiredEventMessageListener(listenerContainer);
+    }
+    
+    /**
+     * 延迟消息处理 监听Redis过期key事件
+     * @return
+     */
+    @Bean
+    @ConditionalOnMissingBean(value = MqRedisKeyExpiredEventHandle.class)
+    MqRedisKeyExpiredEventHandle mqRedisKeyExpiredEventHandle(StringRedisTemplate stringRedisTemplate) {
+        return new MqRedisKeyExpiredEventHandle(stringRedisTemplate);
     }
     
 }
