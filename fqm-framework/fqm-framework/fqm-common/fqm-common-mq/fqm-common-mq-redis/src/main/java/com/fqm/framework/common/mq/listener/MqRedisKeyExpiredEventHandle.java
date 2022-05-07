@@ -22,14 +22,14 @@ import com.fqm.framework.common.redis.listener.spring.RedisKeyExpiredEvent;
 public class MqRedisKeyExpiredEventHandle {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
-
+    
     private static final RedisScript<String> SCRIPT_DELAY_MESSAGE_DELIVERY = 
             new DefaultRedisScript<>(
                     "local msg = redis.call('hget', KEYS[1], ARGV[1]) " +   // 获取hashmap消息
                     "if msg==false or msg[1]==false then" + 
                     "    return 0 " + 
                     "else " + 
-                    "    redis.call('xadd', KEYS[2], '*', 'dm', msg) " +    // 投递消息到队列
+                    "    redis.call('xadd', KEYS[2], 'MAXLEN', '~', ARGV[2], '*', 'dm', msg) " +    // 投递消息到队列
                     "    redis.call('hdel', KEYS[1], ARGV[1]) " +           // 删除hashmap消息
                     "    return 1 " +
                     "end"
@@ -80,7 +80,7 @@ public class MqRedisKeyExpiredEventHandle {
                     stringRedisTemplate.getStringSerializer(),
                     stringRedisTemplate.getStringSerializer(),
                     Arrays.asList(Constants.DELAY_MESSAGE_HASHMAP_PREFIX_KEY + topic, topic),
-                    id
+                    id, String.valueOf(Constants.MAX_QUEUE_SIZE)
                     );
             boolean flag = Objects.equals(delayMessageFlag.toString(), "1");
             if (flag) {
