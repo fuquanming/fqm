@@ -18,6 +18,7 @@ import com.fqm.framework.common.core.util.DateFormatUtil;
 import com.fqm.framework.common.core.util.IdUtil;
 import com.fqm.framework.common.core.util.JsonUtil;
 import com.fqm.framework.common.mq.constant.Constants;
+import com.fqm.framework.common.mq.scripts.LuaScriptUtil;
 
 /**
  * Redis消息队列
@@ -46,8 +47,6 @@ public class RedisMqTemplate implements MqTemplate {
                     "    return 'fail' " + 
                     "end", String.class
                     );
-    /** 获得延迟队列成功的值 */
-    private static final String DELAY_MESSAGE_SUCCESS = "OK";
     
     public RedisMqTemplate(StringRedisTemplate stringRedisTemplate) {
         this.stringRedisTemplate = stringRedisTemplate;
@@ -152,7 +151,7 @@ public class RedisMqTemplate implements MqTemplate {
                     expireTime, timeStr,// TTL
                     id, msgStr// hashmap,id作为hashmap的key
                     );
-            flag = Objects.equals(delayMessageFlag, DELAY_MESSAGE_SUCCESS);
+            flag = Objects.equals(delayMessageFlag, Constants.EXECUTE_SUCCESS);
             
             if (flag) {
                 logger.info("RedisMqProducer.syncDelaySend.success->topic=[{}],message=[{}],delayTime=[{}],timeUnit=[{}]", topic, str, delayTime, timeUnit);

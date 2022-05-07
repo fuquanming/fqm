@@ -130,10 +130,10 @@ public class RedisMqAutoConfiguration {
                 
                 /** spring-boot->2.4.2,redisson-spring-boot-starter->3.15.1，使用新API */
 //                try {
-//                    XInfoGroups gs = stringRedisTemplate.opsForStream().groups(v.getDestination());
+//                    org.springframework.data.redis.connection.stream.StreamInfo.XInfoGroups gs = stringRedisTemplate.opsForStream().groups(v.getDestination());
 //                    if (gs != null) {
-//                        for (Iterator<XInfoGroup> it = gs.iterator(); it.hasNext();) {
-//                            XInfoGroup g = it.next();
+//                        for (Iterator<org.springframework.data.redis.connection.stream.StreamInfo.XInfoGroup> it = gs.iterator(); it.hasNext();) {
+//                            org.springframework.data.redis.connection.stream.StreamInfo.XInfoGroup g = it.next();
 //                            if (g.groupName().equals(v.getGroup())) {
 //                                createGroup = false;// 
 //                                break;
@@ -141,6 +141,7 @@ public class RedisMqAutoConfiguration {
 //                        }
 //                    }
 //                } catch (Exception e) {
+//                    e.printStackTrace();
 //                    createGroup = true;
 //                }
                 /** spring-boot->2.4.2,redisson-spring-boot-starter->3.15.1，使用新API */
@@ -164,7 +165,10 @@ public class RedisMqAutoConfiguration {
                 
                 if (createGroup) {
                     try {
-                        stringRedisTemplate.opsForStream().createGroup(v.getDestination(), ReadOffset.from("0"), v.getGroup());
+                        // 低版本没有加mkstream 参数会报错，因为topic 不存在，必须加选项 mkstream
+                        // XGROUP CREATE t2 t2 0 mkstream
+//                        stringRedisTemplate.opsForStream().createGroup(v.getDestination(), ReadOffset.from("0"), v.getGroup());
+                        LuaScriptUtil.createGroup(v.getDestination(), ReadOffset.from("0"), v.getGroup());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

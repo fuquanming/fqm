@@ -7,6 +7,9 @@ package com.fqm.framework.common.mq.constant;
  */
 public class Constants {
     
+    /** Lua执行成功标志 */
+    public static final String EXECUTE_SUCCESS = "OK";
+    
     /** RedisTemplate 消息队列最大值 */
     public static final int MAX_QUEUE_SIZE = 1000;
     

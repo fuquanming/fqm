@@ -8,16 +8,19 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.springframework.data.domain.Range;
 import org.springframework.data.redis.connection.stream.Consumer;
+import org.springframework.data.redis.connection.stream.ReadOffset;
 import org.springframework.data.redis.connection.stream.RecordId;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.core.script.RedisScript;
 
+import com.fqm.framework.common.mq.constant.Constants;
 import com.fqm.framework.common.mq.redis.PendingMessage;
 import com.fqm.framework.common.mq.redis.PendingMessages;
 import com.fqm.framework.common.mq.redis.PendingMessagesSummary;
@@ -36,6 +39,8 @@ import cn.hutool.extra.spring.SpringUtil;
 public class LuaScriptUtil {
     /** 获取消费者组 */
     public static final RedisScript<List> SCRIPT_GROUP = new DefaultRedisScript<>("return redis.call('xinfo', 'groups', KEYS[1])", List.class);
+    /** 创建消费者组 */
+    public static final RedisScript<String> SCRIPT_CREATE_GROUP = new DefaultRedisScript<>("return redis.call('xgroup', 'create', KEYS[1], ARGV[1], ARGV[2], 'mkstream')", String.class);
     /** 获取消费者组未ack消息的汇总信息 */
     public static final RedisScript<List> SCRIPT_PENDING_GROUP = new DefaultRedisScript<>("local msg=redis.call('xpending', KEYS[1], ARGV[1]) return msg", List.class);
     /** 获取消费者组里消费者未ack消息的摘要 */
@@ -50,7 +55,12 @@ public class LuaScriptUtil {
      */
     public static XInfoGroups getXInfoGroups(String topic) {
         StringRedisTemplate stringRedisTemplate = SpringUtil.getBean(StringRedisTemplate.class);
-        List<Object> parts = stringRedisTemplate.execute(SCRIPT_GROUP, Collections.singletonList(topic));
+        List<Object> parts = null;
+        try {
+            parts = stringRedisTemplate.execute(SCRIPT_GROUP, Collections.singletonList(topic));
+        } catch (Exception e) {
+            return null;
+        }
         
         List<Object> result = new ArrayList<>();
         for (List<Object> part : (List<List<Object>>) (Object) parts) {
@@ -65,6 +75,20 @@ public class LuaScriptUtil {
             result.add(list);
         }
         return StreamInfo.XInfoGroups.fromList(result);
+    }
+    
+    /**
+     * 创建消费者组
+     * @param topic
+     * @param readOffset
+     * @param group
+     * @return
+     */
+    public static boolean createGroup(String topic, ReadOffset readOffset, String group) {
+        StringRedisTemplate stringRedisTemplate = SpringUtil.getBean(StringRedisTemplate.class);
+        String flag = stringRedisTemplate.execute(SCRIPT_CREATE_GROUP, Collections.singletonList(topic),
+                group, readOffset.getOffset());
+        return Objects.equals(Constants.EXECUTE_SUCCESS, flag) ? true : false;
     }
     
     /**

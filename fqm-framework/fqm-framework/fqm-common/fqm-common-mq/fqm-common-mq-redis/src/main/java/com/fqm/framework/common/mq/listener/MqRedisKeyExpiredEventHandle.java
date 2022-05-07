@@ -14,7 +14,7 @@ import com.fqm.framework.common.mq.constant.Constants;
 import com.fqm.framework.common.redis.listener.spring.RedisKeyExpiredEvent;
 
 /**
- * 监听Mq中过期的消息，从zset中获取消息投递到消费者中
+ * 监听Mq中过期的消息，从hashmap中获取消息投递到消费者中
  * 
  * @version 
  * @author 傅泉明
@@ -45,7 +45,7 @@ public class MqRedisKeyExpiredEventHandle {
     @EventListener
     public void expiredEventHandle(RedisKeyExpiredEvent event) {
         String expiredKey = new String(event.getSource());
-        logger.info("expiredEventHandle=" + expiredKey);
+//        logger.info("expiredEventHandle=" + expiredKey);
         if (expiredKey.startsWith(Constants.DELAY_MESSAGE_TTL_PREFIX_KEY)) {
             String[] topicInfos = expiredKey.split(Constants.DELAY_MESSAGE_TTL_PREFIX_KEY);
             String topicInfo = topicInfos[1];
