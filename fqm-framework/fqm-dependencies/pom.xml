@@ -32,7 +32,9 @@
         <!-- DB 相关 -->
         <mysql.version>5.1.39</mysql.version>
         <druid.version>1.2.8</druid.version>
-        <mybatis-plus.version>3.4.3</mybatis-plus.version>
+        <mybatis-plus.version>3.4.3</mybatis-plus.version><!-- 对应mybatis 3.5.7,mybatis-spring 2.0.6 -->
+        <mybatis.version>3.5.7</mybatis.version>
+        <mybatis-spring.version>2.0.6</mybatis-spring.version>
         <!-- es client -->
         <spring-boot-starter-data-jest.version>3.3.4.RELEASE</spring-boot-starter-data-jest.version>
         <!-- Redis 相关 -->
@@ -143,6 +145,19 @@
                 <artifactId>mybatis-plus-boot-starter</artifactId>
                 <version>${mybatis-plus.version}</version>
             </dependency>
+            
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis</artifactId>
+                <version>${mybatis.version}</version>
+            </dependency>
+            
+			<dependency>
+			    <groupId>org.mybatis</groupId>
+			    <artifactId>mybatis-spring</artifactId>
+			    <version>${mybatis-spring.version}</version>
+			</dependency>
+            
 
             <!-- <dependency>
                 <groupId>com.alibaba</groupId>
@@ -422,6 +437,23 @@
 	            <artifactId>fqm-common-mq-rabbit</artifactId>
 	            <version>1.0.0</version>
 	        </dependency>
+	        
+	        
+	        <dependency>
+	            <groupId>com.fqm</groupId>
+	            <artifactId>fqm-dynamic-module-core</artifactId>
+	            <version>1.0.0</version>
+	        </dependency>
+	        <dependency>
+                <groupId>com.fqm</groupId>
+                <artifactId>fqm-dynamic-module-mybatis</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fqm</groupId>
+                <artifactId>fqm-dynamic-module-spring</artifactId>
+                <version>1.0.0</version>
+            </dependency>
             
         </dependencies>
     </dependencyManagement>

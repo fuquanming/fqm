@@ -17,6 +17,7 @@
     
     <modules>
         <module>fqm-common</module>
+        <module>fqm-dynamic</module>
         <module>fqm-spring-boot-starter-swagger</module>
         <module>fqm-spring-boot-starter-web</module>
         <module>fqm-spring-boot-starter-sentry</module>
