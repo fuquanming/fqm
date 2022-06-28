@@ -32,7 +32,6 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.fqm.dynamic.module.core.ModuleClassLoader;
 import com.fqm.dynamic.module.filter.ModuleUnloadFilter;
 
@@ -65,68 +64,75 @@ public class MybatisMapUnloadFilter implements ModuleUnloadFilter {
             /** 获取Configuration中的loadedResource,mybatis-plus和mybatis，mybatis-plus的Configuration是继承自mybatis的子类 */
             Set<?> loadedResourcesSet = (Set<?>) FieldUtils.readField(configuration, "loadedResources", true);
             for (Entry<String, byte[]> entry : fileByteMap.entrySet()) {
-                String resource = entry.getKey();
-                if (resource.startsWith(mapperXmlFolder) && resource.endsWith(mapperXmlSuffix)) {
-                    byte[] bytes = entry.getValue();
-
-                    /** 加载mybatis中的xml */
-                    XPathParser xPathParser = new XPathParser(new ByteArrayInputStream(bytes), true, configuration.getVariables(),
-                            new XMLMapperEntityResolver());
-                    /** 解析mybatis的xml的根节点 */
-                    XNode context = xPathParser.evalNode("/mapper");
-
-                    /** 拿到namespace，namespace就是指Mapper接口的全限定名 */
-                    String namespace = context.getStringAttribute("namespace");
-
-                    Field knownMappersField = configuration.getMapperRegistry().getClass().getDeclaredField("knownMappers");
-                    knownMappersField.setAccessible(true);
-
-                    /** 存放Mapper接口和对应代理子类的映射map */
-//                    Map<Class<?>, MapperProxyFactory<?>> mapConfig = 
-//                            (Map<Class<?>, MapperProxyFactory<?>>) knownMappersField.get(configuration.getMapperRegistry());
-                    Map<?, ?> mapConfig = (Map<?, ?>) knownMappersField.get(configuration.getMapperRegistry());
-                    /** Mapper接口对应的class对象 */
-                    Class<?> clazz = Resources.classForName(namespace);
-
-                    /** 删除各种缓存 */
-                    mapConfig.remove(clazz);
-                    loadedResourcesSet.remove(resource);
-                    loadedResourcesSet.remove(clazz.toString());
-                    loadedResourcesSet.remove("namespace:" + clazz.getName());
-                    configuration.getCacheNames().remove(namespace);
-
-                    /** mybatis-plus必须清除缓存 */
-                    Set<String> mapperRegistryCache = GlobalConfigUtils.getMapperRegistryCache(configuration);
-                    mapperRegistryCache.remove("interface " + namespace);
-
-                    /** 缓存的CRUD等 */
-                    Collection<MappedStatement> mappedStatements = configuration.getMappedStatements();
-                    List<MappedStatement> objects = new ArrayList<>();
-                    Iterator<MappedStatement> it = mappedStatements.iterator();
-                    while (it.hasNext()) {
-                        Object object = it.next();
-                        if (object instanceof MappedStatement) {
-                            MappedStatement mappedStatement = (MappedStatement) object;
-                            if (mappedStatement.getId().startsWith(namespace)) {
-                                objects.add(mappedStatement);
-                            }
-                        }
-                    }
-                    mappedStatements.removeAll(objects);
-
-                    /** 清掉namespace下各种缓存 */
-                    cleanParameterMap(configuration, context.evalNodes("/mapper/parameterMap"), namespace);
-                    cleanResultMap(configuration, context.evalNodes("/mapper/resultMap"), namespace);
-                    cleanKeyGenerators(configuration, context.evalNodes("insert|update|select|delete"), namespace);
-                    cleanSqlElement(configuration, context.evalNodes("/mapper/sql"), namespace);
-
-                    logger.info("unload->resource=" + resource);
-                }
+                resourceFilter(configuration, loadedResourcesSet, entry);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         this.sqlSessionFactory = null;
+    }
+
+    public String resourceFilter(Configuration configuration, Set<?> loadedResourcesSet, Entry<String, byte[]> entry)
+            throws NoSuchFieldException, IllegalAccessException, ClassNotFoundException {
+        String resource = entry.getKey();
+        if (resource.startsWith(mapperXmlFolder) && resource.endsWith(mapperXmlSuffix)) {
+            byte[] bytes = entry.getValue();
+
+            /** 加载mybatis中的xml */
+            XPathParser xPathParser = new XPathParser(new ByteArrayInputStream(bytes), true, configuration.getVariables(),
+                    new XMLMapperEntityResolver());
+            /** 解析mybatis的xml的根节点 */
+            XNode context = xPathParser.evalNode("/mapper");
+
+            /** 拿到namespace，namespace就是指Mapper接口的全限定名 */
+            String namespace = context.getStringAttribute("namespace");
+
+            Field knownMappersField = configuration.getMapperRegistry().getClass().getDeclaredField("knownMappers");
+            knownMappersField.setAccessible(true);
+
+            /** 存放Mapper接口和对应代理子类的映射map */
+//                    Map<Class<?>, MapperProxyFactory<?>> mapConfig = 
+//                            (Map<Class<?>, MapperProxyFactory<?>>) knownMappersField.get(configuration.getMapperRegistry());
+            Map<?, ?> mapConfig = (Map<?, ?>) knownMappersField.get(configuration.getMapperRegistry());
+            /** Mapper接口对应的class对象 */
+            Class<?> clazz = Resources.classForName(namespace);
+
+            /** 删除各种缓存 */
+            mapConfig.remove(clazz);
+            loadedResourcesSet.remove(resource);
+            loadedResourcesSet.remove(clazz.toString());
+            loadedResourcesSet.remove("namespace:" + clazz.getName());
+            configuration.getCacheNames().remove(namespace);
+
+//            /** mybatis-plus必须清除缓存 */
+//            Set<String> mapperRegistryCache = GlobalConfigUtils.getMapperRegistryCache(configuration);
+//            mapperRegistryCache.remove("interface " + namespace);
+
+            /** 缓存的CRUD等 */
+            Collection<MappedStatement> mappedStatements = configuration.getMappedStatements();
+            List<MappedStatement> objects = new ArrayList<>();
+            Iterator<MappedStatement> it = mappedStatements.iterator();
+            while (it.hasNext()) {
+                Object object = it.next();
+                if (object instanceof MappedStatement) {
+                    MappedStatement mappedStatement = (MappedStatement) object;
+                    if (mappedStatement.getId().startsWith(namespace)) {
+                        objects.add(mappedStatement);
+                    }
+                }
+            }
+            mappedStatements.removeAll(objects);
+
+            /** 清掉namespace下各种缓存 */
+            cleanParameterMap(configuration, context.evalNodes("/mapper/parameterMap"), namespace);
+            cleanResultMap(configuration, context.evalNodes("/mapper/resultMap"), namespace);
+            cleanKeyGenerators(configuration, context.evalNodes("insert|update|select|delete"), namespace);
+            cleanSqlElement(configuration, context.evalNodes("/mapper/sql"), namespace);
+
+            logger.info("unload->resource=" + resource);
+            return namespace;
+        }
+        return null;
     }
 
     /**

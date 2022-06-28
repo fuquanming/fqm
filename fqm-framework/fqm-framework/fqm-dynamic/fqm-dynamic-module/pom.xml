@@ -14,5 +14,6 @@
 		<module>fqm-dynamic-module-mybatis</module>
 		<module>fqm-dynamic-module-spring</module>
 		<module>fqm-dynamic-module-spring-mybatis</module>
-    </modules>
+		<module>fqm-dynamic-module-mybatis-plus</module>
+	</modules>
 </project>

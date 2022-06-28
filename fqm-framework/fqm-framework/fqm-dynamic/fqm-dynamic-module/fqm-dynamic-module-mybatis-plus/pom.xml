@@ -1,0 +1,51 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.fqm</groupId>
+		<artifactId>fqm-dynamic-module</artifactId>
+		<version>1.0.0</version>
+	</parent>
+	<artifactId>fqm-dynamic-module-mybatis-plus</artifactId>
+	
+	<dependencies>
+        <dependency>
+            <groupId>com.fqm</groupId>
+            <artifactId>fqm-dynamic-module-core</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.fqm</groupId>
+            <artifactId>fqm-dynamic-module-mybatis</artifactId>
+        </dependency>
+
+        <!-- <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+        </dependency> -->
+        
+        <dependency>
+		    <groupId>com.baomidou</groupId>
+		    <artifactId>mybatis-plus</artifactId>
+		</dependency>
+        <!-- 
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
+        </dependency>
+         -->
+        
+        
+    </dependencies>
+</project>
