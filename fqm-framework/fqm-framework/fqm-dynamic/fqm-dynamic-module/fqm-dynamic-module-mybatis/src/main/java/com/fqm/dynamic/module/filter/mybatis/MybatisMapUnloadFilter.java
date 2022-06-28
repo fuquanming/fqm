@@ -7,7 +7,7 @@
  * 修改历史 : 
  *     1. [2022年6月21日]创建文件 by 傅泉明
  */
-package com.fqm.dynamic.mybatis;
+package com.fqm.dynamic.module.filter.mybatis;
 
 import java.io.ByteArrayInputStream;
 import java.lang.reflect.Field;
@@ -20,7 +20,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
-import org.apache.ibatis.binding.MapperProxyFactory;
 import org.apache.ibatis.builder.xml.XMLMapperEntityResolver;
 import org.apache.ibatis.executor.keygen.SelectKeyGenerator;
 import org.apache.ibatis.io.Resources;
@@ -53,6 +52,17 @@ public class MybatisMapUnloadFilter implements ModuleUnloadFilter {
     private SqlSessionFactory sqlSessionFactory;
 
     public MybatisMapUnloadFilter(SqlSessionFactory sqlSessionFactory) {
+        this.sqlSessionFactory = sqlSessionFactory;
+    }
+    /**
+     * 
+     * @param mapperXmlFolder   xml文件所在文件路径包含/，如:mapper/
+     * @param sqlSessionFactory
+     */
+    public MybatisMapUnloadFilter(String mapperXmlFolder, SqlSessionFactory sqlSessionFactory) {
+        if (mapperXmlFolder != null) {
+            this.mapperXmlFolder = mapperXmlFolder;
+        }
         this.sqlSessionFactory = sqlSessionFactory;
     }
 

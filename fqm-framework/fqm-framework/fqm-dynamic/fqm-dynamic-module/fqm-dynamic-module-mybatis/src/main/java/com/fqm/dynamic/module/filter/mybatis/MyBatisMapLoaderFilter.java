@@ -7,7 +7,7 @@
  * 修改历史 : 
  *     1. [2022年6月21日]创建文件 by 傅泉明
  */
-package com.fqm.dynamic.mybatis;
+package com.fqm.dynamic.module.filter.mybatis;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
@@ -49,7 +49,11 @@ public class MyBatisMapLoaderFilter implements ModuleLoaderFilter {
     public MyBatisMapLoaderFilter(SqlSessionFactory sqlSessionFactory) {
         this.sqlSessionFactory = sqlSessionFactory;
     }
-
+    /**
+     * 
+     * @param mapperXmlFolder   xml文件所在文件路径包含/，如:mapper/
+     * @param sqlSessionFactory
+     */
     public MyBatisMapLoaderFilter(String mapperXmlFolder, SqlSessionFactory sqlSessionFactory) {
         if (mapperXmlFolder != null) {
             this.mapperXmlFolder = mapperXmlFolder;

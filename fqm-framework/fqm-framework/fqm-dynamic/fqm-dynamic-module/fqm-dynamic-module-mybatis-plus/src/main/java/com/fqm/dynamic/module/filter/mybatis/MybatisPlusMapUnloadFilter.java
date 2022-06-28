@@ -1,4 +1,4 @@
-package com.fqm.dynamic.mybatis;
+package com.fqm.dynamic.module.filter.mybatis;
 
 import java.util.Map.Entry;
 import java.util.Set;
@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.fqm.dynamic.module.filter.mybatis.MybatisMapUnloadFilter;
 /**
  * MyBatisPlus 卸载过滤器
  * 
@@ -20,6 +21,14 @@ public class MybatisPlusMapUnloadFilter extends MybatisMapUnloadFilter {
     private Logger logger = LoggerFactory.getLogger(getClass());
     
     public MybatisPlusMapUnloadFilter(SqlSessionFactory sqlSessionFactory) {
+        super(sqlSessionFactory);
+    }
+    /**
+     * 
+     * @param mapperXmlFolder   xml文件所在文件路径包含/，如:mapper/
+     * @param sqlSessionFactory
+     */
+    public MybatisPlusMapUnloadFilter(String mapperXmlFolder, SqlSessionFactory sqlSessionFactory) {
         super(sqlSessionFactory);
     }
     

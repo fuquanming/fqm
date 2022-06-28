@@ -7,7 +7,7 @@
  * 修改历史 : 
  *     1. [2022年6月21日]创建文件 by 傅泉明
  */
-package com.fqm.dynamic.spring.mybatis;
+package com.fqm.dynamic.module.filter.spring;
 
 import java.lang.reflect.Modifier;
 import java.util.Map;
@@ -24,7 +24,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 import com.fqm.dynamic.module.core.ModuleClassLoader;
-import com.fqm.dynamic.spring.filter.AbstractSpringLoaderFilter;
+import com.fqm.dynamic.module.filter.spring.AbstractSpringLoaderFilter;
 
 import cn.hutool.extra.spring.SpringUtil;
 

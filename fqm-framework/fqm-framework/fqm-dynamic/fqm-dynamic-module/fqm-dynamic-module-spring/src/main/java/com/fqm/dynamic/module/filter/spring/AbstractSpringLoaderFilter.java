@@ -1,4 +1,4 @@
-package com.fqm.dynamic.spring.filter;
+package com.fqm.dynamic.module.filter.spring;
 
 import com.fqm.dynamic.module.core.ModuleClassLoader;
 import com.fqm.dynamic.module.filter.ModuleLoaderFilter;

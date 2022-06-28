@@ -7,7 +7,7 @@
  * 修改历史 : 
  *     1. [2022年6月27日]创建文件 by 傅泉明
  */
-package com.fqm.dynamic.spring.filter;
+package com.fqm.dynamic.module.filter.spring;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
