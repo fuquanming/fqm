@@ -10,6 +10,7 @@ public enum MqMode {
     kafka,
     rabbit,
     redis,
+    redisson,
     rocket,
     zookeeper;
     
@@ -27,3 +28,4 @@ public enum MqMode {
     }
     
 }
+

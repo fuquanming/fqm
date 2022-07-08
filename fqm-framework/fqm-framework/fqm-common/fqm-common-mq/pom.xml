@@ -22,5 +22,7 @@
 		<module>fqm-common-mq-zookeeper</module>
 		<module>fqm-spring-boot-starter-mq-zookeeper</module>
 		<module>fqm-spring-boot-starter-mq-rabbit</module>
+		<module>fqm-common-mq-redisson</module>
+		<module>fqm-spring-boot-starter-mq-redisson</module>
 	</modules>
 </project>

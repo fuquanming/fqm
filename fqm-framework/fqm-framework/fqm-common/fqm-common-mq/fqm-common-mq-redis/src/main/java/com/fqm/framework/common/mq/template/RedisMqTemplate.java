@@ -21,7 +21,7 @@ import com.fqm.framework.common.mq.constant.Constants;
 import com.fqm.framework.common.mq.scripts.LuaScriptUtil;
 
 /**
- * Redis消息队列
+ * Redis消息队列，使用stream实现，但是redis使用monitor监控命令，一直执行命令，不建议使用
  * 
  * @version 
  * @author 傅泉明

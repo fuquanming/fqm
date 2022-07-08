@@ -31,6 +31,8 @@ public class MqFactory {
             mqTemplateMap.put(MqMode.kafka.name(), mqTemplate);
         } else if (mqName.contains(MqMode.rabbit.name().toLowerCase())) {
             mqTemplateMap.put(MqMode.rabbit.name(), mqTemplate);
+        } else if (mqName.contains(MqMode.redisson.name().toLowerCase())) {
+            mqTemplateMap.put(MqMode.redisson.name(), mqTemplate);
         } else if (mqName.contains(MqMode.redis.name().toLowerCase())) {
             mqTemplateMap.put(MqMode.redis.name(), mqTemplate);
         } else if (mqName.contains(MqMode.rocket.name().toLowerCase())) {

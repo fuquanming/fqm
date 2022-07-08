@@ -419,6 +419,12 @@
                 <version>1.0.0</version>
             </dependency>
             <dependency>
+                <groupId>com.fqm</groupId>
+                <artifactId>fqm-common-mq-redisson</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+            
+            <dependency>
 	            <groupId>com.fqm</groupId>
 	            <artifactId>fqm-spring-boot-starter-mq</artifactId>
 	            <version>1.0.0</version>
