@@ -1,0 +1,28 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.fqm</groupId>
+		<artifactId>fqm-framework</artifactId>
+		<version>1.0.0</version>
+	</parent>
+	<artifactId>fqm-mq</artifactId>
+	<packaging>pom</packaging>
+	<modules>
+		<module>fqm-mq-core</module>
+		<module>fqm-mq-kafka</module>
+		<module>fqm-mq-rabbit</module>
+		<module>fqm-mq-redis</module>
+		<module>fqm-mq-redisson</module>
+		<module>fqm-mq-rocket</module>
+		<module>fqm-mq-zookeeper</module>
+		<module>fqm-spring-boot-starter-mq</module>
+		<module>fqm-spring-boot-starter-mq-kafka</module>
+		<module>fqm-spring-boot-starter-mq-rabbit</module>
+		<module>fqm-spring-boot-starter-mq-redis</module>
+		<module>fqm-spring-boot-starter-mq-redisson</module>
+		<module>fqm-spring-boot-starter-mq-rocket</module>
+		<module>fqm-spring-boot-starter-mq-zookeeper</module>
+	</modules>
+</project>

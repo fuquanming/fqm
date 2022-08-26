@@ -330,6 +330,11 @@
             </dependency>
             <dependency>
                 <groupId>com.fqm</groupId>
+                <artifactId>fqm-common-redisson</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fqm</groupId>
                 <artifactId>fqm-common-cache-spring</artifactId>
                 <version>1.0.0</version>
             </dependency>
@@ -406,8 +411,43 @@
                 <artifactId>fqm-spring-boot-starter-lock-zookeeper</artifactId>
                 <version>1.0.0</version>
             </dependency>
-            
-            
+            <!-- mq start -->
+            <dependency>
+                <groupId>com.fqm</groupId>
+                <artifactId>fqm-mq-core</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fqm</groupId>
+                <artifactId>fqm-mq-redis</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fqm</groupId>
+                <artifactId>fqm-mq-redisson</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fqm</groupId>
+                <artifactId>fqm-mq-kafka</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fqm</groupId>
+                <artifactId>fqm-mq-rocket</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fqm</groupId>
+                <artifactId>fqm-mq-zookeeper</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fqm</groupId>
+                <artifactId>fqm-mq-rabbit</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+            <!-- mq end -->
             <dependency>
                 <groupId>com.fqm</groupId>
                 <artifactId>fqm-common-mq-core</artifactId>
