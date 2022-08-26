@@ -16,7 +16,7 @@
         </dependency>
         <dependency>
             <groupId>com.fqm</groupId>
-            <artifactId>fqm-common-lock-core</artifactId>
+            <artifactId>fqm-lock-core</artifactId>
         </dependency>        
         <dependency>
             <groupId>org.apache.curator</groupId>

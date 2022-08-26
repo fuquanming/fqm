@@ -15,8 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fqm.framework.common.core.util.JsonUtil;
-import com.fqm.framework.common.lock.impl.SimpleLock;
-import com.fqm.framework.common.lock.template.SimpleLockTemplate;
+import com.fqm.framework.locks.impl.SimpleLock;
+import com.fqm.framework.locks.template.SimpleLockTemplate;
+import com.fqm.framework.mq.MqMode;
 
 import io.netty.util.CharsetUtil;
 
@@ -38,6 +39,11 @@ public class ZookeeperMqTemplate implements MqTemplate {
 
     public ZookeeperMqTemplate(CuratorFramework curatorFramework) {
         this.curatorFramework = curatorFramework;
+    }
+    
+    @Override
+    public MqMode getMqMode() {
+        return MqMode.zookeeper;
     }
 
     @Override

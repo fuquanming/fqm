@@ -1,9 +1,0 @@
-#spring:
-#  cloud:
-#    zookeeper: 
-#      connect-string: 127.0.0.1:2181
-#      connection-timeout: 15000
-#      base-sleep-time-ms: 1000
-#      max-retries: 3
-#      max-sleep-ms: 10000
-#      session-timeout: 30000   

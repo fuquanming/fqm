@@ -30,7 +30,8 @@ import com.fqm.framework.mq.template.ZookeeperMqTemplate;
 public class ZookeeperMqAutoConfiguration {
 
     @Bean
-    @ConfigurationProperties(prefix = "zookeeper")
+    @ConditionalOnMissingBean
+    @ConfigurationProperties(prefix = "spring.cloud.zookeeper")
     public ZookeeperConfig zookeeperConfig() {
         return new ZookeeperConfig();
     }

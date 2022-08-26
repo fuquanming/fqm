@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.support.MessageBuilder;
 
+import com.fqm.framework.mq.MqMode;
 import com.fqm.framework.mq.client.producer.SendCallback;
 
 /**
@@ -23,6 +24,11 @@ public class RocketMqTemplate implements MqTemplate {
     
     public RocketMqTemplate(RocketMQTemplate rocketMqTemplate) {
         this.rocketMqTemplate = rocketMqTemplate;
+    }
+    
+    @Override
+    public MqMode getMqMode() {
+        return MqMode.rocket;
     }
     
     @Override

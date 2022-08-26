@@ -22,9 +22,8 @@
 		<module>fqm-common-spring</module>
 		<module>fqm-multilevel-cache</module>
 		<module>fqm-common-file</module>
-		<module>fqm-common-lock</module>
-		<!-- <module>fqm-common-mq</module> -->
 		<module>fqm-common-redisson</module>
+		<module>fqm-common-zookeeper</module>
 	</modules>
 
 </project>

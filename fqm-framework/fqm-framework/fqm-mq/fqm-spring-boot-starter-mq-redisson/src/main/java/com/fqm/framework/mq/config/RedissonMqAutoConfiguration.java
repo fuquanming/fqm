@@ -7,8 +7,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
+import com.fqm.framework.common.redisson.RedissonFactory;
 import com.fqm.framework.common.redisson.RedissonConfig;
-import com.fqm.framework.common.redisson.RedissonProperties;
 import com.fqm.framework.mq.MqFactory;
 import com.fqm.framework.mq.MqMode;
 import com.fqm.framework.mq.annotation.MqListenerAnnotationBeanPostProcessor;
@@ -51,13 +51,13 @@ public class RedissonMqAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     @ConfigurationProperties(prefix = "spring.redis")
-    public RedissonProperties redissonProperties() {
-        return new RedissonProperties();
+    public RedissonConfig redissonProperties() {
+        return new RedissonConfig();
     }
     
     @Bean
     @ConditionalOnMissingBean
-    public RedissonClient redissonClient(RedissonProperties redissonProperties) {
-        return new RedissonConfig(redissonProperties).getClient();
+    public RedissonClient redissonClient(RedissonConfig redissonProperties) {
+        return RedissonFactory.getClient(redissonProperties);
     }
 }

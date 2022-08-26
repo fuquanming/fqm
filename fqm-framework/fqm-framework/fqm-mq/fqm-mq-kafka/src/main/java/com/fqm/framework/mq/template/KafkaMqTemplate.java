@@ -7,6 +7,7 @@ import org.springframework.kafka.support.SendResult;
 import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 
+import com.fqm.framework.mq.MqMode;
 import com.fqm.framework.mq.client.producer.SendCallback;
 
 /**
@@ -24,6 +25,11 @@ public class KafkaMqTemplate implements MqTemplate {
     
     public KafkaMqTemplate(KafkaTemplate kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
+    }
+    
+    @Override
+    public MqMode getMqMode() {
+        return MqMode.kafka;
     }
     
     @Override

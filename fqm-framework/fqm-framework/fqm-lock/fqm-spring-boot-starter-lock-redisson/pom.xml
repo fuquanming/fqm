@@ -1,0 +1,35 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.fqm</groupId>
+		<artifactId>fqm-lock</artifactId>
+		<version>1.0.0</version>
+	</parent>
+	<artifactId>fqm-spring-boot-starter-lock-redisson</artifactId>
+	
+	<dependencies>
+        <dependency>
+            <groupId>com.fqm</groupId>
+            <artifactId>fqm-spring-boot-starter-lock</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fqm</groupId>
+            <artifactId>fqm-lock-redisson</artifactId>
+        </dependency>
+        <!-- <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson-spring-boot-starter</artifactId>
+        </dependency> -->
+        <dependency>
+            <groupId>com.fqm</groupId>
+            <artifactId>fqm-common-redisson</artifactId>
+        </dependency>
+        <dependency>
+        	<groupId>org.springframework.boot</groupId>
+        	<artifactId>spring-boot-configuration-processor</artifactId>
+        	<optional>true</optional>
+        </dependency>
+	</dependencies>
+</project>

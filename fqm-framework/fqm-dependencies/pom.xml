@@ -335,6 +335,11 @@
             </dependency>
             <dependency>
                 <groupId>com.fqm</groupId>
+                <artifactId>fqm-common-zookeeper</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fqm</groupId>
                 <artifactId>fqm-common-cache-spring</artifactId>
                 <version>1.0.0</version>
             </dependency>
@@ -381,9 +386,25 @@
                 <version>1.0.0</version>
             </dependency>
             
+            <!-- lock start -->
             <dependency>
                 <groupId>com.fqm</groupId>
-                <artifactId>fqm-common-lock-core</artifactId>
+                <artifactId>fqm-lock-core</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fqm</groupId>
+                <artifactId>fqm-lock-redis</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fqm</groupId>
+                <artifactId>fqm-lock-redisson</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fqm</groupId>
+                <artifactId>fqm-lock-zookeeper</artifactId>
                 <version>1.0.0</version>
             </dependency>
             <dependency>
@@ -391,26 +412,8 @@
                 <artifactId>fqm-spring-boot-starter-lock</artifactId>
                 <version>1.0.0</version>
             </dependency>
-            <dependency>
-                <groupId>com.fqm</groupId>
-                <artifactId>fqm-common-lock-redisson</artifactId>
-                <version>1.0.0</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fqm</groupId>
-                <artifactId>fqm-spring-boot-starter-lock-redisson</artifactId>
-                <version>1.0.0</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fqm</groupId>
-                <artifactId>fqm-common-lock-zookeeper</artifactId>
-                <version>1.0.0</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fqm</groupId>
-                <artifactId>fqm-spring-boot-starter-lock-zookeeper</artifactId>
-                <version>1.0.0</version>
-            </dependency>
+            <!-- lock end -->
+            
             <!-- mq start -->
             <dependency>
                 <groupId>com.fqm</groupId>
@@ -447,49 +450,12 @@
                 <artifactId>fqm-mq-rabbit</artifactId>
                 <version>1.0.0</version>
             </dependency>
-            <!-- mq end -->
-            <dependency>
-                <groupId>com.fqm</groupId>
-                <artifactId>fqm-common-mq-core</artifactId>
-                <version>1.0.0</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fqm</groupId>
-                <artifactId>fqm-common-mq-redis</artifactId>
-                <version>1.0.0</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fqm</groupId>
-                <artifactId>fqm-common-mq-redisson</artifactId>
-                <version>1.0.0</version>
-            </dependency>
-            
             <dependency>
 	            <groupId>com.fqm</groupId>
 	            <artifactId>fqm-spring-boot-starter-mq</artifactId>
 	            <version>1.0.0</version>
 	        </dependency>
-	        <dependency>
-	            <groupId>com.fqm</groupId>
-	            <artifactId>fqm-common-mq-kafka</artifactId>
-	            <version>1.0.0</version>
-	        </dependency>
-	        <dependency>
-	            <groupId>com.fqm</groupId>
-	            <artifactId>fqm-common-mq-rocket</artifactId>
-	            <version>1.0.0</version>
-	        </dependency>
-	        <dependency>
-	            <groupId>com.fqm</groupId>
-	            <artifactId>fqm-common-mq-zookeeper</artifactId>
-	            <version>1.0.0</version>
-	        </dependency>
-	        <dependency>
-	            <groupId>com.fqm</groupId>
-	            <artifactId>fqm-common-mq-rabbit</artifactId>
-	            <version>1.0.0</version>
-	        </dependency>
-	        
+	        <!-- mq end -->
 	        
 	        <dependency>
 	            <groupId>com.fqm</groupId>

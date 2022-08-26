@@ -17,6 +17,7 @@ import org.springframework.data.redis.core.script.RedisScript;
 import com.fqm.framework.common.core.util.DateFormatUtil;
 import com.fqm.framework.common.core.util.IdUtil;
 import com.fqm.framework.common.core.util.JsonUtil;
+import com.fqm.framework.mq.MqMode;
 import com.fqm.framework.mq.constant.Constants;
 
 /**
@@ -49,6 +50,11 @@ public class RedisMqTemplate implements MqTemplate {
     
     public RedisMqTemplate(StringRedisTemplate stringRedisTemplate) {
         this.stringRedisTemplate = stringRedisTemplate;
+    }
+    
+    @Override
+    public MqMode getMqMode() {
+        return MqMode.redis;
     }
     
     @Override

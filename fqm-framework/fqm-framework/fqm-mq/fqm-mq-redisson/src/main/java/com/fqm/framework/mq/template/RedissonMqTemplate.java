@@ -8,6 +8,7 @@ import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fqm.framework.mq.MqMode;
 import com.fqm.framework.mq.client.producer.SendCallback;
 /**
  * Redisson消息队列
@@ -25,6 +26,10 @@ public class RedissonMqTemplate implements MqTemplate {
         this.redissonClient = redissonClient;
     }
 
+    @Override
+    public MqMode getMqMode() {
+        return MqMode.redisson;
+    }
     
     @Override
     public boolean syncSend(String topic, Object msg) {

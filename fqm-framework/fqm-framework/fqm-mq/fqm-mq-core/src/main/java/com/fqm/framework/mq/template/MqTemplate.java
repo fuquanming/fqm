@@ -3,6 +3,7 @@ package com.fqm.framework.mq.template;
 import java.util.concurrent.TimeUnit;
 
 import com.fqm.framework.common.core.util.JsonUtil;
+import com.fqm.framework.mq.MqMode;
 import com.fqm.framework.mq.client.producer.SendCallback;
 
 /**
@@ -16,6 +17,8 @@ public interface MqTemplate {
     public default String getJsonStr(Object msg) {
         return JsonUtil.toJsonStr(msg);
     }
+    
+    public MqMode getMqMode();
     
     /**
      * 同步发送消息，对象使用json保存到队列中

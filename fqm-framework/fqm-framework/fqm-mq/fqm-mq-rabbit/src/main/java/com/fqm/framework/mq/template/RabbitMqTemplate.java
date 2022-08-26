@@ -16,6 +16,7 @@ import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
 import com.fqm.framework.common.core.util.ReturnParamUtil;
+import com.fqm.framework.mq.MqMode;
 import com.fqm.framework.mq.callback.RabbitListenableFutureCallback;
 import com.fqm.framework.mq.client.producer.SendCallback;
 
@@ -98,6 +99,11 @@ public class RabbitMqTemplate implements MqTemplate {
         RabbitListenableFutureCallback callback = new RabbitListenableFutureCallback(Thread.currentThread(), id, sendCallback);
         correlationData.getFuture().addCallback(callback);
         return ReturnParamUtil.of(correlationData, callback);
+    }
+    
+    @Override
+    public MqMode getMqMode() {
+        return MqMode.rabbit;
     }
     
     @Override
