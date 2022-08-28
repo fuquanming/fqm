@@ -12,6 +12,5 @@
 	<modules>
 		<module>fqm-common-cache-spring</module>
 		<module>fqm-common-cache-redis-spring</module>
-		<module>fqm-common-cache-spring-redis</module>
 	</modules>
 </project>

@@ -20,7 +20,6 @@
 		<module>fqm-common-redis</module>
 		<module>fqm-common-cache</module>
 		<module>fqm-common-spring</module>
-		<module>fqm-multilevel-cache</module>
 		<module>fqm-common-file</module>
 		<module>fqm-common-redisson</module>
 		<module>fqm-common-zookeeper</module>

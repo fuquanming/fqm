@@ -1,0 +1,3 @@
+#starter自动装配
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+ com.fqm.framework.cache.spring.config.MultilevelCacheManagerRedissonAutoConfiguration

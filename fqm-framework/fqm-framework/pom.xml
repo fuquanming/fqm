@@ -19,6 +19,7 @@
         <module>fqm-common</module>
         <module>fqm-mq</module>
         <module>fqm-lock</module>
+		<module>fqm-multilevel-cache</module>
         <module>fqm-dynamic</module>
         <module>fqm-spring-boot-starter-swagger</module>
         <module>fqm-spring-boot-starter-web</module>
