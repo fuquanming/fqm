@@ -1,0 +1,28 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.fqm</groupId>
+		<artifactId>fqm-file</artifactId>
+		<version>1.0.0</version>
+	</parent>
+	<artifactId>fqm-file-minio</artifactId>
+	
+	<dependencies>
+        <!-- 文件 相关 -->
+        <dependency>
+            <groupId>com.fqm</groupId>
+            <artifactId>fqm-file-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.minio</groupId>
+            <artifactId>minio</artifactId>
+        </dependency>
+        <!-- 需要 com.squareup.okhttp3 4.8.1 -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+    </dependencies>
+</project>

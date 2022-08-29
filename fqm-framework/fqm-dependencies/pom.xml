@@ -386,6 +386,19 @@
                 <version>1.0.0</version>
             </dependency>
             
+            <!-- file start -->
+            <dependency>
+                <groupId>com.fqm</groupId>
+                <artifactId>fqm-file-core</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fqm</groupId>
+                <artifactId>fqm-file-minio</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+            <!-- file end -->
+            
             <!-- lock start -->
             <dependency>
                 <groupId>com.fqm</groupId>

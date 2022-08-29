@@ -25,5 +25,6 @@
         <module>fqm-spring-boot-starter-web</module>
         <module>fqm-spring-boot-starter-sentry</module>
         <module>fqm-spring-boot-starter-mybatis</module>
+        <module>fqm-file</module>
     </modules>
 </project>
