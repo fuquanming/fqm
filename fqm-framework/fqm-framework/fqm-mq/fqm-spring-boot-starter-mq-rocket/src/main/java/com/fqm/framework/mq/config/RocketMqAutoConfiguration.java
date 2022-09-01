@@ -81,7 +81,7 @@ public class RocketMqAutoConfiguration {
                     
                     beanDefinitionBuilder.addPropertyValue("rocketMQMessageListener", 
                             rocketMQMessageListener(nameServer, v.getTopic(), v.getGroup(), v.getConcurrentConsumers()));
-                    beanDefinitionBuilder.addPropertyValue("rocketMQListener", new RocketMqListener(v.getBean(), v.getMethod()));
+                    beanDefinitionBuilder.addPropertyValue("rocketMQListener", new RocketMqListener(v.getBean(), v.getMethod(), v.getTopic(), applicationContext.getBean(RocketMqTemplate.class)));
                     // 注册bean
                     AbstractBeanDefinition bean = beanDefinitionBuilder.getRawBeanDefinition();
                     

@@ -67,6 +67,11 @@ public class RedissonMqTemplate implements MqTemplate {
     public boolean syncDelaySend(String topic, Object msg, int delayTime, TimeUnit timeUnit) {
         String str = getJsonStr(msg);
         try {
+            /**
+             * 1、生产者：消息发送到zset中，并发布publish
+             * 2、消费者：监听到publish，获取zset数据，本地使用时间轮开始定时获取延迟数据，如果有则入到阻塞队列及删除zset中数据
+             * 3、消费者：监听阻塞队列，进行消费
+             */
             RBlockingDeque<Object> topicQueue = redissonClient.getBlockingDeque(topic);
             RDelayedQueue<Object> delayedQueue = redissonClient.getDelayedQueue(topicQueue);
             delayedQueue.offer(str, delayTime, timeUnit);
