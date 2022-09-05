@@ -14,12 +14,16 @@ import java.util.concurrent.TimeUnit;
  */
 public class RedissonMqListenerContainer {
 
-    private ExecutorService pool = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors(), 
-            Runtime.getRuntime().availableProcessors() * 2,
-            60L, TimeUnit.SECONDS,
-            new LinkedBlockingQueue<Runnable>());
+    private ExecutorService pool;
     
     private List<RedissonMqListener> listeners = new ArrayList<>();
+    
+    public RedissonMqListenerContainer(int size) {
+        pool = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors(), 
+                size,
+                60L, TimeUnit.SECONDS,
+                new LinkedBlockingQueue<Runnable>());
+    }
     
     public void stop() {
         listeners.forEach(listener -> {

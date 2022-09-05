@@ -470,6 +470,24 @@
 	        </dependency>
 	        <!-- mq end -->
 	        
+	        <!-- job start -->
+	        <dependency>
+	            <groupId>com.fqm</groupId>
+	            <artifactId>fqm-job-core</artifactId>
+	            <version>1.0.0</version>
+	        </dependency>
+	        <dependency>
+                <groupId>com.fqm</groupId>
+                <artifactId>fqm-job-xxl</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+	        <dependency>
+                <groupId>com.fqm</groupId>
+                <artifactId>fqm-spring-boot-starter-job</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+	        <!-- job end -->
+	        
 	        <dependency>
 	            <groupId>com.fqm</groupId>
 	            <artifactId>fqm-dynamic-module-core</artifactId>

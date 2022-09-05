@@ -37,7 +37,13 @@ public class RedissonMqAutoConfiguration {
 
     @Bean(destroyMethod = "stop")
     public RedissonMqListenerContainer redissonMqListener(MqListenerAnnotationBeanPostProcessor mq, RedissonClient redissonClient) {
-        RedissonMqListenerContainer container = new RedissonMqListenerContainer();
+        int mqListenerSize = 0;
+        for (MqListenerParam v : mq.getListeners()) {
+            if (MqMode.redisson.name().equals(v.getBinder())) {
+                mqListenerSize++;
+            }
+        }
+        RedissonMqListenerContainer container = new RedissonMqListenerContainer(mqListenerSize);
         for (MqListenerParam v : mq.getListeners()) {
             if (MqMode.redisson.name().equals(v.getBinder())) {
                 RedissonMqListener redissonMqListener = new RedissonMqListener(v.getBean(), v.getMethod(), redissonClient, v.getTopic(),

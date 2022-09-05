@@ -65,7 +65,7 @@ public class LockInterceptor implements MethodInterceptor {
             
             lockModeStr = ValueUtil.resolveExpression(factory, lockModeStr).toString();
             
-            LockMode lockMode = LockMode.getLockMode(lockModeStr);
+            LockMode lockMode = LockMode.getMode(lockModeStr);
             
             LockTemplate<?> lockTemplate = lockFactory.getLockTemplate(lockMode);
             

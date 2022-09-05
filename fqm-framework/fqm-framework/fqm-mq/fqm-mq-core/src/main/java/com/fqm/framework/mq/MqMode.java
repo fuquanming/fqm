@@ -14,14 +14,14 @@ public enum MqMode {
     rocket,
     zookeeper;
     
-    public static MqMode getLockMode(String mode) {
+    public static MqMode getMode(String mode) {
         if (mode == null || "".equals(mode)) {
             return null;
         }
-        MqMode[] lockModes = values();
-        for (MqMode lockMode : lockModes) {
-            if (mode.equals(lockMode.name())) {
-                return lockMode;
+        MqMode[] modes = values();
+        for (MqMode m : modes) {
+            if (mode.equals(m.name())) {
+                return m;
             }
         }
         return null;
