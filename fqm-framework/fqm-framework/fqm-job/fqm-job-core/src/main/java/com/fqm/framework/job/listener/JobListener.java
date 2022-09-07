@@ -21,6 +21,6 @@ public interface JobListener<T> {
      * @param message
      * @throws Exception
      */
-    public void receiveJob(T message) throws Exception;
+    public void receiveJob(T message);
 
 }

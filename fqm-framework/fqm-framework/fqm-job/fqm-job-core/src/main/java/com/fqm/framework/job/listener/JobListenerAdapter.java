@@ -9,6 +9,7 @@
  */
 package com.fqm.framework.job.listener;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
@@ -43,8 +44,12 @@ public class JobListenerAdapter<T> implements JobListener<T> {
     }
     
     @Override
-    public void receiveJob(T message) throws Exception {
-        method.invoke(bean, message);
+    public void receiveJob(T message) {
+        try {
+            method.invoke(bean, message);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
     
 }

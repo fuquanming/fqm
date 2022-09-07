@@ -9,17 +9,21 @@
  */
 package com.fqm.framework.job.config;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.fqm.framework.job.annotation.JobListenerAnnotationBeanPostProcessor;
 
 /**
- * 任务自动注册
+ * 任务自动装配
  * @version 
  * @author 傅泉明
  */
 @Configuration
+@ConditionalOnProperty(name = "job.enabled", havingValue = "true") // true 开启，默认值为false
+@EnableConfigurationProperties(JobProperties.class)
 public class JobAutoConfiguration {
 
     @Bean

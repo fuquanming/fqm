@@ -19,7 +19,15 @@ import java.lang.reflect.Method;
 public class JobListenerParam {
 
     private String name;
-    private String binder;
+//    private String binder;
+//    
+//    /** cron 表达式 */
+//    private String cron;
+//    /** 任务参数 */
+//    private String jobParam;
+//    /** 分片总数 */
+//    private String shardTotal;
+    
     private Object bean;
     private Method method;
     
@@ -30,13 +38,34 @@ public class JobListenerParam {
         this.name = name;
         return this;
     }
-    public String getBinder() {
-        return binder;
-    }
-    public JobListenerParam setBinder(String binder) {
-        this.binder = binder;
-        return this;
-    }
+//    public String getBinder() {
+//        return binder;
+//    }
+//    public JobListenerParam setBinder(String binder) {
+//        this.binder = binder;
+//        return this;
+//    }
+//    public String getCron() {
+//        return cron;
+//    }
+//    public JobListenerParam setCron(String cron) {
+//        this.cron = cron;
+//        return this;
+//    }
+//    public String getJobParam() {
+//        return jobParam;
+//    }
+//    public JobListenerParam setJobParam(String jobParam) {
+//        this.jobParam = jobParam;
+//        return this;
+//    }
+//    public String getShardTotal() {
+//        return shardTotal;
+//    }
+//    public JobListenerParam setShardTotal(String shardTotal) {
+//        this.shardTotal = shardTotal;
+//        return this;
+//    }
     public Object getBean() {
         return bean;
     }

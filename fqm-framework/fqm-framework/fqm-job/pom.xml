@@ -12,7 +12,9 @@
 	<modules>
 		<module>fqm-job-core</module>
 		<module>fqm-job-xxl</module>
+		<module>fqm-job-elastic</module>
 		<module>fqm-spring-boot-starter-job</module>
 		<module>fqm-spring-boot-starter-job-xxl</module>
+		<module>fqm-spring-boot-starter-job-elastic</module>
 	</modules>
 </project>

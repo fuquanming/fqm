@@ -11,12 +11,15 @@ package com.fqm.framework.job;
 
 /**
  * 任务的方式
+ * xxljob
+ * elasticjob
  * @version 
  * @author 傅泉明
  */
 public enum JobMode {
     
-    xxl;
+    xxljob,
+    elasticjob;
     
     public static JobMode getMode(String mode) {
         if (mode == null || "".equals(mode)) {

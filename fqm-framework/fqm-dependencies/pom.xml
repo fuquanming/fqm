@@ -45,6 +45,7 @@
         
         <!-- Job 相关 -->
         <xxl-job.version>2.3.0</xxl-job.version>
+        <elastic-job.version>3.0.1</elastic-job.version>
         <!-- Transaction 相关 -->
         <seata.version>1.4.2</seata.version>
         <!-- 云服务相关 -->
@@ -209,6 +210,22 @@
                 <artifactId>xxl-job-core</artifactId>
                 <version>${xxl-job.version}</version>
             </dependency>
+            
+            <dependency>
+                <groupId>org.apache.shardingsphere.elasticjob</groupId>
+                <artifactId>elasticjob-lite-core</artifactId>
+                <version>${elastic-job.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shardingsphere.elasticjob</groupId>
+                <artifactId>elasticjob-lite-spring-core</artifactId>
+                <version>${elastic-job.version}</version>
+            </dependency>
+            <dependency>
+			    <groupId>org.apache.shardingsphere.elasticjob</groupId>
+			    <artifactId>elasticjob-lite-spring-boot-starter</artifactId>
+			    <version>${elastic-job.version}</version>
+			</dependency>
 
             <!-- Transaction 相关 -->
             <dependency>
@@ -486,6 +503,13 @@
                 <artifactId>fqm-spring-boot-starter-job</artifactId>
                 <version>1.0.0</version>
             </dependency>
+            
+            <dependency>
+	            <groupId>com.fqm</groupId>
+	            <artifactId>fqm-job-elastic</artifactId>
+	            <version>1.0.0</version>
+	        </dependency>
+            
 	        <!-- job end -->
 	        
 	        <dependency>

@@ -9,26 +9,32 @@
  */
 package com.fqm.framework.job.config;
 
-import java.util.Objects;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
+import java.lang.reflect.Method;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.SmartInitializingSingleton;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.fqm.framework.common.core.util.JsonUtil;
 import com.fqm.framework.job.JobMode;
 import com.fqm.framework.job.annotation.JobListenerAnnotationBeanPostProcessor;
+import com.fqm.framework.job.config.XxlJobProperties.AdminProperties;
+import com.fqm.framework.job.config.XxlJobProperties.ExecutorProperties;
+import com.fqm.framework.job.core.JobContext;
 import com.fqm.framework.job.listener.JobListenerParam;
 import com.fqm.framework.job.listener.XxlJobListener;
+import com.google.common.base.Preconditions;
 import com.xxl.job.core.executor.XxlJobExecutor;
-import com.xxl.job.core.executor.impl.XxlJobSpringExecutor;
+import com.xxl.job.core.handler.impl.MethodJobHandler;
 
 /**
  * xxl-job 自动配置类
@@ -36,29 +42,29 @@ import com.xxl.job.core.executor.impl.XxlJobSpringExecutor;
  * @author 傅泉明
  */
 @Configuration
-@ConditionalOnClass(XxlJobSpringExecutor.class)
-@ConditionalOnProperty(prefix = "xxl.job", name = "enabled", havingValue = "true", matchIfMissing = true)
-@EnableConfigurationProperties({XxlJobConfig.class})
-public class XxlJobAutoConfiguration {
+@AutoConfigureAfter(JobAutoConfiguration.class)
+@ConditionalOnBean(JobProperties.class) // JobProperties加载则JobAutoConfiguration也就加载
+@EnableConfigurationProperties({ XxlJobProperties.class })
+public class XxlJobAutoConfiguration implements SmartInitializingSingleton, ApplicationContextAware {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(XxlJobAutoConfiguration.class);
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
-    private final XxlJobConfig properties;
+    private ApplicationContext applicationContext;
 
-    public XxlJobAutoConfiguration(XxlJobConfig properties) {
-        this.properties = properties;
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
 
     @Bean(initMethod = "start", destroyMethod = "destroy")
     @ConditionalOnMissingBean
-    public XxlJobExecutor xxlJobExecutor() {
-        LOGGER.info("初始化 XXL-Job 执行器的配置");
-
+    public XxlJobExecutor xxlJobExecutor(XxlJobProperties properties) {
+        logger.info("初始化 XXL-Job 执行器的配置");
         // 参数校验
-        XxlJobConfig.AdminProperties admin = this.properties.getAdmin();
-        XxlJobConfig.ExecutorProperties executor = this.properties.getExecutor();
-        Objects.requireNonNull(admin, "xxl job admin properties must not be null.");
-        Objects.requireNonNull(executor, "xxl job executor properties must not be null.");
+        AdminProperties admin = properties.getAdmin();
+        ExecutorProperties executor = properties.getExecutor();
+        Preconditions.checkArgument(admin != null, "Please specific [admin] under xxljob configuration.");
+        Preconditions.checkArgument(executor != null, "Please specific [executor] under xxljob configuration.");
 
         // 初始化执行器
         XxlJobExecutor xxlJobExecutor = new XxlJobExecutor();
@@ -68,20 +74,46 @@ public class XxlJobAutoConfiguration {
         xxlJobExecutor.setLogPath(executor.getLogPath());
         xxlJobExecutor.setLogRetentionDays(executor.getLogRetentionDays());
         xxlJobExecutor.setAdminAddresses(admin.getAddresses());
-        xxlJobExecutor.setAccessToken(this.properties.getAccessToken());
+        xxlJobExecutor.setAccessToken(properties.getAccessToken());
         return xxlJobExecutor;
     }
-    
-    @Resource
-    JobListenerAnnotationBeanPostProcessor job;
-    
-    @PostConstruct
-    public void init() {
+
+    @Override
+    public void afterSingletonsInstantiated() {
+        JobListenerAnnotationBeanPostProcessor job = applicationContext.getBean(JobListenerAnnotationBeanPostProcessor.class);
+        JobProperties jp = applicationContext.getBean(JobProperties.class);
         for (JobListenerParam v : job.getListeners()) {
-            if (JobMode.xxl.name().equals(v.getBinder())) {
-                new XxlJobListener(v.getBean(), v.getMethod(), v.getName());
+            String jobName = v.getName();
+            JobConfigurationProperties properties = jp.getJobs().get(jobName);
+            if (properties == null) {
+                // 遍历jp.Jobs
+                for (JobConfigurationProperties jcp : jp.getJobs().values()) {
+                    if (jcp.getName().equals(jobName) && JobMode.xxljob.name().equals(jcp.getBinder())) {
+                        properties = jcp;
+                        break;
+                    }
+                }
+
+            }
+            if (properties != null && JobMode.xxljob.name().equals(properties.getBinder()) && XxlJobExecutor.loadJobHandler(jobName) == null) {
+                XxlJobListener listener = new XxlJobListener(v.getBean(), v.getMethod());
+                // 获取任务执行的方法
+                Method[] ms = listener.getClass().getMethods();
+                Method jobMethod = null;
+                for (Method m : ms) {
+                    Class<?>[] params = m.getParameterTypes();
+                    if (params.length == 1) {
+                        if (params[0] == JobContext.class) {
+                            jobMethod = m;
+                            break;
+                        }
+                    }
+                }
+                // 注册本身的 receiveJob 方法,jobName 即管理控台->任务管理->运行模式:(BEAN:名称)
+                XxlJobExecutor.registJobHandler(jobName, new MethodJobHandler(listener, jobMethod, null, null));
+                logger.info("InitJob XxlJobListener,bean={},method={}", v.getBean().getClass(), v.getMethod().getName());
             }
         }
     }
-    
+
 }

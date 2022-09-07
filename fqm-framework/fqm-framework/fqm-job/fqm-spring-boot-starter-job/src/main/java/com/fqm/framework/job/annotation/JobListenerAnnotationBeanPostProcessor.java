@@ -14,6 +14,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import org.springframework.aop.support.AopUtils;
@@ -30,6 +32,7 @@ import org.springframework.util.ReflectionUtils;
 import com.fqm.framework.common.core.util.StringUtil;
 import com.fqm.framework.common.spring.util.ValueUtil;
 import com.fqm.framework.job.listener.JobListenerParam;
+import com.google.common.base.Preconditions;
 
 /**
  * @JobListener 注解监听，并转换为 List<JobListenerParam> 对象
@@ -39,8 +42,11 @@ import com.fqm.framework.job.listener.JobListenerParam;
 public class JobListenerAnnotationBeanPostProcessor implements BeanPostProcessor, Ordered, BeanFactoryAware {
 
     private BeanFactory beanFactory;
+
     private List<JobListenerParam> listeners = new ArrayList<>();
-    
+
+    private Map<String, JobListenerParam> jobListeners = new ConcurrentHashMap<>();
+
     @Override
     public Object postProcessAfterInitialization(final Object bean, final String beanName) throws BeansException {
         Class<?> targetClass = AopUtils.getTargetClass(bean);
@@ -51,28 +57,29 @@ public class JobListenerAnnotationBeanPostProcessor implements BeanPostProcessor
                 methods.add(new ListenerMethod(method, listenerAnnotations.toArray(new JobListener[listenerAnnotations.size()])));
             }
         }, ReflectionUtils.USER_DECLARED_METHODS);
-        
+
         if (!methods.isEmpty()) {
             for (ListenerMethod method : methods) {
                 for (JobListener listener : method.annotations) {
-                    String binder = listener.binder();// job
-                    String name = listener.value();
-                    if (StringUtil.isNotEmpty(binder)) {
-                        String nameStr = ValueUtil.resolveExpression((ConfigurableBeanFactory)beanFactory, name).toString();
-                        String binderStr = ValueUtil.resolveExpression((ConfigurableBeanFactory)beanFactory, binder).toString();
-                        JobListenerParam param = new JobListenerParam();
-                        param.setName(nameStr).setBinder(binderStr).setBean(bean).setMethod(method.method);
-                        listeners.add(param);
-                    }
+                    String name = listener.name();// jobName
+                    String nameStr = ValueUtil.resolveExpression((ConfigurableBeanFactory) beanFactory, name).toString();
+                    Preconditions.checkArgument(StringUtil.isNotBlank(nameStr), "Please specific [name] under job configuration.");
+                    JobListenerParam param = new JobListenerParam();
+                    param.setName(nameStr).setBean(bean).setMethod(method.method);
+                    listeners.add(param);
                 }
             }
         }
 
         return bean;
     }
-    
+
     public List<JobListenerParam> getListeners() {
         return listeners;
+    }
+
+    public Map<String, JobListenerParam> getJobListeners() {
+        return jobListeners;
     }
 
     @Override
@@ -89,7 +96,7 @@ public class JobListenerAnnotationBeanPostProcessor implements BeanPostProcessor
         return MergedAnnotations.from(element, SearchStrategy.TYPE_HIERARCHY).stream(JobListener.class).map(ann -> ann.synthesize())
                 .collect(Collectors.toList());
     }
-    
+
     private static class ListenerMethod {
 
         final Method method; // NOSONAR
