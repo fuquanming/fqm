@@ -1,24 +1,41 @@
 package com.fqm.framework.mq.config;
 
+import java.nio.charset.Charset;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.SmartInitializingSingleton;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
+import com.fqm.framework.common.core.util.StringUtil;
 import com.fqm.framework.mq.MqFactory;
 import com.fqm.framework.mq.MqMode;
 import com.fqm.framework.mq.annotation.MqListenerAnnotationBeanPostProcessor;
 import com.fqm.framework.mq.listener.MqListenerParam;
 import com.fqm.framework.mq.listener.ZookeeperMqListener;
 import com.fqm.framework.mq.template.ZookeeperMqTemplate;
+import com.google.common.base.Preconditions;
 
 /**
  * Zookeeper消息队列自动装配
@@ -27,23 +44,33 @@ import com.fqm.framework.mq.template.ZookeeperMqTemplate;
  * @author 傅泉明
  */
 @Configuration
-public class ZookeeperMqAutoConfiguration {
+@AutoConfigureAfter(MqAutoConfiguration.class)
+@ConditionalOnBean(MqProperties.class) // MqProperties加载则MqAutoConfiguration也就加载
+public class ZookeeperMqAutoConfiguration implements SmartInitializingSingleton, ApplicationContextAware {
+    
+    private Logger logger = LoggerFactory.getLogger(getClass());
+    private ApplicationContext applicationContext;
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
 
     @Bean
     @ConditionalOnMissingBean
     @ConfigurationProperties(prefix = "spring.cloud.zookeeper")
-    public ZookeeperConfig zookeeperConfig() {
-        return new ZookeeperConfig();
+    public ZookeeperProperties zookeeperConfig() {
+        return new ZookeeperProperties();
     }
 
     @Bean(initMethod = "start", destroyMethod = "close")
     @ConditionalOnMissingBean(CuratorFramework.class)
-    public CuratorFramework curatorFramework(ZookeeperConfig zkConfig) {
-        if (zkConfig.getConnectionTimeout() < 15000) zkConfig.setConnectionTimeout(15000);// 必须大于15秒
-        RetryPolicy retryPolicy = new ExponentialBackoffRetry(zkConfig.getBaseSleepTimeMs(), 
-                zkConfig.getMaxRetries(), zkConfig.getMaxSleepMs());
-        return CuratorFrameworkFactory.builder().connectString(zkConfig.getConnectString()).sessionTimeoutMs(zkConfig.getSessionTimeout())
-                .connectionTimeoutMs(zkConfig.getConnectionTimeout()).retryPolicy(retryPolicy).build();
+    public CuratorFramework curatorFramework(ZookeeperProperties zkProperties) {
+        if (zkProperties.getConnectionTimeout() < 15000) zkProperties.setConnectionTimeout(15000);// 必须大于15秒
+        RetryPolicy retryPolicy = new ExponentialBackoffRetry(zkProperties.getBaseSleepTimeMs(), 
+                zkProperties.getMaxRetries(), zkProperties.getMaxSleepMs());
+        return CuratorFrameworkFactory.builder().connectString(zkProperties.getConnectString()).sessionTimeoutMs(zkProperties.getSessionTimeout())
+                .connectionTimeoutMs(zkProperties.getConnectionTimeout()).retryPolicy(retryPolicy).build();
     }
 
     @Bean(destroyMethod = "destroy")
@@ -55,17 +82,30 @@ public class ZookeeperMqAutoConfiguration {
         return zookeeperMqTemplate;
     }
 
-    @Resource
-    MqListenerAnnotationBeanPostProcessor mq;
-    
-    @Resource
-    ZookeeperMqTemplate zookeeperMqTemplate;
-
-    @PostConstruct
-    public void init() {
+    @Override
+    public void afterSingletonsInstantiated() {
+        MqListenerAnnotationBeanPostProcessor mq = applicationContext.getBean(MqListenerAnnotationBeanPostProcessor.class);
+        MqProperties mp = applicationContext.getBean(MqProperties.class);
+        
+        ZookeeperMqTemplate zookeeperMqTemplate = applicationContext.getBean(ZookeeperMqTemplate.class);
         for (MqListenerParam v : mq.getListeners()) {
-            if (MqMode.zookeeper.name().equals(v.getBinder())) {
-                zookeeperMqTemplate.getQueue(v.getTopic(), new ZookeeperMqListener(v.getBean(), v.getMethod(), zookeeperMqTemplate, v.getTopic()));
+            String name = v.getName();
+            MqConfigurationProperties properties = mp.getMqs().get(name);
+            if (properties == null) {
+                // 遍历mp.mqs
+                for (MqConfigurationProperties mcp : mp.getMqs().values()) {
+                    if (mcp.getName().equals(name) && MqMode.zookeeper.name().equals(mcp.getBinder())) {
+                        properties = mcp;
+                        break;
+                    }
+                }
+
+            }
+            if (properties != null && MqMode.zookeeper.name().equals(properties.getBinder())) {
+                String topic = properties.getTopic();
+                Preconditions.checkArgument(StringUtil.isNotBlank(topic), "Please specific [topic] under mq configuration.");
+                zookeeperMqTemplate.getQueue(topic, new ZookeeperMqListener(v.getBean(), v.getMethod(), zookeeperMqTemplate, topic));
+                logger.info("Init ZookeeperMqListener,bean={},method={},topic={}", v.getBean().getClass(), v.getMethod().getName(), topic);
             }
         }
     }

@@ -109,7 +109,7 @@ public class ZookeeperMqTemplate implements MqTemplate {
                     e.printStackTrace();
                 }
                 queueMap.put(topic, queue);
-                logger.info("zk listener,{}", "/mq/" + topic);
+                logger.info("InIt Zookeeper Listener,{}", "/mq/" + topic);
             } finally {
                 lock.unlock();
             }

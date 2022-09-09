@@ -1,6 +1,6 @@
 package com.fqm.framework.mq.config;
 
-public class ZookeeperConfig {
+public class ZookeeperProperties {
 
     /** zookeeper服务端 */
     private String connectString;

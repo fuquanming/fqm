@@ -18,7 +18,7 @@
     }, {
         "name": "job.jobs",
         "type": "java.util.Map<java.lang.String,com.fqm.framework.job.config.JobConfigurationProperties>",
-        "description": "Job Configuration",
+        "description": "任务列表 参见@link JobConfigurationProperties,例如:job.jobs.job1.name...,job.jobs.job2.name...",
         "sourceType": "com.fqm.framework.job.config.JobProperties"
     }],
     "hints": [{

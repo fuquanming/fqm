@@ -21,6 +21,7 @@ import org.springframework.util.ReflectionUtils;
 import com.fqm.framework.common.core.util.StringUtil;
 import com.fqm.framework.common.spring.util.ValueUtil;
 import com.fqm.framework.mq.listener.MqListenerParam;
+import com.google.common.base.Preconditions;
 
 /**
  * @MqListener 注解监听，并转换为 List<MqListenerParam> 对象
@@ -48,21 +49,12 @@ public class MqListenerAnnotationBeanPostProcessor implements BeanPostProcessor,
         if (!methods.isEmpty()) {
             for (ListenerMethod method : methods) {
                 for (MqListener mqListener : method.annotations) {
-                    String destination = mqListener.topic();// topic
-                    String group = mqListener.group();// 分组
-                    String binder = mqListener.binder();// mq
-                    if (StringUtil.isNotEmpty(destination) &&
-                            StringUtil.isNotEmpty(group) && StringUtil.isNotEmpty(binder)) {
-                        
-                        String destinationStr = ValueUtil.resolveExpression((ConfigurableBeanFactory)beanFactory, destination).toString();
-                        String groupStr = ValueUtil.resolveExpression((ConfigurableBeanFactory)beanFactory, group).toString();
-                        String binderStr = ValueUtil.resolveExpression((ConfigurableBeanFactory)beanFactory, binder).toString();
-                        MqListenerParam param = new MqListenerParam();
-                        param.setTopic(destinationStr).setGroup(groupStr)
-                        .setBinder(binderStr).setBean(bean).setMethod(method.method)
-                        .setConcurrentConsumers(mqListener.concurrentConsumers() <= 0 ? 1 : mqListener.concurrentConsumers());
-                        listeners.add(param);
-                    }
+                    String name = mqListener.name();// 消息名称
+                    String nameStr = ValueUtil.resolveExpression((ConfigurableBeanFactory)beanFactory, name).toString();
+                    Preconditions.checkArgument(StringUtil.isNotBlank(nameStr), "Please specific [name] under mq configuration.");
+                    MqListenerParam param = new MqListenerParam();
+                    param.setName(nameStr).setBean(bean).setMethod(method.method);
+                    listeners.add(param);
                 }
             }
         }

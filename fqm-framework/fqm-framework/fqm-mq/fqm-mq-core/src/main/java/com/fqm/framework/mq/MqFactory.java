@@ -22,7 +22,7 @@ public class MqFactory {
     private Map<String, MqTemplate> mqTemplateMap = new ConcurrentHashMap<>();
 
     public MqFactory addMqTemplate(MqTemplate mqTemplate) {
-        logger.info("init MqTemplate->{}", mqTemplate.getClass());
+        logger.info("Init MqTemplate->{}", mqTemplate.getClass());
         String mqTemplateName = mqTemplate.getClass().getName();
         mqTemplateMap.put(mqTemplateName, mqTemplate);
         mqTemplateMap.put(mqTemplate.getMqMode().name(), mqTemplate);

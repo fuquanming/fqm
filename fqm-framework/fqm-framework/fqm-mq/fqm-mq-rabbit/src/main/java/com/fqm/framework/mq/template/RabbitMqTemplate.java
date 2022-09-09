@@ -64,7 +64,7 @@ public class RabbitMqTemplate implements MqTemplate {
                 // String name:名称, boolean durable:是否持久化, boolean exclusive:是否排他（只能一个人连接）, boolean autoDelete:是否自动删除
                 Queue queue = new Queue(topic, true, false, false);
                 String queueResult = amqpAdmin.declareQueue(queue);
-                logger.info("queueInit=" + queueResult);
+                logger.info("Init RabbitQueue=" + queueResult);
                 topicSet.add(topic);
                 
                 TopicExchange customExchange = new TopicExchange(topic, true, false);
@@ -72,14 +72,14 @@ public class RabbitMqTemplate implements MqTemplate {
                 amqpAdmin.declareExchange(customExchange);
                 amqpAdmin.declareBinding(BindingBuilder.bind(queue).to(customExchange).with(topic));
                 exchangeSet.add(topic);
-                logger.info("exchangeInit=" + queueResult);
+                logger.info("Init RabbitExchange=" + queueResult);
             }
         } else {
             if (!topicSet.contains(topic)) {
                 // String name:名称, boolean durable:是否持久化, boolean exclusive:是否排他（只能一个人连接）, boolean autoDelete:是否自动删除
                 Queue queue = new Queue(topic, true, false, false);
                 String queueResult = amqpAdmin.declareQueue(queue);
-                logger.info("queueInit=" + queueResult);
+                logger.info("Init RabbitQueue=" + queueResult);
                 topicSet.add(topic);
             }
         }

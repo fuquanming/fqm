@@ -9,7 +9,6 @@
  */
 package com.fqm.framework.job.config;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -25,16 +24,6 @@ public class JobProperties {
     /** 任务配置 */
     private Map<String, JobConfigurationProperties> jobs = new LinkedHashMap<>();
     
-    private Map<String, String> maps = new HashMap<>();
-    
-    public Map<String, String> getMaps() {
-        return maps;
-    }
-
-    public void setMaps(Map<String, String> maps) {
-        this.maps = maps;
-    }
-
     public Map<String, JobConfigurationProperties> getJobs() {
         return jobs;
     }

@@ -16,6 +16,8 @@ import java.lang.annotation.Target;
 @Retention(value = RetentionPolicy.RUNTIME)
 @Documented
 public @interface MqListener {
+    /** 消息名称，唯一 */
+    String name();
     /** 设置当前的消费者数量 */
     int concurrentConsumers() default 1;
     /** @MqMode 类型:kafka,rabbit,redis,rocket,zookeeper */

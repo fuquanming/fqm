@@ -19,6 +19,9 @@ public class RedissonMqListenerContainer {
     private List<RedissonMqListener> listeners = new ArrayList<>();
     
     public RedissonMqListenerContainer(int size) {
+        if (size <= Runtime.getRuntime().availableProcessors()) {
+            size = Runtime.getRuntime().availableProcessors() * 2;
+        }
         pool = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors(), 
                 size,
                 60L, TimeUnit.SECONDS,
