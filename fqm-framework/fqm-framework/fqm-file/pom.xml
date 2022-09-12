@@ -14,5 +14,6 @@
         <module>fqm-file-core</module>
         <module>fqm-file-minio</module>
         <module>fqm-spring-boot-starter-file-minio</module>
-    </modules>
+        <module>fqm-spring-boot-starter-file</module>
+	</modules>
 </project>

@@ -414,6 +414,11 @@
                 <artifactId>fqm-file-minio</artifactId>
                 <version>1.0.0</version>
             </dependency>
+            <dependency>
+                <groupId>com.fqm</groupId>
+                <artifactId>fqm-spring-boot-starter-file</artifactId>
+                <version>1.0.0</version>
+            </dependency>
             <!-- file end -->
             
             <!-- lock start -->

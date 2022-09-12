@@ -1,4 +1,4 @@
-package com.fqm.framework.file.minio.config;
+package com.fqm.framework.file.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

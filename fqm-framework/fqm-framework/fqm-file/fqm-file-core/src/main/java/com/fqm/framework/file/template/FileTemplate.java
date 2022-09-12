@@ -1,14 +1,18 @@
-package com.fqm.framework.file;
+package com.fqm.framework.file.template;
 
 import java.io.File;
 import java.io.InputStream;
 
+import com.fqm.framework.file.FileMode;
 /**
- * 文件服务，上传下载
+ * 文件模板
+ * 
  * @version 
  * @author 傅泉明
  */
-public interface FileService {
+public interface FileTemplate {
+    
+    public FileMode getFileMode();
     
     /**
      * 删除文件 根据 文件标识 来删除一个文件（上传文件时直接将fileId保存在了数据库中）
@@ -48,6 +52,5 @@ public interface FileService {
      * @return          文件标识，如：group1/M00/00/00/wKjTgFo7cNGAI8TvAALa-N2N974394.jpg
      */
     public String uploadFile(InputStream is, String fileName);
-    
     
 }
