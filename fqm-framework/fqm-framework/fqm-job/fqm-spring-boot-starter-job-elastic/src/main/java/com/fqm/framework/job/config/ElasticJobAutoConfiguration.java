@@ -25,6 +25,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 import com.fqm.framework.common.core.util.StringUtil;
 import com.fqm.framework.job.JobMode;
@@ -40,6 +41,7 @@ import com.google.common.base.Preconditions;
  */
 @Configuration
 @AutoConfigureAfter(JobAutoConfiguration.class)
+@Import(ElasticJobPropertiesBeanPostProcessor.class)
 @ConditionalOnBean(JobProperties.class) // JobProperties加载则JobAutoConfiguration也就加载
 public class ElasticJobAutoConfiguration implements SmartInitializingSingleton, ApplicationContextAware {
 
