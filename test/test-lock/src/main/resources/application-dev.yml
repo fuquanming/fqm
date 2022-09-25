@@ -1,0 +1,33 @@
+server:
+  port: 28080
+  shutdown-port: 10001
+
+spring:
+  main:    allow-bean-definition-overriding: true
+  cloud:
+    zookeeper: 
+#      connect-string: hadoop102:2181,hadoop103:2181,hadoop104:2181
+      connect-string: 192.168.1.102:2181
+      connection-timeout: 15000
+      base-sleep-time-ms: 1000
+      max-retries: 3
+      max-sleep-ms: 10000
+      session-timeout: 30000
+  redis:
+    host: 192.168.1.102
+    port: 6379
+    database: 0
+#    password: 123456
+    timeout: 6000
+    lettuce:
+      pool:
+        max-active: 8
+        max-wait: -1
+        max-idle: 8
+        min-idle: 0 
+      
+# 通用锁配置
+lock:
+  user:
+    key: user # 锁的唯一key
+    lockMode: zookeeper # simple,redisson,redisTemplate,zookeeper

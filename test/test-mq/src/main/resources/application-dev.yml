@@ -1,0 +1,157 @@
+server:
+  port: 18080
+  shutdown-port: 10001
+
+spring:
+  main:    allow-bean-definition-overriding: true
+  cloud:
+    zookeeper: 
+#      connect-string: hadoop102:2181,hadoop103:2181,hadoop104:2181
+      connect-string: 192.168.2.100:2181
+      connection-timeout: 15000
+      base-sleep-time-ms: 1000
+      max-retries: 3
+      max-sleep-ms: 10000
+      session-timeout: 30000
+          
+
+  redis:
+    host: 192.168.2.100
+    port: 6379
+    database: 0
+#    password: 123456
+    timeout: 6000
+    
+    lettuce:
+      pool:
+        max-active: 8
+        max-wait: -1
+        max-idle: 8
+        min-idle: 0  
+            
+    
+  rabbitmq:
+    host: 192.168.2.100
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
+#    listener:#      simple:#        retry:#          enabled: true
+#          max-attempts: 3 # 最大重试次数
+#          initial-interval: 1000 # 重试时间隔时间
+
+#    publisher-confirm-type: CORRELATED
+#    publisher-returns: true
+#    template:#      mandatory: true
+    # 进入死信不会重试？
+    listener:
+      simple:
+        retry:
+          enabled: true #是否开启消费者重试（为false时关闭消费者重试，这时消费端代码异常会一直重复收到消息）
+          max-attempts: 5 #最大重试次数
+          initial-interval: 5000 #重试间隔时间（单位毫秒） 
+          max-interval: 1200000 #重试最大时间间隔（单位毫秒） 
+          multiplier: 5 #应用于前一重试间隔的乘法器。
+  kafka:
+    bootstrap-servers:#    - hadoop102:9092
+#    - hadoop103:9092
+#    - hadoop104:9092
+    - 192.168.2.100:9092
+rocketmq:
+  name-server: http://192.168.2.100:9876 #rocketmq服务地址
+
+# 通用消息队列配置
+mq:
+  enabled: true
+  topic: my-topic   # 消息主题
+  mqs:
+    a:                          # 业务编码，唯一
+      name: kafkamq             # 消息名称，该值等于自定义注解@MqListener.name()，唯一值
+      topic: my-topic           # 消息主题
+      group: msg-group          # 消费者组，使用@MqListener时，必填
+      binder: kafka             # 消息组件，参考@MqMode
+    a1:                         # 业务编码，唯一
+      name: kafkamq1            # 消息名称，该值等于自定义注解@MqListener.name()，唯一值
+      topic: my-topic           # 消息主题
+      group: msg-group          # 消费者组，使用@MqListener时，必填
+      binder: kafka             # 消息组件，参考@MqMode
+    a-dead:                     # 业务编码，唯一
+      name: kafkamq2            # 消息名称，该值等于自定义注解@MqListener.name()，唯一值
+      topic: my-topic.DLT       # 消息主题，死信队列：topic + ".DLT"
+      group: my-topic.DLT-kafka # 消费者组，使用@MqListener时，必填
+      binder: kafka             # 消息组件，参考@MqMode
+    b:
+      name: rabbitmq   
+      topic: my-topic
+      group: msg-group
+      binder: rabbit
+    b1:
+      name: rabbitmq1   
+      topic: my-topic
+      group: msg-group
+      binder: rabbit
+    b-dead:
+      name: rabbitmq2   
+      topic: my-topic.DLQ            # 死信队列：topic + ".DLQ", 监听的Topic不能有符号：%
+      group: my-topic.DLQ-rabbit
+      binder: rabbit
+    c:
+      name: redismq   
+      topic: my-topic
+      group: msg-group
+      binder: redis
+    c1:
+      name: redismq1   
+      topic: my-topic
+      group: msg-group
+      binder: redis
+    c-dead:
+      name: redismq2   
+      topic: msg-group.DLQ                 # 死信队列：group + ".DLQ", 监听的Topic不能有符号：%
+      group: msg-group.DLQ-redis
+      binder: redis
+    d:
+      name: redissonmq   
+      topic: my-topic-redisson
+      group: msg-group-redisson
+      binder: redisson
+    d1:
+      name: redissonmq1   
+      topic: my-topic-redisson
+      group: msg-group-redisson
+      binder: redisson
+    d-dead:
+      name: redissonmq2   
+      topic: my-topic-redisson.DLQ                 # 死信队列：topic + ".DLQ", 监听的Topic不能有符号：%
+      group: my-topic-redisson.DLQ-redis
+      binder: redisson
+    e:
+      name: rocketmq
+      topic: my-topic
+      group: msg-group
+      binder: rocket
+    e1:
+      name: rocketmq1
+      topic: my-topic
+      group: msg-group
+      binder: rocket
+    e-dead:
+      name: rocketmq2
+      topic: '%DLQ%msg-group'                               # 死信队列：%DLQ% + 消费组，死信队列需要在rocket控制台：主题->勾选死信->点击“TOPIC配置”->修改 perm 值，修改为6（可读可写权限）
+      group: '%DLQ%msg-group-DLQ-rocket'                    # 正则表达式：^[%|a-zA-Z0-9_-]+$，不能和原topic的消费者组一样，一样消费会不及时，不全和原topic数据冲突
+      binder: rocket
+    f:
+      name: zookeepermq
+      topic: my-topic
+      group: msg-group
+      binder: zookeeper  
+    f1:
+      name: zookeepermq1
+      topic: my-topic
+      group: msg-group
+      binder: zookeeper  
+    f-dead:
+      name: zookeepermq2
+      topic: my-topic.DLQ                                      # 死信队列：topic + ".DLQ"
+      group: my-topic.DLQ-zookeeper
+      binder: zookeeper  
