@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.reflect.FieldUtils;
+
 import io.minio.BucketExistsArgs;
 import io.minio.DeleteObjectTagsArgs;
 import io.minio.DownloadObjectArgs;
@@ -15,6 +17,7 @@ import io.minio.GetObjectTagsArgs;
 import io.minio.GetPresignedObjectUrlArgs;
 import io.minio.ListObjectsArgs;
 import io.minio.MakeBucketArgs;
+import io.minio.MinioAsyncClient;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import io.minio.RemoveBucketArgs;
@@ -30,6 +33,7 @@ import io.minio.messages.DeleteError;
 import io.minio.messages.DeleteObject;
 import io.minio.messages.Item;
 import io.minio.messages.Tags;
+import okhttp3.HttpUrl;
 
 /**
  * 
@@ -374,16 +378,23 @@ public class MinioService {
         return minioClient.statObject(StatObjectArgs.builder().bucket(bucketName).object(objectName).build());
     }
 
-//    /**
-//     * 文件访问路径
-//     * @param bucketName 存储桶名称
-//     * @param objectName 存储桶里的对象名称
-//     * @return
-//     */
-//
-//    public String getObjectUrl(String bucketName, String objectName) throws Exception {
-//        return minioClient.getObjectUrl(bucketName, objectName);
-//    }
+    /**
+     * 文件访问路径
+     * @param bucketName 存储桶名称
+     * @param objectName 存储桶里的对象名称
+     * @return
+     */
+    public String getObjectUrl(String bucketName, String objectName) throws Exception {
+        MinioAsyncClient asyncClient = (MinioAsyncClient) FieldUtils.readField(minioClient, "asyncClient", true);
+        HttpUrl baseUrl = (HttpUrl) FieldUtils.readField(asyncClient, "baseUrl", true);
+        StringBuilder data = new StringBuilder(baseUrl.toString());
+        data.append(bucketName);
+        if (!objectName.startsWith("/")) {
+            data.append("/");
+        }
+        data.append(objectName);
+        return data.toString();
+    }
 
     /**
      * 下载文件，在项目根目录

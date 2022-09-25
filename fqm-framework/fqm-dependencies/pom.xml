@@ -51,7 +51,7 @@
         <!-- 云服务相关 -->
         
         <!-- 文件相关 -->
-        <minio.version>8.3.0</minio.version>
+        <minio.version>8.4.5</minio.version>
         <okhttp3.version>4.8.1</okhttp3.version>
 
         <!-- 监控相关 -->

@@ -38,6 +38,16 @@ public interface FileTemplate {
     }
     
     /**
+     * 获取有时效文件访问的URL地址
+     * @param fileId            文件标识  如：group1/M00/00/00/wKjTgFo7cNGAI8TvAALa-N2N974394_181x161.jpg
+     * @param expireSecond      时效，单位秒
+     * @return
+     */
+    default String getFileUrlExpires(String fileId, Integer expireSecond) {
+        return null;
+    }
+    
+    /**
      * 上传文件
      * @param file      文件
      * @param fileName  文件名，如：group1/M00/00/00/wKjTgFo7cNGAI8TvAALa-N2N974394.jpg     

@@ -57,8 +57,24 @@ public class MinioFileTemplate implements FileTemplate {
         return false;
     }
     
+    /**
+     * 1、Buckets-> 选择一个Bucket -> 点击Manage
+     * 2、选择"AccessRules"，添加新的Access Rule，prefix=*，Access=readonly 
+     * @see com.fqm.framework.file.template.FileTemplate#getFileUrl(java.lang.String)
+     *
+     */
     @Override
     public String getFileUrl(String fileId) {
+        try {
+            return minioService.getObjectUrl(bucketDefaultName, fileId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    @Override
+    public String getFileUrlExpires(String fileId, Integer expireSecond) {
         try {
             return minioService.getPresignedObjectUrl(bucketDefaultName, fileId, 24 * 3600, Method.GET);
         } catch (Exception e) {
