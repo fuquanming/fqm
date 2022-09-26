@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.fqm</groupId>
     <artifactId>fqm</artifactId>
     <version>1.0.0</version>
     <packaging>pom</packaging>
-    
+
     <modules>
         <module>fqm-dependencies</module>
         <module>fqm-framework</module>
@@ -15,6 +13,26 @@
 
     <name>${artifactId}</name>
     <description>基础脚手架</description>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <name>傅泉明</name>
+            <url>https://gitee.com/fuquanming/</url>
+            <email>67837343@qq.com</email>
+        </developer>
+    </developers>
+    <scm>
+        <tag>master</tag>
+        <url>https://gitee.com/fuquanming/fqm.git</url>
+        <connection>git@https://gitee.com/fuquanming/fqm.git</connection>
+    </scm>
 
     <properties>
         <project.version>1.0.0</project.version>
@@ -29,9 +47,9 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>3.0.0-M5</maven-surefire-plugin.version>
-        
+
         <lombok.version>1.18.16</lombok.version>
-        <org.mapstruct.version>1.4.2.Final</org.mapstruct.version><!-- bean拷贝 -->
+        <org.mapstruct.version>1.4.2.Final</org.mapstruct.version> <!-- bean拷贝 -->
     </properties>
 
     <dependencyManagement>
@@ -56,7 +74,7 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${maven-surefire-plugin.version}</version>
                 </plugin>
-                
+
                 <!-- 提供给 mapstruct 使用 -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
