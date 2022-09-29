@@ -53,6 +53,7 @@ public class SpringBeanPostProcessorFilter {
      * 获取Spring中使用proxyClassLoader的BeanPostProcessor集合对应的字段
      * @return
      */
+    @SuppressWarnings("unchecked")
     public List<BeanPostProcessor> getBeanPostProcessorsByProxyClassLoader() {
         /** 
          * SpringBoot 中JDK代理，cglib代理，初始化用的AppClassLoader加载class，外部加载的jar不在AppClassLoader范围内，从而出现 ClassNotFoundException

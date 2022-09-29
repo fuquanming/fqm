@@ -44,7 +44,6 @@ public class GlobalRequestBodyHandler implements RequestBodyAdvice {
     @Override
     public Object afterBodyRead(Object body, HttpInputMessage inputMessage, MethodParameter parameter, Type targetType,
             Class<? extends HttpMessageConverter<?>> converterType) {
-        System.out.println("afterBodyRead=" + JsonUtil.toJsonStr(body));
         return body;
     }
 
