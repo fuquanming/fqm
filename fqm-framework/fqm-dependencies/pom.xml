@@ -65,7 +65,6 @@
         <hibernate-validator.version>6.2.0.Final</hibernate-validator.version>
         <!-- <httpclient.version>4.5.13</httpclient.version> -->
         <!-- <hibernate-validator.version>6.1.7.Final</hibernate-validator.version> -->
-        <hutool.version>5.7.7</hutool.version>
         <guava.version>30.1.1-jre</guava.version>
         <!-- <lombok.version>1.18.16</lombok.version> -->
         <org.mapstruct.version>1.4.2.Final</org.mapstruct.version><!-- bean拷贝 -->
@@ -301,12 +300,6 @@
                 <version>${ant.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>cn.hutool</groupId>
-                <artifactId>hutool-all</artifactId>
-                <version>${hutool.version}</version>
-            </dependency>
-            
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-validator</artifactId>

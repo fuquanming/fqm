@@ -8,9 +8,7 @@ import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
 
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.exceptions.UtilException;
-import cn.hutool.core.lang.Filter;
+import com.fqm.framework.common.core.lang.Filter;
 
 public class NetUtil {
 
@@ -26,11 +24,11 @@ public class NetUtil {
         try {
             networkInterfaces = NetworkInterface.getNetworkInterfaces();
         } catch (SocketException e) {
-            throw new UtilException(e);
+            throw new RuntimeException(e);
         }
 
         if (networkInterfaces == null) {
-            throw new UtilException("Get network interface error!");
+            throw new RuntimeException("Get network interface error!");
         }
 
         final LinkedHashSet<InetAddress> ipSet = new LinkedHashSet<>();
@@ -64,7 +62,6 @@ public class NetUtil {
      *
      * @param inetAddress {@link InetAddress}
      * @return 硬件地址
-     * @since 5.7.3
      */
     public static byte[] getHardwareAddress(InetAddress inetAddress) {
         if (null == inetAddress) {
@@ -77,7 +74,7 @@ public class NetUtil {
                 return networkInterface.getHardwareAddress();
             }
         } catch (SocketException e) {
-            throw new UtilException(e);
+            throw new RuntimeException(e);
         }
         return null;
     }
@@ -93,10 +90,8 @@ public class NetUtil {
      * <p>
      * 此方法不会抛出异常，获取失败将返回{@code null}<br>
      * <p>
-     * 见：https://github.com/looly/hutool/issues/428
      *
      * @return 本机网卡IP地址，获取失败返回{@code null}
-     * @since 3.0.1
      */
     public static InetAddress getLocalhost() {
         final LinkedHashSet<InetAddress> localAddressList = localAddressList(address -> {
@@ -106,7 +101,7 @@ public class NetUtil {
                     && address instanceof Inet4Address;
         });
 
-        if (CollUtil.isNotEmpty(localAddressList)) {
+        if (CollectionUtil.isNotEmpty(localAddressList)) {
             InetAddress address2 = null;
             for (InetAddress inetAddress : localAddressList) {
                 if (false == inetAddress.isSiteLocalAddress()) {

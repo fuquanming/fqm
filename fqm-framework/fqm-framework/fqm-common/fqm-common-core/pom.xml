@@ -61,11 +61,6 @@
             <artifactId>guava</artifactId>
         </dependency>
         
-        <dependency>
-            <groupId>cn.hutool</groupId>
-            <artifactId>hutool-all</artifactId>
-        </dependency>
-        
         <!-- Swagger3，Bean字段注解 -->
         <dependency>
 			<groupId>io.swagger</groupId>

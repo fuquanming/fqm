@@ -17,8 +17,7 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import com.fqm.dynamic.module.core.ModuleClassLoader;
 import com.fqm.dynamic.module.core.ModuleClassLoaderFactory;
 import com.fqm.dynamic.module.filter.ModuleUnloadFilter;
-
-import cn.hutool.extra.spring.SpringUtil;
+import com.fqm.framework.common.spring.util.SpringUtil;
 
 /**
  * Spring卸载基类

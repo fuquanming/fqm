@@ -24,9 +24,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 import com.fqm.dynamic.module.core.ModuleClassLoader;
-import com.fqm.dynamic.module.filter.spring.AbstractSpringLoaderFilter;
-
-import cn.hutool.extra.spring.SpringUtil;
+import com.fqm.framework.common.spring.util.SpringUtil;
 
 /**
  * 

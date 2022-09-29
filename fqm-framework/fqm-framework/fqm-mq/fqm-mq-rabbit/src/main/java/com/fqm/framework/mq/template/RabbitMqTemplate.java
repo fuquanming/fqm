@@ -1,6 +1,7 @@
 package com.fqm.framework.mq.template;
 
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.LockSupport;
@@ -16,12 +17,10 @@ import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
 import com.fqm.framework.common.core.util.ReturnParamUtil;
+import com.fqm.framework.common.core.util.system.SystemUtil;
 import com.fqm.framework.mq.MqMode;
 import com.fqm.framework.mq.callback.RabbitListenableFutureCallback;
 import com.fqm.framework.mq.client.producer.SendCallback;
-
-import cn.hutool.core.collection.ConcurrentHashSet;
-import cn.hutool.system.SystemUtil;
 
 /**
  * Rabbit消息队列，发送都是异步消息
@@ -36,13 +35,13 @@ public class RabbitMqTemplate implements MqTemplate {
     private RabbitTemplate rabbitTemplate;
     private AmqpAdmin amqpAdmin;
     /** 队列列表 */
-    private Set<String> topicSet = new ConcurrentHashSet<>();
+    private Set<String> topicSet = ConcurrentHashMap.newKeySet();
     /** 延迟任务交换机列表 */
-    private Set<String> exchangeSet = new ConcurrentHashSet<>();
+    private Set<String> exchangeSet = ConcurrentHashMap.newKeySet();
     
     private AtomicLong atomicLong = new AtomicLong();
     
-    private String hostAddress = SystemUtil.getHostInfo().getAddress();
+    private String hostAddress = SystemUtil.getHostAddress();
     
     private long pid = SystemUtil.getCurrentPID();
     /** 延迟任务的信息头 */

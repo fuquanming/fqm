@@ -27,8 +27,6 @@ import com.fqm.framework.mq.redis.PendingMessagesSummary;
 import com.fqm.framework.mq.redis.StreamInfo;
 import com.fqm.framework.mq.redis.StreamInfo.XInfoGroups;
 
-import cn.hutool.extra.spring.SpringUtil;
-
 /**
  * Lua脚本
  * 
@@ -53,8 +51,7 @@ public class LuaScriptUtil {
      * @param topic
      * @return
      */
-    public static XInfoGroups getXInfoGroups(String topic) {
-        StringRedisTemplate stringRedisTemplate = SpringUtil.getBean(StringRedisTemplate.class);
+    public static XInfoGroups getXInfoGroups(String topic, StringRedisTemplate stringRedisTemplate) {
         List<Object> parts = null;
         try {
             parts = stringRedisTemplate.execute(SCRIPT_GROUP, Collections.singletonList(topic));
@@ -84,8 +81,7 @@ public class LuaScriptUtil {
      * @param group
      * @return
      */
-    public static boolean createGroup(String topic, ReadOffset readOffset, String group) {
-        StringRedisTemplate stringRedisTemplate = SpringUtil.getBean(StringRedisTemplate.class);
+    public static boolean createGroup(String topic, ReadOffset readOffset, String group, StringRedisTemplate stringRedisTemplate) {
         String flag = stringRedisTemplate.execute(SCRIPT_CREATE_GROUP, Collections.singletonList(topic),
                 group, readOffset.getOffset());
         return Objects.equals(Constants.EXECUTE_SUCCESS, flag) ? true : false;
@@ -98,8 +94,7 @@ public class LuaScriptUtil {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public static PendingMessagesSummary pending(String topic, String group) {
-        StringRedisTemplate stringRedisTemplate = SpringUtil.getBean(StringRedisTemplate.class);
+    public static PendingMessagesSummary pending(String topic, String group, StringRedisTemplate stringRedisTemplate) {
         List<?> parts = stringRedisTemplate.execute(SCRIPT_PENDING_GROUP, Collections.singletonList(topic), group);
         if (parts.isEmpty()) {
             return null;
@@ -127,8 +122,7 @@ public class LuaScriptUtil {
      * @param count     返回记录数
      * @return
      */
-    public static PendingMessages pending(String topic, String group, String consumer, Range<?> range, long count) {
-        StringRedisTemplate stringRedisTemplate = SpringUtil.getBean(StringRedisTemplate.class);
+    public static PendingMessages pending(String topic, String group, String consumer, Range<?> range, long count, StringRedisTemplate stringRedisTemplate) {
         List<?> parts = stringRedisTemplate.execute(
                 SCRIPT_PENDING_GROUP_CONSUMER,
                 Collections.singletonList(topic),

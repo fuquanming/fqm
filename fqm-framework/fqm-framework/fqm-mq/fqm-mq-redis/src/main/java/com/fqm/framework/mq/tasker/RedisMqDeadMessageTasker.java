@@ -89,7 +89,7 @@ public class RedisMqDeadMessageTasker {
                 for (String topic : topics) {
                     // 获取消费者组 
                     // 替换XInfoGroups groups = streamOperations.groups(topic); 需要spring-boot->2.4.2,redisson-spring-boot-starter->3.15.1
-                    XInfoGroups groups = LuaScriptUtil.getXInfoGroups(topic);
+                    XInfoGroups groups = LuaScriptUtil.getXInfoGroups(topic, stringRedisTemplate);
                     if (groups == null) {
                         continue;
                     }
@@ -101,7 +101,7 @@ public class RedisMqDeadMessageTasker {
                             // 死信队列topic
                             String deadTopic = groupName + ".DLQ";
                             // 获取消费者组里的pending消息，替换PendingMessagesSummary pendingMessagesSummary = streamOperations.pending(topic, groupName);
-                            PendingMessagesSummary pendingMessagesSummary = LuaScriptUtil.pending(topic, groupName);
+                            PendingMessagesSummary pendingMessagesSummary = LuaScriptUtil.pending(topic, groupName, stringRedisTemplate);
                             // 每个消费者的pending消息数量
                             Map<String, Long> pendingMessagesPerConsumer = pendingMessagesSummary.getPendingMessagesPerConsumer();
                             pendingMessagesPerConsumer.entrySet().forEach(entry -> {
@@ -112,7 +112,7 @@ public class RedisMqDeadMessageTasker {
                                 if (consumerTotalPendingMessages > 0) {
                                     // 读取消费者pending队列的前10条记录，从ID=0的记录开始，一直到ID最大值，一次处理10条
                                     // 替换 PendingMessages pendingMessages = streamOperations.pending(topic, Consumer.from(groupName, consumer), Range.closed("0", "+"), 10);
-                                    PendingMessages pendingMessages = LuaScriptUtil.pending(topic, groupName, consumer, Range.closed("0", "+"), 10);
+                                    PendingMessages pendingMessages = LuaScriptUtil.pending(topic, groupName, consumer, Range.closed("0", "+"), 10, stringRedisTemplate);
                                     // 遍历所有Opending消息的详情
                                     pendingMessages.forEach(message -> {
                                         // 消息的ID

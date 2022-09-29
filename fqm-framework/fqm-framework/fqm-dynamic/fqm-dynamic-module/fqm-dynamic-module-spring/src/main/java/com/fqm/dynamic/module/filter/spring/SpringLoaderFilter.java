@@ -36,8 +36,7 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import com.fqm.dynamic.module.core.ModuleClassLoader;
-
-import cn.hutool.extra.spring.SpringUtil;
+import com.fqm.framework.common.spring.util.SpringUtil;
 
 /**
  * 

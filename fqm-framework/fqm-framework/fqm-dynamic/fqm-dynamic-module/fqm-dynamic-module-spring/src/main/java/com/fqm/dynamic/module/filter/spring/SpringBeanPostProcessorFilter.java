@@ -21,7 +21,7 @@ import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
-import cn.hutool.extra.spring.SpringUtil;
+import com.fqm.framework.common.spring.util.SpringUtil;
 
 /**
  * Spring 加载基类

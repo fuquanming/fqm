@@ -27,8 +27,8 @@
         </dependency>
 
 		<dependency>
-			<groupId>cn.hutool</groupId>
-			<artifactId>hutool-all</artifactId>
-		</dependency>
+            <groupId>com.fqm</groupId>
+            <artifactId>fqm-common-spring</artifactId>
+        </dependency>
 	</dependencies>
 </project>

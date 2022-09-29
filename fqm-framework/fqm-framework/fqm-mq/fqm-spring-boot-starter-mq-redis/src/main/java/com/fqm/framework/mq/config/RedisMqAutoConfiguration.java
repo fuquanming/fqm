@@ -32,6 +32,7 @@ import org.springframework.data.redis.stream.StreamMessageListenerContainer.Stre
 import org.springframework.util.ErrorHandler;
 
 import com.fqm.framework.common.core.util.StringUtil;
+import com.fqm.framework.common.core.util.system.SystemUtil;
 import com.fqm.framework.common.redis.listener.spring.KeyExpiredEventMessageListener;
 import com.fqm.framework.mq.MqFactory;
 import com.fqm.framework.mq.MqMode;
@@ -45,8 +46,6 @@ import com.fqm.framework.mq.scripts.LuaScriptUtil;
 import com.fqm.framework.mq.tasker.RedisMqDeadMessageTasker;
 import com.fqm.framework.mq.template.RedisMqTemplate;
 import com.google.common.base.Preconditions;
-
-import cn.hutool.system.SystemUtil;
 
 /**
  * Redis消息队列自动装配
@@ -169,7 +168,7 @@ public class RedisMqAutoConfiguration {
                 Preconditions.checkArgument(StringUtil.isNotBlank(topic), "Please specific [topic] under mq configuration.");
                 // Lua获取消费者组
                 try {
-                    XInfoGroups gs = LuaScriptUtil.getXInfoGroups(topic);
+                    XInfoGroups gs = LuaScriptUtil.getXInfoGroups(topic, stringRedisTemplate);
                     if (gs != null) {
                         for (Iterator<XInfoGroup> it = gs.iterator(); it.hasNext();) {
                             XInfoGroup g = it.next();
@@ -189,7 +188,7 @@ public class RedisMqAutoConfiguration {
                         // 低版本没有加mkstream 参数会报错，因为topic 不存在，必须加选项 mkstream
                         // XGROUP CREATE t2 t2 0 mkstream
 //                        stringRedisTemplate.opsForStream().createGroup(v.getDestination(), ReadOffset.from("0"), v.getGroup());
-                        LuaScriptUtil.createGroup(topic, ReadOffset.from("0"), group);
+                        LuaScriptUtil.createGroup(topic, ReadOffset.from("0"), group, stringRedisTemplate);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -246,7 +245,7 @@ public class RedisMqAutoConfiguration {
      */
     private static String buildConsumerName() {
 //        return "consumer-1";
-        return String.format("%s@%d", SystemUtil.getHostInfo().getAddress(), SystemUtil.getCurrentPID());
+        return String.format("%s@%d", SystemUtil.getHostAddress(), SystemUtil.getCurrentPID());
     }
 
     @Bean

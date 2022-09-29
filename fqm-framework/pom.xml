@@ -23,15 +23,17 @@
     </licenses>
     <developers>
         <developer>
+            <id>fqm</id>
             <name>傅泉明</name>
-            <url>https://gitee.com/fuquanming/</url>
+            <url>https://github.com/fuquanming/</url>
             <email>67837343@qq.com</email>
         </developer>
     </developers>
     <scm>
         <tag>master</tag>
-        <url>https://gitee.com/fuquanming/fqm.git</url>
-        <connection>git@https://gitee.com/fuquanming/fqm.git</connection>
+        <url>https://github.com/fuquanming/fqm.git</url>
+        <connection>scm:git:https://github.com/fuquanming/fqm.git</connection>
+        <developerConnection>scm:git:git@github.com:fuquanming/fqm.git</developerConnection>
     </scm>
 
     <properties>
