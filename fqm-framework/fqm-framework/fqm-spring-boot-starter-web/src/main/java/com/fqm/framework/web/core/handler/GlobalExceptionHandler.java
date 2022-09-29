@@ -161,12 +161,12 @@ public class GlobalExceptionHandler {
         // 插入异常日志
 //        this.createExceptionLog(req, e);
         
-        String queryStr = buildQueryString(req);
-        System.out.println("queryStr=" + queryStr);
-        R<?> r = (R<?>)req.getAttribute("fqm_common_result");
-        if (r != null) {
-            System.out.println("r=" + r);
-        }
+//        String queryStr = buildQueryString(req);
+//        System.out.println("queryStr=" + queryStr);
+//        R<?> r = (R<?>)req.getAttribute("fqm_common_result");
+//        if (r != null) {
+//            System.out.println("r=" + r);
+//        }
         
         // 返回 ERROR CommonResult
         return R.build(INTERNAL_SERVER_ERROR.getCode(), INTERNAL_SERVER_ERROR.getMessage())

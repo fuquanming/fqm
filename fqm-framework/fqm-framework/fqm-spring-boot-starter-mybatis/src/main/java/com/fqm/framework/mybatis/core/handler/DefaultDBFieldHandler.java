@@ -32,7 +32,6 @@ public class DefaultDBFieldHandler implements MetaObjectHandler {
             }
             if (metaObject.hasSetter(id) && Objects.isNull(getFieldValByName(id, metaObject))) {
                 setFieldValByName(id, IdUtil.getSnowflake().nextId(), metaObject);
-                System.out.println(getFieldValByName(id, metaObject));
             }
 //        this.setFieldValByName("version", 1, metaObject);
 //        this.setFieldValByName("deleted", 0, metaObject);
