@@ -3,15 +3,14 @@
     <modelVersion>4.0.0</modelVersion>
     <!-- -->
     <parent>
-        <groupId>com.fqm</groupId>
+        <groupId>io.github.fuquanming</groupId>
         <artifactId>fqm-dependencies</artifactId>
         <version>1.0.0</version>
         <relativePath>../fqm-dependencies</relativePath>
     </parent>
     
-    <groupId>io.github.fuquanming</groupId>
     <artifactId>fqm-common</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <packaging>pom</packaging>
 
     <name>${project.artifactId}</name>
