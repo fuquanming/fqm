@@ -4,15 +4,22 @@
 	<modelVersion>4.0.0</modelVersion>
 	
 	<parent>
-        <groupId>com.fqm</groupId>
+        <groupId>io.github.fuquanming</groupId>
         <artifactId>fqm-dependencies</artifactId>
         <version>1.0.0</version>
         <relativePath>../fqm-dependencies</relativePath>
     </parent>
     
-    <groupId>io.github.fuquanming</groupId>
 	<artifactId>fqm-file</artifactId>
+	<version>1.0.1</version>
 	<packaging>pom</packaging>
+	
+	<modules>
+        <module>fqm-file-core</module>
+        <module>fqm-file-minio</module>
+        <module>fqm-spring-boot-starter-file-minio</module>
+        <module>fqm-spring-boot-starter-file</module>
+    </modules>
 	
 	<licenses>
         <license>
@@ -34,11 +41,4 @@
             <email>67837343@qq.com</email>
         </developer>
     </developers>
-	
-	<modules>
-        <module>fqm-file-core</module>
-        <module>fqm-file-minio</module>
-        <module>fqm-spring-boot-starter-file-minio</module>
-        <module>fqm-spring-boot-starter-file</module>
-	</modules>
 </project>
