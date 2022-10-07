@@ -19,6 +19,12 @@
     <url>https://github.com/fuquanming/fqm</url>
 
     <modules>
+        <module>fqm-common-core</module>
+        <module>fqm-common-cache</module>
+        <module>fqm-common-http</module>
+        <module>fqm-common-redis</module>
+        <module>fqm-common-redisson</module>
+        <module>fqm-common-spring</module>
         <module>fqm-common-zookeeper</module>
     </modules>
 
