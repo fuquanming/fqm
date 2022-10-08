@@ -1,0 +1,24 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>io.github.fuquanming</groupId>
+		<artifactId>fqm-lock</artifactId>
+		<version>1.0.0</version>
+	</parent>
+	<artifactId>fqm-lock-zookeeper</artifactId>
+	<description>Zookeeper distributed lock is implemented based on Curator (blocking lock, trying to acquire a lock, trying to acquire a lock, unlocking)</description>
+	<dependencies>
+        <dependency>
+            <groupId>io.github.fuquanming</groupId>
+            <artifactId>fqm-lock-core</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.curator</groupId>
+            <artifactId>curator-recipes</artifactId>
+        </dependency>
+    </dependencies>
+</project>
