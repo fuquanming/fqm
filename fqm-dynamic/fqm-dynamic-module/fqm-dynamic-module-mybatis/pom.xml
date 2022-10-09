@@ -1,0 +1,38 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>io.github.fuquanming</groupId>
+		<artifactId>fqm-dynamic-module</artifactId>
+		<version>1.0.0</version>
+	</parent>
+	<artifactId>fqm-dynamic-module-mybatis</artifactId>
+    <description>Dynamically load jar based on mybatis</description>
+	<dependencies>
+		<dependency>
+			<groupId>io.github.fuquanming</groupId>
+			<artifactId>fqm-dynamic-module-core</artifactId>
+			<version>${parent.version}</version>
+		</dependency>
+
+		<!-- 日志 -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+
+		<!-- commons-Lang3 -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+		</dependency>
+
+		<!-- mybatis -->
+		<dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
+        </dependency>
+        
+	</dependencies>
+</project>

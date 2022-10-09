@@ -1,0 +1,56 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>io.github.fuquanming</groupId>
+		<artifactId>fqm-dynamic</artifactId>
+		<version>1.0.0</version>
+	</parent>
+	<artifactId>fqm-dynamic-module</artifactId>
+	<packaging>pom</packaging>
+	<description>Dynamic loading jar</description>
+	<url>https://github.com/fuquanming/fqm.git</url>
+	<modules>
+		<module>fqm-dynamic-module-core</module>
+		<module>fqm-dynamic-module-mybatis</module>
+		<module>fqm-dynamic-module-spring</module>
+		<module>fqm-dynamic-module-spring-mybatis</module>
+		<module>fqm-dynamic-module-mybatis-plus</module>
+	</modules>
+	
+	<licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+    <scm>
+        <tag>master</tag>
+        <url>https://github.com/fuquanming/fqm.git</url>
+        <connection>scm:git:https://github.com/fuquanming/fqm.git</connection>
+        <developerConnection>scm:git:git@github.com:fuquanming/fqm.git</developerConnection>
+    </scm>
+    <developers>
+        <developer>
+            <id>fqm</id>
+            <name>傅泉明</name>
+            <url>https://github.com/fuquanming/</url>
+            <email>67837343@qq.com</email>
+        </developer>
+    </developers>
+
+    <properties>
+        <fqm-common-spring.version>1.0.2</fqm-common-spring.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-common-spring</artifactId>
+                <version>${fqm-common-spring.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+</project>

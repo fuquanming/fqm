@@ -1,0 +1,30 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>io.github.fuquanming</groupId>
+		<artifactId>fqm-dynamic-module</artifactId>
+		<version>1.0.0</version>
+	</parent>
+	<artifactId>fqm-dynamic-module-mybatis-plus</artifactId>
+	<description>Dynamically load jar based on mybatis plus</description>
+	<dependencies>
+        <dependency>
+            <groupId>io.github.fuquanming</groupId>
+            <artifactId>fqm-dynamic-module-core</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>io.github.fuquanming</groupId>
+            <artifactId>fqm-dynamic-module-mybatis</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
+
+        <dependency>
+		    <groupId>com.baomidou</groupId>
+		    <artifactId>mybatis-plus</artifactId>
+		</dependency>
+    </dependencies>
+</project>
