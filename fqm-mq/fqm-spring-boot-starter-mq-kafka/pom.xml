@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>io.github.fuquanming</groupId>
 		<artifactId>fqm-mq</artifactId>
-		<version>1.0.0</version>
+		<version>1.0.1</version>
 	</parent>
 	<artifactId>fqm-spring-boot-starter-mq-kafka</artifactId>
 	<description>Starter for kafka message queue</description>
