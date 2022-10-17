@@ -25,6 +25,11 @@ import org.apache.commons.io.FileUtils;
  */
 public class FileUtil {
     
+    private static String JAR_PATH_START = "file:";
+    private static String OS_NAME = "os.name";
+    private static String DOWS = "dows";
+    private static String SLASH = "/";
+    private static String JAR = "jar";
     /**
      * 获取jar所在的路径
      * @return
@@ -38,17 +43,17 @@ public class FileUtil {
             e.printStackTrace();
         }
         
-        if (path.startsWith("file:")) {
+        if (path.startsWith(JAR_PATH_START)) {
             path = path.substring(5, path.length());
         }
         
-        if (System.getProperty("os.name").contains("dows")) {
-            if (path.startsWith("/")) {
+        if (System.getProperty(OS_NAME).contains(DOWS)) {
+            if (path.startsWith(SLASH)) {
                 path = path.substring(1, path.length());
             }
         }
         
-        if (path.contains("jar")) {
+        if (path.contains(JAR)) {
             path = path.substring(0, path.lastIndexOf("."));
             return path.substring(0, path.lastIndexOf("/"));
         }

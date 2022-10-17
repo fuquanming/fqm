@@ -22,6 +22,7 @@ import com.fqm.framework.common.core.util.IdUtil;
  * 最后12位是毫秒内的计数（12位的计数顺序号支持每个节点每毫秒产生4096个ID序号）
  * <p>
  * 并且可以通过生成的id反推出生成时间,datacenterId和workerId
+ * @author fqm
  * <p>
  */
 public class Snowflake implements Serializable {
@@ -48,7 +49,7 @@ public class Snowflake implements Serializable {
     /** 时间毫秒数左移22位 */
     private static final long TIMESTAMP_LEFT_SHIFT = SEQUENCE_BITS + WORKER_ID_BITS + DATA_CENTER_ID_BITS;
     /** 序列掩码，用于限定序列最大值不能超过4095 */
-    private static final long SEQUENCE_MASK = ~(-1L << SEQUENCE_BITS);// 4095
+    private static final long SEQUENCE_MASK = ~(-1L << SEQUENCE_BITS);
 
     /** 时间起始标记点，作为基准，一般取系统的最近时间（一旦确定不能变动）*/
     private final long twepoch;

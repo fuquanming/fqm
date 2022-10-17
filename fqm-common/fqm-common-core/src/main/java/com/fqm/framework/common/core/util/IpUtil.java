@@ -23,17 +23,17 @@ import java.util.Enumeration;
  */
 public class IpUtil {
 
+    public static String LOCAL_127 = "127.0.0.1";
     /**
      * 根据网卡获得IP地址
      * @return
      * @throws SocketException
      */
     public static String getLocalIp() {
-        String local_127 = "127.0.0.1";
         String ip = null;
         try {
             ip = Inet4Address.getLocalHost().getHostAddress();
-            if (ip != null && !"".equals(ip) && !local_127.equals(ip)) {
+            if (ip != null && !"".equals(ip) && !LOCAL_127.equals(ip)) {
                 return ip;
             }
         } catch (UnknownHostException e) {
@@ -51,7 +51,7 @@ public class IpUtil {
                         if (!inetAddress.isLoopbackAddress()) {
                             String ipaddress = inetAddress.getHostAddress().toString();
                             if (!ipaddress.contains("::") && !ipaddress.contains("0:0:") && !ipaddress.contains("fe80")) {
-                                if (!local_127.equals(ip)) {
+                                if (!LOCAL_127.equals(ip)) {
                                     ip = ipaddress;
                                 }
                             }

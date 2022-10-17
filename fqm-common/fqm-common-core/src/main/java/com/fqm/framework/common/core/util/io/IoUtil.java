@@ -44,7 +44,7 @@ public class IoUtil {
      * @return 传输的byte数
      * @throws IOException IO异常
      */
-    public static long copyByNIO(InputStream in, OutputStream out, int bufferSize) throws IOException {
+    public static long copyByNio(InputStream in, OutputStream out, int bufferSize) throws IOException {
         return copy(Channels.newChannel(in), Channels.newChannel(out), bufferSize);
     }
     

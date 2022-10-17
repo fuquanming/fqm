@@ -54,11 +54,14 @@ public class Trie {
      * @return
      */
     public Object getObjectContains(String str) {
-        if (str == null) return null;
+        if (str == null) {
+            return null;
+        }
         TrieNode lastNode = root;
         char[] chars = str.toCharArray();
         int length = chars.length;
-        int temp = 0;   // 记录找到第一个字符的下标
+        /** 记录找到第一个字符的下标 */
+        int temp = 0; 
         for (int i = 0; i < length; i++) {
             lastNode = lastNode.getNode(chars[i]);
             if (lastNode == null) {
@@ -70,7 +73,9 @@ public class Trie {
                 return lastNode.getObj();
             }
         }
-        if (lastNode == null) return null;
+        if (lastNode == null) {
+            return null;
+        }
         return lastNode.getObj();
     }
     
@@ -80,11 +85,14 @@ public class Trie {
      * @return
      */
     public NodeObj getObjectContainsIndex(String str) {
-        if (str == null) return null;
+        if (str == null) {
+            return null;
+        }
         TrieNode lastNode = root;
         char[] chars = str.toCharArray();
         int length = chars.length;
-        int temp = 0;   // 记录找到第一个字符的下标
+        /** 记录找到第一个字符的下标 */
+        int temp = 0;
         for (int i = 0; i < length; i++) {
             lastNode = lastNode.getNode(chars[i]);
             if (lastNode == null) {
@@ -99,7 +107,9 @@ public class Trie {
                 return nodeObj;
             }
         }
-        if (lastNode == null) return null;
+        if (lastNode == null) {
+            return null;
+        }
         return null;
     }
     
@@ -109,7 +119,9 @@ public class Trie {
      * @return
      */
     public Object getObject(String str) {
-        if (str == null) return null;
+        if (str == null) {
+            return null;
+        }
         TrieNode lastNode = root;
         char[] chars = str.toCharArray();
         int length = chars.length;
@@ -121,12 +133,16 @@ public class Trie {
                 return lastNode.getObj();
             }
         }
-        if (lastNode == null) return null;
+        if (lastNode == null) {
+            return null;
+        }
         return lastNode.getObj();
     }
     
     public void removeString(String str) {
-        if (str == null) return;
+        if (str == null) {
+            return;
+        }
         TrieNode lastNode = root;
         char[] chars = str.toCharArray();
         int length = chars.length;

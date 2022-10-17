@@ -1,5 +1,10 @@
 package com.fqm.framework.common.core.trie;
-/** 节点包含的对象 */
+/**
+ * 节点包含的对象
+ * 
+ * @version 
+ * @author 傅泉明
+ */
 public class NodeObj {
     private Object obj;
     /** 找到节点的下标索引 */

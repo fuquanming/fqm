@@ -6,6 +6,7 @@ import java.io.Serializable;
  * 排序字段 DTO
  *
  * 类名加了 ing 的原因是，避免和 ES SortField 重名。
+ * @author fqm
  */
 public class SortingField implements Serializable {
 
@@ -31,7 +32,9 @@ public class SortingField implements Serializable {
      */
     private String order;
 
-    // 空构造方法，解决反序列化
+    /**
+     * 空构造方法，解决反序列化
+     */
     public SortingField() {
     }
 

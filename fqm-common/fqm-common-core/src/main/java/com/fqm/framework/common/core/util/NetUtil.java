@@ -9,7 +9,12 @@ import java.util.Enumeration;
 import java.util.LinkedHashSet;
 
 import com.fqm.framework.common.core.lang.Filter;
-
+/**
+ * 
+ * 
+ * @version 
+ * @author 傅泉明
+ */
 public class NetUtil {
 
     /**
@@ -38,8 +43,11 @@ public class NetUtil {
             final Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();
             while (inetAddresses.hasMoreElements()) {
                 final InetAddress inetAddress = inetAddresses.nextElement();
-                if (inetAddress != null && (null == addressFilter || addressFilter.accept(inetAddress))) {
-                    ipSet.add(inetAddress);
+//                if (inetAddress != null && (null == addressFilter || addressFilter.accept(inetAddress))) {
+                if (inetAddress != null) {
+                    if (null == addressFilter || addressFilter.accept(inetAddress)) {
+                        ipSet.add(inetAddress);
+                    }
                 }
             }
         }

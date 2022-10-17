@@ -17,7 +17,7 @@ import io.swagger.annotations.ApiModelProperty;
  * @author 傅泉明
  */
 @ApiModel(value = "全局统一返回结果")
-public class R<T> implements Serializable {
+public class Result<T> implements Serializable {
 
     /**
      * 
@@ -39,39 +39,41 @@ public class R<T> implements Serializable {
     @ApiModelProperty(value = "错误信息")
     private String detailMessage;
 
-    public R() {
+    public Result() {
     }
 
-    protected static <T> R<T> build(T data) {
-        R<T> r = new R<T>();
-        if (data != null) r.setData(data);
+    protected static <T> Result<T> build(T data) {
+        Result<T> r = new Result<T>();
+        if (data != null) {
+            r.setData(data);
+        }
         return r;
     }
 
-    public static <T> R<T> build(T body, ErrorCode errorCode) {
-        R<T> r = build(body);
+    public static <T> Result<T> build(T body, ErrorCode errorCode) {
+        Result<T> r = build(body);
         r.setCode(errorCode.getCode());
         r.setMessage(errorCode.getMessage());
         return r;
     }
 
-    public static <T> R<T> build(Integer code, String message) {
-        R<T> r = build(null);
+    public static <T> Result<T> build(Integer code, String message) {
+        Result<T> r = build(null);
         r.setCode(code);
         r.setMessage(message);
         return r;
     }
     
-    public static <T> R<T> build(Integer code, String message, String detailMessage) {
-        R<T> r = build(null);
+    public static <T> Result<T> build(Integer code, String message, String detailMessage) {
+        Result<T> r = build(null);
         r.setCode(code);
         r.setMessage(message);
         r.setDetailMessage(detailMessage);
         return r;
     }
 
-    public static <T> R<T> ok() {
-        return R.ok(null);
+    public static <T> Result<T> ok() {
+        return Result.ok(null);
     }
 
     /**
@@ -80,12 +82,12 @@ public class R<T> implements Serializable {
      * @param <T>
      * @return
      */
-    public static <T> R<T> ok(T data) {
+    public static <T> Result<T> ok(T data) {
         return build(data, GlobalErrorCodeConstants.SUCCESS);
     }
 
-    public static <T> R<T> fail() {
-        return R.fail(null);
+    public static <T> Result<T> fail() {
+        return Result.fail(null);
     }
 
     /**
@@ -94,16 +96,16 @@ public class R<T> implements Serializable {
      * @param <T>
      * @return
      */
-    public static <T> R<T> fail(T data) {
+    public static <T> Result<T> fail(T data) {
         return build(data, GlobalErrorCodeConstants.INTERNAL_SERVER_ERROR);
     }
 
-    public R<T> message(String msg) {
+    public Result<T> message(String msg) {
         this.setMessage(msg);
         return this;
     }
 
-    public R<T> code(Integer code) {
+    public Result<T> code(Integer code) {
         this.setCode(code);
         return this;
     }
@@ -127,7 +129,7 @@ public class R<T> implements Serializable {
         return message;
     }
 
-    public R<T> setMessage(String message) {
+    public Result<T> setMessage(String message) {
         this.message = message;
         return this;
     }
@@ -136,7 +138,7 @@ public class R<T> implements Serializable {
         return data;
     }
 
-    public R<T> setData(T data) {
+    public Result<T> setData(T data) {
         this.data = data;
         return this;
     }
@@ -145,18 +147,26 @@ public class R<T> implements Serializable {
         return detailMessage;
     }
 
-    public R<T> setDetailMessage(String detailMessage) {
+    public Result<T> setDetailMessage(String detailMessage) {
         this.detailMessage = detailMessage;
         return this;
     }
     
-//    @JSONField(serialize = false) // 避免序列化
+//    @JSONField(serialize = false)
+    /**
+     * 避免序列化
+     * @return
+     */
     @JsonIgnore
     public boolean isSuccess() {
         return GlobalErrorCodeConstants.SUCCESS.getCode().equals(code);
     }
 
-//    @JSONField(serialize = false) // 避免序列化
+//    @JSONField(serialize = false)
+    /**
+     * 避免序列化
+     * @return
+     */
     @JsonIgnore
     public boolean isError() {
         return !isSuccess();
@@ -189,12 +199,12 @@ public class R<T> implements Serializable {
         throw new ServiceException(code, message).setDetailMessage(detailMessage);
     }
     
-    public static <T> R<T> error(ServiceException serviceException) {
+    public static <T> Result<T> error(ServiceException serviceException) {
         return build(serviceException.getCode(), serviceException.getMessage(),
                 serviceException.getDetailMessage());
     }
 
-    public static <T> R<T> error(GlobalException globalException) {
+    public static <T> Result<T> error(GlobalException globalException) {
         return build(globalException.getCode(), globalException.getMessage(),
                 globalException.getDetailMessage());
     }

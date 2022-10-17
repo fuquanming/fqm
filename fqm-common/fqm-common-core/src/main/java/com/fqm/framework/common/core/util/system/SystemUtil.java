@@ -45,8 +45,8 @@ public class SystemUtil {
      *
      * @return 当前进程 ID
      */
-    public static long getCurrentPID() {
-        return Long.parseLong(getRuntimeMXBean().getName().split("@")[0]);
+    public static long getCurrentPid() {
+        return Long.parseLong(getRuntimeMxBean().getName().split("@")[0]);
     }
     
     /**
@@ -54,7 +54,7 @@ public class SystemUtil {
      *
      * @return {@link RuntimeMXBean}
      */
-    public static RuntimeMXBean getRuntimeMXBean() {
+    public static RuntimeMXBean getRuntimeMxBean() {
         return ManagementFactory.getRuntimeMXBean();
     }
     
