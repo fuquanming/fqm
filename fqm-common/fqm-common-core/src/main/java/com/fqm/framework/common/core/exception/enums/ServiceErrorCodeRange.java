@@ -28,7 +28,7 @@ package com.fqm.framework.common.core.exception.enums;
  * @version 
  * @author 傅泉明
  */
-public class ServiceErrorCodeRange {
+public interface ServiceErrorCodeRange {
 
     // order 错误码区间 [1-000-001-000 ~ 1-000-002-000]
 

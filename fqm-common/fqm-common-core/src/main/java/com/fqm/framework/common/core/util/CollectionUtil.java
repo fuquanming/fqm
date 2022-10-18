@@ -24,6 +24,9 @@ import org.apache.commons.collections4.CollectionUtils;
  * @author 傅泉明
  */
 public class CollectionUtil {
+    
+    private CollectionUtil() {
+    }
 
     public static boolean isEmpty(final Collection<?> coll) {
         return coll == null || coll.isEmpty();

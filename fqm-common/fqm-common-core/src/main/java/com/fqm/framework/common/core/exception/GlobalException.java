@@ -15,32 +15,50 @@ public class GlobalException extends RuntimeException {
      *
      * @see GlobalErrorCodeConstants
      */
-    private Integer code;
+    private final Integer code;
     /**
      * 错误提示
      */
-    private String message;
+    private final String message;
     /**
      * 错误明细，内部调试错误
      *
      * 和 {@link CommonResult#getDetailMessage()} 一致的设计
      */
-    private String detailMessage;
+    private final String detailMessage;
 
     /**
      * 空构造方法，避免反序列化问题
      */
     public GlobalException() {
+        this.code = null;
+        this.message = null;
+        this.detailMessage = null;
+    }
+    
+    public GlobalException(Throwable cause) {
+        super(cause);
+        this.code = null;
+        this.message = null;
+        this.detailMessage = null;
     }
 
     public GlobalException(ErrorCode errorCode) {
         this.code = errorCode.getCode();
         this.message = errorCode.getMessage();
+        this.detailMessage = null;
     }
 
     public GlobalException(Integer code, String message) {
         this.code = code;
         this.message = message;
+        this.detailMessage = null;
+    }
+    
+    public GlobalException(Integer code, String message, String detailMessage) {
+        this.code = code;
+        this.message = message;
+        this.detailMessage = detailMessage;
     }
 
     public Integer getCode() {
@@ -51,24 +69,8 @@ public class GlobalException extends RuntimeException {
         return detailMessage;
     }
 
-    public GlobalException setDetailMessage(String detailMessage) {
-        this.detailMessage = detailMessage;
-        return this;
-    }
-
-    public GlobalException setCode(Integer code) {
-        this.code = code;
-        return this;
-    }
-
     @Override
     public String getMessage() {
         return message;
     }
-
-    public GlobalException setMessage(String message) {
-        this.message = message;
-        return this;
-    }
-
 }

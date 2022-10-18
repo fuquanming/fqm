@@ -14,32 +14,43 @@ public class ServiceException extends RuntimeException {
      *
      * @see ServiceErrorCodeRange
      */
-    private Integer code;
+    private final Integer code;
     /**
      * 错误提示
      */
-    private String message;
+    private final String message;
     /**
      * 错误明细，内部调试错误
      *
      * 和 {@link R#getDetailMessage()} 一致的设计
      */
-    private String detailMessage;
+    private final String detailMessage;
 
     /**
      * 空构造方法，避免反序列化问题
      */
     public ServiceException() {
+        this.code = null;
+        this.message = null;
+        this.detailMessage = null;
     }
 
     public ServiceException(ErrorCode errorCode) {
         this.code = errorCode.getCode();
         this.message = errorCode.getMessage();
+        this.detailMessage = null;
     }
 
     public ServiceException(Integer code, String message) {
         this.code = code;
         this.message = message;
+        this.detailMessage = null;
+    }
+    
+    public ServiceException(Integer code, String message, String detailMessage) {
+        this.code = code;
+        this.message = message;
+        this.detailMessage = detailMessage;
     }
 
     public Integer getCode() {
@@ -50,24 +61,9 @@ public class ServiceException extends RuntimeException {
         return detailMessage;
     }
 
-    public ServiceException setDetailMessage(String detailMessage) {
-        this.detailMessage = detailMessage;
-        return this;
-    }
-
-    public ServiceException setCode(Integer code) {
-        this.code = code;
-        return this;
-    }
-
     @Override
     public String getMessage() {
         return message;
-    }
-
-    public ServiceException setMessage(String message) {
-        this.message = message;
-        return this;
     }
 
     /**
@@ -75,7 +71,7 @@ public class ServiceException extends RuntimeException {
      * @see java.lang.Throwable#fillInStackTrace()
      */
     @Override
-    public Throwable fillInStackTrace() {
+    public synchronized Throwable fillInStackTrace() {
         return this;
     }
 }

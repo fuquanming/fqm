@@ -30,9 +30,9 @@ public class Snowflake implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /** 默认的起始时间，为2021-10-08 14:12:06 */
-    public static long DEFAULT_TWEPOCH = 1288834974657L;
+    private static long defaultTwepoc = 1288834974657L;
     /** 默认回拨时间，2S */
-    public static long DEFAULT_TIME_OFFSET = 2000L;
+    private static long defaultTimeOffset = 2000L;
 
     private static final long WORKER_ID_BITS = 5L;
     /** 最大支持机器节点数0~31，一共32个 */
@@ -96,10 +96,9 @@ public class Snowflake implements Serializable {
      * @param epochDate        初始化时间起点（null表示默认起始日期）,后期修改会导致id重复,如果要修改连workerId dataCenterId，慎用
      * @param workerId         工作机器节点id
      * @param dataCenterId     数据中心id
-     * @since 5.1.3
      */
     public Snowflake(Date epochDate, long workerId, long dataCenterId) {
-        this(epochDate, workerId, dataCenterId, DEFAULT_TIME_OFFSET);
+        this(epochDate, workerId, dataCenterId, defaultTimeOffset);
     }
 
     /**
@@ -107,14 +106,13 @@ public class Snowflake implements Serializable {
      * @param workerId         工作机器节点id
      * @param dataCenterId     数据中心id
      * @param timeOffset 允许时间回拨的毫秒数
-     * @since 5.7.3
      */
     public Snowflake(Date epochDate, long workerId, long dataCenterId, long timeOffset) {
         if (null != epochDate) {
             this.twepoch = epochDate.getTime();
         } else{
             // 2021-10-08 14:12:06
-            this.twepoch = DEFAULT_TWEPOCH;
+            this.twepoch = defaultTwepoc;
         }
         if (workerId > MAX_WORKER_ID || workerId < 0) {
             throw new IllegalArgumentException(String.format("worker Id can't be greater than %d or less than 0", MAX_WORKER_ID));
@@ -199,11 +197,11 @@ public class Snowflake implements Serializable {
         }
 
         if (timestamp == this.lastTimestamp) {
-            final long sequence = (this.sequence + 1) & SEQUENCE_MASK;
+            final long sequenceNext = (this.sequence + 1) & SEQUENCE_MASK;
             if (sequence == 0) {
                 timestamp = tilNextMillis(lastTimestamp);
             }
-            this.sequence = sequence;
+            this.sequence = sequenceNext;
         } else {
             sequence = 0L;
         }

@@ -68,7 +68,6 @@ public class Trie {
                 lastNode = root;
                 i = temp;
                 temp++;
-                continue;
             } else if (lastNode.getObj() != null) {
                 return lastNode.getObj();
             }
@@ -99,7 +98,6 @@ public class Trie {
                 lastNode = root;
                 i = temp;
                 temp++;
-                continue;
             } else if (lastNode.getObj() != null) {
                 NodeObj nodeObj = new NodeObj();
                 nodeObj.setObj(lastNode.getObj());
@@ -172,7 +170,7 @@ public class Trie {
         private Object obj;
         
         public TrieNode() {
-            children = new HashMap<Character, TrieNode>();
+            children = new HashMap<>();
         }
         public TrieNode(char character) {
             this();

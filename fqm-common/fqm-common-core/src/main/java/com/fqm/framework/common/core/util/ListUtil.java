@@ -20,6 +20,8 @@ import com.google.common.collect.Lists;
  */
 public class ListUtil {
 
+    private ListUtil() {
+    }
     /**
      * List切割
      * @param <T>

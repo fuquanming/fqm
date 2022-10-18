@@ -19,6 +19,8 @@ import org.apache.commons.lang3.tuple.ImmutableTriple;
  */
 public class ReturnParamUtil {
 
+    private ReturnParamUtil() {
+    }
     /**
      * <p>创建两个推断泛型类型的对象的不可变对</p>
      *

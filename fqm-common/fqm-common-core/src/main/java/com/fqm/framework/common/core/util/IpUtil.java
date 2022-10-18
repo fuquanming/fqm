@@ -9,7 +9,6 @@
  */
 package com.fqm.framework.common.core.util;
 
-import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -23,7 +22,10 @@ import java.util.Enumeration;
  */
 public class IpUtil {
 
-    public static String LOCAL_127 = "127.0.0.1";
+    private static final String LOCAL_127 = "127.0.0.1";
+    
+    private IpUtil() {
+    }
     /**
      * 根据网卡获得IP地址
      * @return
@@ -32,7 +34,7 @@ public class IpUtil {
     public static String getLocalIp() {
         String ip = null;
         try {
-            ip = Inet4Address.getLocalHost().getHostAddress();
+            ip = InetAddress.getLocalHost().getHostAddress();
             if (ip != null && !"".equals(ip) && !LOCAL_127.equals(ip)) {
                 return ip;
             }
@@ -49,11 +51,9 @@ public class IpUtil {
                         //获得IP
                         InetAddress inetAddress = enumIpAddr.nextElement();
                         if (!inetAddress.isLoopbackAddress()) {
-                            String ipaddress = inetAddress.getHostAddress().toString();
-                            if (!ipaddress.contains("::") && !ipaddress.contains("0:0:") && !ipaddress.contains("fe80")) {
-                                if (!LOCAL_127.equals(ip)) {
-                                    ip = ipaddress;
-                                }
+                            String ipaddress = inetAddress.getHostAddress();
+                            if (!ipaddress.contains("::") && !ipaddress.contains("0:0:") && !ipaddress.contains("fe80") && !LOCAL_127.equals(ip)) {
+                                ip = ipaddress;
                             }
                         }
                     }

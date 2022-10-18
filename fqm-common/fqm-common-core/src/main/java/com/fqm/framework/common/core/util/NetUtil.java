@@ -7,7 +7,10 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
+import java.util.Set;
 
+import com.fqm.framework.common.core.exception.GlobalException;
+import com.fqm.framework.common.core.exception.ServiceException;
 import com.fqm.framework.common.core.lang.Filter;
 /**
  * 
@@ -17,6 +20,8 @@ import com.fqm.framework.common.core.lang.Filter;
  */
 public class NetUtil {
 
+    private NetUtil() {
+    }
     /**
      * 获取所有满足过滤条件的本地IP地址对象
      *
@@ -24,16 +29,16 @@ public class NetUtil {
      * @return 过滤后的地址对象列表
      * @since 4.5.17
      */
-    public static LinkedHashSet<InetAddress> localAddressList(Filter<InetAddress> addressFilter) {
+    public static Set<InetAddress> localAddressList(Filter<InetAddress> addressFilter) {
         Enumeration<NetworkInterface> networkInterfaces;
         try {
             networkInterfaces = NetworkInterface.getNetworkInterfaces();
         } catch (SocketException e) {
-            throw new RuntimeException(e);
+            throw new GlobalException(e);
         }
 
         if (networkInterfaces == null) {
-            throw new RuntimeException("Get network interface error!");
+            throw new ServiceException(null, "Get network interface error!");
         }
 
         final LinkedHashSet<InetAddress> ipSet = new LinkedHashSet<>();
@@ -43,8 +48,7 @@ public class NetUtil {
             final Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();
             while (inetAddresses.hasMoreElements()) {
                 final InetAddress inetAddress = inetAddresses.nextElement();
-//                if (inetAddress != null && (null == addressFilter || addressFilter.accept(inetAddress))) {
-                if (inetAddress != null) {
+                if (null != inetAddress) {
                     if (null == addressFilter || addressFilter.accept(inetAddress)) {
                         ipSet.add(inetAddress);
                     }
@@ -73,7 +77,7 @@ public class NetUtil {
      */
     public static byte[] getHardwareAddress(InetAddress inetAddress) {
         if (null == inetAddress) {
-            return null;
+            return new byte[] {};
         }
 
         try {
@@ -82,9 +86,9 @@ public class NetUtil {
                 return networkInterface.getHardwareAddress();
             }
         } catch (SocketException e) {
-            throw new RuntimeException(e);
+            throw new GlobalException(e);
         }
-        return null;
+        return new byte[] {};
     }
 
     
@@ -103,16 +107,14 @@ public class NetUtil {
      */
     public static InetAddress getLocalhost() {
         final LinkedHashSet<InetAddress> localAddressList = localAddressList(address -> {
-            // 非loopback地址，指127.*.*.*的地址
-            return false == address.isLoopbackAddress()
-                    // 需为IPV4地址
-                    && address instanceof Inet4Address;
+            // 非loopback地址，指127.*.*.*的地址，需为IPV4地址
+            return !address.isLoopbackAddress() && address instanceof Inet4Address;
         });
 
         if (CollectionUtil.isNotEmpty(localAddressList)) {
             InetAddress address2 = null;
             for (InetAddress inetAddress : localAddressList) {
-                if (false == inetAddress.isSiteLocalAddress()) {
+                if (!inetAddress.isSiteLocalAddress()) {
                     // 非地区本地地址，指10.0.0.0 ~ 10.255.255.255、172.16.0.0 ~ 172.31.255.255、192.168.0.0 ~ 192.168.255.255
                     return inetAddress;
                 } else if (null == address2) {

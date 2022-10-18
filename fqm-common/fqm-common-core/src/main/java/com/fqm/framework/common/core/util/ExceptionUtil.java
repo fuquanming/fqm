@@ -9,6 +9,9 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
  */
 public class ExceptionUtil {
     
+    private ExceptionUtil() {
+    }
+    
     public static String getMessage(Throwable th) {
         return ExceptionUtils.getMessage(th);
     }

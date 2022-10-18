@@ -34,6 +34,9 @@ public class IoUtil {
      * 数据流末尾
      */
     public static final int EOF = -1;
+
+    private IoUtil() {
+    }
     
     /**
      * 拷贝流，不会关闭流

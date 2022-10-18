@@ -19,6 +19,8 @@ import com.google.common.collect.HashBiMap;
  */
 public class MapUtil {
 
+    private MapUtil() {
+    }
     /**
      * 一个key可以映射多个value的HashMap
      * @param <K>

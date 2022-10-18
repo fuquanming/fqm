@@ -14,6 +14,8 @@ import com.fqm.framework.common.core.util.NetUtil;
  */
 public class SystemUtil {
 
+    private SystemUtil() {
+    }
     /**
      * 取得Host的信息。
      *

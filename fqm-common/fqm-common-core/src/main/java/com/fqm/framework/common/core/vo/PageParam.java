@@ -18,9 +18,6 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel("分页参数")
 public class PageParam implements Serializable {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 8905235213543099239L;
 
     private static final Integer PAGE_NO = 1;
@@ -54,8 +51,8 @@ public class PageParam implements Serializable {
         return this;
     }
 
-//    public final int getOffset() {
-//        return (pageNo - 1) * pageSize;
-//    }
+    public final int getOffset() {
+        return (pageNo - 1) * pageSize;
+    }
 
 }

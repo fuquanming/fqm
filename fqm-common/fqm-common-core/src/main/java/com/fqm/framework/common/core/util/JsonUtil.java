@@ -1,5 +1,6 @@
 package com.fqm.framework.common.core.util;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -7,7 +8,6 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -31,11 +31,11 @@ public class JsonUtil {
         mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
         /** 允许key有单引号 */
         mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
-        /** 允许整数以0开头 */
-//        mapper.configure(JsonParser.Feature.ALLOW_NUMERIC_LEADING_ZEROS, true);
-        /** 允许字符串中存在回车换行控制符 */
-//        mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
-
+        /** 允许整数以0开头 mapper.configure(JsonParser.Feature.ALLOW_NUMERIC_LEADING_ZEROS, true); */
+        /** 允许字符串中存在回车换行控制符 mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true); */
+    }
+    
+    private JsonUtil() {
     }
 
     /**
@@ -64,8 +64,6 @@ public class JsonUtil {
     public static <T> T toBean(String jsonString, Class<T> clazz) {
         try {
             return mapper.readValue(jsonString, clazz);
-        } catch (JsonMappingException e) {
-            e.printStackTrace();
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
@@ -82,12 +80,10 @@ public class JsonUtil {
         JavaType javaType = mapper.getTypeFactory().constructParametricType(List.class, clazz);
         try {
             return mapper.readValue(jsonString, javaType);
-        } catch (JsonMappingException e) {
-            e.printStackTrace();
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-        return null;
+        return Collections.emptyList();
     }
 
     /**
@@ -100,12 +96,10 @@ public class JsonUtil {
     public static Map<String, Object> toMap(String jsonString) {
         try {
             return mapper.readValue(jsonString, Map.class);
-        } catch (JsonMappingException e) {
-            e.printStackTrace();
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-        return null;
+        return Collections.emptyMap();
     }
 
 }

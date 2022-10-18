@@ -30,6 +30,9 @@ public class RandomUtil {
         }
     }
     
+    private RandomUtil() {
+    }
+    
     /**
      * <p>
      * Returns a random integer within the specified range. within 0 - endExclusive

@@ -17,7 +17,7 @@ import io.swagger.annotations.ApiModelProperty;
  * @author 傅泉明
  */
 @ApiModel(value = "全局统一返回结果")
-public class Result<T> implements Serializable {
+public class Result<T extends Serializable> implements Serializable {
 
     /**
      * 
@@ -39,32 +39,29 @@ public class Result<T> implements Serializable {
     @ApiModelProperty(value = "错误信息")
     private String detailMessage;
 
-    public Result() {
-    }
-
-    protected static <T> Result<T> build(T data) {
-        Result<T> r = new Result<T>();
+    protected static <T extends Serializable> Result<T> build(T data) {
+        Result<T> r = new Result<>();
         if (data != null) {
             r.setData(data);
         }
         return r;
     }
 
-    public static <T> Result<T> build(T body, ErrorCode errorCode) {
+    public static <T extends Serializable> Result<T> build(T body, ErrorCode errorCode) {
         Result<T> r = build(body);
         r.setCode(errorCode.getCode());
         r.setMessage(errorCode.getMessage());
         return r;
     }
 
-    public static <T> Result<T> build(Integer code, String message) {
+    public static <T extends Serializable> Result<T> build(Integer code, String message) {
         Result<T> r = build(null);
         r.setCode(code);
         r.setMessage(message);
         return r;
     }
     
-    public static <T> Result<T> build(Integer code, String message, String detailMessage) {
+    public static <T extends Serializable> Result<T> build(Integer code, String message, String detailMessage) {
         Result<T> r = build(null);
         r.setCode(code);
         r.setMessage(message);
@@ -72,7 +69,7 @@ public class Result<T> implements Serializable {
         return r;
     }
 
-    public static <T> Result<T> ok() {
+    public static <T extends Serializable> Result<T> ok() {
         return Result.ok(null);
     }
 
@@ -82,11 +79,11 @@ public class Result<T> implements Serializable {
      * @param <T>
      * @return
      */
-    public static <T> Result<T> ok(T data) {
+    public static <T extends Serializable> Result<T> ok(T data) {
         return build(data, GlobalErrorCodeConstants.SUCCESS);
     }
 
-    public static <T> Result<T> fail() {
+    public static <T extends Serializable> Result<T> fail() {
         return Result.fail(null);
     }
 
@@ -96,7 +93,7 @@ public class Result<T> implements Serializable {
      * @param <T>
      * @return
      */
-    public static <T> Result<T> fail(T data) {
+    public static <T extends Serializable> Result<T> fail(T data) {
         return build(data, GlobalErrorCodeConstants.INTERNAL_SERVER_ERROR);
     }
 
@@ -111,10 +108,7 @@ public class Result<T> implements Serializable {
     }
 
     public boolean isOk() {
-        if (this.getCode().intValue() == GlobalErrorCodeConstants.SUCCESS.getCode().intValue()) {
-            return true;
-        }
-        return false;
+        return this.getCode().intValue() == GlobalErrorCodeConstants.SUCCESS.getCode().intValue();
     }
 
     public Integer getCode() {
@@ -193,18 +187,18 @@ public class Result<T> implements Serializable {
         }
         // 全局异常
         if (GlobalErrorCodeConstants.isMatch(code)) {
-            throw new GlobalException(code, message).setDetailMessage(detailMessage);
+            throw new GlobalException(code, message, detailMessage);
         }
         // 业务异常
-        throw new ServiceException(code, message).setDetailMessage(detailMessage);
+        throw new ServiceException(code, message, detailMessage);
     }
     
-    public static <T> Result<T> error(ServiceException serviceException) {
+    public static <T extends Serializable> Result<T> error(ServiceException serviceException) {
         return build(serviceException.getCode(), serviceException.getMessage(),
                 serviceException.getDetailMessage());
     }
 
-    public static <T> Result<T> error(GlobalException globalException) {
+    public static <T extends Serializable> Result<T> error(GlobalException globalException) {
         return build(globalException.getCode(), globalException.getMessage(),
                 globalException.getDetailMessage());
     }

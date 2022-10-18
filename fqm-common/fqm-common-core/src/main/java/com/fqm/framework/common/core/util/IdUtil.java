@@ -2,9 +2,11 @@ package com.fqm.framework.common.core.util;
 
 import java.lang.management.ManagementFactory;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fqm.framework.common.core.exception.ServiceException;
 import com.fqm.framework.common.core.incrementer.Snowflake;
 
 /**
@@ -15,6 +17,8 @@ import com.fqm.framework.common.core.incrementer.Snowflake;
  */
 public class IdUtil {
 
+    private IdUtil() {
+    }
     /**
      * 获取数据中心ID<br>
      * 数据中心ID依赖于本地网卡MAC地址。
@@ -56,8 +60,8 @@ public class IdUtil {
             // 获取进程ID
             int pid = 0;
             String processName = ManagementFactory.getRuntimeMXBean().getName();
-            if (StringUtil.isBlank(processName)) {
-                throw new RuntimeException("Process name is blank!");
+            if (StringUtils.isBlank(processName)) {
+                throw new ServiceException(null, "Process name is blank!");
             }
             int atIndex = processName.indexOf('@');
             if (atIndex > 0) {
@@ -103,7 +107,7 @@ public class IdUtil {
         
         private static Logger logger = LoggerFactory.getLogger(SnowflakeInstance.class);
         
-        public static Snowflake instance = null;
+        private static Snowflake instance = null;
         
         static {
             instance = new Snowflake();
@@ -111,6 +115,8 @@ public class IdUtil {
                     instance.getWorkerId(), instance.getTwepoch());
         }
         
+        private SnowflakeInstance() {
+        }
     }
     
 }
