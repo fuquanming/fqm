@@ -22,6 +22,9 @@ public class ValueUtil {
     
     private static String elStartStr = "#{";
     private static String elEndStr = "}";
+    
+    private ValueUtil() {
+    }
     /**
      * 解析表达式，或读取配置信息 
      * @param beanFactory
@@ -33,7 +36,7 @@ public class ValueUtil {
         String resolveValue = beanFactory.resolveEmbeddedValue(value);
         
         // 表达式
-        if (resolveValue.startsWith(elStartStr) && resolveValue.endsWith(elEndStr)) {
+        if (null != resolveValue && resolveValue.startsWith(elStartStr) && resolveValue.endsWith(elEndStr)) {
             RESSOLVER.evaluate(resolveValue, new BeanExpressionContext(beanFactory, null));
         }
         // 读取配置信息

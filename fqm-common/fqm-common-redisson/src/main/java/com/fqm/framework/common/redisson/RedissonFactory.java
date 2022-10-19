@@ -14,6 +14,9 @@ import org.redisson.config.Config;
  * @author 傅泉明
  */
 public class RedissonFactory {
+    
+    private RedissonFactory() {
+    }
 
     /**
      * 返回单机或集群的客户端 

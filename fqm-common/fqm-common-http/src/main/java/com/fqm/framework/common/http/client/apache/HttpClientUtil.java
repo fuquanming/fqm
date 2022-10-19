@@ -10,8 +10,6 @@
 package com.fqm.framework.common.http.client.apache;
 
 import java.io.IOException;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.concurrent.TimeUnit;
@@ -39,6 +37,9 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
  * @author 傅泉明
  */
 public class HttpClientUtil {
+    
+    private HttpClientUtil() {
+    }
 
     public static SSLContext getSslContext() {
         TrustManager[] trustAllCerts = new TrustManager[1];
@@ -48,9 +49,7 @@ public class HttpClientUtil {
         try {
             sc = SSLContext.getInstance("TLS");
             sc.init(null, trustAllCerts, null);
-        } catch (KeyManagementException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return sc;
@@ -58,23 +57,23 @@ public class HttpClientUtil {
 
     static class TrustAllManager implements TrustManager, X509TrustManager {
         public X509Certificate[] getAcceptedIssuers() {
-            return null;
+            return new X509Certificate[] {};
         }
-
+        /**
         public boolean isServerTrusted(X509Certificate[] certs) {
             return true;
         }
 
         public boolean isClientTrusted(X509Certificate[] certs) {
             return true;
-        }
-
+        }*/
+        @Override
         public void checkServerTrusted(X509Certificate[] certs, String authType) throws CertificateException {
-            return;
+            // do nothing
         }
-
+        @Override
         public void checkClientTrusted(X509Certificate[] certs, String authType) throws CertificateException {
-            return;
+            // do nothing
         }
     }
 
@@ -84,15 +83,14 @@ public class HttpClientUtil {
     }
 
     public static CloseableHttpClient createHttpClient(int connectionTimeout, int readTimeout) {
-        //      if (connectionTimeout <= 0) connectionTimeout = 10000;
-        //      if (readTimeout <= 0) readTimeout = 60000;
+        /**      if (connectionTimeout <= 0) connectionTimeout = 10000;
+        //      if (readTimeout <= 0) readTimeout = 60000;*/
 
         SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(HttpClientUtil.getSslContext(),
                 SSLConnectionSocketFactory.getDefaultHostnameVerifier());
         Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory> create()
                 .register("http", PlainConnectionSocketFactory.getSocketFactory()).register("https", sslsf).build();
 
-        //        PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(registry);
         // 60秒长连接
         PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(registry, null, null, null, 60, TimeUnit.SECONDS);
         //设置连接参数,最大连接数
@@ -107,13 +105,13 @@ public class HttpClientUtil {
                 //返回数据的超时时间
                 .setSocketTimeout(readTimeout)
         ;
-//        if (proxyIp != null && proxyPort > 0) {
-//            builder.setProxy(new HttpHost(proxyIp, proxyPort));
-//        }
+        /**
+        if (proxyIp != null && proxyPort > 0) {
+            builder.setProxy(new HttpHost(proxyIp, proxyPort));
+        }*/
         // 重试次数3次，并开启
-        CloseableHttpClient client = HttpClients.custom().setConnectionManager(manager).setRetryHandler(new DefaultHttpRequestRetryHandler(3, true))
+        return HttpClients.custom().setConnectionManager(manager).setRetryHandler(new DefaultHttpRequestRetryHandler(3, true))
                 .setDefaultRequestConfig(builder.build()).build();
-        return client;
     }
     
     public static void closeHttpClient(CloseableHttpClient client) {

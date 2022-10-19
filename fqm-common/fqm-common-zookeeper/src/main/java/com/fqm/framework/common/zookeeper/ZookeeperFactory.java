@@ -14,6 +14,8 @@ public class ZookeeperFactory {
     
     private static int defaultConnectionTimeout = 15000;
     
+    private ZookeeperFactory() {
+    }
     /**
      * 获取Zookeeper客户端 
      * @param config

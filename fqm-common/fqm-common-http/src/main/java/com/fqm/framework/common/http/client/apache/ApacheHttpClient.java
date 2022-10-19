@@ -13,12 +13,15 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
@@ -37,7 +40,6 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fqm.framework.common.core.util.StringUtil;
 import com.fqm.framework.common.core.util.io.IoUtil;
 import com.fqm.framework.common.http.Header;
 import com.fqm.framework.common.http.HttpUtil;
@@ -81,7 +83,7 @@ public class ApacheHttpClient implements HttpClient {
         return null;
     }
 
-    public String getString(HttpEntity entity, String charset) throws Exception {
+    public String getString(HttpEntity entity, String charset) throws IOException {
         if (entity == null) {
             return "";
         }
@@ -93,7 +95,7 @@ public class ApacheHttpClient implements HttpClient {
         return str;
     }
 
-    public byte[] getByte(HttpEntity entity) throws Exception {
+    public byte[] getByte(HttpEntity entity) throws IOException {
         if (entity == null) {
             return new byte[0];
         }
@@ -103,7 +105,7 @@ public class ApacheHttpClient implements HttpClient {
     }
 
     public Object sendDataHttpEntity(HttpUriRequest request, ResultType resultType, Map<String, String> headMap, String charset)
-            throws Exception {
+            throws IOException {
         if (headMap != null) {
             for (Map.Entry<String, String> entry : headMap.entrySet()) {
                 request.setHeader(entry.getKey(), entry.getValue());
@@ -112,10 +114,10 @@ public class ApacheHttpClient implements HttpClient {
         try (CloseableHttpResponse httpResponse = client.execute(request);) {
             HttpEntity entity = httpResponse.getEntity();
             
-            if (ResultType.bytes == resultType) {
+            if (ResultType.BYTES == resultType) {
                 return getByte(entity);
-            } else if (ResultType.string == resultType) {
-                return getString(entity, null);
+            } else if (ResultType.STRING == resultType) {
+                return getString(entity, charset);
             } else {
                 return null;
             }
@@ -127,10 +129,10 @@ public class ApacheHttpClient implements HttpClient {
      *
      * @param urlString 网址
      * @return 返回内容
-     * @throws Exception 
+     * @throws IOException 
      */
-    public String get(String urlString) throws Exception {
-        return (String) sendDataHttpEntity(new HttpGet(urlString), ResultType.string, null, null);
+    public String get(String urlString) throws IOException {
+        return (String) sendDataHttpEntity(new HttpGet(urlString), ResultType.STRING, null, null);
     }
 
     /**
@@ -138,12 +140,12 @@ public class ApacheHttpClient implements HttpClient {
      *
      * @param urlString 网址
      * @return 返回内容
-     * @throws Exception 
+     * @throws IOException 
      */
-    public String get(String urlString, int timeout) throws Exception {
+    public String get(String urlString, int timeout) throws IOException {
         return (String) sendDataHttpEntity(
                 RequestBuilder.get(urlString).setConfig(getRequestConfig(timeout, timeout)).build(),
-                ResultType.string,
+                ResultType.STRING,
                 null,
                 null);
     }
@@ -155,9 +157,9 @@ public class ApacheHttpClient implements HttpClient {
      * @param paramMap       post表单数据
      * @param headMap        请求头
      * @return 返回数据
-     * @throws Exception 
+     * @throws IOException 
      */
-    public String post(String urlString, Map<String, Object> paramMap, Map<String, String> headMap) throws Exception {
+    public String post(String urlString, Map<String, Object> paramMap, Map<String, String> headMap) throws IOException {
         return post(urlString, paramMap, headMap, -1);
     }
 
@@ -168,9 +170,9 @@ public class ApacheHttpClient implements HttpClient {
      * @param paramMap       post表单数据
      * @param headMap        请求头
      * @return 返回数据
-     * @throws Exception 
+     * @throws IOException 
      */
-    public String post(String urlString, Map<String, Object> paramMap, Map<String, String> headMap, int timeout) throws Exception {
+    public String post(String urlString, Map<String, Object> paramMap, Map<String, String> headMap, int timeout) throws IOException {
         RequestBuilder requestBuilder = RequestBuilder.post(urlString);
         /** 是否上传文件 */
         MultipartEntityBuilder multipartEntityBuilder = null;
@@ -180,40 +182,54 @@ public class ApacheHttpClient implements HttpClient {
                 String key = entry.getKey();
                 Object value = entry.getValue();
                 if (value instanceof Collection) {
-                    for (Object val : (Collection<?>) value) {
-                        requestBuilder.addParameter(key, String.valueOf(val));
-                    }
+                    postCollection(requestBuilder, key, value);
                 } else if (value instanceof File) {
-                    if (multipartEntityBuilder == null) {
-                        multipartEntityBuilder = MultipartEntityBuilder.create().setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
-                    }
-                    File file = (File) value;
-                    FileBody fileBody = new FileBody(file, ContentType.MULTIPART_FORM_DATA, file.getName());
-                    multipartEntityBuilder.addPart(key, fileBody);
+                    multipartEntityBuilder = postFile(multipartEntityBuilder, key, value);
                 } else if (value instanceof HttpInputStream) {
-                    if (multipartEntityBuilder == null) {
-                        multipartEntityBuilder = MultipartEntityBuilder.create().setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
-                    }
-                    HttpInputStream is = (HttpInputStream) value;
-                    multipartEntityBuilder.addBinaryBody(key, is.getIs(), ContentType.MULTIPART_FORM_DATA, is.getFileName());
+                    multipartEntityBuilder = postHttpInputStream(multipartEntityBuilder, key, value);
                 } else {
                     requestBuilder.addParameter(key, String.valueOf(value));
                 }
             }
         }
-
-        //        HttpPost request = new HttpPost(urlString);
-        //        UrlEncodedFormEntity entity = new UrlEncodedFormEntity(pairs, "UTF-8");
-        //        request.setEntity(entity);
-
-        requestBuilder.setCharset(Charset.forName(DEFAULT_CHARSET));
+        /**
+                HttpPost request = new HttpPost(urlString);
+                UrlEncodedFormEntity entity = new UrlEncodedFormEntity(pairs, "UTF-8");
+                request.setEntity(entity);
+        */
+        requestBuilder.setCharset(StandardCharsets.UTF_8);
         requestBuilder.setConfig(getRequestConfig(timeout, timeout));
         
-        if (multipartEntityBuilder != null) {
+        if (null != multipartEntityBuilder) {
             requestBuilder.setEntity(multipartEntityBuilder.build());
         }
 
-        return (String) sendDataHttpEntity(requestBuilder.build(), ResultType.string, headMap, DEFAULT_CHARSET);
+        return (String) sendDataHttpEntity(requestBuilder.build(), ResultType.STRING, headMap, DEFAULT_CHARSET);
+    }
+
+    private MultipartEntityBuilder postHttpInputStream(MultipartEntityBuilder multipartEntityBuilder, String key, Object value) {
+        if (null == multipartEntityBuilder) {
+            multipartEntityBuilder = MultipartEntityBuilder.create().setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+        }
+        HttpInputStream is = (HttpInputStream) value;
+        multipartEntityBuilder.addBinaryBody(key, is.getIs(), ContentType.MULTIPART_FORM_DATA, is.getFileName());
+        return multipartEntityBuilder;
+    }
+
+    private MultipartEntityBuilder postFile(MultipartEntityBuilder multipartEntityBuilder, String key, Object value) {
+        if (null == multipartEntityBuilder) {
+            multipartEntityBuilder = MultipartEntityBuilder.create().setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+        }
+        File file = (File) value;
+        FileBody fileBody = new FileBody(file, ContentType.MULTIPART_FORM_DATA, file.getName());
+        multipartEntityBuilder.addPart(key, fileBody);
+        return multipartEntityBuilder;
+    }
+
+    private void postCollection(RequestBuilder requestBuilder, String key, Object value) {
+        for (Object val : (Collection<?>) value) {
+            requestBuilder.addParameter(key, String.valueOf(val));
+        }
     }
 
     /**
@@ -223,9 +239,9 @@ public class ApacheHttpClient implements HttpClient {
      * @param body           body
      * @param headMap        请求头
      * @return 返回数据
-     * @throws Exception 
+     * @throws IOException 
      */
-    public String post(String urlString, String body, Map<String, String> headMap) throws Exception {
+    public String post(String urlString, String body, Map<String, String> headMap) throws IOException {
         return post(urlString, body, headMap, -1, DEFAULT_CHARSET);
     }
     
@@ -237,9 +253,9 @@ public class ApacheHttpClient implements HttpClient {
      * @param headMap        请求头
      * @param charset        请求字符编码
      * @return 返回数据
-     * @throws Exception 
+     * @throws IOException 
      */
-    public String post(String urlString, String body, Map<String, String> headMap, int timeout) throws Exception {
+    public String post(String urlString, String body, Map<String, String> headMap, int timeout) throws IOException {
         return post(urlString, body, headMap, timeout, DEFAULT_CHARSET);
     }
 
@@ -253,7 +269,7 @@ public class ApacheHttpClient implements HttpClient {
      * @param charset        请求字符编码
      * @return 返回数据
      */
-    public String post(String urlString, String body, Map<String, String> headMap, int timeout, String charset) throws Exception {
+    public String post(String urlString, String body, Map<String, String> headMap, int timeout, String charset) throws IOException {
         if (charset == null) {
             charset = DEFAULT_CHARSET;
         }
@@ -266,16 +282,16 @@ public class ApacheHttpClient implements HttpClient {
             requestBuilder.setEntity(reqEntity);
         }
 
-        return (String) sendDataHttpEntity(requestBuilder.build(), ResultType.string, headMap, charset);
+        return (String) sendDataHttpEntity(requestBuilder.build(), ResultType.STRING, headMap, charset);
     }
     
     @Override
-    public long downloadFile(String url, OutputStream os) throws Exception {
+    public long downloadFile(String url, OutputStream os) throws IOException {
         return (long) downloadFiles(url, null, null, null, os, -1);
     }
     
     @Override
-    public long downloadFile(String url, File destFile) throws Exception {
+    public long downloadFile(String url, File destFile) throws IOException {
         return downloadFile(url, null, null, destFile, -1);
     }
     
@@ -289,7 +305,7 @@ public class ApacheHttpClient implements HttpClient {
      * @throws IOException 
      * @throws  
      */
-    public long downloadFile(String url, String body, File destFile) throws Exception {
+    public long downloadFile(String url, String body, File destFile) throws IOException {
         return downloadFile(url, body, null, destFile, -1);
     }
     
@@ -304,11 +320,11 @@ public class ApacheHttpClient implements HttpClient {
      * @throws IOException 
      * @throws  
      */
-    public long downloadFile(String url, String body, Map<String, String> headMap, File destFile) throws Exception {
+    public long downloadFile(String url, String body, Map<String, String> headMap, File destFile) throws IOException {
         return downloadFile(url, body, headMap, destFile, -1);
     }
     
-    public long downloadFile(String url, String body, Map<String, String> headMap, File destFile, int timeout) throws Exception {
+    public long downloadFile(String url, String body, Map<String, String> headMap, File destFile, int timeout) throws IOException {
         return (long) downloadFiles(url, body, headMap, destFile, null, -1);
     }
     
@@ -324,10 +340,10 @@ public class ApacheHttpClient implements HttpClient {
      * @throws IOException 
      * @throws  
      */
-    public Object downloadFiles(String url, String body, Map<String, String> headMap, File destFile, OutputStream os, int timeout) throws Exception {
+    public Object downloadFiles(String url, String body, Map<String, String> headMap, File destFile, OutputStream os, int timeout) throws IOException {
         OutputStream fos = null;
         HttpUriRequest request = null;
-        if (StringUtil.isEmpty(body)) {
+        if (StringUtils.isEmpty(body)) {
             request = RequestBuilder.get(url).setConfig(getRequestConfig(timeout, timeout)).build();
         } else {
             StringEntity reqEntity = new StringEntity(body, DEFAULT_CHARSET);
@@ -349,36 +365,9 @@ public class ApacheHttpClient implements HttpClient {
             if (destFile != null) {
                 File file = null;
                 // 保存的文件名
-                if (true == destFile.isDirectory()) {
+                if (destFile.isDirectory()) {
                     // 从Content-Disposition头中获取文件名
-                    String fileName = null;
-                    String disposition = null;
-                    org.apache.http.Header[] headers = httpResponse.getHeaders(Header.CONTENT_DISPOSITION.getValue());
-                    if (headers != null && headers.length > 0) {
-                        disposition = headers[0].getValue();
-                    }
-                    if (StringUtil.isNotBlank(disposition)) {
-                        fileName = StringUtil.substringBetween(disposition, "filename=\"", "\"");
-                        if (StringUtil.isBlank(fileName)) {
-                            fileName = StringUtil.substringAfter(disposition, "filename=");
-                        }
-                    }
-                    
-                    if (StringUtil.isBlank(fileName)) {
-                        // 从路径中获取文件名
-                        fileName = StringUtil.substringAfterLast(url, "/");
-                        if (StringUtil.isNotBlank(fileName)) {
-                            // url 获取文件名
-                            fileName = URLDecoder.decode(fileName, DEFAULT_CHARSET);
-                        } else {
-                            // 编码后的路径做为文件名
-                            fileName = URLEncoder.encode(url, DEFAULT_CHARSET);
-                        }
-                    } else {
-                        // 头文件获取的文件名
-                        fileName = new String(fileName.getBytes("iso-8859-1"), DEFAULT_CHARSET);
-                    }
-                    file = new File(destFile, fileName);
+                    file = getFileByDirectory(url, destFile, httpResponse);
                 } else {
                     file = destFile;
                 }
@@ -398,7 +387,41 @@ public class ApacheHttpClient implements HttpClient {
             }
         }
     }
-    
+
+    private File getFileByDirectory(String url, File destFile, CloseableHttpResponse httpResponse) throws UnsupportedEncodingException {
+        File file;
+        String fileName = null;
+        String disposition = null;
+        org.apache.http.Header[] headers = httpResponse.getHeaders(Header.CONTENT_DISPOSITION.getValue());
+        if (headers != null && headers.length > 0) {
+            disposition = headers[0].getValue();
+        }
+        if (StringUtils.isNotBlank(disposition)) {
+            fileName = StringUtils.substringBetween(disposition, "filename=\"", "\"");
+            if (StringUtils.isBlank(fileName)) {
+                fileName = StringUtils.substringAfter(disposition, "filename=");
+            }
+        }
+        
+        if (StringUtils.isBlank(fileName)) {
+            // 从路径中获取文件名
+            fileName = StringUtils.substringAfterLast(url, "/");
+            if (StringUtils.isNotBlank(fileName)) {
+                // url 获取文件名
+                fileName = URLDecoder.decode(fileName, DEFAULT_CHARSET);
+            } else {
+                // 编码后的路径做为文件名
+                fileName = URLEncoder.encode(url, DEFAULT_CHARSET);
+            }
+        } else {
+            // 头文件获取的文件名
+            fileName = new String(fileName.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
+        }
+        file = new File(destFile, fileName);
+        return file;
+    }
+
+    @Override
     public void destroy() {
         if (client != null) {
             try {
@@ -412,8 +435,8 @@ public class ApacheHttpClient implements HttpClient {
 
     enum ResultType {
         /** 字符类型 */
-        string, 
+        STRING, 
         /** 字节类型 */
-        bytes;
+        BYTES;
     }
 }

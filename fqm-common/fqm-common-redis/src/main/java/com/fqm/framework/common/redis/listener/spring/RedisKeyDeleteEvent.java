@@ -20,8 +20,8 @@ public class RedisKeyDeleteEvent extends RedisKeyspaceEvent {
      */
     private static final Charset CHARSET = StandardCharsets.UTF_8;
 
-    private final BinaryKeyspaceIdentifier objectId;
-    private final @Nullable Object value;
+    private final transient BinaryKeyspaceIdentifier objectId;
+    private final transient @Nullable Object value;
 
     /**
      * Creates new {@link RedisKeyDeleteEvent}.

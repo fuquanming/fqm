@@ -10,6 +10,7 @@
 package com.fqm.framework.common.http.client;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 
@@ -27,9 +28,9 @@ public interface HttpClient {
      *
      * @param urlString 网址
      * @return 返回内容
-     * @throws Exception
+     * @throws IOException
      */
-    public String get(String urlString) throws Exception;
+    public String get(String urlString) throws IOException;
 
     /**
      * 发送post请求
@@ -38,9 +39,9 @@ public interface HttpClient {
      * @param paramMap       post表单数据
      * @param headMap        请求头
      * @return 返回数据
-     * @throws Exception
+     * @throws IOException
      */
-    public String post(String urlString, Map<String, Object> paramMap, Map<String, String> headMap) throws Exception;
+    public String post(String urlString, Map<String, Object> paramMap, Map<String, String> headMap) throws IOException;
 
     /**
      * 发送post请求
@@ -49,9 +50,9 @@ public interface HttpClient {
      * @param headMap       请求头
      * @param timeout       超时时间   
      * @return
-     * @throws Exception
+     * @throws IOException
      */
-    public String post(String urlString, Map<String, Object> paramMap, Map<String, String> headMap, int timeout) throws Exception;
+    public String post(String urlString, Map<String, Object> paramMap, Map<String, String> headMap, int timeout) throws IOException;
 
     /**
      * 发送post请求<br>
@@ -60,9 +61,9 @@ public interface HttpClient {
      * @param body           请求内容
      * @param headMap        请求头
      * @return 返回数据
-     * @throws Exception
+     * @throws IOException
      */
-    public String post(String urlString, String body, Map<String, String> headMap) throws Exception;
+    public String post(String urlString, String body, Map<String, String> headMap) throws IOException;
 
     /**
      * 发送post请求<br>
@@ -71,9 +72,9 @@ public interface HttpClient {
      * @param headMap       请求头
      * @param timeout       超时时间    
      * @return
-     * @throws Exception
+     * @throws IOException
      */
-    public String post(String urlString, String body, Map<String, String> headMap, int timeout) throws Exception;
+    public String post(String urlString, String body, Map<String, String> headMap, int timeout) throws IOException;
     
     /**
     * 发送post请求<br>
@@ -84,18 +85,18 @@ public interface HttpClient {
     * @param timeout        超时时间
     * @param charset        请求字符编码
     * @return 返回数据
-    * @throws Exception
+    * @throws IOException
     */
-    public String post(String urlString, String body, Map<String, String> headMap, int timeout, String charset) throws Exception;
+    public String post(String urlString, String body, Map<String, String> headMap, int timeout, String charset) throws IOException;
     
     /**
      * 下载远程文件
      * @param url           请求的url
      * @param os            输出的流
      * @return
-     * @throws Exception
+     * @throws IOException
      */
-    public long downloadFile(String url, OutputStream os) throws Exception;
+    public long downloadFile(String url, OutputStream os) throws IOException;
     
     /**
      * 下载远程文件
@@ -103,9 +104,9 @@ public interface HttpClient {
      * @param url            请求的url
      * @param destFile       目标文件或目录，当为目录时，取URL中的文件名，取不到使用编码后的URL做为文件名
      * @return 文件大小
-     * @throws Exception
+     * @throws IOException
      */
-    public long downloadFile(String url, File destFile) throws Exception;
+    public long downloadFile(String url, File destFile) throws IOException;
     
     /**
      * 下载远程文件
@@ -114,9 +115,9 @@ public interface HttpClient {
      * @param body           请求内容
      * @param destFile       目标文件或目录，当为目录时，取URL中的文件名，取不到使用编码后的URL做为文件名
      * @return 文件大小
-     * @throws Exception
+     * @throws IOException
      */
-    public long downloadFile(String url, String body, File destFile) throws Exception;
+    public long downloadFile(String url, String body, File destFile) throws IOException;
     
     
     /**
@@ -127,9 +128,9 @@ public interface HttpClient {
      * @param headMap        请求头
      * @param destFile       目标文件或目录，当为目录时，取URL中的文件名，取不到使用编码后的URL做为文件名
      * @return 文件大小
-     * @throws Exception
+     * @throws IOException
      */
-    public long downloadFile(String url, String body, Map<String, String> headMap, File destFile) throws Exception;
+    public long downloadFile(String url, String body, Map<String, String> headMap, File destFile) throws IOException;
     
     /**
      * 下载远程文件
@@ -140,9 +141,9 @@ public interface HttpClient {
      * @param destFile       目标文件或目录，当为目录时，取URL中的文件名，取不到使用编码后的URL做为文件名
      * @param timeout        超时，单位毫秒，-1表示默认超时
      * @return 文件大小
-     * @throws Exception
+     * @throws IOException
      */
-    public long downloadFile(String url, String body, Map<String, String> headMap, File destFile, int timeout) throws Exception;
+    public long downloadFile(String url, String body, Map<String, String> headMap, File destFile, int timeout) throws IOException;
     
     /**
      * 默认摧毁 

@@ -3,6 +3,7 @@ package com.fqm.framework.common.spring.util;
 import java.util.Map;
 
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -71,7 +72,7 @@ public class SpringUtil implements BeanFactoryPostProcessor, ApplicationContextA
         } else if (applicationContext instanceof ConfigurableApplicationContext) {
             factory = ((ConfigurableApplicationContext) applicationContext).getBeanFactory();
         } else {
-            throw new RuntimeException("No ConfigurableListableBeanFactory from context!");
+            throw new BeanDefinitionStoreException("No ConfigurableListableBeanFactory from context!");
         }
         return factory;
     }
@@ -154,7 +155,7 @@ public class SpringUtil implements BeanFactoryPostProcessor, ApplicationContextA
      */
     public static String[] getActiveProfiles() {
         if(null == applicationContext){
-            return null;
+            return new String[] {};
         }
         return applicationContext.getEnvironment().getActiveProfiles();
     }
@@ -166,7 +167,7 @@ public class SpringUtil implements BeanFactoryPostProcessor, ApplicationContextA
      */
     public static String getActiveProfile() {
         final String[] activeProfiles = getActiveProfiles();
-        return (null != activeProfiles && activeProfiles.length != 0) ? activeProfiles[0] : null;
+        return (activeProfiles.length != 0) ? activeProfiles[0] : null;
     }
 
     /**
@@ -197,7 +198,7 @@ public class SpringUtil implements BeanFactoryPostProcessor, ApplicationContextA
             DefaultSingletonBeanRegistry registry = (DefaultSingletonBeanRegistry) factory;
             registry.destroySingleton(beanName);
         } else {
-            throw new RuntimeException("Can not unregister bean, the factory is not a DefaultSingletonBeanRegistry!");
+            throw new BeanDefinitionStoreException("Can not unregister bean, the factory is not a DefaultSingletonBeanRegistry!");
         }
     }
 }

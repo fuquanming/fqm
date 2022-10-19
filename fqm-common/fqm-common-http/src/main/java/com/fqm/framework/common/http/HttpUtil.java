@@ -41,10 +41,10 @@ public class HttpUtil {
 
     private static ThreadLocal<ProxyInfo> proxyLocal = new ThreadLocal<>();
 
-    /** 超时时间，单位毫秒 */
-    public static int timeout = 60000;
+    private static HttpClient httpClient;
     
-    private static volatile HttpClient httpClient;
+    private HttpUtil() {
+    }
     /**
      * 设置代理 ip 和 端口
      * @param ip
@@ -73,12 +73,12 @@ public class HttpUtil {
     }
     
     private static class ApacheHttpClientHolder {
-        private static HttpClient INSTANCE = new ApacheHttpClient();
+        private static HttpClient instance = new ApacheHttpClient();
     }
     
     public static HttpClient getHttpClient() {
         if (httpClient == null) {
-            httpClient = ApacheHttpClientHolder.INSTANCE;
+            httpClient = ApacheHttpClientHolder.instance;
         }
         return httpClient;
     }

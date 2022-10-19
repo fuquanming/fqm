@@ -10,6 +10,8 @@ import org.springframework.data.redis.listener.Topic;
  */
 public class TopicManager {
     
+    private TopicManager() {
+    }
     /**
      * 所有主题
      * @return
