@@ -131,6 +131,7 @@ public class ApacheHttpClient implements HttpClient {
      * @return 返回内容
      * @throws IOException 
      */
+    @Override
     public String get(String urlString) throws IOException {
         return (String) sendDataHttpEntity(new HttpGet(urlString), ResultType.STRING, null, null);
     }
@@ -159,6 +160,7 @@ public class ApacheHttpClient implements HttpClient {
      * @return 返回数据
      * @throws IOException 
      */
+    @Override
     public String post(String urlString, Map<String, Object> paramMap, Map<String, String> headMap) throws IOException {
         return post(urlString, paramMap, headMap, -1);
     }
@@ -172,6 +174,7 @@ public class ApacheHttpClient implements HttpClient {
      * @return 返回数据
      * @throws IOException 
      */
+    @Override
     public String post(String urlString, Map<String, Object> paramMap, Map<String, String> headMap, int timeout) throws IOException {
         RequestBuilder requestBuilder = RequestBuilder.post(urlString);
         /** 是否上传文件 */
@@ -241,6 +244,7 @@ public class ApacheHttpClient implements HttpClient {
      * @return 返回数据
      * @throws IOException 
      */
+    @Override
     public String post(String urlString, String body, Map<String, String> headMap) throws IOException {
         return post(urlString, body, headMap, -1, DEFAULT_CHARSET);
     }
@@ -255,6 +259,7 @@ public class ApacheHttpClient implements HttpClient {
      * @return 返回数据
      * @throws IOException 
      */
+    @Override
     public String post(String urlString, String body, Map<String, String> headMap, int timeout) throws IOException {
         return post(urlString, body, headMap, timeout, DEFAULT_CHARSET);
     }
@@ -269,6 +274,7 @@ public class ApacheHttpClient implements HttpClient {
      * @param charset        请求字符编码
      * @return 返回数据
      */
+    @Override
     public String post(String urlString, String body, Map<String, String> headMap, int timeout, String charset) throws IOException {
         if (charset == null) {
             charset = DEFAULT_CHARSET;
@@ -305,6 +311,7 @@ public class ApacheHttpClient implements HttpClient {
      * @throws IOException 
      * @throws  
      */
+    @Override
     public long downloadFile(String url, String body, File destFile) throws IOException {
         return downloadFile(url, body, null, destFile, -1);
     }
@@ -320,10 +327,12 @@ public class ApacheHttpClient implements HttpClient {
      * @throws IOException 
      * @throws  
      */
+    @Override
     public long downloadFile(String url, String body, Map<String, String> headMap, File destFile) throws IOException {
         return downloadFile(url, body, headMap, destFile, -1);
     }
     
+    @Override
     public long downloadFile(String url, String body, Map<String, String> headMap, File destFile, int timeout) throws IOException {
         return (long) downloadFiles(url, body, headMap, destFile, null, -1);
     }

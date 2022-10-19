@@ -56,17 +56,10 @@ public class HttpClientUtil {
     }
 
     static class TrustAllManager implements TrustManager, X509TrustManager {
+        @Override
         public X509Certificate[] getAcceptedIssuers() {
             return new X509Certificate[] {};
         }
-        /**
-        public boolean isServerTrusted(X509Certificate[] certs) {
-            return true;
-        }
-
-        public boolean isClientTrusted(X509Certificate[] certs) {
-            return true;
-        }*/
         @Override
         public void checkServerTrusted(X509Certificate[] certs, String authType) throws CertificateException {
             // do nothing
@@ -77,7 +70,6 @@ public class HttpClientUtil {
         }
     }
 
-    /** 10秒连接，200秒读 */
     public static HttpClient createHttpClient() {
         return createHttpClient(10000, 200000);
     }
