@@ -49,14 +49,18 @@ public class NetUtil {
             while (inetAddresses.hasMoreElements()) {
                 final InetAddress inetAddress = inetAddresses.nextElement();
                 if (null != inetAddress) {
-                    if (null == addressFilter || addressFilter.accept(inetAddress)) {
-                        ipSet.add(inetAddress);
-                    }
+                    addressFilterIp(addressFilter, ipSet, inetAddress);
                 }
             }
         }
 
         return ipSet;
+    }
+    
+    private static void addressFilterIp(Filter<InetAddress> addressFilter, final LinkedHashSet<InetAddress> ipSet, final InetAddress inetAddress) {
+        if (null == addressFilter || addressFilter.accept(inetAddress)) {
+            ipSet.add(inetAddress);
+        }
     }
     
     /**
@@ -106,10 +110,8 @@ public class NetUtil {
      * @return 本机网卡IP地址，获取失败返回{@code null}
      */
     public static InetAddress getLocalhost() {
-        final LinkedHashSet<InetAddress> localAddressList = localAddressList(address -> {
-            // 非loopback地址，指127.*.*.*的地址，需为IPV4地址
-            return !address.isLoopbackAddress() && address instanceof Inet4Address;
-        });
+        // 非loopback地址，指127.*.*.*的地址，需为IPV4地址
+        final Set<InetAddress> localAddressList = localAddressList(address -> !address.isLoopbackAddress() && address instanceof Inet4Address);
 
         if (CollectionUtil.isNotEmpty(localAddressList)) {
             InetAddress address2 = null;

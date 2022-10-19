@@ -7,9 +7,12 @@ package com.fqm.framework.common.core.exception;
  * @version 
  * @author 傅泉明
  */
-@SuppressWarnings("serial")
 public class GlobalException extends RuntimeException {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 2186942009688825738L;
     /**
      * 全局错误码
      *

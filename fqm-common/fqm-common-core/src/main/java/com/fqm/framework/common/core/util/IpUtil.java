@@ -24,14 +24,14 @@ public class IpUtil {
 
     private static final String LOCAL_127 = "127.0.0.1";
     
+    private static String ipColon = "::";
+    private static String ipColonZero = "0:0:";
+    private static String ipFe = "fe80";
+    
     private IpUtil() {
     }
-    /**
-     * 根据网卡获得IP地址
-     * @return
-     * @throws SocketException
-     */
-    public static String getLocalIp() {
+    
+    private static String getHostAddressIp() {
         String ip = null;
         try {
             ip = InetAddress.getLocalHost().getHostAddress();
@@ -41,7 +41,30 @@ public class IpUtil {
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
-        ip = null;
+        return ip;
+    }
+    
+    private static String getInetAddressIp(InetAddress inetAddress) {
+        String ip = null;
+        if (!inetAddress.isLoopbackAddress()) {
+            String ipaddress = inetAddress.getHostAddress();
+            if (!ipaddress.contains(ipColon) && !ipaddress.contains(ipColonZero) && !ipaddress.contains(ipFe)) {
+                ip = ipaddress;
+            }
+        }
+        return ip;
+    }
+    
+    /**
+     * 根据网卡获得IP地址
+     * @return
+     * @throws SocketException
+     */
+    public static String getLocalIp() {
+        String ip = getHostAddressIp();
+        if (null != ip) {
+            return ip;
+        }
         try {
             for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
                 NetworkInterface intf = en.nextElement();
@@ -49,13 +72,7 @@ public class IpUtil {
                 if (!name.contains("docker") && !name.contains("lo")) {
                     for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements();) {
                         //获得IP
-                        InetAddress inetAddress = enumIpAddr.nextElement();
-                        if (!inetAddress.isLoopbackAddress()) {
-                            String ipaddress = inetAddress.getHostAddress();
-                            if (!ipaddress.contains("::") && !ipaddress.contains("0:0:") && !ipaddress.contains("fe80") && !LOCAL_127.equals(ip)) {
-                                ip = ipaddress;
-                            }
-                        }
+                        ip = getInetAddressIp(enumIpAddr.nextElement());
                     }
                 }
             }

@@ -9,7 +9,7 @@
 		<version>1.0.2</version>
 	</parent>
 	<artifactId>fqm-common-core</artifactId>
-	<version>1.0.3</version>
+	<version>1.0.4</version>
 	
 	<description>定义基础 pojo 类、枚举、工具类等等</description>
     <url></url>

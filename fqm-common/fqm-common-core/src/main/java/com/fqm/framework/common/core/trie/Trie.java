@@ -60,14 +60,10 @@ public class Trie {
         TrieNode lastNode = root;
         char[] chars = str.toCharArray();
         int length = chars.length;
-        /** 记录找到第一个字符的下标 */
-        int temp = 0; 
         for (int i = 0; i < length; i++) {
             lastNode = lastNode.getNode(chars[i]);
             if (lastNode == null) {
                 lastNode = root;
-                i = temp;
-                temp++;
             } else if (lastNode.getObj() != null) {
                 return lastNode.getObj();
             }
@@ -96,7 +92,7 @@ public class Trie {
             lastNode = lastNode.getNode(chars[i]);
             if (lastNode == null) {
                 lastNode = root;
-                i = temp;
+                temp = i;
                 temp++;
             } else if (lastNode.getObj() != null) {
                 NodeObj nodeObj = new NodeObj();
@@ -178,12 +174,8 @@ public class Trie {
         }
         
         TrieNode addString(char c) {
-            TrieNode node = children.get(c);
-            if (node == null) {
-                node = new TrieNode(c);
-                children.put(c, node);
-                node.parent = this;
-            }
+            TrieNode node = children.computeIfAbsent(c, k -> new TrieNode(c));
+            node.parent = this;
             return node;
         }
         public Object getObj() {
