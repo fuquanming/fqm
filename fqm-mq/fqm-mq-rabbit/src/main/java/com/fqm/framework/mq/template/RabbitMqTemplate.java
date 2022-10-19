@@ -43,7 +43,7 @@ public class RabbitMqTemplate implements MqTemplate {
     
     private String hostAddress = SystemUtil.getHostAddress();
     
-    private long pid = SystemUtil.getCurrentPID();
+    private long pid = SystemUtil.getCurrentPid();
     /** 延迟任务的信息头 */
     public static final String HEADER_DELAY = "rabbit-delay";
     

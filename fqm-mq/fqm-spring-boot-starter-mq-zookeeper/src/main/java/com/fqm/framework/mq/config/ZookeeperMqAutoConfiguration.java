@@ -1,5 +1,6 @@
 package com.fqm.framework.mq.config;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
@@ -18,7 +19,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
-import com.fqm.framework.common.core.util.StringUtil;
 import com.fqm.framework.mq.MqFactory;
 import com.fqm.framework.mq.MqMode;
 import com.fqm.framework.mq.annotation.MqListenerAnnotationBeanPostProcessor;
@@ -93,7 +93,7 @@ public class ZookeeperMqAutoConfiguration implements SmartInitializingSingleton,
             }
             if (properties != null && MqMode.zookeeper.name().equals(properties.getBinder())) {
                 String topic = properties.getTopic();
-                Preconditions.checkArgument(StringUtil.isNotBlank(topic), "Please specific [topic] under mq configuration.");
+                Preconditions.checkArgument(StringUtils.isNotBlank(topic), "Please specific [topic] under mq configuration.");
                 zookeeperMqTemplate.getQueue(topic, new ZookeeperMqListener(v.getBean(), v.getMethod(), zookeeperMqTemplate, topic));
                 logger.info("Init ZookeeperMqListener,bean={},method={},topic={}", v.getBean().getClass(), v.getMethod().getName(), topic);
             }

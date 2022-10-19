@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
@@ -18,7 +19,6 @@ import org.springframework.core.annotation.MergedAnnotations;
 import org.springframework.core.annotation.MergedAnnotations.SearchStrategy;
 import org.springframework.util.ReflectionUtils;
 
-import com.fqm.framework.common.core.util.StringUtil;
 import com.fqm.framework.common.spring.util.ValueUtil;
 import com.fqm.framework.mq.listener.MqListenerParam;
 import com.google.common.base.Preconditions;
@@ -51,7 +51,7 @@ public class MqListenerAnnotationBeanPostProcessor implements BeanPostProcessor,
                 for (MqListener mqListener : method.annotations) {
                     String name = mqListener.name();// 消息名称
                     String nameStr = ValueUtil.resolveExpression((ConfigurableBeanFactory)beanFactory, name).toString();
-                    Preconditions.checkArgument(StringUtil.isNotBlank(nameStr), "Please specific [name] under mq configuration.");
+                    Preconditions.checkArgument(StringUtils.isNotBlank(nameStr), "Please specific [name] under mq configuration.");
                     MqListenerParam param = new MqListenerParam();
                     param.setName(nameStr).setBean(bean).setMethod(method.method);
                     listeners.add(param);

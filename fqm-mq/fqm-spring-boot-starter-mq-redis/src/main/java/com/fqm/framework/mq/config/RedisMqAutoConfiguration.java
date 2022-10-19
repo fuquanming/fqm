@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 //import org.redisson.api.RStream;
@@ -31,7 +32,6 @@ import org.springframework.data.redis.stream.StreamMessageListenerContainer;
 import org.springframework.data.redis.stream.StreamMessageListenerContainer.StreamMessageListenerContainerOptions;
 import org.springframework.util.ErrorHandler;
 
-import com.fqm.framework.common.core.util.StringUtil;
 import com.fqm.framework.common.core.util.system.SystemUtil;
 import com.fqm.framework.common.redis.listener.spring.KeyExpiredEventMessageListener;
 import com.fqm.framework.mq.MqFactory;
@@ -164,8 +164,8 @@ public class RedisMqAutoConfiguration {
                 /** spring-boot->2.4.2,redisson-spring-boot-starter->3.15.1，使用新API */
                 String group = properties.getGroup();
                 String topic = properties.getTopic();
-                Preconditions.checkArgument(StringUtil.isNotBlank(group), "Please specific [group] under mq configuration.");
-                Preconditions.checkArgument(StringUtil.isNotBlank(topic), "Please specific [topic] under mq configuration.");
+                Preconditions.checkArgument(StringUtils.isNotBlank(group), "Please specific [group] under mq configuration.");
+                Preconditions.checkArgument(StringUtils.isNotBlank(topic), "Please specific [topic] under mq configuration.");
                 // Lua获取消费者组
                 try {
                     XInfoGroups gs = LuaScriptUtil.getXInfoGroups(topic, stringRedisTemplate);
@@ -245,7 +245,7 @@ public class RedisMqAutoConfiguration {
      */
     private static String buildConsumerName() {
 //        return "consumer-1";
-        return String.format("%s@%d", SystemUtil.getHostAddress(), SystemUtil.getCurrentPID());
+        return String.format("%s@%d", SystemUtil.getHostAddress(), SystemUtil.getCurrentPid());
     }
 
     @Bean

@@ -3,6 +3,7 @@ package com.fqm.framework.mq.config;
 import java.lang.annotation.Annotation;
 import java.nio.charset.Charset;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.rocketmq.client.AccessChannel;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
@@ -34,7 +35,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.messaging.converter.StringMessageConverter;
 
-import com.fqm.framework.common.core.util.StringUtil;
 import com.fqm.framework.mq.MqFactory;
 import com.fqm.framework.mq.MqMode;
 import com.fqm.framework.mq.annotation.MqListenerAnnotationBeanPostProcessor;
@@ -131,8 +131,8 @@ public class RocketMqAutoConfiguration implements SmartInitializingSingleton, Ap
             if (properties != null && MqMode.rocket.name().equals(properties.getBinder())) {
                 String group = properties.getGroup();
                 String topic = properties.getTopic();
-                Preconditions.checkArgument(StringUtil.isNotBlank(group), "Please specific [group] under mq configuration.");
-                Preconditions.checkArgument(StringUtil.isNotBlank(topic), "Please specific [topic] under mq configuration.");
+                Preconditions.checkArgument(StringUtils.isNotBlank(group), "Please specific [group] under mq configuration.");
+                Preconditions.checkArgument(StringUtils.isNotBlank(topic), "Please specific [topic] under mq configuration.");
                 String beanName = "rocketListener." + i;
                 // 动态注册
                 //将applicationContext转换为ConfigurableApplicationContext

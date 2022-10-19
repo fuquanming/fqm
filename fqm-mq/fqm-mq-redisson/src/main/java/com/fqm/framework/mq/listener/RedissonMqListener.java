@@ -3,11 +3,11 @@ package com.fqm.framework.mq.listener;
 import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RBlockingDeque;
 import org.redisson.api.RDelayedQueue;
 import org.redisson.api.RedissonClient;
 
-import com.fqm.framework.common.core.util.StringUtil;
 /**
  * Redisson消息队列监听器
  * 
@@ -43,7 +43,7 @@ public class RedissonMqListener extends MqListenerAdapter<String> implements Run
                 redissonClient.getDelayedQueue(topicQueue);
                 // 阻塞获取队列数据，没有ack消息队列，消息取出服务端就删除了该消息
                 String msg = topicQueue.take().toString();
-                if (StringUtil.isNotBlank(msg)) {
+                if (StringUtils.isNotBlank(msg)) {
                     try {
                         receiveMessage(msg);
                     } catch (Exception e) {

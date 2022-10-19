@@ -3,6 +3,7 @@ package com.fqm.framework.mq.config;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,9 +13,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
-import com.fqm.framework.common.redisson.RedissonFactory;
-import com.fqm.framework.common.core.util.StringUtil;
 import com.fqm.framework.common.redisson.RedissonConfig;
+import com.fqm.framework.common.redisson.RedissonFactory;
 import com.fqm.framework.mq.MqFactory;
 import com.fqm.framework.mq.MqMode;
 import com.fqm.framework.mq.annotation.MqListenerAnnotationBeanPostProcessor;
@@ -64,8 +64,8 @@ public class RedissonMqAutoConfiguration {
             if (properties != null && MqMode.redisson.name().equals(properties.getBinder())) {
                 String group = properties.getGroup();
                 String topic = properties.getTopic();
-                Preconditions.checkArgument(StringUtil.isNotBlank(group), "Please specific [group] under mq configuration.");
-                Preconditions.checkArgument(StringUtil.isNotBlank(topic), "Please specific [topic] under mq configuration.");
+                Preconditions.checkArgument(StringUtils.isNotBlank(group), "Please specific [group] under mq configuration.");
+                Preconditions.checkArgument(StringUtils.isNotBlank(topic), "Please specific [topic] under mq configuration.");
                 RedissonMqListener redissonMqListener = new RedissonMqListener(v.getBean(), v.getMethod(), redissonClient, topic, group);
                 listenerList.add(redissonMqListener);
                 logger.info("Init RedissonMqListener,bean={},method={},topic={},group={}", v.getBean().getClass(), v.getMethod().getName(), topic, group);
