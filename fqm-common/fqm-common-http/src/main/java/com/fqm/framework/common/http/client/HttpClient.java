@@ -27,6 +27,7 @@ public interface HttpClient {
      *
      * @param urlString 网址
      * @return 返回内容
+     * @throws Exception
      */
     public String get(String urlString) throws Exception;
 
@@ -37,16 +38,18 @@ public interface HttpClient {
      * @param paramMap       post表单数据
      * @param headMap        请求头
      * @return 返回数据
+     * @throws Exception
      */
     public String post(String urlString, Map<String, Object> paramMap, Map<String, String> headMap) throws Exception;
 
     /**
      * 发送post请求
-     *
-     * @param urlString      网址
-     * @param paramMap       post表单数据
-     * @param headMap        请求头
-     * @return 返回数据
+     * @param urlString     网址
+     * @param paramMap      post表单数据
+     * @param headMap       请求头
+     * @param timeout       超时时间   
+     * @return
+     * @throws Exception
      */
     public String post(String urlString, Map<String, Object> paramMap, Map<String, String> headMap, int timeout) throws Exception;
 
@@ -57,16 +60,18 @@ public interface HttpClient {
      * @param body           请求内容
      * @param headMap        请求头
      * @return 返回数据
+     * @throws Exception
      */
     public String post(String urlString, String body, Map<String, String> headMap) throws Exception;
 
     /**
      * 发送post请求<br>
-     *
-     * @param urlString      网址
-     * @param body           请求内容
-     * @param headMap        请求头
-     * @return 返回数据
+     * @param urlString     网址
+     * @param body          请求内容
+     * @param headMap       请求头
+     * @param timeout       超时时间    
+     * @return
+     * @throws Exception
      */
     public String post(String urlString, String body, Map<String, String> headMap, int timeout) throws Exception;
     
@@ -79,14 +84,15 @@ public interface HttpClient {
     * @param timeout        超时时间
     * @param charset        请求字符编码
     * @return 返回数据
+    * @throws Exception
     */
     public String post(String urlString, String body, Map<String, String> headMap, int timeout, String charset) throws Exception;
     
     /**
      * 下载远程文件
-     * 
      * @param url           请求的url
      * @param os            输出的流
+     * @return
      * @throws Exception
      */
     public long downloadFile(String url, OutputStream os) throws Exception;
@@ -97,7 +103,7 @@ public interface HttpClient {
      * @param url            请求的url
      * @param destFile       目标文件或目录，当为目录时，取URL中的文件名，取不到使用编码后的URL做为文件名
      * @return 文件大小
-     * @throws  
+     * @throws Exception
      */
     public long downloadFile(String url, File destFile) throws Exception;
     
@@ -108,7 +114,7 @@ public interface HttpClient {
      * @param body           请求内容
      * @param destFile       目标文件或目录，当为目录时，取URL中的文件名，取不到使用编码后的URL做为文件名
      * @return 文件大小
-     * @throws  
+     * @throws Exception
      */
     public long downloadFile(String url, String body, File destFile) throws Exception;
     
@@ -121,7 +127,7 @@ public interface HttpClient {
      * @param headMap        请求头
      * @param destFile       目标文件或目录，当为目录时，取URL中的文件名，取不到使用编码后的URL做为文件名
      * @return 文件大小
-     * @throws  
+     * @throws Exception
      */
     public long downloadFile(String url, String body, Map<String, String> headMap, File destFile) throws Exception;
     
@@ -134,11 +140,13 @@ public interface HttpClient {
      * @param destFile       目标文件或目录，当为目录时，取URL中的文件名，取不到使用编码后的URL做为文件名
      * @param timeout        超时，单位毫秒，-1表示默认超时
      * @return 文件大小
-     * @throws  
+     * @throws Exception
      */
     public long downloadFile(String url, String body, Map<String, String> headMap, File destFile, int timeout) throws Exception;
     
-
+    /**
+     * 默认摧毁 
+     */
     default void destroy() {
     }
     

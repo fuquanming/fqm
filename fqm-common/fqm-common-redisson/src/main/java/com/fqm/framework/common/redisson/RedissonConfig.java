@@ -2,7 +2,12 @@ package com.fqm.framework.common.redisson;
 
 import java.time.Duration;
 import java.util.List;
-
+/**
+ * Redisson配置
+ * 
+ * @version 
+ * @author 傅泉明
+ */
 public class RedissonConfig {
     /**
      * Database index used by the connection factory.

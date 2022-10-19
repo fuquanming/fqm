@@ -27,8 +27,20 @@ public interface CacheBuilder {
      */
     public Cache getCache(String name, int expireSecond, int nullExpireSecond, int refreshSecond);
 
+    /**
+     * 获取缓存类型
+     * @return
+     */
     public CacheType getCacheType();
 
+    /**
+     * 获取缓存名称
+     * @param name                  缓存名称
+     * @param expireSecond          过期时间，单位：秒
+     * @param nullExpireSecond      null值过期时间，单位：秒
+     * @param refreshSecond         刷新时间，单位：秒
+     * @return
+     */
     public static String getCacheName(String name, int expireSecond, int nullExpireSecond, int refreshSecond) {
         return name + SEPARATE_CHAR + expireSecond + SEPARATE_CHAR + nullExpireSecond + SEPARATE_CHAR + refreshSecond;
     }

@@ -18,7 +18,10 @@ import org.springframework.context.expression.StandardBeanExpressionResolver;
 
 public class ValueUtil {
 
-    private static final BeanExpressionResolver resolver = new StandardBeanExpressionResolver();
+    private static final BeanExpressionResolver RESSOLVER = new StandardBeanExpressionResolver();
+    
+    private static String elStartStr = "#{";
+    private static String elEndStr = "}";
     /**
      * 解析表达式，或读取配置信息 
      * @param beanFactory
@@ -30,8 +33,8 @@ public class ValueUtil {
         String resolveValue = beanFactory.resolveEmbeddedValue(value);
         
         // 表达式
-        if (resolveValue.startsWith("#{") && resolveValue.endsWith("}")) {
-            resolver.evaluate(resolveValue, new BeanExpressionContext(beanFactory, null));
+        if (resolveValue.startsWith(elStartStr) && resolveValue.endsWith(elEndStr)) {
+            RESSOLVER.evaluate(resolveValue, new BeanExpressionContext(beanFactory, null));
         }
         // 读取配置信息
         return resolveValue;

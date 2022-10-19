@@ -11,13 +11,19 @@ import org.apache.curator.retry.ExponentialBackoffRetry;
  * @author 傅泉明
  */
 public class ZookeeperFactory {
+    
+    private static int defaultConnectionTimeout = 15000;
+    
     /**
      * 获取Zookeeper客户端 
      * @param config
      * @return
      */
     public static CuratorFramework buildCuratorFramework(ZookeeperConfig config) {
-        if (config.getConnectionTimeout() < 15000) config.setConnectionTimeout(15000);// 必须大于15秒
+        if (config.getConnectionTimeout() < defaultConnectionTimeout) {
+            // 必须大于15秒
+            config.setConnectionTimeout(defaultConnectionTimeout);
+        }
         RetryPolicy retryPolicy = new ExponentialBackoffRetry(config.getBaseSleepTimeMs(), config.getMaxRetries(), config.getMaxSleepMs());
         return CuratorFrameworkFactory.builder().connectString(config.getConnectString()).sessionTimeoutMs(config.getSessionTimeout())
                 .connectionTimeoutMs(config.getConnectionTimeout()).retryPolicy(retryPolicy).build();

@@ -40,7 +40,7 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
  */
 public class HttpClientUtil {
 
-    public static SSLContext getSSLContext() {
+    public static SSLContext getSslContext() {
         TrustManager[] trustAllCerts = new TrustManager[1];
         TrustManager tm = new TrustAllManager();
         trustAllCerts[0] = tm;
@@ -87,26 +87,31 @@ public class HttpClientUtil {
         //      if (connectionTimeout <= 0) connectionTimeout = 10000;
         //      if (readTimeout <= 0) readTimeout = 60000;
 
-        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(HttpClientUtil.getSSLContext(),
+        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(HttpClientUtil.getSslContext(),
                 SSLConnectionSocketFactory.getDefaultHostnameVerifier());
         Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory> create()
                 .register("http", PlainConnectionSocketFactory.getSocketFactory()).register("https", sslsf).build();
 
         //        PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(registry);
-        PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(registry, null, null, null, 60, TimeUnit.SECONDS);// 60秒长连接
-        //设置连接参数
-        manager.setMaxTotal(800); // 最大连接数
-        manager.setDefaultMaxPerRoute(500); // 路由最大连接数
+        // 60秒长连接
+        PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(registry, null, null, null, 60, TimeUnit.SECONDS);
+        //设置连接参数,最大连接数
+        manager.setMaxTotal(800); 
+        // 路由最大连接数
+        manager.setDefaultMaxPerRoute(500);
 
-        Builder builder = RequestConfig.custom().setConnectionRequestTimeout(1000)//从连接池中获取连接的超时时间
-                .setConnectTimeout(connectionTimeout)//连接上服务器的超时时间
-                .setSocketTimeout(readTimeout)//返回数据的超时时间
+        //从连接池中获取连接的超时时间
+        Builder builder = RequestConfig.custom().setConnectionRequestTimeout(1000)
+                //连接上服务器的超时时间
+                .setConnectTimeout(connectionTimeout)
+                //返回数据的超时时间
+                .setSocketTimeout(readTimeout)
         ;
 //        if (proxyIp != null && proxyPort > 0) {
 //            builder.setProxy(new HttpHost(proxyIp, proxyPort));
 //        }
-
-        CloseableHttpClient client = HttpClients.custom().setConnectionManager(manager).setRetryHandler(new DefaultHttpRequestRetryHandler(3, true))// 重试次数3次，并开启
+        // 重试次数3次，并开启
+        CloseableHttpClient client = HttpClients.custom().setConnectionManager(manager).setRetryHandler(new DefaultHttpRequestRetryHandler(3, true))
                 .setDefaultRequestConfig(builder.build()).build();
         return client;
     }

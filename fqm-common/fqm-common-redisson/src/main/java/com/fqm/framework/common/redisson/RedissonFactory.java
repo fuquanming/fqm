@@ -31,7 +31,8 @@ public class RedissonFactory {
     
     public static Config getSingleConfig(RedissonConfig redissonProperties) {
         Config config = new Config();
-        config.setCodec(JsonJacksonCodec.INSTANCE) // 字符编码
+        // 字符编码
+        config.setCodec(JsonJacksonCodec.INSTANCE) 
         .useSingleServer().setAddress("redis://" + redissonProperties.getHost() + ":" + redissonProperties.getPort())
         .setDatabase(redissonProperties.getDatabase())
         .setUsername(redissonProperties.getUsername())
@@ -46,7 +47,8 @@ public class RedissonFactory {
             clusterNodes.add("redis://" + redissonProperties.getCluster().getNodes().get(i));
         }
         Config config = new Config();
-        config.setCodec(JsonJacksonCodec.INSTANCE)// 字符编码
+        // 字符编码
+        config.setCodec(JsonJacksonCodec.INSTANCE)
         .useClusterServers()
         .addNodeAddress(clusterNodes.toArray(new String[clusterNodes.size()]))
         .setUsername(redissonProperties.getUsername())

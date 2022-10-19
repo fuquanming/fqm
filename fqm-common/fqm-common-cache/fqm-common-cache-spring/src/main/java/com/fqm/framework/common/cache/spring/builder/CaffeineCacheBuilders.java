@@ -19,7 +19,9 @@ public class CaffeineCacheBuilders implements CacheBuilder {
     @Override
     public Cache getCache(String name, int expireSecond, int nullExpireSecond, int refreshSecond) {
         CaffeineCache caffeineCache = null;
-        if (name == null) name = CacheBuilder.getCacheName(CacheSource.CAFFEINE.name(), expireSecond, nullExpireSecond, refreshSecond);
+        if (name == null) {
+            name = CacheBuilder.getCacheName(CacheSource.CAFFEINE.name(), expireSecond, nullExpireSecond, refreshSecond);
+        }
         caffeineCache = new CaffeineCache(name, 
                 Caffeine.newBuilder().expireAfterWrite(expireSecond, TimeUnit.SECONDS).build());
         return caffeineCache;

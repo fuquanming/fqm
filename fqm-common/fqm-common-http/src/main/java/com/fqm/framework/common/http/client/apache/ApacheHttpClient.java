@@ -82,15 +82,21 @@ public class ApacheHttpClient implements HttpClient {
     }
 
     public String getString(HttpEntity entity, String charset) throws Exception {
-        if (entity == null) return "";
-        if (charset == null) charset = DEFAULT_CHARSET;
+        if (entity == null) {
+            return "";
+        }
+        if (charset == null) {
+            charset = DEFAULT_CHARSET;
+        }
         String str = EntityUtils.toString(entity, charset);
         EntityUtils.consume(entity);
         return str;
     }
 
     public byte[] getByte(HttpEntity entity) throws Exception {
-        if (entity == null) return new byte[0];
+        if (entity == null) {
+            return new byte[0];
+        }
         byte[] bytes = EntityUtils.toByteArray(entity);
         EntityUtils.consume(entity);
         return bytes;
@@ -248,7 +254,9 @@ public class ApacheHttpClient implements HttpClient {
      * @return 返回数据
      */
     public String post(String urlString, String body, Map<String, String> headMap, int timeout, String charset) throws Exception {
-        if (charset == null) charset = DEFAULT_CHARSET;
+        if (charset == null) {
+            charset = DEFAULT_CHARSET;
+        }
         RequestBuilder requestBuilder = RequestBuilder.post(urlString);
         requestBuilder.setCharset(Charset.forName(charset));
         requestBuilder.setConfig(getRequestConfig(timeout, timeout));
@@ -360,13 +368,15 @@ public class ApacheHttpClient implements HttpClient {
                         // 从路径中获取文件名
                         fileName = StringUtil.substringAfterLast(url, "/");
                         if (StringUtil.isNotBlank(fileName)) {
-                            fileName = URLDecoder.decode(fileName, DEFAULT_CHARSET);// url 获取文件名
+                            // url 获取文件名
+                            fileName = URLDecoder.decode(fileName, DEFAULT_CHARSET);
                         } else {
                             // 编码后的路径做为文件名
                             fileName = URLEncoder.encode(url, DEFAULT_CHARSET);
                         }
                     } else {
-                        fileName = new String(fileName.getBytes("iso-8859-1"), DEFAULT_CHARSET);// 头文件获取的文件名
+                        // 头文件获取的文件名
+                        fileName = new String(fileName.getBytes("iso-8859-1"), DEFAULT_CHARSET);
                     }
                     file = new File(destFile, fileName);
                 } else {
@@ -383,7 +393,9 @@ public class ApacheHttpClient implements HttpClient {
             EntityUtils.consume(entity);
             return size;
         } finally {
-            if (fos != null) fos.close();
+            if (fos != null) {
+                fos.close();
+            }
         }
     }
     
@@ -399,6 +411,9 @@ public class ApacheHttpClient implements HttpClient {
     }
 
     enum ResultType {
-        string, bytes;
+        /** 字符类型 */
+        string, 
+        /** 字节类型 */
+        bytes;
     }
 }

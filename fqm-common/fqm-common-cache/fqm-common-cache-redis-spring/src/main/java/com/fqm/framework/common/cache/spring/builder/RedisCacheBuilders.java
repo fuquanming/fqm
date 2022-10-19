@@ -29,7 +29,9 @@ public class RedisCacheBuilders implements CacheBuilder {
 
     @Override
     public Cache getCache(String name, int expireSecond, int nullExpireSecond, int refreshSecond) {
-        if (name == null) name = CacheBuilder.getCacheName(CacheSource.REDIS.name(), expireSecond, nullExpireSecond, refreshSecond); 
+        if (name == null) {
+            name = CacheBuilder.getCacheName(CacheSource.REDIS.name(), expireSecond, nullExpireSecond, refreshSecond); 
+        }
 
         // 默认可以保持null值
         RedisCacheConfiguration defaultCacheConfig = redisCacheConfiguration.entryTtl(Duration.ofSeconds(expireSecond));
