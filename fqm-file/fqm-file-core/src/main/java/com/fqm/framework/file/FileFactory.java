@@ -44,7 +44,7 @@ public class FileFactory {
         if (fileMode == null) {
             return null;
         }
-        return fileTemplateMap.get(fileMode);
+        return fileTemplateMap.get(fileMode.toUpperCase());
     }
     
     public FileTemplate getFileTemplate() {
