@@ -32,7 +32,7 @@ public class LockFactory {
     }
     
     @SuppressWarnings("rawtypes")
-    public LockTemplate<?> getLockTemplate(Class<? extends LockTemplate> lockTemplateClass) {
+    public LockTemplate getLockTemplate(Class<? extends LockTemplate> lockTemplateClass) {
         if (lockTemplateClass == null || lockTemplateClass == LockTemplate.class
                 || lockTemplateClass == SimpleLockTemplate.class) {
             // 获取默认lockTemplate
@@ -41,7 +41,8 @@ public class LockFactory {
         return lockTemplateMap.get(lockTemplateClass.getName());
     }
     
-    public LockTemplate<?> getLockTemplate(LockMode lockMode) {
+    @SuppressWarnings({ "rawtypes" })
+    public LockTemplate getLockTemplate(LockMode lockMode) {
         if (lockMode == null) {
             return null;
         } else if (LockMode.SIMPLE == lockMode) {
@@ -50,7 +51,8 @@ public class LockFactory {
         return lockTemplateMap.get(lockMode.name());
     }
     
-    public LockTemplate<?> getLockTemplate(String lockMode) {
+    @SuppressWarnings({ "rawtypes" })
+    public LockTemplate getLockTemplate(String lockMode) {
         if (lockMode == null) {
             return null;
         } else if (LockMode.SIMPLE.name().equalsIgnoreCase(lockMode)) {
