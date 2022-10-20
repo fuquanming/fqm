@@ -37,12 +37,13 @@ import com.xxl.job.core.handler.impl.MethodJobHandler;
 
 /**
  * xxl-job 自动配置类
+ * JobProperties加载则JobAutoConfiguration也就加载
  * @version 
  * @author 傅泉明
  */
 @Configuration
 @AutoConfigureAfter(JobAutoConfiguration.class)
-@ConditionalOnBean(JobProperties.class) // JobProperties加载则JobAutoConfiguration也就加载
+@ConditionalOnBean(JobProperties.class)
 @EnableConfigurationProperties({ XxlJobProperties.class })
 public class XxlJobAutoConfiguration implements SmartInitializingSingleton, ApplicationContextAware {
 

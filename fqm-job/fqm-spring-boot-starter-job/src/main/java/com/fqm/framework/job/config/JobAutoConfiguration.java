@@ -18,11 +18,12 @@ import com.fqm.framework.job.annotation.JobListenerAnnotationBeanPostProcessor;
 
 /**
  * 任务自动装配
+ * @ConditionalOnProperty true 开启，默认值为false
  * @version 
  * @author 傅泉明
  */
 @Configuration
-@ConditionalOnProperty(name = "job.enabled", havingValue = "true") // true 开启，默认值为false
+@ConditionalOnProperty(name = "job.enabled", havingValue = "true")
 @EnableConfigurationProperties(JobProperties.class)
 public class JobAutoConfiguration {
 

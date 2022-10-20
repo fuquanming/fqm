@@ -61,7 +61,8 @@ public class JobListenerAnnotationBeanPostProcessor implements BeanPostProcessor
         if (!methods.isEmpty()) {
             for (ListenerMethod method : methods) {
                 for (JobListener listener : method.annotations) {
-                    String name = listener.name();// jobName
+                    // jobName
+                    String name = listener.name();
                     String nameStr = ValueUtil.resolveExpression((ConfigurableBeanFactory) beanFactory, name).toString();
                     Assert.isTrue(StringUtils.hasText(nameStr), "Please specific [name] under job configuration.");
                     JobListenerParam param = new JobListenerParam();

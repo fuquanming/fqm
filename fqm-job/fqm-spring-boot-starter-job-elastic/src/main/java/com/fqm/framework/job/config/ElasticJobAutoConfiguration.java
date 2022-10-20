@@ -36,13 +36,14 @@ import com.google.common.base.Preconditions;
 
 /**
  * ElasticJob自动配置类
+ * JobProperties加载则JobAutoConfiguration也就加载
  * @version 
  * @author 傅泉明
  */
 @Configuration
 @AutoConfigureAfter(JobAutoConfiguration.class)
 @Import(ElasticJobPropertiesBeanPostProcessor.class)
-@ConditionalOnBean(JobProperties.class) // JobProperties加载则JobAutoConfiguration也就加载
+@ConditionalOnBean(JobProperties.class)
 public class ElasticJobAutoConfiguration implements SmartInitializingSingleton, ApplicationContextAware {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
@@ -80,7 +81,8 @@ public class ElasticJobAutoConfiguration implements SmartInitializingSingleton, 
                 Preconditions.checkArgument(StringUtils.hasText(cron), "Please specific [core] under job configuration, binder is elasticjob.");
                 JobConfiguration jobConfig = JobConfiguration.newBuilder(jobName, 1).cron(cron).overwrite(false).build();
                 ElasticJob elasticJob = new ElasticJobListener(v.getBean(), v.getMethod());
-                if (StringUtils.hasText(cron)) {// cron为空
+                // cron为空
+                if (StringUtils.hasText(cron)) {
                     singletonBeanRegistry.registerSingleton(jobName, new OneOffJobBootstrap(registryCenter, elasticJob, jobConfig));
                 } else {
                     singletonBeanRegistry.registerSingleton(jobName, new ScheduleJobBootstrap(registryCenter, elasticJob, jobConfig));

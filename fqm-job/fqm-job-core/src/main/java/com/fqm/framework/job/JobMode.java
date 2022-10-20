@@ -17,8 +17,9 @@ package com.fqm.framework.job;
  * @author 傅泉明
  */
 public enum JobMode {
-    
+    /** xxljob */
     xxljob,
+    /** elasticjob */
     elasticjob;
     
     public static JobMode getMode(String mode) {
