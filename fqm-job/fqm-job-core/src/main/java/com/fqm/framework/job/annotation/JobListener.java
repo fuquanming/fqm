@@ -17,13 +17,4 @@ import java.lang.annotation.Target;
 public @interface JobListener {
     /** 任务名称 */
     String name();
-//    /** @JobMode */
-//    String binder() default "";
-//    
-//    /** cron 表达式 */
-//    String cron() default "";
-//    /** 任务参数 */
-//    String jobParam() default "";
-//    /** 分片总数 */
-//    String shardTotal() default "";
 }

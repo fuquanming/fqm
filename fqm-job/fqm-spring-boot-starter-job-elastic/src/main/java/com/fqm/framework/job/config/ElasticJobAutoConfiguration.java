@@ -69,26 +69,30 @@ public class ElasticJobAutoConfiguration implements SmartInitializingSingleton, 
             if (properties == null) {
                 // 遍历jp.Jobs
                 for (JobConfigurationProperties jcp : jp.getJobs().values()) {
-                    if (jcp.getName().equals(jobName) && JobMode.elasticjob.name().equals(jcp.getBinder())) {
+                    if (jcp.getName().equals(jobName) && JobMode.ELASTICJOB.name().equals(jcp.getBinder())) {
                         properties = jcp;
                         break;
                     }
                 }
+            }
+            buildJob(singletonBeanRegistry, registryCenter, v, jobName, properties);
+        }
+    }
 
+    private void buildJob(SingletonBeanRegistry singletonBeanRegistry, CoordinatorRegistryCenter registryCenter, JobListenerParam v, String jobName,
+            JobConfigurationProperties properties) {
+        if (properties != null && JobMode.ELASTICJOB.name().equals(properties.getBinder()) && !singletonBeanRegistry.containsSingleton(jobName)) {
+            String cron = properties.getCron();
+            Preconditions.checkArgument(StringUtils.hasText(cron), "Please specific [core] under job configuration, binder is elasticjob.");
+            JobConfiguration jobConfig = JobConfiguration.newBuilder(jobName, 1).cron(cron).overwrite(false).build();
+            ElasticJob elasticJob = new ElasticJobListener(v.getBean(), v.getMethod());
+            // cron为空
+            if (StringUtils.hasText(cron)) {
+                singletonBeanRegistry.registerSingleton(jobName, new OneOffJobBootstrap(registryCenter, elasticJob, jobConfig));
+            } else {
+                singletonBeanRegistry.registerSingleton(jobName, new ScheduleJobBootstrap(registryCenter, elasticJob, jobConfig));
             }
-            if (properties != null && JobMode.elasticjob.name().equals(properties.getBinder()) && !singletonBeanRegistry.containsSingleton(jobName)) {
-                String cron = properties.getCron();
-                Preconditions.checkArgument(StringUtils.hasText(cron), "Please specific [core] under job configuration, binder is elasticjob.");
-                JobConfiguration jobConfig = JobConfiguration.newBuilder(jobName, 1).cron(cron).overwrite(false).build();
-                ElasticJob elasticJob = new ElasticJobListener(v.getBean(), v.getMethod());
-                // cron为空
-                if (StringUtils.hasText(cron)) {
-                    singletonBeanRegistry.registerSingleton(jobName, new OneOffJobBootstrap(registryCenter, elasticJob, jobConfig));
-                } else {
-                    singletonBeanRegistry.registerSingleton(jobName, new ScheduleJobBootstrap(registryCenter, elasticJob, jobConfig));
-                }
-                logger.info("InitJob ElasticJobListener,bean={},method={}", v.getBean().getClass(), v.getMethod().getName());
-            }
+            logger.info("InitJob ElasticJobListener,bean={},method={}", v.getBean().getClass(), v.getMethod().getName());
         }
     }
 }

@@ -11,6 +11,8 @@ package com.fqm.framework.job.listener;
 
 import java.lang.reflect.Method;
 
+import com.fqm.framework.job.exception.InvokeException;
+
 /**
  * 任务监听适配器
  * @version 
@@ -47,7 +49,7 @@ public class JobListenerAdapter<T> implements JobListener<T> {
         try {
             method.invoke(bean, message);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new InvokeException(e);
         }
     }
     

@@ -18,9 +18,9 @@ package com.fqm.framework.job;
  */
 public enum JobMode {
     /** xxljob */
-    xxljob,
+    XXLJOB,
     /** elasticjob */
-    elasticjob;
+    ELASTICJOB;
     
     public static JobMode getMode(String mode) {
         if (mode == null || "".equals(mode)) {
@@ -28,7 +28,7 @@ public enum JobMode {
         }
         JobMode[] modes = values();
         for (JobMode m : modes) {
-            if (mode.equals(m.name())) {
+            if (mode.toUpperCase().equals(m.name())) {
                 return m;
             }
         }

@@ -25,6 +25,7 @@ import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.core.Ordered;
+import org.springframework.core.annotation.MergedAnnotation;
 import org.springframework.core.annotation.MergedAnnotations;
 import org.springframework.core.annotation.MergedAnnotations.SearchStrategy;
 import org.springframework.util.Assert;
@@ -93,9 +94,14 @@ public class JobListenerAnnotationBeanPostProcessor implements BeanPostProcessor
         return 0;
     }
 
+    
     private Collection<JobListener> findListenerAnnotations(AnnotatedElement element) {
-        return MergedAnnotations.from(element, SearchStrategy.TYPE_HIERARCHY).stream(JobListener.class).map(ann -> ann.synthesize())
-                .collect(Collectors.toList());
+        // .map(ann -> ann.synthesize()).collect(Collectors.toList())
+        return MergedAnnotations.from(element, SearchStrategy.TYPE_HIERARCHY)
+                .stream(JobListener.class)
+                .map(MergedAnnotation::synthesize)
+                .collect(Collectors.toCollection(ArrayList<JobListener>::new))
+                ;
     }
 
     private static class ListenerMethod {
