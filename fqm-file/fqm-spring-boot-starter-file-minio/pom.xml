@@ -8,7 +8,7 @@
 		<version>1.0.1</version>
 	</parent>
 	<artifactId>fqm-spring-boot-starter-file-minio</artifactId>
-	
+	<version>1.0.2</version>
 	<dependencies>
         <!-- Spring 核心 -->
         <dependency>

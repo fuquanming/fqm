@@ -17,7 +17,7 @@ package com.fqm.framework.file;
  */
 public enum FileMode {
     /** Minio存储 */
-    minio;
+    MINIO;
     
     public static FileMode getMode(String mode) {
         if (mode == null || "".equals(mode)) {
@@ -25,7 +25,7 @@ public enum FileMode {
         }
         FileMode[] modes = values();
         for (FileMode m : modes) {
-            if (mode.equals(m.name())) {
+            if (mode.toUpperCase().equals(m.name())) {
                 return m;
             }
         }

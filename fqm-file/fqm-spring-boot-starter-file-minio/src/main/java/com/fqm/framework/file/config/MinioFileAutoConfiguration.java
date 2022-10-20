@@ -35,10 +35,9 @@ public class MinioFileAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public MinioClient getMinioClient() {
-        MinioClient minioClient = MinioClient.builder()
+        return MinioClient.builder()
                 .endpoint(this.properties.getEndpoint(), this.properties.getPort(), this.properties.getSecure())
                 .credentials(this.properties.getAccessKey(), this.properties.getSecretKey()).build();
-        return minioClient;
     }
 
     @Bean

@@ -8,7 +8,7 @@
 		<version>1.0.1</version>
 	</parent>
 	<artifactId>fqm-file-core</artifactId>
-	
+	<version>1.0.2</version>
 	<dependencies>
 	   <dependency>
             <groupId>org.slf4j</groupId>

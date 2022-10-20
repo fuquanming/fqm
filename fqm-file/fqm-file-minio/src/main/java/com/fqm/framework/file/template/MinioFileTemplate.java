@@ -113,6 +113,6 @@ public class MinioFileTemplate implements FileTemplate {
 
     @Override
     public FileMode getFileMode() {
-        return FileMode.minio;
+        return FileMode.MINIO;
     }
 }

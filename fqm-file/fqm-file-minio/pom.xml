@@ -8,7 +8,7 @@
 		<version>1.0.1</version>
 	</parent>
 	<artifactId>fqm-file-minio</artifactId>
-	
+	<version>1.0.2</version>
 	<dependencies>
         <!-- 文件 相关 -->
         <dependency>
