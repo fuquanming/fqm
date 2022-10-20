@@ -16,7 +16,7 @@ package com.fqm.framework.file;
  * @author 傅泉明
  */
 public enum FileMode {
-    
+    /** Minio存储 */
     minio;
     
     public static FileMode getMode(String mode) {

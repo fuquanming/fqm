@@ -47,7 +47,9 @@ public class MinioFileTemplate implements FileTemplate {
         try {
             File file = new File(downloadFileName);
             File parentFile = file.getParentFile();
-            if (!parentFile.exists()) parentFile.mkdirs();
+            if (!parentFile.exists()) {
+                parentFile.mkdirs();
+            }
             minioService.downloadObject(bucketDefaultName, fileId, downloadFileName);
             return true;
         } catch (Exception e) {

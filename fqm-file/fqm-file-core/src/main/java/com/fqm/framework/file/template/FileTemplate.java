@@ -11,7 +11,10 @@ import com.fqm.framework.file.FileMode;
  * @author 傅泉明
  */
 public interface FileTemplate {
-    
+    /**
+     * 获取文件存储的方式 
+     * @return
+     */
     public FileMode getFileMode();
     
     /**
@@ -25,6 +28,7 @@ public interface FileTemplate {
      * 文件下载
      * @param fileId            文件标识  如：group1/M00/00/00/wKjTgFo7cNGAI8TvAALa-N2N974394_181x161.jpg
      * @param downloadFileName  保存的文件，全路径
+     * @return
      */
     public boolean downloadFile(String fileId, String downloadFileName);
     

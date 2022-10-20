@@ -34,12 +34,16 @@ public class FileFactory {
     }
 
     public FileTemplate getFileTemplate(FileMode fileMode) {
-        if (fileMode == null) return null;
+        if (fileMode == null) {
+            return null;
+        }
         return fileTemplateMap.get(fileMode.name());
     }
     
     public FileTemplate getFileTemplate(String fileMode) {
-        if (fileMode == null) return null;
+        if (fileMode == null) {
+            return null;
+        }
         return fileTemplateMap.get(fileMode);
     }
     

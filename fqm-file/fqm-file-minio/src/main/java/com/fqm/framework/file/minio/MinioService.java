@@ -46,6 +46,8 @@ public class MinioService {
     private static final int DEFAULT_EXPIRY_TIME = 7 * 24 * 3600;
     
     private MinioClient minioClient;
+    /** 对象名称第一个字符 */
+    private String objectNameFirstCharacter = "/";
     
     public MinioService(MinioClient minioClient) {
         this.minioClient = minioClient;
@@ -389,8 +391,8 @@ public class MinioService {
         HttpUrl baseUrl = (HttpUrl) FieldUtils.readField(asyncClient, "baseUrl", true);
         StringBuilder data = new StringBuilder(baseUrl.toString());
         data.append(bucketName);
-        if (!objectName.startsWith("/")) {
-            data.append("/");
+        if (!objectName.startsWith(objectNameFirstCharacter)) {
+            data.append(objectNameFirstCharacter);
         }
         data.append(objectName);
         return data.toString();

@@ -16,12 +16,12 @@ import io.minio.MinioClient;
 
 /**
  * 
+ * name=enable 且值为true，时才加载，matchIfMissing=true 缺失也加载
  * @version 
  * @author 傅泉明
  */
 @Configuration
 @ConditionalOnClass(MinioClient.class)
-// name=enable 且值为true，时才加载，matchIfMissing=true 缺失也加载
 @ConditionalOnProperty(prefix = "minio", name = "enabled", havingValue = "true")
 @EnableConfigurationProperties({ MinioProperties.class })
 public class MinioFileAutoConfiguration {
