@@ -33,16 +33,18 @@ public class LockRedisKeyDeleteEventHandle {
         String deleteKey = new String(event.getSource());
         
         if (deleteKey.startsWith(Constants.PREFIX_KEY)) {
-            logger.info("Delete lockKey=" + deleteKey);
-            Set<BlockLockThreadExecutor> blockThreads = RedisLock.BLOCK_THREADS.get(deleteKey);
-            if (blockThreads == null) return;
+            logger.info("Delete lockKey={}", deleteKey);
+            Set<BlockLockThreadExecutor> blockThreads = RedisLock.getBlockThreads().get(deleteKey);
+            if (blockThreads == null) {
+                return;
+            }
             // 唤醒一个被阻塞的线程，标识删除通知唤醒
-            for (Iterator<BlockLockThreadExecutor> iterator = blockThreads.iterator(); iterator.hasNext();) {
+            Iterator<BlockLockThreadExecutor> iterator = blockThreads.iterator();
+            if (iterator.hasNext()) {
                 BlockLockThreadExecutor thread = iterator.next();
                 logger.debug("lockKey->{},unpark->{}", deleteKey, thread);
                 thread.setDeleteNotify(true);
                 LockSupport.unpark(thread.getBlockThread());
-                break;
             }
         }
     }

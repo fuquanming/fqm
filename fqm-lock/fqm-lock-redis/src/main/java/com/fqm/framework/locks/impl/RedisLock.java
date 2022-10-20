@@ -52,7 +52,7 @@ public class RedisLock implements Lock {
     private static final String LOCK_SUCCESS = "OK";
     
     /** JVM阻塞的线程,key:lockKey, value:Set<Thread> */
-    public static Map<String, Set<BlockLockThreadExecutor>> BLOCK_THREADS = new ConcurrentHashMap<>();
+    protected static final Map<String, Set<BlockLockThreadExecutor>> BLOCK_THREADS = new ConcurrentHashMap<>();
     /** Redis锁操作 */
     private final StringRedisTemplate stringRedisTemplate;
 
@@ -64,15 +64,13 @@ public class RedisLock implements Lock {
     
     /** 使用JVM锁 */
     private LockFactory lockFactory;
-    /** 尝试获取锁时间，单位：纳秒 */
-    private long tryLockTimeout;
     
     private BlockLockThreadExecutor lockBlockThreadExecutor;
     
     public RedisLock(StringRedisTemplate stringRedisTemplate, String lockKey, LockFactory lockFactory) {
         this.stringRedisTemplate = stringRedisTemplate;
         this.lockKey = lockKey;
-        this.lockValue = UUID.randomUUID().toString().replaceAll("-", "");
+        this.lockValue = UUID.randomUUID().toString();
         this.lockFactory = lockFactory;
     }
     
@@ -92,12 +90,8 @@ public class RedisLock implements Lock {
         LockTemplate<?> lockTemplate = lockFactory.getLockTemplate(SimpleLockTemplate.class);
         Lock lockKeyLock = lockTemplate.getLock(lockKey);
         lockKeyLock.lock();
-        Set<BlockLockThreadExecutor> threads = BLOCK_THREADS.get(lockKey);
+        Set<BlockLockThreadExecutor> threads = BLOCK_THREADS.computeIfAbsent(lockKey, k -> ConcurrentHashMap.newKeySet());
         try {
-            if (threads == null) {
-                threads = ConcurrentHashMap.newKeySet();
-                BLOCK_THREADS.put(lockKey, threads);
-            }
             if (lockBlockThreadExecutor == null) {
                 lockBlockThreadExecutor = new BlockLockThreadExecutor().setBlockThread(Thread.currentThread()).setDeleteNotify(false);
             }
@@ -128,7 +122,7 @@ public class RedisLock implements Lock {
                 break;
             } else {
                 // 获取锁的剩余时间，并阻塞该线程到指定时间
-                Long expireMillisecond = stringRedisTemplate.getExpire(lockKey, TimeUnit.MILLISECONDS);// 过期时间毫秒
+                Long expireMillisecond = stringRedisTemplate.getExpire(lockKey, TimeUnit.MILLISECONDS);
                 long nanos = TimeUnit.MILLISECONDS.toNanos(expireMillisecond);
                 
                 initBlockThreads();
@@ -138,7 +132,7 @@ public class RedisLock implements Lock {
                 // 移除阻塞线程
                 BLOCK_THREADS.get(lockKey).remove(lockBlockThreadExecutor);
                 // 删除事件会唤醒阻塞线程，或超时自动唤醒阻塞线程
-                logger.debug("retry lock ->" + Thread.currentThread());
+                logger.debug("retry lock ->{}", Thread.currentThread());
             }
         }
     }
@@ -157,7 +151,8 @@ public class RedisLock implements Lock {
                 return true;
             } else {
                 // 尝试锁时间
-                tryLockTimeout = unit.toNanos(timeout);
+                /** 尝试获取锁时间，单位：纳秒 */
+                long tryLockTimeout = unit.toNanos(timeout);
                 
                 initBlockThreads();
                 
@@ -174,11 +169,12 @@ public class RedisLock implements Lock {
                 long blockTime = now - beginTime;
                 
                 tryLockTimeout = tryLockTimeout - blockTime;
-                if (tryLockTimeout <= 0) {// 已尝试完成
+                // 已尝试完成
+                if (tryLockTimeout <= 0) {
                     return false;
                 }
                 // 删除事件会唤醒阻塞线程，或超时自动唤醒阻塞线程
-                logger.debug("retry tryLock ->" + Thread.currentThread());
+                logger.debug("retry tryLock ->{}", Thread.currentThread());
                 
             }
         }
@@ -211,16 +207,15 @@ public class RedisLock implements Lock {
     /** 延时任务 */
     private static class HashedWheelTimerInstance {
         
-        public static HashedWheelTimer instance = null;
-        
-        static {
-            instance = new HashedWheelTimer(Executors.defaultThreadFactory(), 100, TimeUnit.MILLISECONDS, 32);
-        }
+        public static final HashedWheelTimer INSTANCE = new HashedWheelTimer(Executors.defaultThreadFactory(), 100, TimeUnit.MILLISECONDS, 32);
         
     }
     
     public static HashedWheelTimer getHashedWheelTimer() {
-        return HashedWheelTimerInstance.instance;
+        return HashedWheelTimerInstance.INSTANCE;
     }
     
+    public static Map<String, Set<BlockLockThreadExecutor>> getBlockThreads() {
+        return BLOCK_THREADS;
+    }
 }

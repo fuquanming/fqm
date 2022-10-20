@@ -7,13 +7,13 @@ package com.fqm.framework.locks;
  */
 public enum LockMode {
     /** 单机内存锁 */
-    simple,
+    SIMPLE,
     /** 分布式Redisson */
-    redisson,
+    REDISSON,
     /** 分布式Redis */
-    redis,
+    REDIS,
     /** 分布式Zookeeper */
-    zookeeper;
+    ZOOKEEPER;
     
     public static LockMode getMode(String mode) {
         if (mode == null || "".equals(mode)) {
@@ -22,7 +22,7 @@ public enum LockMode {
         String modeName = mode;
         LockMode[] modes = values();
         for (LockMode m : modes) {
-            if (modeName.contains(m.name())) {
+            if (modeName.toUpperCase().contains(m.name())) {
                 return m;
             }
         }

@@ -34,7 +34,7 @@ public class RedisLockTemplate implements LockTemplate<RedisLock> {
     
     @Override
     public LockMode getLockMode() {
-        return LockMode.redis;
+        return LockMode.REDIS;
     }
 
     public void destory() {

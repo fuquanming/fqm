@@ -22,14 +22,13 @@ public class ZookeeperLockTemplate implements LockTemplate<ZookeeperLock> {
 
     @Override
     public ZookeeperLock getLock(String key) {
-        String nodePath = "/curator/lock4j/%s";
-        InterProcessMutex mutex = new InterProcessMutex(curatorFramework, String.format(nodePath, key));
+        InterProcessMutex mutex = new InterProcessMutex(curatorFramework, String.format("/curator/lock4j/%s", key));
         return new ZookeeperLock(mutex);
     }
     
     @Override
     public LockMode getLockMode() {
-        return LockMode.zookeeper;
+        return LockMode.ZOOKEEPER;
     }
 
 }

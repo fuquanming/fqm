@@ -14,21 +14,16 @@ import com.fqm.framework.locks.impl.SimpleLock;
  */
 public class SimpleLockTemplate implements LockTemplate<SimpleLock> {
     
-    private Map<String, SimpleLock> lockMap = new HashMap<String, SimpleLock>();
+    private Map<String, SimpleLock> lockMap = new HashMap<>();
 
     @Override
     public synchronized SimpleLock getLock(String key) {
-        SimpleLock cacheLock = lockMap.get(key);
-        if (cacheLock == null) {
-            cacheLock = new SimpleLock();
-            lockMap.put(key, cacheLock);
-        }
-        return cacheLock;
+        return lockMap.computeIfAbsent(key, k -> new SimpleLock());
     }
     
     @Override
     public LockMode getLockMode() {
-        return LockMode.simple;
+        return LockMode.SIMPLE;
     }
     
 }

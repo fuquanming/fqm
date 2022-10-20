@@ -5,6 +5,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.curator.framework.recipes.locks.InterProcessMutex;
 
 import com.fqm.framework.locks.Lock;
+import com.fqm.framework.locks.exception.LockException;
 /**
  * Zookeeper锁
  * 
@@ -24,7 +25,7 @@ public class ZookeeperLock implements Lock {
         try {
             interProcessMutex.acquire();
         } catch (Exception e) {
-            throw new RuntimeException("zookeeperLock lock fail", e);
+            throw new LockException("zookeeperLock lock fail", e);
         }
     }
 
@@ -33,7 +34,7 @@ public class ZookeeperLock implements Lock {
         try {
             return interProcessMutex.acquire(0, TimeUnit.SECONDS);
         } catch (Exception e) {
-            throw new RuntimeException("zookeeperLock tryLock fail", e);
+            throw new LockException("zookeeperLock tryLock fail", e);
         }
     }
 
@@ -42,7 +43,7 @@ public class ZookeeperLock implements Lock {
         try {
             return interProcessMutex.acquire(timeout, TimeUnit.MILLISECONDS);
         } catch (Exception e) {
-            throw new RuntimeException("zookeeperLock tryLock fail", e);
+            throw new LockException("zookeeperLock tryLock fail", e);
         }
     }
 
@@ -51,7 +52,7 @@ public class ZookeeperLock implements Lock {
         try {
             interProcessMutex.release();
         } catch (Exception e) {
-            throw new RuntimeException("zookeeperLock unlock fail", e);
+            throw new LockException("zookeeperLock unlock fail", e);
         }
         return false;
     }

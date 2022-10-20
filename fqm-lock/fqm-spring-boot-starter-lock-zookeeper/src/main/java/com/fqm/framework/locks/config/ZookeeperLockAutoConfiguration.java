@@ -42,7 +42,7 @@ public class ZookeeperLockAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean
-    @Conditional(ZookeeperCondition.class) // 检查配置文件
+    @Conditional(ZookeeperCondition.class)
     @ConfigurationProperties(prefix = "spring.cloud.zookeeper")
     public ZookeeperConfig zookeeperConfig() {
         return new ZookeeperConfig();

@@ -31,6 +31,7 @@ public class SimpleLock implements Lock {
             return lock.tryLock(timeout, unit);
         } catch (InterruptedException e) {
             e.printStackTrace();
+            Thread.currentThread().interrupt();
         }
         return false;
     }

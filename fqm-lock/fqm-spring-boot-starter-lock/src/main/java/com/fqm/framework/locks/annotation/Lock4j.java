@@ -48,16 +48,6 @@ public @interface Lock4j {
 
     /**
      * support SPEL expresion
-     * @return 过期时间 单位：毫秒
-     * <pre>
-     *     过期时间一定是要长于业务的执行时间. 未设置则为默认时间3秒
-     * </pre>
-     */
-    @Deprecated
-    long expire() default 3000;
-
-    /**
-     * support SPEL expresion
      * @return 获取锁超时时间 单位：毫秒
      * =0：tryLock，尝试获取一次锁
      * >0：tryLock，在指定时间内获取锁，调用{@link Lock.tryLock(long timeout, TimeUnit unit)}方法

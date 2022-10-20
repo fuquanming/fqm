@@ -45,23 +45,27 @@ public class LockInterceptor implements MethodInterceptor {
             return invocation.proceed();
         }
         Lock4j lock4j = null;
-        boolean tryLockFlag = false;// 是否调用tryLock
-        boolean tryLockStatus = false;// 调用tryLock是否成功
+        // 是否调用tryLock
+        boolean tryLockFlag = false;
+        // 调用tryLock是否成功
+        boolean tryLockStatus = false;
         
         Lock lock = null;
-        boolean block = false;// 是否调用lock
+        // 是否调用lock
+        boolean block = false;
         
         String lockName = null;
-        String key = null;// 锁的key
+        // 锁的key
+        String key = null;
         
         try {
             ConfigurableBeanFactory factory = (ConfigurableBeanFactory) this.applicationContext.getAutowireCapableBeanFactory();
             
             lock4j = invocation.getMethod().getAnnotation(Lock4j.class);
-            
-            block = lock4j.block();// 是否调用lock
-            
-            String lockModeStr = lock4j.lockMode();// 锁的方式
+            // 是否调用lock
+            block = lock4j.block();
+            // 锁的方式
+            String lockModeStr = lock4j.lockMode();
             
             lockModeStr = ValueUtil.resolveExpression(factory, lockModeStr).toString();
             
@@ -72,10 +76,10 @@ public class LockInterceptor implements MethodInterceptor {
             if (lockTemplate == null) {
                 lockTemplate = lockFactory.getLockTemplate(lock4j.lockTemplate());
             }
-            
-            long acquireTimeout = lock4j.acquireTimeout();// 获取锁超时时间
-            
-            key = lock4j.key();// 锁的key
+            // 获取锁超时时间
+            long acquireTimeout = lock4j.acquireTimeout();
+            // 锁的key
+            key = lock4j.key();
             
             key = ValueUtil.resolveExpression(factory, key).toString();
             

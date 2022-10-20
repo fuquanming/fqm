@@ -19,11 +19,11 @@ public class LockFactory {
     
     private Logger logger = LoggerFactory.getLogger(getClass());
     
-    private Map<String, LockTemplate<?>> lockTemplateMap = new ConcurrentHashMap<>();
+    private Map<String, LockTemplate<? extends Lock>> lockTemplateMap = new ConcurrentHashMap<>();
     
     private SimpleLockTemplate memoryLockTemplate = new SimpleLockTemplate();
     
-    public LockFactory addLockTemplate(LockTemplate<?> lockTemplate) {
+    public LockFactory addLockTemplate(LockTemplate<? extends Lock> lockTemplate) {
         logger.info("init LockTemplate->{}", lockTemplate.getClass());
         String lockTemplateName = lockTemplate.getClass().getName();
         lockTemplateMap.put(lockTemplateName, lockTemplate);
@@ -44,7 +44,7 @@ public class LockFactory {
     public LockTemplate<?> getLockTemplate(LockMode lockMode) {
         if (lockMode == null) {
             return null;
-        } else if (LockMode.simple == lockMode) {
+        } else if (LockMode.SIMPLE == lockMode) {
             return memoryLockTemplate;
         }
         return lockTemplateMap.get(lockMode.name());
@@ -53,10 +53,10 @@ public class LockFactory {
     public LockTemplate<?> getLockTemplate(String lockMode) {
         if (lockMode == null) {
             return null;
-        } else if (LockMode.simple.name().equalsIgnoreCase(lockMode)) {
+        } else if (LockMode.SIMPLE.name().equalsIgnoreCase(lockMode)) {
             return memoryLockTemplate;
         }
-        return lockTemplateMap.get(lockMode);
+        return lockTemplateMap.get(lockMode.toUpperCase());
     }
     
 }

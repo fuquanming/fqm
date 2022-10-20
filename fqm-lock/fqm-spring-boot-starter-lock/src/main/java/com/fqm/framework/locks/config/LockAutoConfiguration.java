@@ -22,8 +22,7 @@ public class LockAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public LockFactory lockFactory() {
-        LockFactory lockFactory = new LockFactory();
-        return lockFactory;
+        return new LockFactory();
     }
     
     @Bean

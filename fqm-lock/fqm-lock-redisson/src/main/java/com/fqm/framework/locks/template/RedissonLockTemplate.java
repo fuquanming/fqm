@@ -28,6 +28,6 @@ public class RedissonLockTemplate implements LockTemplate<RedissonLock> {
 
     @Override
     public LockMode getLockMode() {
-        return LockMode.redisson;
+        return LockMode.REDISSON;
     }
 }
