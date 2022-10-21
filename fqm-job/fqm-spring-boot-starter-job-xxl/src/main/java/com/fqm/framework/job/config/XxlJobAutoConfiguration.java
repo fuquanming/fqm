@@ -95,24 +95,26 @@ public class XxlJobAutoConfiguration implements SmartInitializingSingleton, Appl
                 }
 
             }
-            if (properties != null && JobMode.XXLJOB.name().equals(properties.getBinder()) && XxlJobExecutor.loadJobHandler(jobName) == null) {
-                XxlJobListener listener = new XxlJobListener(v.getBean(), v.getMethod());
-                // 获取任务执行的方法
-                Method[] ms = listener.getClass().getMethods();
-                Method jobMethod = null;
-                for (Method m : ms) {
-                    Class<?>[] params = m.getParameterTypes();
-                    if (params.length == 1) {
-                        if (params[0] == JobContext.class) {
-                            jobMethod = m;
-                            break;
-                        }
-                    }
+            buildJob(v, jobName, properties);
+        }
+    }
+
+    private void buildJob(JobListenerParam v, String jobName, JobConfigurationProperties properties) {
+        if (properties != null && JobMode.XXLJOB.name().equals(properties.getBinder()) && XxlJobExecutor.loadJobHandler(jobName) == null) {
+            XxlJobListener listener = new XxlJobListener(v.getBean(), v.getMethod());
+            // 获取任务执行的方法
+            Method[] ms = listener.getClass().getMethods();
+            Method jobMethod = null;
+            for (Method m : ms) {
+                Class<?>[] params = m.getParameterTypes();
+                if (params.length == 1 && params[0] == JobContext.class) {
+                    jobMethod = m;
+                    break;
                 }
-                // 注册本身的 receiveJob 方法,jobName 即管理控台->任务管理->运行模式:(BEAN:名称)
-                XxlJobExecutor.registJobHandler(jobName, new MethodJobHandler(listener, jobMethod, null, null));
-                logger.info("InitJob XxlJobListener,bean={},method={}", v.getBean().getClass(), v.getMethod().getName());
             }
+            // 注册本身的 receiveJob 方法,jobName 即管理控台->任务管理->运行模式:(BEAN:名称)
+            XxlJobExecutor.registJobHandler(jobName, new MethodJobHandler(listener, jobMethod, null, null));
+            logger.info("InitJob XxlJobListener,bean={},method={}", v.getBean().getClass(), v.getMethod().getName());
         }
     }
 
