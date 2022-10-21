@@ -1,5 +1,10 @@
 package com.fqm.framework.mq.config;
-
+/**
+ * Zookeeper配置
+ * 
+ * @version 
+ * @author 傅泉明
+ */
 public class ZookeeperProperties {
 
     /** zookeeper服务端 */

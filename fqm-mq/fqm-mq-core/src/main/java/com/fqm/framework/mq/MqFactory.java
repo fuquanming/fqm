@@ -34,12 +34,16 @@ public class MqFactory {
     }
 
     public MqTemplate getMqTemplate(MqMode mqMode) {
-        if (mqMode == null) return null;
+        if (mqMode == null) {
+            return null;
+        }
         return mqTemplateMap.get(mqMode.name());
     }
     
     public MqTemplate getMqTemplate(String mqMode) {
-        if (mqMode == null) return null;
+        if (mqMode == null) {
+            return null;
+        }
         return mqTemplateMap.get(mqMode);
     }
     

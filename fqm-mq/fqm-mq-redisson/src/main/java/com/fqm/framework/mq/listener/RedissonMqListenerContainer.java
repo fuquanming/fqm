@@ -3,9 +3,12 @@ package com.fqm.framework.mq.listener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Redisson消息队列监听器容器
  * 
@@ -25,7 +28,20 @@ public class RedissonMqListenerContainer {
         pool = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors(), 
                 size,
                 60L, TimeUnit.SECONDS,
-                new LinkedBlockingQueue<Runnable>());
+                new LinkedBlockingQueue<Runnable>(),
+                new ThreadFactory() {
+                    private final ThreadFactory defaultFactory = Executors.defaultThreadFactory();
+                    private final AtomicInteger threadNumber = new AtomicInteger(1);
+                    @Override
+                    public Thread newThread(Runnable r) {
+                        Thread thread = defaultFactory.newThread(r);
+                        if (!thread.isDaemon()) {
+                            thread.setDaemon(true);
+                        }
+                        thread.setName("mq-redisson-" + threadNumber.getAndIncrement());
+                        return thread;
+                    }
+                });
     }
     
     public void stop() {

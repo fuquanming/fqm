@@ -42,7 +42,7 @@ import com.google.common.base.Preconditions;
  */
 @Configuration
 @AutoConfigureAfter(MqAutoConfiguration.class)
-@ConditionalOnBean(MqProperties.class) // MqProperties加载则MqAutoConfiguration也就加载
+@ConditionalOnBean(MqProperties.class)
 public class KafkaMqAutoConfiguration implements SmartInitializingSingleton, ApplicationContextAware {
     
     private Logger logger = LoggerFactory.getLogger(getClass());
@@ -98,7 +98,8 @@ public class KafkaMqAutoConfiguration implements SmartInitializingSingleton, App
                     // 通过BeanDefinitionBuilder创建bean定义
                     ContainerProperties containerProperties = new ContainerProperties(topic);
                     containerProperties.setGroupId(group);
-                    containerProperties.setAckMode(AckMode.MANUAL);// 手动ack
+                    // 手动ack
+                    containerProperties.setAckMode(AckMode.MANUAL);
                     containerProperties.setMessageListener(new KafkaMqListener(v.getBean(), v.getMethod()));
 
                     BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder

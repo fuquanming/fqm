@@ -6,12 +6,17 @@ package com.fqm.framework.mq;
  * @author 傅泉明
  */
 public enum MqMode {
-    
+    /** kafka */
     kafka,
+    /** rabbit */
     rabbit,
+    /** redis */
     redis,
+    /** redisson */
     redisson,
+    /** rocket */
     rocket,
+    /** zookeeper */
     zookeeper;
     
     public static MqMode getMode(String mode) {

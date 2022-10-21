@@ -25,7 +25,7 @@ import com.fqm.framework.mq.redis.PendingMessage;
 import com.fqm.framework.mq.redis.PendingMessages;
 import com.fqm.framework.mq.redis.PendingMessagesSummary;
 import com.fqm.framework.mq.redis.StreamInfo;
-import com.fqm.framework.mq.redis.StreamInfo.XInfoGroups;
+import com.fqm.framework.mq.redis.StreamInfo.InfoGroups;
 
 /**
  * Lua脚本
@@ -51,7 +51,7 @@ public class LuaScriptUtil {
      * @param topic
      * @return
      */
-    public static XInfoGroups getXInfoGroups(String topic, StringRedisTemplate stringRedisTemplate) {
+    public static InfoGroups getInfoGroups(String topic, StringRedisTemplate stringRedisTemplate) {
         List<Object> parts = null;
         try {
             parts = stringRedisTemplate.execute(SCRIPT_GROUP, Collections.singletonList(topic));
@@ -61,7 +61,7 @@ public class LuaScriptUtil {
         
         List<Object> result = new ArrayList<>();
         for (List<Object> part : (List<List<Object>>) (Object) parts) {
-            Map<String, Object> res = new HashMap<>();
+            Map<String, Object> res = new HashMap<>(4);
             res.put("name", part.get(1));
             res.put("consumers", part.get(3));
             res.put("pending", part.get(5));
@@ -71,7 +71,7 @@ public class LuaScriptUtil {
                     .collect(Collectors.toList());
             result.add(list);
         }
-        return StreamInfo.XInfoGroups.fromList(result);
+        return StreamInfo.InfoGroups.fromList(result);
     }
     
     /**

@@ -26,7 +26,8 @@ public class RocketDelayUtil {
     public static Map<Integer, Integer> hourMap = new TreeMap<>();
 
     static {
-        for (int i = 0; i < 60; i++) {
+        int sixty = 60;
+        for (int i = 0; i < sixty; i++) {
             if (i <= 1) {
                 secondMap.put(i, 1);
             } else if (i > 1 && i < 5) {
@@ -40,7 +41,7 @@ public class RocketDelayUtil {
             }
         }
 
-        for (int i = 0; i < 60; i++) {
+        for (int i = 0; i < sixty; i++) {
             if (i <= 1) {
                 minuteMap.put(i, 1);
             } else if (i > 1 && i < 2) {
@@ -69,8 +70,8 @@ public class RocketDelayUtil {
                 minuteMap.put(i, 30);
             }
         }
-
-        for (int i = 0; i < 3; i++) {
+        int three = 3;
+        for (int i = 0; i < three; i++) {
             if (i <= 1) {
                 hourMap.put(i, 1);
             } else if (i > 1 && i < 2) {
@@ -98,7 +99,8 @@ public class RocketDelayUtil {
         secondLevelMap.put(10, 3);
         secondLevelMap.put(30, 4);
         int step = 5;
-        for (int i = 1; i <= 10; i++) {
+        int ten = 10;
+        for (int i = 1; i <= ten; i++) {
             minuteLevelMap.put(i, step);
             step++;
         }
@@ -117,12 +119,14 @@ public class RocketDelayUtil {
      * @return
      */
     public static int getDelayLevel(int delayTime, TimeUnit timeUnit) {
+        int minuteToSecond = 60;
+        int hourToSecond = 3600;
         long second = timeUnit.toSeconds(delayTime);
-        if (second < 60) {
+        if (second < minuteToSecond) {
             Integer secondLevel = secondMap.get((int)second);
 //            System.out.println("second=" + secondLevel);
             return secondLevelMap.get(secondLevel);
-        } else if (second < 3600) {
+        } else if (second < hourToSecond) {
             long minute = timeUnit.toMinutes(delayTime);
             Integer minuteLevel = minuteMap.get((int)minute);
 //            System.out.println("minute=" + minuteLevel);
@@ -152,7 +156,7 @@ public class RocketDelayUtil {
     public static String buildDelayMsg(Object msg, int delayTime, TimeUnit timeUnit) {
         String jsonMsg = JsonUtil.toJsonStr(msg);
         Map<String, Object> valueMap = JsonUtil.toMap(jsonMsg);
-        Map<String, Object> delayMap = new HashMap<>();
+        Map<String, Object> delayMap = new HashMap<>(3);
         valueMap.put(delayInfoKey, delayMap);
         delayMap.put(timeUnitKey, timeUnit.toString());
         delayMap.put(delayTimeKey, delayTime);

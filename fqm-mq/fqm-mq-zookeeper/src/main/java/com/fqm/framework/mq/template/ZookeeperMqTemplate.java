@@ -88,7 +88,9 @@ public class ZookeeperMqTemplate implements MqTemplate {
             lock.lock();
             try {
                 queue = queueMap.get(topic);
-                if (queue != null) return queue;
+                if (queue != null) {
+                    return queue;
+                }
                 
                 QueueBuilder<String> queueBuilder = QueueBuilder.builder(curatorFramework, 
                         consumer, new QueueSerializer<String>() {

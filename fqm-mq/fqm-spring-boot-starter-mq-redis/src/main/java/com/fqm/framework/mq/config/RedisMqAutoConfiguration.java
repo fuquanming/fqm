@@ -8,9 +8,6 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-//import org.redisson.api.RStream;
-//import org.redisson.api.RedissonClient;
-//import org.redisson.api.StreamGroup;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,11 +16,6 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.stream.Consumer;
 import org.springframework.data.redis.connection.stream.MapRecord;
 import org.springframework.data.redis.connection.stream.ReadOffset;
-//import org.springframework.data.redis.connection.stream.StreamInfo.XInfoGroup;
-//import org.springframework.data.redis.connection.stream.StreamRecords;
-//import org.springframework.data.redis.connection.stream.StringRecord;
-//import org.springframework.data.redis.connection.stream.StreamInfo.XInfoGroup;
-//import org.springframework.data.redis.connection.stream.StreamInfo.XInfoGroups;
 import org.springframework.data.redis.connection.stream.StreamOffset;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
@@ -40,8 +32,8 @@ import com.fqm.framework.mq.annotation.MqListenerAnnotationBeanPostProcessor;
 import com.fqm.framework.mq.listener.MqListenerParam;
 import com.fqm.framework.mq.listener.MqRedisKeyExpiredEventHandle;
 import com.fqm.framework.mq.listener.RedisMqListener;
-import com.fqm.framework.mq.redis.StreamInfo.XInfoGroup;
-import com.fqm.framework.mq.redis.StreamInfo.XInfoGroups;
+import com.fqm.framework.mq.redis.StreamInfo.InfoGroup;
+import com.fqm.framework.mq.redis.StreamInfo.InfoGroups;
 import com.fqm.framework.mq.scripts.LuaScriptUtil;
 import com.fqm.framework.mq.tasker.RedisMqDeadMessageTasker;
 import com.fqm.framework.mq.template.RedisMqTemplate;
@@ -86,14 +78,16 @@ public class RedisMqAutoConfiguration {
         StreamMessageListenerContainer<String, MapRecord<String, String, String>> container = null;
         if (mq.getListeners() != null && !mq.getListeners().isEmpty()) {
             containerOptions = StreamMessageListenerContainerOptions.builder()
-                    .batchSize(10) // 一次性最多拉取多少条消息
+                    // 一次性最多拉取多少条消息
+                    .batchSize(10) 
                     .errorHandler(new ErrorHandler() {
                         @Override
                         public void handleError(Throwable t) {
                             t.printStackTrace();
                         }
                     })
-                    .pollTimeout(Duration.ZERO) // 超时时间，设置为0，表示不超时（超时后会抛出异常）
+                    // 超时时间，设置为0，表示不超时（超时后会抛出异常）
+                    .pollTimeout(Duration.ZERO)
                     .serializer(new StringRedisSerializer())
                     .build();
             // 根据配置对象创建监听容器对象
@@ -168,12 +162,12 @@ public class RedisMqAutoConfiguration {
                 Preconditions.checkArgument(StringUtils.isNotBlank(topic), "Please specific [topic] under mq configuration.");
                 // Lua获取消费者组
                 try {
-                    XInfoGroups gs = LuaScriptUtil.getXInfoGroups(topic, stringRedisTemplate);
+                    InfoGroups gs = LuaScriptUtil.getInfoGroups(topic, stringRedisTemplate);
                     if (gs != null) {
-                        for (Iterator<XInfoGroup> it = gs.iterator(); it.hasNext();) {
-                            XInfoGroup g = it.next();
+                        for (Iterator<InfoGroup> it = gs.iterator(); it.hasNext();) {
+                            InfoGroup g = it.next();
                             if (g.groupName().equals(group)) {
-                                createGroup = false;// 
+                                createGroup = false;
                                 break;
                             }
                         }
@@ -200,8 +194,10 @@ public class RedisMqAutoConfiguration {
                 // 设置 Consumer 监听
                 StreamMessageListenerContainer.StreamReadRequestBuilder<String> builder = StreamMessageListenerContainer.StreamReadRequest
                         .builder(streamOffset).consumer(consumer)
-                        .autoAcknowledge(false) // 不自动 ack
-                        .cancelOnError(throwable -> false) // 默认配置，发生异常就取消消费，显然不符合预期；因此，我们设置为 false
+                        // 不自动 ack
+                        .autoAcknowledge(false)
+                        // 默认配置，发生异常就取消消费，显然不符合预期；因此，我们设置为 false
+                        .cancelOnError(throwable -> false) 
                         ;
                 container.register(builder.build(), new RedisMqListener(v.getBean(), v.getMethod(), stringRedisTemplate, topic, group));
                 logger.info("Init RedisMqListener,bean={},method={},topic={},group={}", v.getBean().getClass(), v.getMethod().getName(), topic, group);

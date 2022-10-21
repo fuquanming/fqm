@@ -67,7 +67,8 @@ public class RabbitMqTemplate implements MqTemplate {
                 topicSet.add(topic);
                 
                 TopicExchange customExchange = new TopicExchange(topic, true, false);
-                customExchange.setDelayed(true);// 延迟队列
+                // 延迟队列
+                customExchange.setDelayed(true);
                 amqpAdmin.declareExchange(customExchange);
                 amqpAdmin.declareBinding(BindingBuilder.bind(queue).to(customExchange).with(topic));
                 exchangeSet.add(topic);
@@ -116,8 +117,8 @@ public class RabbitMqTemplate implements MqTemplate {
             RabbitListenableFutureCallback callback = params.right;
             // 使用默认交换机（默认持久化），默认消息持久化
             rabbitTemplate.convertAndSend("", topic, str, correlationData);
-            
-            LockSupport.parkNanos(TimeUnit.SECONDS.toNanos(3));// 最多等3秒
+            // 最多等3秒
+            LockSupport.parkNanos(TimeUnit.SECONDS.toNanos(3));
             if (callback.isError()) {
                 logger.info("RabbitMqProducer.syncSend.error->topic=[{}],message=[{}]", topic, str);
                 return false;
@@ -154,8 +155,8 @@ public class RabbitMqTemplate implements MqTemplate {
                 message.getMessageProperties().getHeaders().put(HEADER_DELAY, time);
                 return message;
             }, correlationData);
-            
-            LockSupport.parkNanos(TimeUnit.SECONDS.toNanos(3));// 最多等3秒
+            // 最多等3秒
+            LockSupport.parkNanos(TimeUnit.SECONDS.toNanos(3));
             if (callback.isError()) {
                 logger.info("RabbitMqProducer.syncDelaySend.error->topic=[{}],message=[{}],delayTime=[{}],timeUnit=[{}]", topic, str, delayTime, timeUnit);
                 return false;

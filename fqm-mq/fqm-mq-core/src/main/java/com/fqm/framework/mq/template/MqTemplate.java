@@ -13,11 +13,18 @@ import com.fqm.framework.mq.client.producer.SendCallback;
  * @author 傅泉明
  */
 public interface MqTemplate {
-
+    /**
+     * 序列号对象为json
+     * @param msg
+     * @return
+     */
     public default String getJsonStr(Object msg) {
         return JsonUtil.toJsonStr(msg);
     }
-    
+    /**
+     * 获取消息存储的方式
+     * @return
+     */
     public MqMode getMqMode();
     
     /**

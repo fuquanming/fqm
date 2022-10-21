@@ -37,27 +37,20 @@ public class RabbitPropertiesBeanPostProcessor implements BeanPostProcessor, Pri
             properties.setPublisherConfirmType(ConfirmType.CORRELATED);
             /** 2.消息抵达队列失败回调 */
             properties.setPublisherReturns(true);
-            properties.getTemplate().setMandatory(true);//开启强制委托模式
-        } else if (targetClass == RabbitMqTemplate.class) {/** 设置rabbitTemplate的回调函数 */
+            //开启强制委托模式
+            properties.getTemplate().setMandatory(true);
+        } else if (targetClass == RabbitMqTemplate.class) {
+            /** 设置rabbitTemplate的回调函数 */
             /** RabbitMqTemplate 实例化前RabbitTemplate会先实例化， */
             RabbitMqTemplate rabbitMqTemplate = (RabbitMqTemplate) bean;
             /** 设置确认回调，多线程回调。可以用发送添加CcorrelationData对象，
              * 使用 correlationData.getFuture().addCallback 替代
              * addCallback 优于该ConfirmCallback前回调
-             *  */
-//            rabbitTemplate.setConfirmCallback(new ConfirmCallback() {
-//                /**
-//                 * @param ccorrelationData  消息唯一关联数据（发送时带该对象，则返回时有该对象）
-//                 * @param ack               消息是否发生成功
-//                 * @param cause             失败原因
-//                 */
-//                @Override
-//                public void confirm(CorrelationData correlationData, boolean ack, String cause) {
-//                    System.out.println(Thread.currentThread().getId() + ",correlationData=[" + correlationData + "],ack=[" + ack + "],cause=[" + cause + "]");
-//                }
-//            });
-                    
-            /** 消息抵达队列失败回调，多线程回调 */
+            // ccorrelationData  消息唯一关联数据（发送时带该对象，则返回时有该对象）
+            // ack               消息是否发生成功
+            //cause             失败原因
+             * */
+            // 消息抵达队列失败回调，多线程回调
             RabbitTemplate rabbitTemplate = beanFactory.getBean(RabbitTemplate.class);
             rabbitTemplate.setReturnsCallback(new RabbitReturnsCallback(rabbitMqTemplate));
         }

@@ -39,7 +39,7 @@ import com.google.common.base.Preconditions;
  */
 @Configuration
 @AutoConfigureAfter(MqAutoConfiguration.class)
-@ConditionalOnBean(MqProperties.class) // MqProperties加载则MqAutoConfiguration也就加载
+@ConditionalOnBean(MqProperties.class)
 public class RabbitMqAutoConfiguration implements SmartInitializingSingleton, ApplicationContextAware {
     
     private Logger logger = LoggerFactory.getLogger(getClass());
@@ -106,8 +106,10 @@ public class RabbitMqAutoConfiguration implements SmartInitializingSingleton, Ap
                     beanDefinitionBuilder.addConstructorArgValue(connectionFactory);
                     beanDefinitionBuilder.addPropertyValue("messageListener", new RabbitMqListener(v.getBean(), v.getMethod(), topic, rabbitMqTemplate));
                     beanDefinitionBuilder.addPropertyValue("queues", new Queue(topic));
-                    beanDefinitionBuilder.addPropertyValue("concurrentConsumers", 1);//设置当前的消费者数量
-                    beanDefinitionBuilder.addPropertyValue("acknowledgeMode", AcknowledgeMode.MANUAL);//设置手动签收
+                    //设置当前的消费者数量
+                    beanDefinitionBuilder.addPropertyValue("concurrentConsumers", 1);
+                    //设置手动签收
+                    beanDefinitionBuilder.addPropertyValue("acknowledgeMode", AcknowledgeMode.MANUAL);
 //                        beanDefinitionBuilder.addPropertyValue("transactionManager", new RabbitTransactionManager(connectionFactory));//设置事务
                     // 注册bean
                     defaultListableBeanFactory.registerBeanDefinition(name, beanDefinitionBuilder.getRawBeanDefinition());

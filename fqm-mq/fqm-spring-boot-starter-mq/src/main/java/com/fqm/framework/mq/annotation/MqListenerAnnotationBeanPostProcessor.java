@@ -49,7 +49,8 @@ public class MqListenerAnnotationBeanPostProcessor implements BeanPostProcessor,
         if (!methods.isEmpty()) {
             for (ListenerMethod method : methods) {
                 for (MqListener mqListener : method.annotations) {
-                    String name = mqListener.name();// 消息名称
+                    // 消息名称
+                    String name = mqListener.name();
                     String nameStr = ValueUtil.resolveExpression((ConfigurableBeanFactory)beanFactory, name).toString();
                     Preconditions.checkArgument(StringUtils.isNotBlank(nameStr), "Please specific [name] under mq configuration.");
                     MqListenerParam param = new MqListenerParam();

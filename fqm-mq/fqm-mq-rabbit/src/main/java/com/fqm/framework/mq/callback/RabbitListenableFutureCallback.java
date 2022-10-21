@@ -51,7 +51,8 @@ public class RabbitListenableFutureCallback implements ListenableFutureCallback<
         error = true;
         errorMsg = "ERROR exchange onFailure";
         LockSupport.unpark(productThread);
-        if (sendCallback != null) {// 同步消息
+        // 同步消息
+        if (sendCallback != null) {
             sendCallback.onException(ex);
         }
     }
@@ -61,12 +62,14 @@ public class RabbitListenableFutureCallback implements ListenableFutureCallback<
         // 设置确认回调 ACK
         callbackThread = Thread.currentThread();
 //        logger.info(callbackThread.getId() + ",onSuccess,ack=" + confirm.isAck() + "\t" + productThread.getId());
-        if (!confirm.isAck()) {// 入交换机失败
+        // 入交换机失败
+        if (!confirm.isAck()) {
             error = true;
             errorMsg = "ERROR exchange ack";
         }
         // 等待入队列异常通知，不处理
-        if (sendCallback == null) {// 同步消息
+        if (sendCallback == null) {
+            // 同步消息
             LockSupport.unpark(productThread);
         } else {// 异步消息
             if (error) {

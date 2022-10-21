@@ -6,8 +6,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,8 +26,8 @@ import org.springframework.data.redis.core.script.RedisScript;
 import com.fqm.framework.mq.constant.Constants;
 import com.fqm.framework.mq.redis.PendingMessages;
 import com.fqm.framework.mq.redis.PendingMessagesSummary;
-import com.fqm.framework.mq.redis.StreamInfo.XInfoGroup;
-import com.fqm.framework.mq.redis.StreamInfo.XInfoGroups;
+import com.fqm.framework.mq.redis.StreamInfo.InfoGroup;
+import com.fqm.framework.mq.redis.StreamInfo.InfoGroups;
 import com.fqm.framework.mq.scripts.LuaScriptUtil;
 
 /**
@@ -35,11 +40,12 @@ import com.fqm.framework.mq.scripts.LuaScriptUtil;
 public class RedisMqDeadMessageTasker {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
-    private Timer timer = null;
+    private ScheduledExecutorService timer;
     private StringRedisTemplate stringRedisTemplate;
     private static final RedisScript<String> SCRIPT_DEAD_MESSAGE = 
             new DefaultRedisScript<>(
-                    "local ack = redis.call('xack', KEYS[1], ARGV[1], ARGV[2]) " +   // ACK消息
+                    // ACK消息
+                    "local ack = redis.call('xack', KEYS[1], ARGV[1], ARGV[2]) " +   
                     "if ack==1 then" + 
                     "    return redis.call('xadd', KEYS[2], 'MAXLEN', '~', ARGV[3], '*', 'deadMessage', ARGV[4]) " +    // 投递死信消息到队列
                     "else " + 
@@ -69,32 +75,44 @@ public class RedisMqDeadMessageTasker {
     
     public void start() {
         if (timer == null) {
-            timer = new Timer(true);
+            timer = new ScheduledThreadPoolExecutor(2, new ThreadFactory() {
+                private final ThreadFactory defaultFactory = Executors.defaultThreadFactory();
+                private final AtomicInteger threadNumber = new AtomicInteger(1);
+                @Override
+                public Thread newThread(Runnable r) {
+                    Thread thread = defaultFactory.newThread(r);
+                    if (!thread.isDaemon()) {
+                        thread.setDaemon(true);
+                    }
+                    thread.setName("mq-redis-deadMsg-" + threadNumber.getAndIncrement());
+                    return thread;
+                }
+            });
         }
-        timer.schedule(new DeadMessageTasker(), 60000, 60000);// 1分钟执行一次
+        // 1分钟执行一次
+        timer.scheduleWithFixedDelay(new DeadMessageTasker(), 1, 1, TimeUnit.MINUTES);
     }
     
     public void stop() {
         if (timer != null) {
-            timer.cancel();
+            timer.shutdown();
         }
     }
     
     class DeadMessageTasker extends TimerTask {
         @Override
         public void run() {
-//            if (true) return;
             try {
                 StreamOperations<String, String, String> streamOperations = stringRedisTemplate.opsForStream();
                 for (String topic : topics) {
                     // 获取消费者组 
                     // 替换XInfoGroups groups = streamOperations.groups(topic); 需要spring-boot->2.4.2,redisson-spring-boot-starter->3.15.1
-                    XInfoGroups groups = LuaScriptUtil.getXInfoGroups(topic, stringRedisTemplate);
+                    InfoGroups groups = LuaScriptUtil.getInfoGroups(topic, stringRedisTemplate);
                     if (groups == null) {
                         continue;
                     }
-                    for (Iterator<XInfoGroup> it = groups.iterator(); it.hasNext();) {
-                        XInfoGroup group = it.next();
+                    for (Iterator<InfoGroup> it = groups.iterator(); it.hasNext();) {
+                        InfoGroup group = it.next();
                         Long pendingCount = group.pendingCount();// 未ack的消息
                         if (pendingCount.longValue() > 0) {
                             String groupName = group.groupName();

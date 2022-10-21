@@ -16,7 +16,7 @@ import com.fqm.framework.mq.annotation.MqListenerAnnotationBeanPostProcessor;
  * @author 傅泉明
  */
 @Configuration
-@ConditionalOnProperty(name = "mq.enabled", havingValue = "true") // true 开启，默认值为false
+@ConditionalOnProperty(name = "mq.enabled", havingValue = "true")
 @EnableConfigurationProperties(MqProperties.class)
 public class MqAutoConfiguration {
 

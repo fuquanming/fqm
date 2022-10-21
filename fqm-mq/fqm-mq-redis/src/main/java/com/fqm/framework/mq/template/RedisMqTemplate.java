@@ -34,11 +34,12 @@ public class RedisMqTemplate implements MqTemplate {
     /** 发送消息 */
     private static final RedisScript<String> SCRIPT_MESSAGE = 
             new DefaultRedisScript<>(
-                    "return redis.call('xadd', KEYS[1], 'MAXLEN', '~', ARGV[1], '*', 'mq', ARGV[2]) "   // 投递消息到队列
+                    // 投递消息到队列
+                    "return redis.call('xadd', KEYS[1], 'MAXLEN', '~', ARGV[1], '*', 'mq', ARGV[2]) "   
                     , String.class
                     );
     
-    // 延迟队列 EX：秒，PX：毫秒
+    /** 延迟队列 EX：秒，PX：毫秒 */
     private static final RedisScript<String> SCRIPT_DELAY_MESSAGE = 
             new DefaultRedisScript<>(
                     "if redis.call('hset', KEYS[2], ARGV[3], ARGV[4]) == 1 then " + 
@@ -153,8 +154,12 @@ public class RedisMqTemplate implements MqTemplate {
                     stringRedisTemplate.getStringSerializer(),
                     Arrays.asList(Constants.DELAY_MESSAGE_TTL_PREFIX_KEY + topic + "-" + id, 
                             Constants.DELAY_MESSAGE_HASHMAP_PREFIX_KEY + topic),
-                    expireTime, timeStr,// TTL
-                    id, msgStr// hashmap,id作为hashmap的key
+                    expireTime, 
+                    // TTL
+                    timeStr,
+                    id, 
+                    // hashmap,id作为hashmap的key
+                    msgStr
                     );
             flag = Objects.equals(delayMessageFlag, Constants.EXECUTE_SUCCESS);
             

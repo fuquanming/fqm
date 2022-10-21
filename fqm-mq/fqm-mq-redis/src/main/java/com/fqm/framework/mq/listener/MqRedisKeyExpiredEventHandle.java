@@ -25,7 +25,8 @@ public class MqRedisKeyExpiredEventHandle {
     
     private static final RedisScript<String> SCRIPT_DELAY_MESSAGE_DELIVERY = 
             new DefaultRedisScript<>(
-                    "local msg = redis.call('hget', KEYS[1], ARGV[1]) " +   // 获取hashmap消息
+                    // 获取hashmap消息
+                    "local msg = redis.call('hget', KEYS[1], ARGV[1]) " +   
                     "if msg==false or msg[1]==false then" + 
                     "    return '0' " + 
                     "else " + 

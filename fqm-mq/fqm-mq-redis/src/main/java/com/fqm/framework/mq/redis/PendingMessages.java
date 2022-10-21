@@ -63,6 +63,7 @@ public class PendingMessages implements Streamable<PendingMessage> {
     /**
      * @return {@literal true} if no messages pending within range.
      */
+    @Override
     public boolean isEmpty() {
         return pendingMessages.isEmpty();
     }
@@ -85,7 +86,7 @@ public class PendingMessages implements Streamable<PendingMessage> {
         return pendingMessages.get(index);
     }
 
-    /*
+    /**
      * (non-Javadoc)
      * @see java.lang.Iterable#iterator()
      */

@@ -27,7 +27,7 @@ import java.util.stream.Stream;
  */
 public class StreamInfo {
 
-    public static class XInfoObject {
+    public static class InfoObject {
 
         protected static final Map<String, Class<?>> DEFAULT_TYPE_HINTS;
 
@@ -42,7 +42,7 @@ public class StreamInfo {
 
         private Map<String, Object> raw;
 
-        private XInfoObject(List<Object> raw, Map<String, Class<?>> typeHints) {
+        private InfoObject(List<Object> raw, Map<String, Class<?>> typeHints) {
             Map<String, Object> map = new HashMap<>();
             int size = raw.size();
             for (int i = 0; i < size; i++) {
@@ -54,7 +54,7 @@ public class StreamInfo {
             this.raw = map;
         }
 
-        private XInfoObject(Map<String, Object> raw) {
+        private InfoObject(Map<String, Object> raw) {
             this.raw = raw;
         }
 
@@ -87,33 +87,33 @@ public class StreamInfo {
      *
      * @author Christoph Strobl
      */
-    public static class XInfoStream extends XInfoObject {
+    public static class InfoStream extends InfoObject {
 
-        private static final Map<String, Class<?>> typeHints;
+        private static final Map<String, Class<?>> TYPE_HINTS;
 
         static {
 
-            typeHints = new HashMap<>(DEFAULT_TYPE_HINTS);
-            typeHints.put("root.first-entry", Map.class);
-            typeHints.put("root.first-entry.*", Map.class);
-            typeHints.put("root.first-entry.*.*", Object.class);
-            typeHints.put("root.last-entry", Map.class);
-            typeHints.put("root.last-entry.*", Map.class);
-            typeHints.put("root.last-entry.*.*", Object.class);
+            TYPE_HINTS = new HashMap<>(DEFAULT_TYPE_HINTS);
+            TYPE_HINTS.put("root.first-entry", Map.class);
+            TYPE_HINTS.put("root.first-entry.*", Map.class);
+            TYPE_HINTS.put("root.first-entry.*.*", Object.class);
+            TYPE_HINTS.put("root.last-entry", Map.class);
+            TYPE_HINTS.put("root.last-entry.*", Map.class);
+            TYPE_HINTS.put("root.last-entry.*.*", Object.class);
         }
 
-        private XInfoStream(List<Object> raw) {
-            super(raw, typeHints);
+        private InfoStream(List<Object> raw) {
+            super(raw, TYPE_HINTS);
         }
 
         /**
-         * Factory method to create a new instance of {@link XInfoStream}.
+         * Factory method to create a new instance of {@link InfoStream}.
          *
          * @param source the raw value source.
          * @return
          */
-        public static XInfoStream fromList(List<Object> source) {
-            return new XInfoStream(source);
+        public static InfoStream fromList(List<Object> source) {
+            return new InfoStream(source);
         }
 
         /**
@@ -208,27 +208,27 @@ public class StreamInfo {
      *
      * @author Christoph Strobl
      */
-    public static class XInfoGroups {
+    public static class InfoGroups {
 
-        private final List<XInfoGroup> groupInfoList;
+        private final List<InfoGroup> groupInfoList;
 
         @SuppressWarnings("unchecked")
-        private XInfoGroups(List<Object> raw) {
+        private InfoGroups(List<Object> raw) {
 
             groupInfoList = new ArrayList<>();
             for (Object entry : raw) {
-                groupInfoList.add(new XInfoGroup((List<Object>) entry));
+                groupInfoList.add(new InfoGroup((List<Object>) entry));
             }
         }
 
         /**
-         * Factory method to create a new instance of {@link XInfoGroups}.
+         * Factory method to create a new instance of {@link InfoGroups}.
          *
          * @param source the raw value source.
          * @return
          */
-        public static XInfoGroups fromList(List<Object> source) {
-            return new XInfoGroups(source);
+        public static InfoGroups fromList(List<Object> source) {
+            return new InfoGroups(source);
         }
 
         /**
@@ -241,7 +241,7 @@ public class StreamInfo {
         }
 
         /**
-         * Returns the number of {@link XInfoGroup} available.
+         * Returns the number of {@link InfoGroup} available.
          *
          * @return zero if none available.
          * @see #groupCount()
@@ -258,39 +258,39 @@ public class StreamInfo {
         }
 
         /**
-         * Returns an iterator over the {@link XInfoGroup} elements.
+         * Returns an iterator over the {@link InfoGroup} elements.
          *
          * @return
          */
-        public Iterator<XInfoGroup> iterator() {
+        public Iterator<InfoGroup> iterator() {
             return groupInfoList.iterator();
         }
 
         /**
-         * Returns the {@link XInfoGroup} element at the given {@literal index}.
+         * Returns the {@link InfoGroup} element at the given {@literal index}.
          *
          * @return the element at the specified position.
          * @throws IndexOutOfBoundsException if the index is out of range.
          */
-        public XInfoGroup get(int index) {
+        public InfoGroup get(int index) {
             return groupInfoList.get(index);
         }
 
         /**
-         * Returns a sequential {@code Stream} of {@link XInfoGroup}.
+         * Returns a sequential {@code Stream} of {@link InfoGroup}.
          *
          * @return
          */
-        public Stream<XInfoGroup> stream() {
+        public Stream<InfoGroup> stream() {
             return groupInfoList.stream();
         }
 
         /**
-         * Performs the given {@literal action} on every available {@link XInfoGroup} of this {@link XInfoGroups}.
+         * Performs the given {@literal action} on every available {@link InfoGroup} of this {@link InfoGroups}.
          *
          * @param action
          */
-        public void forEach(Consumer<? super XInfoGroup> action) {
+        public void forEach(Consumer<? super InfoGroup> action) {
             groupInfoList.forEach(action);
         }
 
@@ -301,14 +301,14 @@ public class StreamInfo {
 
     }
 
-    public static class XInfoGroup extends XInfoObject {
+    public static class InfoGroup extends InfoObject {
 
-        private XInfoGroup(List<Object> raw) {
+        private InfoGroup(List<Object> raw) {
             super(raw, DEFAULT_TYPE_HINTS);
         }
 
-        public static XInfoGroup fromList(List<Object> raw) {
-            return new XInfoGroup(raw);
+        public static InfoGroup fromList(List<Object> raw) {
+            return new InfoGroup(raw);
         }
 
         /**
@@ -348,21 +348,21 @@ public class StreamInfo {
         }
     }
 
-    public static class XInfoConsumers {
+    public static class InfoConsumers {
 
-        private final List<XInfoConsumer> consumerInfoList;
+        private final List<InfoConsumer> consumerInfoList;
 
         @SuppressWarnings("unchecked")
-        public XInfoConsumers(String groupName, List<Object> raw) {
+        public InfoConsumers(String groupName, List<Object> raw) {
 
             consumerInfoList = new ArrayList<>();
             for (Object entry : raw) {
-                consumerInfoList.add(new XInfoConsumer(groupName, (List<Object>) entry));
+                consumerInfoList.add(new InfoConsumer(groupName, (List<Object>) entry));
             }
         }
 
-        public static XInfoConsumers fromList(String groupName, List<Object> source) {
-            return new XInfoConsumers(groupName, source);
+        public static InfoConsumers fromList(String groupName, List<Object> source) {
+            return new InfoConsumers(groupName, source);
         }
 
         /**
@@ -375,7 +375,7 @@ public class StreamInfo {
         }
 
         /**
-         * Returns the number of {@link XInfoConsumer} available.
+         * Returns the number of {@link InfoConsumer} available.
          *
          * @return zero if none available.
          * @see #getConsumerCount()
@@ -392,39 +392,39 @@ public class StreamInfo {
         }
 
         /**
-         * Returns an iterator over the {@link XInfoConsumer} elements.
+         * Returns an iterator over the {@link InfoConsumer} elements.
          *
          * @return
          */
-        public Iterator<XInfoConsumer> iterator() {
+        public Iterator<InfoConsumer> iterator() {
             return consumerInfoList.iterator();
         }
 
         /**
-         * Returns the {@link XInfoConsumer} element at the given {@literal index}.
+         * Returns the {@link InfoConsumer} element at the given {@literal index}.
          *
          * @return the element at the specified position.
          * @throws IndexOutOfBoundsException if the index is out of range.
          */
-        public XInfoConsumer get(int index) {
+        public InfoConsumer get(int index) {
             return consumerInfoList.get(index);
         }
 
         /**
-         * Returns a sequential {@code Stream} of {@link XInfoConsumer}.
+         * Returns a sequential {@code Stream} of {@link InfoConsumer}.
          *
          * @return
          */
-        public Stream<XInfoConsumer> stream() {
+        public Stream<InfoConsumer> stream() {
             return consumerInfoList.stream();
         }
 
         /**
-         * Performs the given {@literal action} on every available {@link XInfoConsumer} of this {@link XInfoConsumers}.
+         * Performs the given {@literal action} on every available {@link InfoConsumer} of this {@link InfoConsumers}.
          *
          * @param action
          */
-        public void forEach(Consumer<? super XInfoConsumer> action) {
+        public void forEach(Consumer<? super InfoConsumer> action) {
             consumerInfoList.forEach(action);
         }
 
@@ -434,11 +434,11 @@ public class StreamInfo {
         }
     }
 
-    public static class XInfoConsumer extends XInfoObject {
+    public static class InfoConsumer extends InfoObject {
 
         private final String groupName;
 
-        public XInfoConsumer(String groupName, List<Object> raw) {
+        public InfoConsumer(String groupName, List<Object> raw) {
 
             super(raw, DEFAULT_TYPE_HINTS);
             this.groupName = groupName;

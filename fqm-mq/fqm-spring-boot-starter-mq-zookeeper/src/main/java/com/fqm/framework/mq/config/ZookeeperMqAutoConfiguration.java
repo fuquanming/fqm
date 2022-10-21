@@ -35,11 +35,12 @@ import com.google.common.base.Preconditions;
  */
 @Configuration
 @AutoConfigureAfter(MqAutoConfiguration.class)
-@ConditionalOnBean(MqProperties.class) // MqProperties加载则MqAutoConfiguration也就加载
+@ConditionalOnBean(MqProperties.class)
 public class ZookeeperMqAutoConfiguration implements SmartInitializingSingleton, ApplicationContextAware {
     
     private Logger logger = LoggerFactory.getLogger(getClass());
     private ApplicationContext applicationContext;
+    private int defaultConnectionTimeout = 15000;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -56,7 +57,10 @@ public class ZookeeperMqAutoConfiguration implements SmartInitializingSingleton,
     @Bean(initMethod = "start", destroyMethod = "close")
     @ConditionalOnMissingBean(CuratorFramework.class)
     public CuratorFramework curatorFramework(ZookeeperProperties zkProperties) {
-        if (zkProperties.getConnectionTimeout() < 15000) zkProperties.setConnectionTimeout(15000);// 必须大于15秒
+        if (zkProperties.getConnectionTimeout() < defaultConnectionTimeout) {
+            // 必须大于15秒
+            zkProperties.setConnectionTimeout(defaultConnectionTimeout);
+        }
         RetryPolicy retryPolicy = new ExponentialBackoffRetry(zkProperties.getBaseSleepTimeMs(), 
                 zkProperties.getMaxRetries(), zkProperties.getMaxSleepMs());
         return CuratorFrameworkFactory.builder().connectString(zkProperties.getConnectString()).sessionTimeoutMs(zkProperties.getSessionTimeout())

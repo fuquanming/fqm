@@ -45,13 +45,12 @@ import com.google.common.base.Preconditions;
 
 /**
  * Rocket消息队列自动装配
- * 
  * @version 
  * @author 傅泉明
  */
 @Configuration
 @AutoConfigureAfter(MqAutoConfiguration.class)
-@ConditionalOnBean(MqProperties.class) // MqProperties加载则MqAutoConfiguration也就加载
+@ConditionalOnBean(MqProperties.class)
 public class RocketMqAutoConfiguration implements SmartInitializingSingleton, ApplicationContextAware {
     
     private Logger logger = LoggerFactory.getLogger(getClass());
@@ -65,19 +64,23 @@ public class RocketMqAutoConfiguration implements SmartInitializingSingleton, Ap
     @Value("${rocketmq.name-server:}")
     private String nameServer;
     
-    // 先初始化DefaultMQProducer,解决没有配置rocketmq.producer.group，就没有实例化DefaultMQProducer
-    // 查看RocketMQAutoConfiguration.defaultMQProducer(RocketMQProperties rocketMQProperties)
+    /**
+     * 查看RocketMQAutoConfiguration.defaultMQProducer(RocketMQProperties rocketMQProperties)
+     * 先初始化DefaultMQProducer,解决没有配置rocketmq.producer.group，就没有实例化DefaultMQProducer
+     * @param rocketMqProperties
+     * @return
+     */
     @Bean("defaultMQProducer")
     @ConditionalOnMissingBean(DefaultMQProducer.class)
-    public DefaultMQProducer defaultMQProducer(RocketMQProperties rocketMQProperties) {
-        RocketMQProperties.Producer producerConfig = rocketMQProperties.getProducer();
-        String nameServer = rocketMQProperties.getNameServer();
+    public DefaultMQProducer defaultMqProducer(RocketMQProperties rocketMqProperties) {
+        RocketMQProperties.Producer producerConfig = rocketMqProperties.getProducer();
+        String nameServer = rocketMqProperties.getNameServer();
         if (producerConfig == null) {
             producerConfig = new RocketMQProperties.Producer();
         }
         String groupName = "fqmGroup";
 
-        String accessChannel = rocketMQProperties.getAccessChannel();
+        String accessChannel = rocketMqProperties.getAccessChannel();
 
         String ak = producerConfig.getAccessKey();
         String sk = producerConfig.getSecretKey();
@@ -103,8 +106,8 @@ public class RocketMqAutoConfiguration implements SmartInitializingSingleton, Ap
     @Bean
     @ConditionalOnMissingBean
     @Order(200)
-    public RocketMqTemplate rocketMqTemplate(MqFactory mqFactory, RocketMQTemplate rocketMQTemplate) {
-        RocketMqTemplate rocketMqTemplate = new RocketMqTemplate(rocketMQTemplate);
+    public RocketMqTemplate rocketMqTemplate(MqFactory mqFactory, RocketMQTemplate template) {
+        RocketMqTemplate rocketMqTemplate = new RocketMqTemplate(template);
         mqFactory.addMqTemplate(rocketMqTemplate);
         return rocketMqTemplate;
     }
@@ -147,7 +150,7 @@ public class RocketMqAutoConfiguration implements SmartInitializingSingleton, Ap
                     
                     beanDefinitionBuilder.addPropertyValue("messageConverter", new StringMessageConverter(Charset.forName("UTF-8")));
                     
-                    beanDefinitionBuilder.addPropertyValue("rocketMQMessageListener", rocketMQMessageListener(nameServer, topic, group, 1));
+                    beanDefinitionBuilder.addPropertyValue("rocketMQMessageListener", rocketMqMessageListener(nameServer, topic, group, 1));
                     beanDefinitionBuilder.addPropertyValue("rocketMQListener", new RocketMqListener(v.getBean(), v.getMethod(), topic, applicationContext.getBean(RocketMqTemplate.class)));
                     // 注册bean
                     AbstractBeanDefinition bean = beanDefinitionBuilder.getRawBeanDefinition();
@@ -156,8 +159,10 @@ public class RocketMqAutoConfiguration implements SmartInitializingSingleton, Ap
                     
                     try {
                         DefaultRocketMQListenerContainer container = (DefaultRocketMQListenerContainer) applicationContext.getBean(name);
-                        FieldUtils.writeDeclaredField(container, "messageType", String.class, true);// 修改私有属性，数据传输类型，为string
-                        container.getConsumer().setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);// 指定从第一条消息开始消费
+                        // 修改私有属性，数据传输类型，为string
+                        FieldUtils.writeDeclaredField(container, "messageType", String.class, true);
+                        // 指定从第一条消息开始消费
+                        container.getConsumer().setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
                         container.getConsumer().setInstanceName(name);
                         // 消费失败1次，立即入死信队列 topic="%DLQ%" + v.getGroup()
                         // 第一次10s，第二次30s，第三次60s
@@ -172,88 +177,72 @@ public class RocketMqAutoConfiguration implements SmartInitializingSingleton, Ap
         }
     }
 
-    private RocketMQMessageListener rocketMQMessageListener(String nameServer, String topic, String group, int concurrentConsumers) {
+    private RocketMQMessageListener rocketMqMessageListener(String nameServer, String topic, String group, int concurrentConsumers) {
         return new RocketMQMessageListener() {
             @Override
             public Class<? extends Annotation> annotationType() {
                 return null;
             }
-            
             @Override
             public String topic() {
                 return topic;
             }
-            
             @Override
             public SelectorType selectorType() {
                 return SelectorType.TAG;
             }
-            
             @Override
             public String selectorExpression() {
                 return null;
             }
-            
             @Override
             public String secretKey() {
                 return null;
             }
-            
             @Override
             public int replyTimeout() {
                 return 3000;
             }
-            
             @Override
             public String nameServer() {
                 return nameServer;
             }
-            
             @Override
             public MessageModel messageModel() {
                 return MessageModel.CLUSTERING;// 集群
             }
-            
             @Override
             public int maxReconsumeTimes() {
                 return 0;
             }
-            
             @Override
             public boolean enableMsgTrace() {
                 return false;
             }
-            
             @Override
             public String customizedTraceTopic() {
                 return topic;
             }
-            
             @Override
             public String consumerGroup() {
                 return group;
             }
-            
             @Override
             public long consumeTimeout() {
                 return 15L;
             }
-            
             @Override
             public int consumeThreadMax() {
                 return concurrentConsumers;
             }
-            
             @Override
             public ConsumeMode consumeMode() {
                 return ConsumeMode.CONCURRENTLY;
             }
-            
             @Override
             public String accessKey() {
                 return null;
             }
-            
             @Override
             public String accessChannel() {
                 return null;
