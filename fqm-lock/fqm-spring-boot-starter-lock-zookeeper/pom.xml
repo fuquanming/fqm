@@ -22,12 +22,6 @@
             <artifactId>fqm-lock-zookeeper</artifactId>
             <version>${parent.version}</version>
         </dependency>
-
-        <!-- 使用spring-cloud-starter-zookeeper的配置文件 -->
-        <!-- <dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-zookeeper</artifactId>
-		</dependency> -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>

@@ -13,22 +13,22 @@ import com.fqm.framework.locks.Lock;
  */
 public class SimpleLock implements Lock {
 
-    private ReentrantLock lock = new ReentrantLock();
+    private ReentrantLock reentrantLock = new ReentrantLock();
     
     @Override
     public void lock() {
-        lock.lock();
+        reentrantLock.lock();
     }
 
     @Override
     public boolean tryLock() {
-        return lock.tryLock();
+        return reentrantLock.tryLock();
     }
 
     @Override
     public boolean tryLock(long timeout, TimeUnit unit) {
         try {
-            return lock.tryLock(timeout, unit);
+            return reentrantLock.tryLock(timeout, unit);
         } catch (InterruptedException e) {
             e.printStackTrace();
             Thread.currentThread().interrupt();
@@ -38,7 +38,7 @@ public class SimpleLock implements Lock {
 
     @Override
     public boolean unlock() {
-        lock.unlock();
+        reentrantLock.unlock();
         return true;
     }
 
