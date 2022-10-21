@@ -29,7 +29,7 @@ public class MultilevelCache extends AbstractValueAdaptingCache {
      * name=MLC|超时时间|刷新时间，单位：秒
      * MLC|10：超时10秒
      */
-    private String name;
+    private String cacheName;
     private List<Cache> cacheList = new ArrayList<>();
     private int expireSecond;
     private int refreshSecond;
@@ -47,19 +47,19 @@ public class MultilevelCache extends AbstractValueAdaptingCache {
     
     public MultilevelCache(String name, int expireSecond, int nullExpireSecond, int refreshSecond) {
         super(true);
-        this.name = name;
-        this.name = buildName(expireSecond, nullExpireSecond, refreshSecond);
+        this.cacheName = name;
+        this.cacheName = buildName(expireSecond, nullExpireSecond, refreshSecond);
     }
     
     public MultilevelCache(int expireSecond, int nullExpireSecond, int refreshSecond) {
         super(true);
-        this.name = buildName(expireSecond, nullExpireSecond, refreshSecond);
+        this.cacheName = buildName(expireSecond, nullExpireSecond, refreshSecond);
     }
     
     public String buildName(int expireSecond, int nullExpireSecond, int refreshSecond) {
         this.expireSecond = expireSecond;
         this.refreshSecond = refreshSecond;
-        return CacheBuilder.getCacheName(this.name == null ? NAME : this.name, expireSecond, nullExpireSecond, refreshSecond);
+        return CacheBuilder.getCacheName(this.cacheName == null ? NAME : this.cacheName, expireSecond, nullExpireSecond, refreshSecond);
     }
     
     public MultilevelCache addCache(Cache cache) {
@@ -69,7 +69,7 @@ public class MultilevelCache extends AbstractValueAdaptingCache {
     
     @Override
     public String getName() {
-        return this.name;
+        return this.cacheName;
     }
 
     @Override
@@ -95,7 +95,8 @@ public class MultilevelCache extends AbstractValueAdaptingCache {
         
         if (vw != null) {
             for (int i = 0; i < cacheIndex; i++) {
-                Cache cache = cacheList.get(i);// 拷贝缓存
+                // 拷贝缓存
+                Cache cache = cacheList.get(i);
                 cache.put(key, vw.get());
             }
             return vw;
@@ -146,29 +147,29 @@ public class MultilevelCache extends AbstractValueAdaptingCache {
 
     @Override
     public void put(Object key, Object value) {
-        cacheList.forEach(cache -> {
-            cache.put(key, value);
-        });
+        cacheList.forEach(cache ->
+            cache.put(key, value)
+        );
     }
     
     @Override
     public void evict(Object key) {
-        cacheList.forEach(cache -> {
-            cache.evict(key);
-        });
+        cacheList.forEach(cache ->
+            cache.evict(key)
+        );
     }
 
     @Override
     public void clear() {
-        cacheList.forEach(cache -> {
-            cache.clear();
-        });
+        cacheList.forEach(Cache::clear);
     }
 
     @Override
     protected Object lookup(Object key) {
         ValueWrapper vw = get(key);
-        if (vw != null) return vw.get();
+        if (vw != null) {
+            return vw.get();
+        }
         return null;
     }
     
@@ -197,7 +198,9 @@ public class MultilevelCache extends AbstractValueAdaptingCache {
      * @param key
      */
     public void refreshCache(Object key) {
-        if (refreshSecond <= 0) return;
+        if (refreshSecond <= 0) {
+            return;
+        }
         CacheRefresh cacheRefresh = cacheCallMap.get(key);
         if (cacheRefresh != null) {
             long currentSeconds = currentSeconds();
@@ -205,39 +208,43 @@ public class MultilevelCache extends AbstractValueAdaptingCache {
             /** 缓存已执行的时间 */
             long executeSeconds = currentSeconds - createSeconds;
             /** 大于刷新时间且小于超时时间2秒 */
-            if (executeSeconds >= refreshSecond && executeSeconds < expireSecond - 2) {
+            int minRefreshSecond = 2;
+            if (executeSeconds >= refreshSecond && executeSeconds < expireSecond - minRefreshSecond) {
                 /** 是否添加过key */
                 if (refreshKeyMap.containsKey(key)) {
                     return;
                 }
-                ReentrantLock lock = cacheRefresh.lock;
-                boolean flag = lock.tryLock();
-                /** 控制一个异步刷新缓存 */
-                if (flag) {
-                    refreshKeyMap.put(key, Boolean.TRUE);
-                    try {
-                        if (refreshCacheTimer == null) {
-                            refreshCacheTimer = new Timer(true);
-                        }
-                        refreshCacheTimer.schedule(new TimerTask() {
-                            @Override
-                            public void run() {
-//                                System.out.println("run asyn load cache...executeSeconds=" + executeSeconds + "," + Thread.currentThread().getName());
-                                try {
-                                    Object obj = cacheRefresh.getValueLoader().call();
-                                    put(key, obj);
-                                    saveCacheRefresh(key, cacheRefresh.getValueLoader());
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                } finally {
-                                    refreshKeyMap.remove(key);
-                                }
-                            }
-                        }, 0);
-                    } finally {
-                        lock.unlock();
-                    }
+                refreshCache(key, cacheRefresh);
+            }
+        }
+    }
+
+    private void refreshCache(Object key, CacheRefresh cacheRefresh) {
+        ReentrantLock lock = cacheRefresh.lock;
+        boolean flag = lock.tryLock();
+        /** 控制一个异步刷新缓存 */
+        if (flag) {
+            refreshKeyMap.put(key, Boolean.TRUE);
+            try {
+                if (refreshCacheTimer == null) {
+                    refreshCacheTimer = new Timer(true);
                 }
+                refreshCacheTimer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        try {
+                            Object obj = cacheRefresh.getValueLoader().call();
+                            put(key, obj);
+                            saveCacheRefresh(key, cacheRefresh.getValueLoader());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        } finally {
+                            refreshKeyMap.remove(key);
+                        }
+                    }
+                }, 0);
+            } finally {
+                lock.unlock();
             }
         }
     }
@@ -248,7 +255,9 @@ public class MultilevelCache extends AbstractValueAdaptingCache {
      * @param valueLoader
      */
     public void saveCacheRefresh(Object key, Callable<?> valueLoader) {
-        if (refreshSecond <= 0) return;
+        if (refreshSecond <= 0) {
+            return;
+        }
         // 记录缓存调用的方法
         CacheRefresh cacheRefresh = cacheCallMap.get(key);
         long currentSeconds = currentSeconds();
@@ -272,7 +281,8 @@ public class MultilevelCache extends AbstractValueAdaptingCache {
             this.currentSeconds = currentSeconds;
             this.valueLoader = valueLoader;
         }
-        public Callable<?> getValueLoader() {
+        @SuppressWarnings("rawtypes")
+        public Callable getValueLoader() {
             return valueLoader;
         }
         public void setValueLoader(Callable<?> valueLoader) {

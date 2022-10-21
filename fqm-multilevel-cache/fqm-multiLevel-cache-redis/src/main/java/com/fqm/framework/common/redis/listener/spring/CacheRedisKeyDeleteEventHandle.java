@@ -20,7 +20,9 @@ public class CacheRedisKeyDeleteEventHandle {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    // user|12|9|::cache_user_id_89
+    /**
+     * user|12|9|::cache_user_id_89
+     */
     Pattern p = Pattern.compile("(.*)::(.*)");
     
     private MultilevelCacheManager cacheManager;
@@ -32,7 +34,7 @@ public class CacheRedisKeyDeleteEventHandle {
     @EventListener
     public void eventHandle(RedisKeyDeleteEvent event) {
         String deleteKey = new String(event.getSource());
-//        logger.info("RedisKeyDelete=" + deleteKey);
+        logger.debug("RedisKeyDelete={}", deleteKey);
         
         Matcher m = p.matcher(deleteKey);
         if (m.find()) {
@@ -41,7 +43,7 @@ public class CacheRedisKeyDeleteEventHandle {
                 String cacheKey = m.group(2);
                 // 删除缓存
                 cache.evict(cacheKey);
-                logger.info("MultiLevelCache Delete cacheKey=" + cacheKey);
+                logger.info("MultiLevelCache Delete cacheKey={}", cacheKey);
             }
         }
     }

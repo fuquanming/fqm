@@ -29,11 +29,10 @@ public class MultilevelCacheManagerRedisAutoConfiguration extends ApplicationObj
     @Bean
     @ConditionalOnMissingBean(value = RedisCacheConfiguration.class)
     public RedisCacheConfiguration redisCacheConfiguration() {
-        RedisCacheConfiguration defaultCacheConfig = RedisCacheConfiguration.defaultCacheConfig()
+        return RedisCacheConfiguration.defaultCacheConfig()
 //                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
 //                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()))
                 ;
-        return defaultCacheConfig;
     }
     
     @Bean(name = "multilevelCacheRedis", destroyMethod = "destroy")
@@ -41,7 +40,7 @@ public class MultilevelCacheManagerRedisAutoConfiguration extends ApplicationObj
     public MultilevelCacheManager multiLevelCacheManager(RedisConnectionFactory redisConnectionFactory,
             RedisCacheConfiguration redisCacheConfiguration) {
         MultilevelCacheManager cacheManager = new MultilevelCacheManager(this.getApplicationContext());
-        List<CacheBuilder> cacheBuilders = new ArrayList<CacheBuilder>();
+        List<CacheBuilder> cacheBuilders = new ArrayList<>();
         cacheBuilders.add(new CaffeineCacheBuilders());
         cacheBuilders.add(new RedisCacheBuilders(redisConnectionFactory, redisCacheConfiguration));
         cacheManager.setCacheBuilders(cacheBuilders);

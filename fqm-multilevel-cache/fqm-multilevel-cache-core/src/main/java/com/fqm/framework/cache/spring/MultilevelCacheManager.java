@@ -24,18 +24,6 @@ import com.fqm.framework.common.spring.util.ValueUtil;
  * 2、创建多级缓存及缓存自动刷新时间（懒加载）
  * 3、缓存时间支持配置文件
  * 
-    @Bean(name = "multilevelCacheRedis", destroyMethod = "destroy")
-    @ConditionalOnMissingBean(value = MultilevelCacheManager.class)
-    public MultilevelCacheManager multiLevelCacheManager(RedisConnectionFactory redisConnectionFactory,
-            RedisCacheConfiguration redisCacheConfiguration) {
-        MultilevelCacheManager cacheManager = new MultilevelCacheManager(this.getApplicationContext());
-        List<CacheBuilder> cacheBuilders = new ArrayList<CacheBuilder>();
-        cacheBuilders.add(new CaffeineCacheBuilders());
-        cacheBuilders.add(new RedisCacheBuilders(redisConnectionFactory, redisCacheConfiguration));
-        cacheManager.setCacheBuilders(cacheBuilders);
-        return cacheManager;
-    }
-    
     value = "MLC|10|7"-> MLC：缓存名称，10：过期时间，5：null值过期时间，7：刷新时间
     @Cacheable(value = "MLC|10|5|7", key = "'cache_user_id_' + #id", sync = true, cacheManager = "mlcm")
     支持表达式，读取配置文件类似@Value功能
@@ -52,9 +40,9 @@ public class MultilevelCacheManager extends AbstractCacheManager {
     
     private Collection<CacheBuilder> cacheBuilders = Collections.emptySet();
     /** 默认过期时间15分钟 */
-    public static final int defaultExpireSecond = 900;
+    public static final int DEFAULT_EXPIRE_SECOND = 900;
     /** 默认null值过期时间30秒 */
-    public static final int defaultNullExpireSecond = 30;
+    public static final int DEFAULT_NULL_EXPRIE_SECOND = 30;
 
     private static Timer refreshCacheTimer = new Timer(true);
     
@@ -98,25 +86,29 @@ public class MultilevelCacheManager extends AbstractCacheManager {
         int refreshSecond = 0;
         
         int length = params.length;
-        if (length >= 2) {
+        int expireSecondFlag = 2;
+        int refreshSecondFlag = 3;
+        if (length >= expireSecondFlag) {
             String cacheTime = params[1];
             // 读取配置文件的数据或表达式
             Object secondObj = ValueUtil.resolveExpression((ConfigurableBeanFactory) this.applicationContext.getAutowireCapableBeanFactory(), cacheTime);
             expireSecond = Integer.valueOf(secondObj.toString());
         }
-        if (length > 2) {
+        if (length > expireSecondFlag) {
             Object secondObj = ValueUtil.resolveExpression((ConfigurableBeanFactory) this.applicationContext.getAutowireCapableBeanFactory(), params[2]);
             nullExpireSecond = Integer.valueOf(secondObj.toString());
         }
-        if (length > 3) {
+        if (length > refreshSecondFlag) {
             Object secondObj = ValueUtil.resolveExpression((ConfigurableBeanFactory) this.applicationContext.getAutowireCapableBeanFactory(), params[3]);
             refreshSecond = Integer.valueOf(secondObj.toString());
         }
         
-        String cacheName = CacheBuilder.getCacheName(params[0], expireSecond, nullExpireSecond, refreshSecond);;
+        String cacheName = CacheBuilder.getCacheName(params[0], expireSecond, nullExpireSecond, refreshSecond);
         // lock 新创建的cache
         Cache cache = cacheMap.get(cacheName);
-        if (cache != null) return cache;
+        if (cache != null) {
+            return cache;
+        }
         
         cache = createCache(params[0], expireSecond, nullExpireSecond, refreshSecond);
         cacheMap.put(cache.getName(), cache);
@@ -124,21 +116,33 @@ public class MultilevelCacheManager extends AbstractCacheManager {
     }
 
     protected MultilevelCache createCache(String name, int expireSecond, int nullExpireSecond, int refreshSecond) {
-        if (expireSecond <= 0) expireSecond = defaultExpireSecond;
-        if (nullExpireSecond <= 0) nullExpireSecond = defaultNullExpireSecond;
+        if (expireSecond <= 0) {
+            expireSecond = DEFAULT_EXPIRE_SECOND;
+        }
+        if (nullExpireSecond <= 0) {
+            nullExpireSecond = DEFAULT_NULL_EXPRIE_SECOND;
+        }
         
-        if (refreshSecond <= 0) refreshSecond = 0;
-        if (refreshSecond >= expireSecond) refreshSecond = expireSecond - 5;// 过期前5秒自动刷新缓存
+        if (refreshSecond <= 0) {
+            refreshSecond = 0;
+        }
+        // 过期前5秒自动刷新缓存
+        int minExpireSecond = 5;
+        if (refreshSecond >= expireSecond) {
+            refreshSecond = expireSecond - minExpireSecond;
+        }
         
         /** 刷新时间要在过期时间的75%之后，过期时间-刷新时间>3秒，过期时间前3秒之前才会触发刷新。 */
-        if (expireSecond - refreshSecond < 2) {
+        int minRefreshSecond = 2;
+        if (expireSecond - refreshSecond < minRefreshSecond) {
             logger.warn("cacheName={},expirsecond must be greater than refreshsecond for 2 seconds", CacheBuilder.getCacheName(name, expireSecond, nullExpireSecond, refreshSecond));
             refreshSecond = 0;
         } else {
             NumberFormat numberFormat = NumberFormat.getInstance();  
             numberFormat.setMaximumFractionDigits(2);
             String result = numberFormat.format((float) refreshSecond / (float) expireSecond * 100);
-            if (Float.valueOf(result).intValue() < 75) {
+            int percentage = 75;
+            if (Float.valueOf(result).intValue() < percentage) {
                 logger.warn("cacheName={},refreshSecond is illegal parameter, refreshSecond / expireSecond:must be more than 75%", CacheBuilder.getCacheName(name, expireSecond, nullExpireSecond, refreshSecond));
                 refreshSecond = 0;
             }
@@ -161,22 +165,22 @@ public class MultilevelCacheManager extends AbstractCacheManager {
             multiLevelCache.addCache(cache);
             data.append("cache=").append(cacheBuilder.getCacheType().name()).append("->").append(cache.getName()).append(",");
         }
-        if (cacheBuilders.size() > 0) {
+        if (!cacheBuilders.isEmpty()) {
             data.deleteCharAt(data.length() - 1);
         }
         data.append("]");
         
-        logger.info(data.toString());
+        logger.info("cache={}", data);
         return multiLevelCache;
     }
     
     public void destroy() {
         cacheMap.values().forEach(cache -> {
             MultilevelCache multiLevelCache = (MultilevelCache) cache;
-            logger.info("cache destroy=" + multiLevelCache.getName());
-            Timer refreshCacheTimer = multiLevelCache.getRefreshCacheTimer();
-            if (refreshCacheTimer != null) {
-                refreshCacheTimer.cancel();
+            logger.info("cache destroy={}", multiLevelCache.getName());
+            Timer timer = multiLevelCache.getRefreshCacheTimer();
+            if (timer != null) {
+                timer.cancel();
             }
         });
         if (refreshCacheTimer != null) {
