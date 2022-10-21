@@ -3,9 +3,13 @@ package com.fqm.framework.cache.spring;
 import java.text.NumberFormat;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Timer;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +48,20 @@ public class MultilevelCacheManager extends AbstractCacheManager {
     /** 默认null值过期时间30秒 */
     public static final int DEFAULT_NULL_EXPRIE_SECOND = 30;
 
-    private static Timer refreshCacheTimer = new Timer(true);
+    private static final ThreadFactory THREAD_FACTORY = new ThreadFactory() {
+        private final ThreadFactory defaultFactory = Executors.defaultThreadFactory();
+        private final AtomicInteger threadNumber = new AtomicInteger(1);
+        public Thread newThread(Runnable r) {
+            Thread thread = defaultFactory.newThread(r);
+            if (!thread.isDaemon()) {
+                thread.setDaemon(true);
+            }
+            thread.setName("multilevelCache-" + threadNumber.getAndIncrement());
+            return thread;
+        }
+    };
+    
+    private static ScheduledExecutorService refreshCacheTimer = new ScheduledThreadPoolExecutor(2, THREAD_FACTORY);
     
     ApplicationContext applicationContext;
     
@@ -178,14 +195,14 @@ public class MultilevelCacheManager extends AbstractCacheManager {
         cacheMap.values().forEach(cache -> {
             MultilevelCache multiLevelCache = (MultilevelCache) cache;
             logger.info("cache destroy={}", multiLevelCache.getName());
-            Timer timer = multiLevelCache.getRefreshCacheTimer();
+            ScheduledExecutorService timer = multiLevelCache.getRefreshCacheTimer();
             if (timer != null) {
-                timer.cancel();
+                timer.shutdown();
             }
         });
         if (refreshCacheTimer != null) {
             logger.info("cacheTimer destroy");
-            refreshCacheTimer.cancel();
+            refreshCacheTimer.shutdown();
         }
     }
 }

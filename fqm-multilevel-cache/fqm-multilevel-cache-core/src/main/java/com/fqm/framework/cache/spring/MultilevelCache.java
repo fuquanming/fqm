@@ -3,10 +3,10 @@ package com.fqm.framework.cache.spring;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.springframework.cache.Cache;
@@ -43,7 +43,7 @@ public class MultilevelCache extends AbstractValueAdaptingCache {
      */
     private Map<Object, Boolean> refreshKeyMap = new ConcurrentHashMap<>();
     
-    private Timer refreshCacheTimer = null;
+    private ScheduledExecutorService refreshCacheTimer = null;
     
     public MultilevelCache(String name, int expireSecond, int nullExpireSecond, int refreshSecond) {
         super(true);
@@ -182,10 +182,10 @@ public class MultilevelCache extends AbstractValueAdaptingCache {
     public Map<Object, CacheRefresh> getCacheCallMap() {
         return cacheCallMap;
     }
-    public void setRefreshCacheTimer(Timer refreshCacheTimer) {
+    public void setRefreshCacheTimer(ScheduledExecutorService refreshCacheTimer) {
         this.refreshCacheTimer = refreshCacheTimer;
     }
-    public Timer getRefreshCacheTimer() {
+    public ScheduledExecutorService getRefreshCacheTimer() {
         return refreshCacheTimer;
     }
     public long currentSeconds() {
@@ -202,7 +202,7 @@ public class MultilevelCache extends AbstractValueAdaptingCache {
             return;
         }
         CacheRefresh cacheRefresh = cacheCallMap.get(key);
-        if (cacheRefresh != null) {
+        if (null != cacheRefresh && null != refreshCacheTimer) {
             long currentSeconds = currentSeconds();
             long createSeconds = cacheRefresh.getCurrentSeconds();
             /** 缓存已执行的时间 */
@@ -226,23 +226,17 @@ public class MultilevelCache extends AbstractValueAdaptingCache {
         if (flag) {
             refreshKeyMap.put(key, Boolean.TRUE);
             try {
-                if (refreshCacheTimer == null) {
-                    refreshCacheTimer = new Timer(true);
-                }
-                refreshCacheTimer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        try {
-                            Object obj = cacheRefresh.getValueLoader().call();
-                            put(key, obj);
-                            saveCacheRefresh(key, cacheRefresh.getValueLoader());
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        } finally {
-                            refreshKeyMap.remove(key);
-                        }
+                refreshCacheTimer.schedule(() -> {
+                    try {
+                        Object obj = cacheRefresh.getValueLoader().call();
+                        put(key, obj);
+                        saveCacheRefresh(key, cacheRefresh.getValueLoader());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    } finally {
+                        refreshKeyMap.remove(key);
                     }
-                }, 0);
+                }, 0, TimeUnit.SECONDS);
             } finally {
                 lock.unlock();
             }
@@ -255,7 +249,7 @@ public class MultilevelCache extends AbstractValueAdaptingCache {
      * @param valueLoader
      */
     public void saveCacheRefresh(Object key, Callable<?> valueLoader) {
-        if (refreshSecond <= 0) {
+        if (refreshSecond <= 0 && null != refreshCacheTimer) {
             return;
         }
         // 记录缓存调用的方法
