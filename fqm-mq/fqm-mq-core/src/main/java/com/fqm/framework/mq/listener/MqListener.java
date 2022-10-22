@@ -1,5 +1,7 @@
 package com.fqm.framework.mq.listener;
 
+import com.fqm.framework.mq.exception.MqException;
+
 /**
  * 监听消息队列
  * 
@@ -10,8 +12,8 @@ public interface MqListener<T> {
     /**
      * 监听到json对象
      * @param message
-     * @throws Exception
+     * @throws MqException
      */
-    public void receiveMessage(T message) throws Exception;
+    public void receiveMessage(T message) throws MqException;
     
 }

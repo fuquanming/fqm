@@ -16,101 +16,105 @@ import com.fqm.framework.common.core.util.JsonUtil;
  * @author 傅泉明
  */
 public class RocketDelayUtil {
+    
+    private RocketDelayUtil() {
+    }
+    
     /** 1s/5s/10s/30s */
-    public static Map<Integer, Integer> secondMap = new TreeMap<>();
+    protected static final Map<Integer, Integer> SECOND_MAP = new TreeMap<>();
 
     /** 1m/2m/3m/4m/5m/6m/7m/8m/9m/10m/20m/30m */
-    public static Map<Integer, Integer> minuteMap = new TreeMap<>();
+    protected static final Map<Integer, Integer> MINUTE_MAP = new TreeMap<>();
 
     /** 1h/2h */
-    public static Map<Integer, Integer> hourMap = new TreeMap<>();
+    protected static final Map<Integer, Integer> HOUR_MAP = new TreeMap<>();
 
     static {
         int sixty = 60;
         for (int i = 0; i < sixty; i++) {
             if (i <= 1) {
-                secondMap.put(i, 1);
+                SECOND_MAP.put(i, 1);
             } else if (i > 1 && i < 5) {
-                secondMap.put(i, 1);
+                SECOND_MAP.put(i, 1);
             } else if (i >= 5 && i < 10) {
-                secondMap.put(i, 5);
+                SECOND_MAP.put(i, 5);
             } else if (i >= 10 && i < 30) {
-                secondMap.put(i, 10);
+                SECOND_MAP.put(i, 10);
             } else if (i >= 30 && i < 60) {
-                secondMap.put(i, 30);
+                SECOND_MAP.put(i, 30);
             }
         }
 
         for (int i = 0; i < sixty; i++) {
             if (i <= 1) {
-                minuteMap.put(i, 1);
+                MINUTE_MAP.put(i, 1);
             } else if (i > 1 && i < 2) {
-                minuteMap.put(i, 1);
+                MINUTE_MAP.put(i, 1);
             } else if (i >= 2 && i < 3) {
-                minuteMap.put(i, 2);
+                MINUTE_MAP.put(i, 2);
             } else if (i >= 3 && i < 4) {
-                minuteMap.put(i, 3);
+                MINUTE_MAP.put(i, 3);
             } else if (i >= 4 && i < 5) {
-                minuteMap.put(i, 4);
+                MINUTE_MAP.put(i, 4);
             } else if (i >= 5 && i < 6) {
-                minuteMap.put(i, 5);
+                MINUTE_MAP.put(i, 5);
             } else if (i >= 6 && i < 7) {
-                minuteMap.put(i, 6);
+                MINUTE_MAP.put(i, 6);
             } else if (i >= 7 && i < 8) {
-                minuteMap.put(i, 7);
+                MINUTE_MAP.put(i, 7);
             } else if (i >= 8 && i < 9) {
-                minuteMap.put(i, 8);
+                MINUTE_MAP.put(i, 8);
             } else if (i >= 9 && i < 10) {
-                minuteMap.put(i, 9);
+                MINUTE_MAP.put(i, 9);
             } else if (i >= 10 && i < 20) {
-                minuteMap.put(i, 10);
+                MINUTE_MAP.put(i, 10);
             } else if (i >= 20 && i < 30) {
-                minuteMap.put(i, 20);
+                MINUTE_MAP.put(i, 20);
             } else if (i >= 30 && i < 60) {
-                minuteMap.put(i, 30);
+                MINUTE_MAP.put(i, 30);
             }
         }
         int three = 3;
         for (int i = 0; i < three; i++) {
             if (i <= 1) {
-                hourMap.put(i, 1);
+                HOUR_MAP.put(i, 1);
             } else if (i > 1 && i < 2) {
-                hourMap.put(i, 1);
+                HOUR_MAP.put(i, 1);
             } else if (i >= 2) {
-                hourMap.put(i, 2);
+                HOUR_MAP.put(i, 2);
             }
         }
     }
 
     /** 1s/5s/10s/30s->1,2,3,4 */
-    public static Map<Integer, Integer> secondLevelMap = new TreeMap<>();
+    protected static final Map<Integer, Integer> SECOND_LEVEL_MAP = new TreeMap<>();
 
     /** 1m/2m/3m/4m/5m/6m/7m/8m/9m/10m/20m/30m->5,6,7,8,9,10,11,12,13,14,15,16 */
-    public static Map<Integer, Integer> minuteLevelMap = new TreeMap<>();
+    protected static final Map<Integer, Integer> MINUTE_LEVEL_MAP = new TreeMap<>();
 
     /** 1h/2h->17,18 */
-    public static Map<Integer, Integer> hourLevelMap = new TreeMap<>();
+    protected static final Map<Integer, Integer> HOUR_LEVEL_MAP = new TreeMap<>();
     /** hourLevelMap 最后一个元素 */
-    public static Integer hourLevelMapLast;
+    protected static final Integer HOUR_LEVEL_MAP_LAST;
 
     static {
-        secondLevelMap.put(1, 1);
-        secondLevelMap.put(5, 2);
-        secondLevelMap.put(10, 3);
-        secondLevelMap.put(30, 4);
+        SECOND_LEVEL_MAP.put(1, 1);
+        SECOND_LEVEL_MAP.put(5, 2);
+        SECOND_LEVEL_MAP.put(10, 3);
+        SECOND_LEVEL_MAP.put(30, 4);
         int step = 5;
         int ten = 10;
         for (int i = 1; i <= ten; i++) {
-            minuteLevelMap.put(i, step);
+            MINUTE_LEVEL_MAP.put(i, step);
             step++;
         }
-        minuteLevelMap.put(20, 15);
-        minuteLevelMap.put(30, 16);
+        MINUTE_LEVEL_MAP.put(20, 15);
+        MINUTE_LEVEL_MAP.put(30, 16);
 
-        hourLevelMap.put(1, 17);
-        hourLevelMap.put(2, 18);
+        HOUR_LEVEL_MAP.put(1, 17);
+        HOUR_LEVEL_MAP.put(2, 18);
         
-        hourLevelMapLast = 2;
+        HOUR_LEVEL_MAP_LAST = 2;
     }
     /**
      * 延迟时间转换为延迟级别
@@ -123,23 +127,20 @@ public class RocketDelayUtil {
         int hourToSecond = 3600;
         long second = timeUnit.toSeconds(delayTime);
         if (second < minuteToSecond) {
-            Integer secondLevel = secondMap.get((int)second);
-//            System.out.println("second=" + secondLevel);
-            return secondLevelMap.get(secondLevel);
+            Integer secondLevel = SECOND_MAP.get((int)second);
+            return SECOND_LEVEL_MAP.get(secondLevel);
         } else if (second < hourToSecond) {
             long minute = timeUnit.toMinutes(delayTime);
-            Integer minuteLevel = minuteMap.get((int)minute);
-//            System.out.println("minute=" + minuteLevel);
-            return minuteLevelMap.get(minuteLevel);
+            Integer minuteLevel = MINUTE_MAP.get((int)minute);
+            return MINUTE_LEVEL_MAP.get(minuteLevel);
         } else {
             long hour = timeUnit.toHours(delayTime);
-            Integer hourLevel = hourMap.get((int)hour);
+            Integer hourLevel = HOUR_MAP.get((int)hour);
             if (hourLevel == null) {
                 // 取最后一个
-                hourLevel = hourLevelMapLast;
+                hourLevel = HOUR_LEVEL_MAP_LAST;
             }
-//            System.out.println("hour=" + hourLevel);
-            return hourLevelMap.get(hourLevel);
+            return HOUR_LEVEL_MAP.get(hourLevel);
         }
     }
     
@@ -184,7 +185,7 @@ public class RocketDelayUtil {
         Map<String, Object> valueMap = JsonUtil.toMap(jsonMsg);
         Map<String, Object> delayInfoMap = (Map<String, Object>)valueMap.get(delayInfoKey);
         if (delayInfoMap != null) {
-            long executeTime = Long.valueOf(delayInfoMap.get(executeTimeKey).toString());
+            long executeTime = Long.parseLong(delayInfoMap.get(executeTimeKey).toString());
             long now = System.currentTimeMillis();
             long delayTime = executeTime - now;
             if (delayTime <= 0) {

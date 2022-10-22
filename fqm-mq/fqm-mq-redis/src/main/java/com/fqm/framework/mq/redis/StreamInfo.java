@@ -27,6 +27,9 @@ import java.util.stream.Stream;
  */
 public class StreamInfo {
 
+    private StreamInfo() {
+    }
+    
     public static class InfoObject {
 
         protected static final Map<String, Class<?>> DEFAULT_TYPE_HINTS;
@@ -42,7 +45,7 @@ public class StreamInfo {
 
         private Map<String, Object> raw;
 
-        private InfoObject(List<Object> raw, Map<String, Class<?>> typeHints) {
+        private InfoObject(List<Object> raw) {
             Map<String, Object> map = new HashMap<>();
             int size = raw.size();
             for (int i = 0; i < size; i++) {
@@ -52,10 +55,6 @@ public class StreamInfo {
                 }
             }
             this.raw = map;
-        }
-
-        private InfoObject(Map<String, Object> raw) {
-            this.raw = raw;
         }
 
         <T> T get(String entry, Class<T> type) {
@@ -103,7 +102,7 @@ public class StreamInfo {
         }
 
         private InfoStream(List<Object> raw) {
-            super(raw, TYPE_HINTS);
+            super(raw);
         }
 
         /**
@@ -304,7 +303,7 @@ public class StreamInfo {
     public static class InfoGroup extends InfoObject {
 
         private InfoGroup(List<Object> raw) {
-            super(raw, DEFAULT_TYPE_HINTS);
+            super(raw);
         }
 
         public static InfoGroup fromList(List<Object> raw) {
@@ -440,7 +439,7 @@ public class StreamInfo {
 
         public InfoConsumer(String groupName, List<Object> raw) {
 
-            super(raw, DEFAULT_TYPE_HINTS);
+            super(raw);
             this.groupName = groupName;
         }
 

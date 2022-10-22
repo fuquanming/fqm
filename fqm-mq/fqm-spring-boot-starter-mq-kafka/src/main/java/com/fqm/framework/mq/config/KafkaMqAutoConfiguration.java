@@ -74,16 +74,9 @@ public class KafkaMqAutoConfiguration implements SmartInitializingSingleton, App
             String name = v.getName();
             MqConfigurationProperties properties = mp.getMqs().get(name);
             if (properties == null) {
-                // 遍历mp.mqs
-                for (MqConfigurationProperties mcp : mp.getMqs().values()) {
-                    if (mcp.getName().equals(name) && MqMode.kafka.name().equals(mcp.getBinder())) {
-                        properties = mcp;
-                        break;
-                    }
-                }
-
+                properties = getProperties(mp, name, properties);
             }
-            if (properties != null && MqMode.kafka.name().equals(properties.getBinder())) {
+            if (properties != null && MqMode.KAFKA.name().equalsIgnoreCase(properties.getBinder())) {
                 String group = properties.getGroup();
                 String topic = properties.getTopic();
                 Preconditions.checkArgument(StringUtils.isNotBlank(group), "Please specific [group] under mq configuration.");
@@ -104,22 +97,31 @@ public class KafkaMqAutoConfiguration implements SmartInitializingSingleton, App
 
                     BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder
                             .genericBeanDefinition(KafkaMessageListenerContainer.class);
-//                                .genericBeanDefinition(ConcurrentMessageListenerContainer.class);
+                                /** 并发消费 genericBeanDefinition(ConcurrentMessageListenerContainer.class);*/
                     beanDefinitionBuilder.addConstructorArgValue(consumerFactory);
                     beanDefinitionBuilder.addConstructorArgValue(containerProperties);
                     // 失败重试1次，最后入死信队列，topic=v.getDestination() + ".DLT"
                     beanDefinitionBuilder.addPropertyValue("errorHandler", 
                             new SeekToCurrentErrorHandler(new DeadLetterPublishingRecoverer(template), 
                             new FixedBackOff(10 * 1000L, 1L)));
-//                        // 并发消费
-//                        beanDefinitionBuilder.addPropertyValue("concurrency", v.getConcurrentConsumers());
-                    
+                    /** 并发消费 addPropertyValue("concurrency", v.getConcurrentConsumers()); */
                     // 注册bean
-                    defaultListableBeanFactory.registerBeanDefinition(name, beanDefinitionBuilder.getRawBeanDefinition());
+                    defaultListableBeanFactory.registerBeanDefinition(beanName, beanDefinitionBuilder.getRawBeanDefinition());
                     i++;
                     logger.info("Init KafkaMqListener,bean={},method={},topic={},group={}", v.getBean().getClass(), v.getMethod().getName(), topic, group);
                 }
             }
         }
+    }
+
+    private MqConfigurationProperties getProperties(MqProperties mp, String name, MqConfigurationProperties properties) {
+        // 遍历mp.mqs
+        for (MqConfigurationProperties mcp : mp.getMqs().values()) {
+            if (mcp.getName().equals(name) && MqMode.KAFKA.name().equalsIgnoreCase(mcp.getBinder())) {
+                properties = mcp;
+                break;
+            }
+        }
+        return properties;
     }
 }

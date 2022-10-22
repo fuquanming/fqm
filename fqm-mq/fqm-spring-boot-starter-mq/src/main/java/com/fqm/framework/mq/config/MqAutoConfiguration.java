@@ -23,8 +23,7 @@ public class MqAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public MqFactory mqFactory() {
-        MqFactory mqFactory = new MqFactory();
-        return mqFactory;
+        return new MqFactory();
     }
 
     @Bean

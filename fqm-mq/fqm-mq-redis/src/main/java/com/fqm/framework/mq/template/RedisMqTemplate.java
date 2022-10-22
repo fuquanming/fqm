@@ -8,13 +8,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.core.script.RedisScript;
 
-import com.fqm.framework.common.core.util.DateFormatUtil;
 import com.fqm.framework.common.core.util.IdUtil;
 import com.fqm.framework.common.core.util.JsonUtil;
 import com.fqm.framework.mq.MqMode;
@@ -55,7 +55,7 @@ public class RedisMqTemplate implements MqTemplate {
     
     @Override
     public MqMode getMqMode() {
-        return MqMode.redis;
+        return MqMode.REDIS;
     }
     
     @Override
@@ -72,14 +72,6 @@ public class RedisMqTemplate implements MqTemplate {
                      2) "{\"age\":1,\"name\":\"\xe5\xbc\xa0\xe4\xb8\x89\"}"
              * 添加数据：XADD topic * key value
              */
-//            RecordId recordId1 = stringRedisTemplate.opsForStream().add(
-//                    StreamRecords.newRecord().ofObject(str).withStreamKey(topic));
-//            if (recordId1.getSequence() != null) {
-//                logger.info("RedisMqProducer.success->topic=[{}],message=[{}],offset=[{}]", topic, str, recordId1.getSequence());
-//                return true;
-//            } else {
-//                logger.error("RedisMqProducer.error->topic=[{}],message=[{}],offset=[{}]", topic, str, recordId1);
-//            }
             // Lua
             Object messageFlag = stringRedisTemplate.execute(
                     SCRIPT_MESSAGE,
@@ -88,12 +80,8 @@ public class RedisMqTemplate implements MqTemplate {
                     Collections.singletonList(topic),
                     String.valueOf(Constants.MAX_QUEUE_SIZE), str
                     );
-            if (messageFlag != null) {
-                logger.info("RedisMqProducer.success->topic=[{}],message=[{}],offset=[{}]", topic, str, messageFlag);
-                return true;
-            } else {
-                logger.error("RedisMqProducer.error->topic=[{}],message=[{}],offset=[{}]", topic, str, messageFlag);
-            }
+            logger.info("RedisMqProducer.success->topic=[{}],message=[{}],offset=[{}]", topic, str, messageFlag);
+            return true;
         } catch (Exception e) {
             logger.error("RedisMqProducer-error->" + topic + "," + str, e);
             e.printStackTrace();
@@ -116,9 +104,8 @@ public class RedisMqTemplate implements MqTemplate {
             c.add(Calendar.MILLISECOND, time);
             HashMap<String, Object> info = new HashMap<>(2);
             /** 到期时间 */
-            String expireTime = DateFormatUtil.format(c, "yyyy-MM-dd HH:mm:ss");
+            String expireTime = DateFormatUtils.format(c, "yyyy-MM-dd HH:mm:ss");
             // Zset里score的取值
-//            String zsetScore = String.valueOf(c.getTimeInMillis());
             info.put(Constants.DELAY_MESSAGE_FIELD_TIME, expireTime);
             info.put(Constants.DELAY_MESSAGE_FIELD_ID, id);
             msgMap.put(Constants.DELAY_MESSAGE_FIELD_INFO, info);
@@ -129,24 +116,6 @@ public class RedisMqTemplate implements MqTemplate {
             boolean flag = false;
             
             // 监听过期key，从zset中获取一个消息，多个监听者需要控制一个消息只能投递一次！，消费者必须做幂等性校验
-//            SessionCallback<List<Boolean>> sessionCallback = new SessionCallback<List<Boolean>>() {
-//                @Override
-//                public List<Boolean> execute(RedisOperations operations) throws DataAccessException {
-//                    /** 
-//                     * 开启事务，设置消息过期时间
-//                     * 消息保存到zset中
-//                     */
-//                    operations.multi();
-//                    stringRedisTemplate.opsForValue().set(Constants.DELAY_MESSAGE_TTL_PREFIX_KEY + topic + "-" + id, expireTime, delayTime, timeUnit);
-//                    stringRedisTemplate.opsForHash().put(Constants.DELAY_MESSAGE_HASHMAP_PREFIX_KEY + topic, id, msgStr);
-//                    return operations.exec();
-//                }
-//            };
-//            List<Boolean> resultList = stringRedisTemplate.execute(sessionCallback);
-//            if (resultList.get(0) == true && resultList.get(1) == true) {
-//                flag = true;
-//            }
-            
             // Lua 脚本
             Object delayMessageFlag = stringRedisTemplate.execute(
                     SCRIPT_DELAY_MESSAGE,

@@ -9,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -35,6 +36,10 @@ import com.fqm.framework.mq.redis.StreamInfo.InfoGroups;
  */
 @SuppressWarnings("rawtypes")
 public class LuaScriptUtil {
+    
+    private LuaScriptUtil() {
+    }
+    
     /** 获取消费者组 */
     public static final RedisScript<List> SCRIPT_GROUP = new DefaultRedisScript<>("return redis.call('xinfo', 'groups', KEYS[1])", List.class);
     /** 创建消费者组 */
@@ -84,7 +89,7 @@ public class LuaScriptUtil {
     public static boolean createGroup(String topic, ReadOffset readOffset, String group, StringRedisTemplate stringRedisTemplate) {
         String flag = stringRedisTemplate.execute(SCRIPT_CREATE_GROUP, Collections.singletonList(topic),
                 group, readOffset.getOffset());
-        return Objects.equals(Constants.EXECUTE_SUCCESS, flag) ? true : false;
+        return Objects.equals(Constants.EXECUTE_SUCCESS, flag);
     }
     
     /**
@@ -123,10 +128,22 @@ public class LuaScriptUtil {
      * @return
      */
     public static PendingMessages pending(String topic, String group, String consumer, Range<?> range, long count, StringRedisTemplate stringRedisTemplate) {
+        Optional<?> lowerOptional = range.getLowerBound().getValue();
+        Optional<?> upperOptional = range.getUpperBound().getValue();
+        
+        Object lowerValue = null;
+        if (lowerOptional.isPresent()) {
+            lowerValue = lowerOptional.get();
+        }
+        Object upperValue = null;
+        if (upperOptional.isPresent()) {
+            upperValue = upperOptional.get();
+        }
+        
         List<?> parts = stringRedisTemplate.execute(
                 SCRIPT_PENDING_GROUP_CONSUMER,
                 Collections.singletonList(topic),
-                group, range.getLowerBound().getValue().get(), range.getUpperBound().getValue().get(), String.valueOf(count), consumer
+                group, lowerValue, upperValue, String.valueOf(count), consumer
                 );
         int size = parts.size();
         List<PendingMessage> pms = new ArrayList<>(size);

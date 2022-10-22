@@ -46,7 +46,7 @@ public class MqRedisKeyExpiredEventHandle {
     @EventListener
     public void expiredEventHandle(RedisKeyExpiredEvent event) {
         String expiredKey = new String(event.getSource());
-//        logger.info("expiredEventHandle=" + expiredKey);
+        logger.debug("expiredEventHandle={}", expiredKey);
         if (expiredKey.startsWith(Constants.DELAY_MESSAGE_TTL_PREFIX_KEY)) {
             String[] topicInfos = expiredKey.split(Constants.DELAY_MESSAGE_TTL_PREFIX_KEY);
             String topicInfo = topicInfos[1];
@@ -55,26 +55,6 @@ public class MqRedisKeyExpiredEventHandle {
             String id = topicInfo.substring(separatorIndex + 1);
 
             // 只能投递一次，多个消费者都会收到通知
-//            String ttlTopicId = Constants.DELAY_MESSAGE_INCR_PREFIX_KEY + topic;
-//            long ttlIncr = stringRedisTemplate.opsForHash().increment(ttlTopicId, id, 1);
-//            if (ttlIncr == 1) {
-//                // 获取的消息，可能和通知的id不一样，通知会有延迟或延迟相同时间的消息
-//                String topicHashMap = Constants.DELAY_MESSAGE_HASHMAP_PREFIX_KEY + topic;
-//                Object msgObj = stringRedisTemplate.opsForHash().get(topicHashMap, id);
-//                if (msgObj != null) {
-//                    logger.info("expired delayMessageKey=" + expiredKey);
-//                    String msg = msgObj.toString();
-//                    // 投递消息
-//                    RecordId recordId1 = stringRedisTemplate.opsForStream().add(StreamRecords.newRecord().ofObject(msg).withStreamKey(topic));
-//                    if (recordId1.getSequence() != null) {
-//                        // hashmap删除消息
-//                        stringRedisTemplate.opsForHash().delete(topicHashMap, id);
-//                    }
-//                }
-//            }
-//            // 删除自增id
-//            stringRedisTemplate.opsForHash().delete(ttlTopicId, id);
-            
             // Lua
             Object delayMessageFlag = stringRedisTemplate.execute(
                     SCRIPT_DELAY_MESSAGE_DELIVERY,
@@ -85,7 +65,7 @@ public class MqRedisKeyExpiredEventHandle {
                     );
             boolean flag = Objects.equals(delayMessageFlag.toString(), "1");
             if (flag) {
-                logger.info("expired delayMessageKey=" + expiredKey);
+                logger.info("expired delayMessageKey={}", expiredKey);
             }
         }
     }

@@ -20,12 +20,6 @@ public class RabbitReturnsCallback implements ReturnsCallback {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
     
-    private RabbitMqTemplate rabbitMqTemplate;
-    
-    public RabbitReturnsCallback(RabbitMqTemplate rabbitMqTemplate) {
-        this.rabbitMqTemplate = rabbitMqTemplate;
-    }
-    
     /**
      * ReturnedMessage:
      * message：投递失败的消息;
@@ -42,24 +36,7 @@ public class RabbitReturnsCallback implements ReturnsCallback {
         if (headerDelay != null) {
             return;
         }
-        logger.info("RabbitMqProducer.error->Fail Message[" + returned.getMessage() + "],replyCode=[" + returned.getReplyCode() + "],replyText=[" + returned.getReplyText() + "],exchange=[" + returned.getExchange() + "],routingKey=[" + returned.getRoutingKey() + "]");
-//        String id = returned.getMessage().getMessageProperties().getHeader("spring_returned_message_correlation");
-//        if (id != null) {
-//            Map<String, RabbitListenableFutureCallback> callbackMap = rabbitMqTemplate.getFutureCallbackMap();
-//            System.out.println(callbackMap.size());
-//            RabbitListenableFutureCallback futureCallback = callbackMap.get(id);
-//            if (futureCallback != null) {
-//                if (futureCallback.getSendCallback() != null) {// 异步消息
-//                    futureCallback.setError(true);
-//                    LockSupport.unpark(futureCallback.getCallbackThread());
-//                    futureCallback.getSendCallback().onException(new RuntimeException(returned.getReplyText()));
-//                } else {// 同步消息
-//                    futureCallback.setError(true);
-//                    futureCallback.setErrorMsg(returned.getReplyText());
-//                    LockSupport.unpark(futureCallback.getCallbackThread());
-//                }
-//                callbackMap.remove(id);
-//            }
-//        }
+        logger.info("RabbitMqProducer.error->Fail Message[{}],replyCode=[{}],replyText=[{}],exchange=[{}],routingKey=[{}]", 
+                returned.getMessage(), returned.getReplyCode(), returned.getReplyText(), returned.getExchange(), returned.getRoutingKey());
     }
 }

@@ -28,7 +28,7 @@ public class RedissonMqListenerContainer {
         pool = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors(), 
                 size,
                 60L, TimeUnit.SECONDS,
-                new LinkedBlockingQueue<Runnable>(),
+                new LinkedBlockingQueue<>(),
                 new ThreadFactory() {
                     private final ThreadFactory defaultFactory = Executors.defaultThreadFactory();
                     private final AtomicInteger threadNumber = new AtomicInteger(1);
@@ -45,9 +45,7 @@ public class RedissonMqListenerContainer {
     }
     
     public void stop() {
-        listeners.forEach(listener -> {
-            listener.stop();
-        });
+        listeners.forEach(RedissonMqListener::stop);
         pool.shutdown();
     }
     

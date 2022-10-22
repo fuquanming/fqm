@@ -44,7 +44,7 @@ public class MqFactory {
         if (mqMode == null) {
             return null;
         }
-        return mqTemplateMap.get(mqMode);
+        return mqTemplateMap.get(mqMode.toUpperCase());
     }
     
     public MqTemplate getMqTemplate() {

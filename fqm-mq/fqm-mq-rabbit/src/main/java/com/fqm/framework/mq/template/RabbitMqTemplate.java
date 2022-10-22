@@ -47,6 +47,8 @@ public class RabbitMqTemplate implements MqTemplate {
     /** 延迟任务的信息头 */
     public static final String HEADER_DELAY = "rabbit-delay";
     
+    private String messageStr = "],message=[";
+    
     public RabbitMqTemplate(RabbitTemplate rabbitTemplate, AmqpAdmin amqpAdmin) {
         this.rabbitTemplate = rabbitTemplate;
         this.amqpAdmin = amqpAdmin;
@@ -63,7 +65,7 @@ public class RabbitMqTemplate implements MqTemplate {
                 // String name:名称, boolean durable:是否持久化, boolean exclusive:是否排他（只能一个人连接）, boolean autoDelete:是否自动删除
                 Queue queue = new Queue(topic, true, false, false);
                 String queueResult = amqpAdmin.declareQueue(queue);
-                logger.info("Init RabbitQueue=" + queueResult);
+                logger.info("Init RabbitQueue={}", queueResult);
                 topicSet.add(topic);
                 
                 TopicExchange customExchange = new TopicExchange(topic, true, false);
@@ -72,14 +74,14 @@ public class RabbitMqTemplate implements MqTemplate {
                 amqpAdmin.declareExchange(customExchange);
                 amqpAdmin.declareBinding(BindingBuilder.bind(queue).to(customExchange).with(topic));
                 exchangeSet.add(topic);
-                logger.info("Init RabbitExchange=" + queueResult);
+                logger.info("Init RabbitExchange={}", queueResult);
             }
         } else {
             if (!topicSet.contains(topic)) {
                 // String name:名称, boolean durable:是否持久化, boolean exclusive:是否排他（只能一个人连接）, boolean autoDelete:是否自动删除
                 Queue queue = new Queue(topic, true, false, false);
                 String queueResult = amqpAdmin.declareQueue(queue);
-                logger.info("Init RabbitQueue=" + queueResult);
+                logger.info("Init RabbitQueue={}", queueResult);
                 topicSet.add(topic);
             }
         }
@@ -103,7 +105,7 @@ public class RabbitMqTemplate implements MqTemplate {
     
     @Override
     public MqMode getMqMode() {
-        return MqMode.rabbit;
+        return MqMode.RABBIT;
     }
     
     @Override
@@ -127,7 +129,7 @@ public class RabbitMqTemplate implements MqTemplate {
                 return true;
             }
         } catch (Exception e) {
-            logger.error("RabbitMqProducer.syncSend.error->topic=[" + topic + "],message=[" + str + "]", e);
+            logger.error("RabbitMqProducer.syncSend.error->topic=[" + topic + messageStr + str + "]", e);
             e.printStackTrace();
         }
         return false;
@@ -165,7 +167,7 @@ public class RabbitMqTemplate implements MqTemplate {
                 return true;
             }
         } catch (Exception e) {
-            logger.error("RabbitMqProducer.syncDelaySend.error->topic=[" + topic + "],message=[" + str + "],delayTime=[" + delayTime + "],timeUnit=[" + timeUnit + "]", e);
+            logger.error("RabbitMqProducer.syncDelaySend.error->topic=[" + topic + messageStr + str + "],delayTime=[" + delayTime + "],timeUnit=[" + timeUnit + "]", e);
             e.printStackTrace();
         }
         return false;
@@ -184,7 +186,7 @@ public class RabbitMqTemplate implements MqTemplate {
             
             logger.info("RabbitMqProducer.asyncSend->topic=[{}],message=[{}]", topic, str);
         } catch (Exception e) {
-            logger.error("RabbitMqProducer.asyncSend.error->topic=[" + topic + "],message=[" + str + "]", e);
+            logger.error("RabbitMqProducer.asyncSend.error->topic=[" + topic + messageStr + str + "]", e);
             e.printStackTrace();
         }
     }

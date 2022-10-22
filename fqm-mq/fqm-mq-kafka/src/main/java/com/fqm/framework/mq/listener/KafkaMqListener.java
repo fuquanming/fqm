@@ -6,6 +6,8 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.listener.AcknowledgingMessageListener;
 import org.springframework.kafka.support.Acknowledgment;
 
+import com.fqm.framework.mq.exception.MqException;
+
 /**
  * Kafka消息队列监听
  * 
@@ -24,7 +26,7 @@ public class KafkaMqListener extends MqListenerAdapter<String> implements Acknow
             super.receiveMessage(data.value());
             acknowledgment.acknowledge();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new MqException(e);
         }
     }
 }

@@ -42,7 +42,6 @@ public class RabbitPropertiesBeanPostProcessor implements BeanPostProcessor, Pri
         } else if (targetClass == RabbitMqTemplate.class) {
             /** 设置rabbitTemplate的回调函数 */
             /** RabbitMqTemplate 实例化前RabbitTemplate会先实例化， */
-            RabbitMqTemplate rabbitMqTemplate = (RabbitMqTemplate) bean;
             /** 设置确认回调，多线程回调。可以用发送添加CcorrelationData对象，
              * 使用 correlationData.getFuture().addCallback 替代
              * addCallback 优于该ConfirmCallback前回调
@@ -52,7 +51,7 @@ public class RabbitPropertiesBeanPostProcessor implements BeanPostProcessor, Pri
              * */
             // 消息抵达队列失败回调，多线程回调
             RabbitTemplate rabbitTemplate = beanFactory.getBean(RabbitTemplate.class);
-            rabbitTemplate.setReturnsCallback(new RabbitReturnsCallback(rabbitMqTemplate));
+            rabbitTemplate.setReturnsCallback(new RabbitReturnsCallback());
         }
         return bean;
     }

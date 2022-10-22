@@ -2,6 +2,7 @@ package com.fqm.framework.mq.redis;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.data.domain.Range;
 import org.springframework.data.redis.connection.stream.RecordId;
@@ -64,7 +65,8 @@ public class PendingMessagesSummary {
      * @return never {@literal null}.
      */
     public String minMessageId() {
-        return idRange.getLowerBound().getValue().get();
+        Optional<String> value = idRange.getLowerBound().getValue();
+        return value.isPresent() ? value.get() : null;
     }
 
     /**
@@ -73,7 +75,8 @@ public class PendingMessagesSummary {
      * @return never {@literal null}.
      */
     public String maxMessageId() {
-        return idRange.getUpperBound().getValue().get();
+        Optional<String> value = idRange.getUpperBound().getValue();
+        return value.isPresent() ? value.get() : null;
     }
 
     /**

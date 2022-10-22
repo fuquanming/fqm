@@ -22,7 +22,6 @@ import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.data.redis.stream.StreamMessageListenerContainer;
 import org.springframework.data.redis.stream.StreamMessageListenerContainer.StreamMessageListenerContainerOptions;
-import org.springframework.util.ErrorHandler;
 
 import com.fqm.framework.common.core.util.system.SystemUtil;
 import com.fqm.framework.common.redis.listener.spring.KeyExpiredEventMessageListener;
@@ -80,130 +79,99 @@ public class RedisMqAutoConfiguration {
             containerOptions = StreamMessageListenerContainerOptions.builder()
                     // 一次性最多拉取多少条消息
                     .batchSize(10) 
-                    .errorHandler(new ErrorHandler() {
-                        @Override
-                        public void handleError(Throwable t) {
-                            t.printStackTrace();
-                        }
-                    })
+                    .errorHandler(Throwable::printStackTrace)
                     // 超时时间，设置为0，表示不超时（超时后会抛出异常）
                     .pollTimeout(Duration.ZERO)
                     .serializer(new StringRedisSerializer())
                     .build();
             // 根据配置对象创建监听容器对象
             container = StreamMessageListenerContainer.create(redisConnectionFactory, containerOptions);
-        }
-        
-        for (MqListenerParam v : mq.getListeners()) {
-            String name = v.getName();
-            MqConfigurationProperties properties = mp.getMqs().get(name);
-            if (properties == null) {
-                // 遍历mp.mqs
-                for (MqConfigurationProperties mcp : mp.getMqs().values()) {
-                    if (mcp.getName().equals(name) && MqMode.redis.name().equals(mcp.getBinder())) {
-                        properties = mcp;
-                        break;
-                    }
+            
+            for (MqListenerParam v : mq.getListeners()) {
+                String name = v.getName();
+                MqConfigurationProperties properties = mp.getMqs().get(name);
+                if (properties == null) {
+                    properties = getProperties(mp, name, properties);
                 }
-
-            }
-            if (properties != null && MqMode.redis.name().equals(properties.getBinder())) {
-                // 创建 listener 对应的消费者分组
-                boolean createGroup = true;
-                // 
-                /**
-                 * 低版本：spring-boot->2.2.0.RELEASE,redisson-spring-boot-starter->3.13.1，初始化数据
-                 * 添加pom，使用redissonClient来初始化数据。
-                 * <dependency>
-                       <groupId>org.redisson</groupId>
-                       <artifactId>redisson-spring-boot-starter</artifactId>
-                   </dependency>
-                 * 
-                 */
-                /** spring-boot->2.2.0.RELEASE,redisson-spring-boot-starter->3.13.1，初始化数据 */
-//                RStream<String, String> stream = redissonClient.getStream(v.getDestination());
-//                if (!stream.isExists()) {
-//                    StringRecord stringRecord = StreamRecords.string(
-//                            Collections.singletonMap("test", "testData")).withStreamKey(v.getDestination());
-//                    RecordId recordId = stringRedisTemplate.opsForStream().add(stringRecord);
-//                    stringRedisTemplate.opsForStream().delete(v.getDestination(), recordId);// 删除测试消息
-//                }
-//                List<StreamGroup> groups = stream.listGroups();
-//                if (groups != null) {
-//                    for (StreamGroup group : groups) {
-//                        if (group.getName().equals(v.getGroup())) {
-//                            createGroup = false;
-//                            break;
-//                        }
-//                    }
-//                }
-                /** spring-boot->2.2.0.RELEASE,redisson-spring-boot-starter->3.13.1，初始化数据 */
-                
-                /** spring-boot->2.4.2,redisson-spring-boot-starter->3.15.1，使用新API */
-//                try {
-//                    org.springframework.data.redis.connection.stream.StreamInfo.XInfoGroups gs = stringRedisTemplate.opsForStream().groups(v.getDestination());
-//                    if (gs != null) {
-//                        for (Iterator<org.springframework.data.redis.connection.stream.StreamInfo.XInfoGroup> it = gs.iterator(); it.hasNext();) {
-//                            org.springframework.data.redis.connection.stream.StreamInfo.XInfoGroup g = it.next();
-//                            if (g.groupName().equals(v.getGroup())) {
-//                                createGroup = false;// 
-//                                break;
-//                            }
-//                        }
-//                    }
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                    createGroup = true;
-//                }
-                /** spring-boot->2.4.2,redisson-spring-boot-starter->3.15.1，使用新API */
-                String group = properties.getGroup();
-                String topic = properties.getTopic();
-                Preconditions.checkArgument(StringUtils.isNotBlank(group), "Please specific [group] under mq configuration.");
-                Preconditions.checkArgument(StringUtils.isNotBlank(topic), "Please specific [topic] under mq configuration.");
-                // Lua获取消费者组
-                try {
-                    InfoGroups gs = LuaScriptUtil.getInfoGroups(topic, stringRedisTemplate);
-                    if (gs != null) {
-                        for (Iterator<InfoGroup> it = gs.iterator(); it.hasNext();) {
-                            InfoGroup g = it.next();
-                            if (g.groupName().equals(group)) {
-                                createGroup = false;
-                                break;
-                            }
-                        }
-                    }
-                } catch (Exception e) {
-                    createGroup = true;
+                if (properties != null && MqMode.REDIS.name().equalsIgnoreCase(properties.getBinder())) {
+                    buildListener(stringRedisTemplate, container, v, properties);
                 }
-                
-                
-                if (createGroup) {
-                    try {
-                        // 低版本没有加mkstream 参数会报错，因为topic 不存在，必须加选项 mkstream
-                        // XGROUP CREATE t2 t2 0 mkstream
-//                        stringRedisTemplate.opsForStream().createGroup(v.getDestination(), ReadOffset.from("0"), v.getGroup());
-                        LuaScriptUtil.createGroup(topic, ReadOffset.from("0"), group, stringRedisTemplate);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-                // 创建 Consumer 对象
-                Consumer consumer = Consumer.from(group, buildConsumerName());
-                // 设置 Consumer 消费进度，以最小消费进度为准
-                StreamOffset<String> streamOffset = StreamOffset.create(topic, ReadOffset.lastConsumed());
-                // 设置 Consumer 监听
-                StreamMessageListenerContainer.StreamReadRequestBuilder<String> builder = StreamMessageListenerContainer.StreamReadRequest
-                        .builder(streamOffset).consumer(consumer)
-                        // 不自动 ack
-                        .autoAcknowledge(false)
-                        // 默认配置，发生异常就取消消费，显然不符合预期；因此，我们设置为 false
-                        .cancelOnError(throwable -> false) 
-                        ;
-                container.register(builder.build(), new RedisMqListener(v.getBean(), v.getMethod(), stringRedisTemplate, topic, group));
-                logger.info("Init RedisMqListener,bean={},method={},topic={},group={}", v.getBean().getClass(), v.getMethod().getName(), topic, group);
             }
         }
         return container;
+    }
+
+    private void buildListener(StringRedisTemplate stringRedisTemplate,
+            StreamMessageListenerContainer<String, MapRecord<String, String, String>> container, MqListenerParam v,
+            MqConfigurationProperties properties) {
+        // 创建 listener 对应的消费者分组
+        boolean createGroup = true;
+        // 
+        /**
+         * 低版本：spring-boot->2.2.0.RELEASE,redisson-spring-boot-starter->3.13.1，初始化数据
+         * 添加pom，使用redissonClient来初始化数据。
+         * <dependency>
+               <groupId>org.redisson</groupId>
+               <artifactId>redisson-spring-boot-starter</artifactId>
+           </dependency>
+         * 
+         */
+        /** spring-boot->2.2.0.RELEASE,redisson-spring-boot-starter->3.13.1，初始化数据 */
+        /** spring-boot->2.2.0.RELEASE,redisson-spring-boot-starter->3.13.1，初始化数据 */
+        
+        String group = properties.getGroup();
+        String topic = properties.getTopic();
+        Preconditions.checkArgument(StringUtils.isNotBlank(group), "Please specific [group] under mq configuration.");
+        Preconditions.checkArgument(StringUtils.isNotBlank(topic), "Please specific [topic] under mq configuration.");
+        // Lua获取消费者组
+        try {
+            InfoGroups gs = LuaScriptUtil.getInfoGroups(topic, stringRedisTemplate);
+            if (gs != null) {
+                for (Iterator<InfoGroup> it = gs.iterator(); it.hasNext();) {
+                    InfoGroup g = it.next();
+                    if (g.groupName().equals(group)) {
+                        createGroup = false;
+                        break;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            logger.debug("createGroup error", e);
+        }
+        if (createGroup) {
+            try {
+                // 低版本没有加mkstream 参数会报错，因为topic 不存在，必须加选项 mkstream
+                // XGROUP CREATE t2 t2 0
+                LuaScriptUtil.createGroup(topic, ReadOffset.from("0"), group, stringRedisTemplate);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        // 创建 Consumer 对象
+        Consumer consumer = Consumer.from(group, buildConsumerName());
+        // 设置 Consumer 消费进度，以最小消费进度为准
+        StreamOffset<String> streamOffset = StreamOffset.create(topic, ReadOffset.lastConsumed());
+        // 设置 Consumer 监听
+        StreamMessageListenerContainer.StreamReadRequestBuilder<String> builder = StreamMessageListenerContainer.StreamReadRequest
+                .builder(streamOffset).consumer(consumer)
+                // 不自动 ack
+                .autoAcknowledge(false)
+                // 默认配置，发生异常就取消消费，显然不符合预期；因此，我们设置为 false
+                .cancelOnError(throwable -> false) 
+                ;
+        container.register(builder.build(), new RedisMqListener(v.getBean(), v.getMethod(), stringRedisTemplate, topic, group));
+        logger.info("Init RedisMqListener,bean={},method={},topic={},group={}", v.getBean().getClass(), v.getMethod().getName(), topic, group);
+    }
+
+    private MqConfigurationProperties getProperties(MqProperties mp, String name, MqConfigurationProperties properties) {
+        // 遍历mp.mqs
+        for (MqConfigurationProperties mcp : mp.getMqs().values()) {
+            if (mcp.getName().equals(name) && MqMode.REDIS.name().equalsIgnoreCase(mcp.getBinder())) {
+                properties = mcp;
+                break;
+            }
+        }
+        return properties;
     }
     
     /**
@@ -222,7 +190,7 @@ public class RedisMqAutoConfiguration {
             if (properties == null) {
                 // 遍历mp.mqs
                 for (MqConfigurationProperties mcp : mp.getMqs().values()) {
-                    if (mcp.getName().equals(name) && MqMode.redis.name().equals(mcp.getBinder())) {
+                    if (mcp.getName().equals(name) && MqMode.REDIS.name().equalsIgnoreCase(mcp.getBinder())) {
                         properties = mcp;
                         topics.add(properties.getTopic());
                         break;
@@ -240,7 +208,6 @@ public class RedisMqAutoConfiguration {
      * @return 消费者名字
      */
     private static String buildConsumerName() {
-//        return "consumer-1";
         return String.format("%s@%d", SystemUtil.getHostAddress(), SystemUtil.getCurrentPid());
     }
 

@@ -7,17 +7,17 @@ package com.fqm.framework.mq;
  */
 public enum MqMode {
     /** kafka */
-    kafka,
+    KAFKA,
     /** rabbit */
-    rabbit,
+    RABBIT,
     /** redis */
-    redis,
+    REDIS,
     /** redisson */
-    redisson,
+    REDISSON,
     /** rocket */
-    rocket,
+    ROCKET,
     /** zookeeper */
-    zookeeper;
+    ZOOKEEPER;
     
     public static MqMode getMode(String mode) {
         if (mode == null || "".equals(mode)) {
@@ -25,7 +25,7 @@ public enum MqMode {
         }
         MqMode[] modes = values();
         for (MqMode m : modes) {
-            if (mode.equals(m.name())) {
+            if (mode.equalsIgnoreCase(m.name())) {
                 return m;
             }
         }

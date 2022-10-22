@@ -15,6 +15,7 @@ import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.core.Ordered;
+import org.springframework.core.annotation.MergedAnnotation;
 import org.springframework.core.annotation.MergedAnnotations;
 import org.springframework.core.annotation.MergedAnnotations.SearchStrategy;
 import org.springframework.util.ReflectionUtils;
@@ -78,7 +79,7 @@ public class MqListenerAnnotationBeanPostProcessor implements BeanPostProcessor,
     }
 
     private Collection<MqListener> findListenerAnnotations(AnnotatedElement element) {
-        return MergedAnnotations.from(element, SearchStrategy.TYPE_HIERARCHY).stream(MqListener.class).map(ann -> ann.synthesize())
+        return MergedAnnotations.from(element, SearchStrategy.TYPE_HIERARCHY).stream(MqListener.class).map(MergedAnnotation::synthesize)
                 .collect(Collectors.toList());
     }
     

@@ -43,7 +43,7 @@ public class ZookeeperMqTemplate implements MqTemplate {
     
     @Override
     public MqMode getMqMode() {
-        return MqMode.zookeeper;
+        return MqMode.ZOOKEEPER;
     }
 
     @Override
@@ -111,7 +111,7 @@ public class ZookeeperMqTemplate implements MqTemplate {
                     e.printStackTrace();
                 }
                 queueMap.put(topic, queue);
-                logger.info("InIt Zookeeper Listener,{}", "/mq/" + topic);
+                logger.info("InIt Zookeeper Listener,{}{}", "/mq/", topic);
             } finally {
                 lock.unlock();
             }

@@ -28,7 +28,7 @@ public class RedissonMqTemplate implements MqTemplate {
 
     @Override
     public MqMode getMqMode() {
-        return MqMode.redisson;
+        return MqMode.REDISSON;
     }
     
     @Override

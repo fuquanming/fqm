@@ -54,28 +54,26 @@ public class RedissonMqAutoConfiguration {
             if (properties == null) {
                 // 遍历mp.mqs
                 for (MqConfigurationProperties mcp : mp.getMqs().values()) {
-                    if (mcp.getName().equals(name) && MqMode.redisson.name().equals(mcp.getBinder())) {
+                    if (mcp.getName().equals(name) && MqMode.REDISSON.name().equalsIgnoreCase(mcp.getBinder())) {
                         properties = mcp;
                         break;
                     }
                 }
 
             }
-            if (properties != null && MqMode.redisson.name().equals(properties.getBinder())) {
+            if (properties != null && MqMode.REDISSON.name().equalsIgnoreCase(properties.getBinder())) {
                 String group = properties.getGroup();
                 String topic = properties.getTopic();
                 Preconditions.checkArgument(StringUtils.isNotBlank(group), "Please specific [group] under mq configuration.");
                 Preconditions.checkArgument(StringUtils.isNotBlank(topic), "Please specific [topic] under mq configuration.");
-                RedissonMqListener redissonMqListener = new RedissonMqListener(v.getBean(), v.getMethod(), redissonClient, topic, group);
+                RedissonMqListener redissonMqListener = new RedissonMqListener(v.getBean(), v.getMethod(), redissonClient, topic);
                 listenerList.add(redissonMqListener);
                 logger.info("Init RedissonMqListener,bean={},method={},topic={},group={}", v.getBean().getClass(), v.getMethod().getName(), topic, group);
             }
         }
         if (!listenerList.isEmpty()) {
             RedissonMqListenerContainer container = new RedissonMqListenerContainer(listenerList.size());
-            listenerList.forEach(listener -> {
-                container.register(listener);
-            });
+            listenerList.forEach(container::register);
             return container;
         }
         return null;

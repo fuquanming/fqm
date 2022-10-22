@@ -21,6 +21,8 @@ public class KafkaMqTemplate implements MqTemplate {
     
     private Logger logger = LoggerFactory.getLogger(getClass());
     
+    private String messageStr = "],message=[";
+    
     private KafkaTemplate kafkaTemplate;
     
     public KafkaMqTemplate(KafkaTemplate kafkaTemplate) {
@@ -29,7 +31,7 @@ public class KafkaMqTemplate implements MqTemplate {
     
     @Override
     public MqMode getMqMode() {
-        return MqMode.kafka;
+        return MqMode.KAFKA;
     }
     
     @Override
@@ -37,24 +39,26 @@ public class KafkaMqTemplate implements MqTemplate {
         String str = getJsonStr(msg);
         final boolean[] flag = {true};
         try {
-//            logger.info("KafkaMqProducer->{},{}", topic, str);
             ListenableFuture future = kafkaTemplate.send(topic, str);
             future.addCallback(new ListenableFutureCallback<SendResult<String, String>>() {
                 @Override
                 public void onFailure(Throwable e) {
-                    logger.error("KafkaMqProducer.error->topic=[" + topic + "],message=[" + str + "]", e);
+                    logger.error("KafkaMqProducer.syncSend.error->topic=[" + topic + messageStr + str + "]", e);
                     e.printStackTrace();
                     flag[0] = false;
                 }
                 @Override
                 public void onSuccess(SendResult<String, String> result) {
-                    logger.info("KafkaMqProducer.success->topic=[{}],message=[{}],offset=[{}]", topic, str, result.getRecordMetadata().offset());
+                    logger.info("KafkaMqProducer.syncSend.success->topic=[{}],message=[{}],offset=[{}]", topic, str, result.getRecordMetadata().offset());
                 }
             });
             future.get();
             return flag[0];
+        }catch (InterruptedException e) {
+            e.printStackTrace();
+            Thread.currentThread().interrupt();
         } catch (Exception e) {
-            logger.error("KafkaMqProducer.error->topic=[" + topic + "],message=[" + str + "]", e);
+            logger.error("KafkaMqProducer.syncSend.error->topic=[" + topic + messageStr + str + "]", e);
             e.printStackTrace();
         }
         return false;
@@ -68,18 +72,18 @@ public class KafkaMqTemplate implements MqTemplate {
             future.addCallback(new ListenableFutureCallback<SendResult<String, String>>() {
                 @Override
                 public void onFailure(Throwable e) {
-                    logger.error("KafkaMqProducer.error->topic=[" + topic + "],message=[" + str + "]", e);
+                    logger.error("KafkaMqProducer.asyncSend.error->topic=[" + topic + messageStr + str + "]", e);
                     sendCallback.onException(e);
                     e.printStackTrace();
                 }
                 @Override
                 public void onSuccess(SendResult<String, String> result) {
-                    logger.info("KafkaMqProducer.success->topic=[{}],message=[{}],offset=[{}]", topic, str, result.getRecordMetadata().offset());
+                    logger.info("KafkaMqProducer.asyncSend.success->topic=[{}],message=[{}],offset=[{}]", topic, str, result.getRecordMetadata().offset());
                     sendCallback.onSuccess(null);
                 }
             });
         } catch (Exception e) {
-            logger.error("KafkaMqProducer.error->topic=[" + topic + "],message=[" + str + "]", e);
+            logger.error("KafkaMqProducer.asyncSend.error->topic=[" + topic + messageStr + str + "]", e);
             e.printStackTrace();
         }
     }

@@ -11,6 +11,8 @@ import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.SessionCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.stream.StreamListener;
+
+import com.fqm.framework.mq.exception.MqException;
 /**
  * Redis消息队列监听
  * 
@@ -73,7 +75,7 @@ public class RedisMqListenerLowVersion extends MqListenerAdapter<String> impleme
                 }
             };
             redisTemplate.execute(sessionCallback);
-            throw new RuntimeException(e);
+            throw new MqException(e);
         }
         
     }

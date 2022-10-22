@@ -6,6 +6,8 @@ import org.springframework.data.redis.connection.stream.MapRecord;
 import org.springframework.data.redis.connection.stream.RecordId;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.stream.StreamListener;
+
+import com.fqm.framework.mq.exception.MqException;
 /**
  * Redis消息队列监听
  * 
@@ -38,7 +40,7 @@ public class RedisMqListener extends MqListenerAdapter<String> implements Stream
             // 使用RedisMqDeadMessageTasker触发死信队列任务
             redisTemplate.opsForStream().acknowledge(destination, group, recordId);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new MqException(e);
         }
         
     }

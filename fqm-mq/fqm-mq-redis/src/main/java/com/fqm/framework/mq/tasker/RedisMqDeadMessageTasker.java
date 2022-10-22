@@ -24,6 +24,7 @@ import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.core.script.RedisScript;
 
 import com.fqm.framework.mq.constant.Constants;
+import com.fqm.framework.mq.redis.PendingMessage;
 import com.fqm.framework.mq.redis.PendingMessages;
 import com.fqm.framework.mq.redis.PendingMessagesSummary;
 import com.fqm.framework.mq.redis.StreamInfo.InfoGroup;
@@ -118,7 +119,7 @@ public class RedisMqDeadMessageTasker {
                             String groupName = group.groupName();
                             // 死信队列topic
                             String deadTopic = groupName + ".DLQ";
-                            // 获取消费者组里的pending消息，替换PendingMessagesSummary pendingMessagesSummary = streamOperations.pending(topic, groupName);
+                            // 获取消费者组里的pending消息
                             PendingMessagesSummary pendingMessagesSummary = LuaScriptUtil.pending(topic, groupName, stringRedisTemplate);
                             // 每个消费者的pending消息数量
                             Map<String, Long> pendingMessagesPerConsumer = pendingMessagesSummary.getPendingMessagesPerConsumer();
@@ -129,48 +130,12 @@ public class RedisMqDeadMessageTasker {
                                 long consumerTotalPendingMessages = entry.getValue();
                                 if (consumerTotalPendingMessages > 0) {
                                     // 读取消费者pending队列的前10条记录，从ID=0的记录开始，一直到ID最大值，一次处理10条
-                                    // 替换 PendingMessages pendingMessages = streamOperations.pending(topic, Consumer.from(groupName, consumer), Range.closed("0", "+"), 10);
                                     PendingMessages pendingMessages = LuaScriptUtil.pending(topic, groupName, consumer, Range.closed("0", "+"), 10, stringRedisTemplate);
                                     // 遍历所有Opending消息的详情
-                                    pendingMessages.forEach(message -> {
+                                    pendingMessages.forEach(message -> 
                                         // 消息的ID
-                                        String messageId = message.getIdAsString();
-                                        // 消息投递一次消费的时间，每投递一次重置该时间
-                                        Duration elapsedTimeSinceLastDelivery = message.getElapsedTimeSinceLastDelivery();
-                                        // 在多个消费者中投递的次数
-                                        long deliveryCount = message.getTotalDeliveryCount();
-                                        String consumerName = message.getConsumerName();
-                                        // 是否死信消息，投递次数大于1或消费时间大于60秒
-                                        if (deliveryCount > deadMessageDeliveryCount || elapsedTimeSinceLastDelivery.getSeconds() > deadMessageDeliverySecond) {
-                                            // 获取消息内容
-                                            List<MapRecord<String, String, String>> result = streamOperations
-                                                    .range(topic, Range.rightOpen(messageId, messageId));
-                                            if (result != null && !result.isEmpty()) {
-                                                MapRecord<String, String, String> record = result.get(0);
-                                                logger.info("deadMessage->topic={},group={},consumer={},id={},deliveryCount={},deliveryTimer={}", 
-                                                        topic, groupName, consumerName, messageId, deliveryCount, elapsedTimeSinceLastDelivery.getSeconds());
-                                                String msg = record.getValue().values().iterator().next();
-                                                // ack并放入死信队列
-//                                                streamOperations.acknowledge(groupName, record);
-//                                                streamOperations.add(StreamRecords.newRecord()
-//                                                      .ofObject(msg)
-//                                                      .withStreamKey(groupName + ".DLQ")
-//                                                      );
-                                                // Lua
-                                                Object deadMessageFlag = stringRedisTemplate.execute(
-                                                        SCRIPT_DEAD_MESSAGE,
-                                                        stringRedisTemplate.getStringSerializer(),
-                                                        stringRedisTemplate.getStringSerializer(),
-                                                        Arrays.asList(topic, deadTopic),
-                                                        groupName, messageId,
-                                                        String.valueOf(Constants.MAX_QUEUE_SIZE), msg
-                                                        );
-                                                if (deadMessageFlag != null && deadMessageFlag.toString().contains("-")) {
-                                                    logger.info("deadMessage.ok->topic:{},id={}", deadTopic, deadMessageFlag);
-                                                }
-                                            }
-                                        }
-                                    });
+                                        executeDeadMessage(streamOperations, topic, groupName, deadTopic, message)
+                                    );
                                 }
                             });
                             
@@ -179,6 +144,42 @@ public class RedisMqDeadMessageTasker {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+            }
+        }
+
+        private void executeDeadMessage(StreamOperations<String, String, String> streamOperations, String topic, String groupName, String deadTopic,
+                PendingMessage message) {
+            String flag = "-";
+            String messageId = message.getIdAsString();
+            // 消息投递一次消费的时间，每投递一次重置该时间
+            Duration elapsedTimeSinceLastDelivery = message.getElapsedTimeSinceLastDelivery();
+            // 在多个消费者中投递的次数
+            long deliveryCount = message.getTotalDeliveryCount();
+            String consumerName = message.getConsumerName();
+            // 是否死信消息，投递次数大于1或消费时间大于60秒
+            if (deliveryCount > deadMessageDeliveryCount || elapsedTimeSinceLastDelivery.getSeconds() > deadMessageDeliverySecond) {
+                // 获取消息内容
+                List<MapRecord<String, String, String>> result = streamOperations
+                        .range(topic, Range.rightOpen(messageId, messageId));
+                if (result != null && !result.isEmpty()) {
+                    MapRecord<String, String, String> mapRecord = result.get(0);
+                    logger.info("deadMessage->topic={},group={},consumer={},id={},deliveryCount={},deliveryTimer={}", 
+                            topic, groupName, consumerName, messageId, deliveryCount, elapsedTimeSinceLastDelivery.getSeconds());
+                    String msg = mapRecord.getValue().values().iterator().next();
+                    // ack并放入死信队列
+                    // Lua
+                    Object deadMessageFlag = stringRedisTemplate.execute(
+                            SCRIPT_DEAD_MESSAGE,
+                            stringRedisTemplate.getStringSerializer(),
+                            stringRedisTemplate.getStringSerializer(),
+                            Arrays.asList(topic, deadTopic),
+                            groupName, messageId,
+                            String.valueOf(Constants.MAX_QUEUE_SIZE), msg
+                            );
+                    if (deadMessageFlag.toString().contains(flag)) {
+                        logger.info("deadMessage.ok->topic:{},id={}", deadTopic, deadMessageFlag);
+                    }
+                }
             }
         }
     }

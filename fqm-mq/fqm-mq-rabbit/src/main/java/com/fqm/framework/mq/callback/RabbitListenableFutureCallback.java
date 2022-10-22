@@ -61,7 +61,6 @@ public class RabbitListenableFutureCallback implements ListenableFutureCallback<
         // @RabbitPropertiesBeanPostProcessor 参考
         // 设置确认回调 ACK
         callbackThread = Thread.currentThread();
-//        logger.info(callbackThread.getId() + ",onSuccess,ack=" + confirm.isAck() + "\t" + productThread.getId());
         // 入交换机失败
         if (!confirm.isAck()) {
             error = true;

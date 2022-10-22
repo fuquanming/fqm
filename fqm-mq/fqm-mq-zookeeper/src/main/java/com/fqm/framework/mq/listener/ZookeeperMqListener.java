@@ -6,6 +6,7 @@ import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.queue.QueueConsumer;
 import org.apache.curator.framework.state.ConnectionState;
 
+import com.fqm.framework.mq.exception.MqException;
 import com.fqm.framework.mq.template.ZookeeperMqTemplate;
 
 /**
@@ -29,6 +30,7 @@ public class ZookeeperMqListener extends MqListenerAdapter<String> implements Qu
 
     @Override
     public void stateChanged(CuratorFramework client, ConnectionState newState) {
+        // do nothing
     }
 
     @Override
@@ -38,7 +40,7 @@ public class ZookeeperMqListener extends MqListenerAdapter<String> implements Qu
         } catch (Exception e) {
             // 入死信队列
             zookeeperMqTemplate.syncSend(topic + ".DLQ", message);
-            throw new RuntimeException(e);
+            throw new MqException(e);
         }
     }
 }

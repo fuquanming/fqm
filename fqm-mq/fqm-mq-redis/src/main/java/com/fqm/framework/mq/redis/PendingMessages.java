@@ -16,7 +16,7 @@ public class PendingMessages implements Streamable<PendingMessage> {
 
     private final String groupName;
     private final Range<?> range;
-    private final List<PendingMessage> pendingMessages;
+    private final List<PendingMessage> pms;
 
     public PendingMessages(String groupName, List<PendingMessage> pendingMessages) {
         this(groupName, Range.unbounded(), pendingMessages);
@@ -29,7 +29,7 @@ public class PendingMessages implements Streamable<PendingMessage> {
 
         this.groupName = groupName;
         this.range = range;
-        this.pendingMessages = pendingMessages;
+        this.pms = pendingMessages;
     }
 
     /**
@@ -39,7 +39,7 @@ public class PendingMessages implements Streamable<PendingMessage> {
      * @return new instance of {@link PendingMessages}.
      */
     public PendingMessages withinRange(Range<?> range) {
-        return new PendingMessages(groupName, range, pendingMessages);
+        return new PendingMessages(groupName, range, pms);
     }
 
     /**
@@ -56,7 +56,8 @@ public class PendingMessages implements Streamable<PendingMessage> {
      *
      * @return never {@literal null}.
      */
-    public Range<?> getRange() {
+    @SuppressWarnings("rawtypes")
+    public Range getRange() {
         return range;
     }
 
@@ -65,14 +66,14 @@ public class PendingMessages implements Streamable<PendingMessage> {
      */
     @Override
     public boolean isEmpty() {
-        return pendingMessages.isEmpty();
+        return pms.isEmpty();
     }
 
     /**
      * @return the number of pending messages in range.
      */
     public int size() {
-        return pendingMessages.size();
+        return pms.size();
     }
 
     /**
@@ -83,7 +84,7 @@ public class PendingMessages implements Streamable<PendingMessage> {
      * @throws IndexOutOfBoundsException if the index is out of range.
      */
     public PendingMessage get(int index) {
-        return pendingMessages.get(index);
+        return pms.get(index);
     }
 
     /**
@@ -92,12 +93,12 @@ public class PendingMessages implements Streamable<PendingMessage> {
      */
     @Override
     public Iterator<PendingMessage> iterator() {
-        return pendingMessages.iterator();
+        return pms.iterator();
     }
 
     @Override
     public String toString() {
         return "PendingMessages{" + "groupName='" + groupName + '\'' + ", range=" + range + ", pendingMessages="
-                + pendingMessages + '}';
+                + pms + '}';
     }
 }

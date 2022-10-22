@@ -1,6 +1,5 @@
 package com.fqm.framework.mq.template;
 
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.rocketmq.client.producer.SendResult;
@@ -11,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 
-import com.fqm.framework.common.core.util.JsonUtil;
 import com.fqm.framework.mq.MqMode;
 import com.fqm.framework.mq.client.producer.SendCallback;
 import com.fqm.framework.mq.util.RocketDelayUtil;
@@ -26,22 +24,24 @@ public class RocketMqTemplate implements MqTemplate {
     
     private Logger logger = LoggerFactory.getLogger(getClass());
     
-    private RocketMQTemplate rocketMqTemplate;
+    private RocketMQTemplate template;
+    
+    private String messageStr = "],message=[";
     
     public RocketMqTemplate(RocketMQTemplate rocketMqTemplate) {
-        this.rocketMqTemplate = rocketMqTemplate;
+        this.template = rocketMqTemplate;
     }
     
     @Override
     public MqMode getMqMode() {
-        return MqMode.rocket;
+        return MqMode.ROCKET;
     }
     
     @Override
     public boolean syncSend(String topic, Object msg) {
         String str = getJsonStr(msg);
         try {
-            SendResult sendResult = rocketMqTemplate.syncSend(topic, MessageBuilder.withPayload(str).build());
+            SendResult sendResult = template.syncSend(topic, MessageBuilder.withPayload(str).build());
             if (sendResult.getSendStatus() == SendStatus.SEND_OK) {
                 logger.info("RocketMqProducer.syncSend.success->topic=[{}],message=[{}],offset=[{}]", topic, str, "");
                 return true;
@@ -49,7 +49,7 @@ public class RocketMqTemplate implements MqTemplate {
                 logger.error("RocketMqProducer.syncSend.error->topic=[{}],message=[{}],msg=[{}]", topic, str, sendResult);
             }
         } catch (Exception e) {
-            logger.error("RocketMqProducer.syncSend.error->topic=[" + topic + "],message=[" + str + "]", e);
+            logger.error("RocketMqProducer.syncSend.error->topic=[" + topic + messageStr + str + "]", e);
             e.printStackTrace();
         }
         return false;
@@ -59,7 +59,7 @@ public class RocketMqTemplate implements MqTemplate {
     public void asyncSend(String topic, Object msg, SendCallback sendCallback) {
         String str = getJsonStr(msg);
         try {
-            rocketMqTemplate.asyncSend(topic, MessageBuilder.withPayload(str).build(), new org.apache.rocketmq.client.producer.SendCallback() {
+            template.asyncSend(topic, MessageBuilder.withPayload(str).build(), new org.apache.rocketmq.client.producer.SendCallback() {
                 @Override
                 public void onSuccess(SendResult sendResult) {
                     logger.info("RocketMqProducer.asyncSend.success->topic=[{}],message=[{}],offset=[{}]", topic, str, "");
@@ -68,12 +68,12 @@ public class RocketMqTemplate implements MqTemplate {
                 
                 @Override
                 public void onException(Throwable e) {
-                    logger.error("RocketMqProducer.asyncSend.error->topic=[" + topic + "],message=[" + str + "]", e);
+                    logger.error("RocketMqProducer.asyncSend.error->topic=[" + topic + messageStr + str + "]", e);
                     sendCallback.onException(e);
                 }
             });
         } catch (Exception e) {
-            logger.error("RocketMqProducer.asyncSend.error->topic=[" + topic + "],message=[" + str + "]", e);
+            logger.error("RocketMqProducer.asyncSend.error->topic=[" + topic + messageStr + str + "]", e);
             e.printStackTrace();
         }
     }
@@ -87,7 +87,7 @@ public class RocketMqTemplate implements MqTemplate {
                     .build();
             // 一、延迟时间存在十八个等级 (1s/5s/10s/30s/1m/2m/3m/4m/5m/6m/7m/8m/9m/10m/20m/30m/1h/2h )
             // 通过18级的时间，每次比较最近所在的级别时间投递进去。
-            SendResult sendResult = rocketMqTemplate.syncSend(topic, message, 5000, RocketDelayUtil.getDelayLevel(delayTime, timeUnit));
+            SendResult sendResult = template.syncSend(topic, message, 5000, RocketDelayUtil.getDelayLevel(delayTime, timeUnit));
             if (sendResult.getSendStatus() == SendStatus.SEND_OK) {
                 logger.info("RocketMqProducer.syncDelaySend.success->topic=[{}],message=[{}],delayTime=[{}],timeUnit=[{}]", topic, str, delayTime, timeUnit);
                 return true;
@@ -103,7 +103,7 @@ public class RocketMqTemplate implements MqTemplate {
             // 3、客户端获取到延迟的topic消息，投递到正常监听topic下。
             // 4、客户端获取到延迟消息
         } catch (Exception e) {
-            logger.error("RocketMqProducer.syncDelaySend.error->topic=[" + topic + "],message=[" + str + "],delayTime=[" + delayTime + "],timeUnit=[" + timeUnit + "]", e);
+            logger.error("RocketMqProducer.syncDelaySend.error->topic=[" + topic + messageStr + str + "],delayTime=[" + delayTime + "],timeUnit=[" + timeUnit + "]", e);
             e.printStackTrace();
         }
         return false;

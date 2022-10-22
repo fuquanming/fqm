@@ -39,7 +39,7 @@ public class RabbitMqListener extends MqListenerAdapter<String> implements Chann
             /** 手动发送ack确认收到消息 */
             channel.basicAck(deliveryTag, false);
         } catch (Exception e) {
-            // TODO 不是事务操作
+            // 不是事务操作
             /** 进入死信队列 */
             String deadTopic = destination + ".DLQ";
             rabbitMqTemplate.initTopic(deadTopic, false);

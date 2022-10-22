@@ -88,14 +88,14 @@ public class ZookeeperMqAutoConfiguration implements SmartInitializingSingleton,
             if (properties == null) {
                 // 遍历mp.mqs
                 for (MqConfigurationProperties mcp : mp.getMqs().values()) {
-                    if (mcp.getName().equals(name) && MqMode.zookeeper.name().equals(mcp.getBinder())) {
+                    if (mcp.getName().equals(name) && MqMode.ZOOKEEPER.name().equalsIgnoreCase(mcp.getBinder())) {
                         properties = mcp;
                         break;
                     }
                 }
 
             }
-            if (properties != null && MqMode.zookeeper.name().equals(properties.getBinder())) {
+            if (properties != null && MqMode.ZOOKEEPER.name().equalsIgnoreCase(properties.getBinder())) {
                 String topic = properties.getTopic();
                 Preconditions.checkArgument(StringUtils.isNotBlank(topic), "Please specific [topic] under mq configuration.");
                 zookeeperMqTemplate.getQueue(topic, new ZookeeperMqListener(v.getBean(), v.getMethod(), zookeeperMqTemplate, topic));

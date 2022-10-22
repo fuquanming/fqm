@@ -7,6 +7,8 @@ package com.fqm.framework.mq.constant;
  */
 public class Constants {
     
+    private Constants() {
+    }
     /** Lua执行成功标志 */
     public static final String EXECUTE_SUCCESS = "OK";
     

@@ -1,7 +1,7 @@
 package com.fqm.framework.mq.config;
 
 import java.lang.annotation.Annotation;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -74,7 +74,7 @@ public class RocketMqAutoConfiguration implements SmartInitializingSingleton, Ap
     @ConditionalOnMissingBean(DefaultMQProducer.class)
     public DefaultMQProducer defaultMqProducer(RocketMQProperties rocketMqProperties) {
         RocketMQProperties.Producer producerConfig = rocketMqProperties.getProducer();
-        String nameServer = rocketMqProperties.getNameServer();
+        String nameServerProperties = rocketMqProperties.getNameServer();
         if (producerConfig == null) {
             producerConfig = new RocketMQProperties.Producer();
         }
@@ -89,7 +89,7 @@ public class RocketMqAutoConfiguration implements SmartInitializingSingleton, Ap
 
         DefaultMQProducer producer = RocketMQUtil.createDefaultMQProducer(groupName, ak, sk, isEnableMsgTrace, customizedTraceTopic);
 
-        producer.setNamesrvAddr(nameServer);
+        producer.setNamesrvAddr(nameServerProperties);
         if (accessChannel != null && !accessChannel.equals("")) {
             producer.setAccessChannel(AccessChannel.valueOf(accessChannel));
         }
@@ -124,14 +124,14 @@ public class RocketMqAutoConfiguration implements SmartInitializingSingleton, Ap
             if (properties == null) {
                 // 遍历mp.mqs
                 for (MqConfigurationProperties mcp : mp.getMqs().values()) {
-                    if (mcp.getName().equals(name) && MqMode.rocket.name().equals(mcp.getBinder())) {
+                    if (mcp.getName().equals(name) && MqMode.ROCKET.name().equalsIgnoreCase(mcp.getBinder())) {
                         properties = mcp;
                         break;
                     }
                 }
 
             }
-            if (properties != null && MqMode.rocket.name().equals(properties.getBinder())) {
+            if (properties != null && MqMode.ROCKET.name().equalsIgnoreCase(properties.getBinder())) {
                 String group = properties.getGroup();
                 String topic = properties.getTopic();
                 Preconditions.checkArgument(StringUtils.isNotBlank(group), "Please specific [group] under mq configuration.");
@@ -148,22 +148,22 @@ public class RocketMqAutoConfiguration implements SmartInitializingSingleton, Ap
                     beanDefinitionBuilder.addPropertyValue("nameServer", nameServer);
                     beanDefinitionBuilder.addPropertyValue("topic", topic);
                     
-                    beanDefinitionBuilder.addPropertyValue("messageConverter", new StringMessageConverter(Charset.forName("UTF-8")));
+                    beanDefinitionBuilder.addPropertyValue("messageConverter", new StringMessageConverter(StandardCharsets.UTF_8));
                     
                     beanDefinitionBuilder.addPropertyValue("rocketMQMessageListener", rocketMqMessageListener(nameServer, topic, group, 1));
                     beanDefinitionBuilder.addPropertyValue("rocketMQListener", new RocketMqListener(v.getBean(), v.getMethod(), topic, applicationContext.getBean(RocketMqTemplate.class)));
                     // 注册bean
                     AbstractBeanDefinition bean = beanDefinitionBuilder.getRawBeanDefinition();
                     
-                    defaultListableBeanFactory.registerBeanDefinition(name, bean);
+                    defaultListableBeanFactory.registerBeanDefinition(beanName, bean);
                     
                     try {
-                        DefaultRocketMQListenerContainer container = (DefaultRocketMQListenerContainer) applicationContext.getBean(name);
+                        DefaultRocketMQListenerContainer container = (DefaultRocketMQListenerContainer) applicationContext.getBean(beanName);
                         // 修改私有属性，数据传输类型，为string
                         FieldUtils.writeDeclaredField(container, "messageType", String.class, true);
                         // 指定从第一条消息开始消费
                         container.getConsumer().setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
-                        container.getConsumer().setInstanceName(name);
+                        container.getConsumer().setInstanceName(beanName);
                         // 消费失败1次，立即入死信队列 topic="%DLQ%" + v.getGroup()
                         // 第一次10s，第二次30s，第三次60s
                         container.getConsumer().setMaxReconsumeTimes(1);

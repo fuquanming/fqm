@@ -1,12 +1,12 @@
 package com.fqm.framework.mq.listener;
 
 import java.lang.reflect.Method;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.rocketmq.spring.core.RocketMQListener;
 
 import com.fqm.framework.common.core.util.JsonUtil;
+import com.fqm.framework.mq.exception.MqException;
 import com.fqm.framework.mq.template.RocketMqTemplate;
 import com.fqm.framework.mq.util.RocketDelayUtil;
 
@@ -44,7 +44,7 @@ public class RocketMqListener extends MqListenerAdapter<String> implements Rocke
                 rocketMqTemplate.syncDelaySend(topic, JsonUtil.toMap(message), delayTime, TimeUnit.MILLISECONDS);
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new MqException(e);
         }
     }
 

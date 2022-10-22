@@ -77,16 +77,9 @@ public class RabbitMqAutoConfiguration implements SmartInitializingSingleton, Ap
             String name = v.getName();
             MqConfigurationProperties properties = mp.getMqs().get(name);
             if (properties == null) {
-                // 遍历mp.mqs
-                for (MqConfigurationProperties mcp : mp.getMqs().values()) {
-                    if (mcp.getName().equals(name) && MqMode.rabbit.name().equals(mcp.getBinder())) {
-                        properties = mcp;
-                        break;
-                    }
-                }
-
+                properties = getProperties(mp, name, properties);
             }
-            if (properties != null && MqMode.rabbit.name().equals(properties.getBinder())) {
+            if (properties != null && MqMode.RABBIT.name().equalsIgnoreCase(properties.getBinder())) {
                 String group = properties.getGroup();
                 String topic = properties.getTopic();
                 Preconditions.checkArgument(StringUtils.isNotBlank(group), "Please specific [group] under mq configuration.");
@@ -112,12 +105,23 @@ public class RabbitMqAutoConfiguration implements SmartInitializingSingleton, Ap
                     beanDefinitionBuilder.addPropertyValue("acknowledgeMode", AcknowledgeMode.MANUAL);
 //                        beanDefinitionBuilder.addPropertyValue("transactionManager", new RabbitTransactionManager(connectionFactory));//设置事务
                     // 注册bean
-                    defaultListableBeanFactory.registerBeanDefinition(name, beanDefinitionBuilder.getRawBeanDefinition());
+                    defaultListableBeanFactory.registerBeanDefinition(beanName, beanDefinitionBuilder.getRawBeanDefinition());
                     i++;
                     logger.info("Init RabbitMqListener,bean={},method={},topic={},group={}", v.getBean().getClass(), v.getMethod().getName(), topic, group);
                 }
             }
         }
+    }
+
+    private MqConfigurationProperties getProperties(MqProperties mp, String name, MqConfigurationProperties properties) {
+        // 遍历mp.mqs
+        for (MqConfigurationProperties mcp : mp.getMqs().values()) {
+            if (mcp.getName().equals(name) && MqMode.RABBIT.name().equalsIgnoreCase(mcp.getBinder())) {
+                properties = mcp;
+                break;
+            }
+        }
+        return properties;
     }        
     
 }

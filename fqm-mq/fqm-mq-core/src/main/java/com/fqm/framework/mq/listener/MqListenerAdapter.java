@@ -1,6 +1,9 @@
 package com.fqm.framework.mq.listener;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+
+import com.fqm.framework.mq.exception.MqException;
 
 /**
  * 监听消息队列适配器
@@ -35,7 +38,11 @@ public class MqListenerAdapter<T> implements MqListener<T> {
     }
 
     @Override
-    public void receiveMessage(T message) throws Exception {
-        method.invoke(bean, message);
+    public void receiveMessage(T message) throws MqException {
+        try {
+            method.invoke(bean, message);
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+            throw new MqException(e);
+        }
     }
 }
