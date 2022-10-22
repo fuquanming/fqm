@@ -122,14 +122,7 @@ public class RocketMqAutoConfiguration implements SmartInitializingSingleton, Ap
             String name = v.getName();
             MqConfigurationProperties properties = mp.getMqs().get(name);
             if (properties == null) {
-                // 遍历mp.mqs
-                for (MqConfigurationProperties mcp : mp.getMqs().values()) {
-                    if (mcp.getName().equals(name) && MqMode.ROCKET.name().equalsIgnoreCase(mcp.getBinder())) {
-                        properties = mcp;
-                        break;
-                    }
-                }
-
+                properties = getProperties(mp, name, properties);
             }
             if (properties != null && MqMode.ROCKET.name().equalsIgnoreCase(properties.getBinder())) {
                 String group = properties.getGroup();
@@ -175,6 +168,17 @@ public class RocketMqAutoConfiguration implements SmartInitializingSingleton, Ap
                 }
             }
         }
+    }
+
+    private MqConfigurationProperties getProperties(MqProperties mp, String name, MqConfigurationProperties properties) {
+        // 遍历mp.mqs
+        for (MqConfigurationProperties mcp : mp.getMqs().values()) {
+            if (mcp.getName().equals(name) && MqMode.ROCKET.name().equalsIgnoreCase(mcp.getBinder())) {
+                properties = mcp;
+                break;
+            }
+        }
+        return properties;
     }
 
     private RocketMQMessageListener rocketMqMessageListener(String nameServer, String topic, String group, int concurrentConsumers) {
