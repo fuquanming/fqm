@@ -8,6 +8,8 @@
     </parent>
     <artifactId>fqm-lock</artifactId>
     <packaging>pom</packaging>
+    <version>1.0.1</version>
+    
     <description>The implementation of distributed locks includes RedisTemplate, Redisson and Zookeeper</description>
     <url>https://github.com/fuquanming/fqm.git</url>
     <modules>
@@ -42,10 +44,10 @@
     </developers>
 
     <properties>
-        <fqm-common-redis.version>1.0.2</fqm-common-redis.version>
-        <fqm-common-redisson.version>1.0.2</fqm-common-redisson.version>
-        <fqm-common-spring.version>1.0.2</fqm-common-spring.version>
-        <fqm-common-zookeeper.version>1.0.2</fqm-common-zookeeper.version>
+        <fqm-common-redis.version>1.0.3</fqm-common-redis.version>
+        <fqm-common-redisson.version>1.0.3</fqm-common-redisson.version>
+        <fqm-common-spring.version>1.0.3</fqm-common-spring.version>
+        <fqm-common-zookeeper.version>1.0.3</fqm-common-zookeeper.version>
     </properties>
 
     <dependencyManagement>

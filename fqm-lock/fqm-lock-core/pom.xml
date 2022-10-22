@@ -3,7 +3,7 @@
     <parent>
         <groupId>io.github.fuquanming</groupId>
         <artifactId>fqm-lock</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
     </parent>
     <artifactId>fqm-lock-core</artifactId>
     <description>Provide lock factory, lock template, lock type and single machine lock (block lock, try to obtain a lock once, try to obtain a lock, unlock)</description>
