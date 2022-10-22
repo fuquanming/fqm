@@ -47,7 +47,14 @@ public class JobListenerAdapter<T> implements JobListener<T> {
     @Override
     public void receiveJob(T message) {
         try {
-            method.invoke(bean, message);
+            if (method.getParameterCount() == 1) {
+                Class<?>[] parameterTypes = method.getParameterTypes();
+                if (parameterTypes[0] == message.getClass()) {
+                    method.invoke(bean, message);
+                }
+            } else {
+                method.invoke(bean);
+            }
         } catch (Exception e) {
             throw new InvokeException(e);
         }
