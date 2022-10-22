@@ -5,8 +5,8 @@
         <artifactId>fqm-common</artifactId>
         <version>1.0.2</version>
     </parent>
-    <version>${parent.version}</version>
     <artifactId>fqm-common-zookeeper</artifactId>
+    <version>1.0.3</version>
     <description>zookeeper配置及工厂类</description>
     <dependencies>
         <dependency>

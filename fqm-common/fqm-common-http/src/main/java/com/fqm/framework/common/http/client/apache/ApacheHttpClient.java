@@ -387,7 +387,7 @@ public class ApacheHttpClient implements HttpClient {
             if (fos == null) {
                 fos = os;
             }
-            long size = IoUtil.copyByNIO(entity.getContent(), fos, IoUtil.DEFAULT_BUFFER_SIZE);
+            long size = IoUtil.copyByNio(entity.getContent(), fos, IoUtil.DEFAULT_BUFFER_SIZE);
             EntityUtils.consume(entity);
             return size;
         } finally {

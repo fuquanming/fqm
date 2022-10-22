@@ -9,7 +9,12 @@
 		<version>1.0.2</version>
 	</parent>
 	<artifactId>fqm-common-http</artifactId>
-
+    <version>1.0.3</version>
+    
+    <properties>
+        <fqm-common-core.version>1.0.4</fqm-common-core.version>
+    </properties>
+    
 	<dependencies>
 		
 		<dependency>
@@ -30,7 +35,7 @@
 		<dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-common-core</artifactId>
-            <version>${parent.version}</version>
+            <version>${fqm-common-core.version}</version>
         </dependency>
 		
 	</dependencies>
