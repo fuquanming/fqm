@@ -32,7 +32,15 @@ public class SpringBeanPostProcessorFilter {
     
     private Logger logger = LoggerFactory.getLogger(getClass());
     /** 记录Spring代理使用类加载器 */
-    public static ClassLoader SPRING_PROXY_CLASSLOADER;
+    private static ClassLoader springProxyClassLoader;
+    
+    public static ClassLoader getSpringProxyClassLoader() {
+        return springProxyClassLoader;
+    }
+    
+    public static void setSpringProxyClassLoader(ClassLoader classLoader) {
+        springProxyClassLoader = classLoader;
+    }
     
     /**
      * 1、将beanFactory的类加载器指向自定义类加载器
@@ -84,13 +92,12 @@ public class SpringBeanPostProcessorFilter {
             if (field != null) {
                 try {
                     ClassLoader proxyClassLoader = (ClassLoader) FieldUtils.readField(field, processor);
-//                    logger.info("processor----" + processor.getClass().getName() + "=" + proxyClassLoader + "->" + moduleClassLoader);
                     logger.info("processor----{}:{}->{}", processor.getClass().getName(), proxyClassLoader, moduleClassLoader);
                     FieldUtils.writeField(field, processor, moduleClassLoader, true);
                     
                     /** 缓存 */
-                    if (SPRING_PROXY_CLASSLOADER == null) {
-                        SPRING_PROXY_CLASSLOADER = proxyClassLoader;
+                    if (springProxyClassLoader == null) {
+                        setSpringProxyClassLoader(proxyClassLoader);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

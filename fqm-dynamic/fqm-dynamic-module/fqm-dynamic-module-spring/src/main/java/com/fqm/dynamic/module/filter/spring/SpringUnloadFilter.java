@@ -13,6 +13,7 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang3.reflect.MethodUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
@@ -28,7 +29,7 @@ import com.fqm.dynamic.module.core.ModuleClassLoader;
 import com.fqm.framework.common.spring.util.SpringUtil;
 
 /**
- * 
+ * Spring 卸载过滤器
  * @version 
  * @author 傅泉明
  */
@@ -51,32 +52,7 @@ public class SpringUnloadFilter extends AbstractSpringUnloadFilter {
                 try {
                     Class<?> targetClass = ClassUtils.forName(className, moduleClassLoader);
                     if (targetClass.isAnnotationPresent(Controller.class) || targetClass.isAnnotationPresent(RestController.class)) {
-                        try {
-                            ReflectionUtils.doWithMethods(targetClass, new ReflectionUtils.MethodCallback() {
-                                public void doWith(Method method) {
-                                    Method specificMethod = ClassUtils.getMostSpecificMethod(method, targetClass);
-                                    try {
-                                        Method createMappingMethod = RequestMappingHandlerMapping.class
-                                                .getDeclaredMethod("getMappingForMethod", Method.class, Class.class);
-                                        createMappingMethod.setAccessible(true);
-                                        RequestMappingInfo requestMappingInfo = (RequestMappingInfo) createMappingMethod
-                                                .invoke(requestMappingHandlerMapping, specificMethod, targetClass);
-                                        if (requestMappingInfo != null) {
-                                            requestMappingHandlerMapping.unregisterMapping(requestMappingInfo);
-                                            requestMappingInfo = null;
-                                            logger.info("unload->deleteController=" + className);
-                                        }
-
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }, ReflectionUtils.USER_DECLARED_METHODS);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        
-                        
+                        unloadRequestMapping(requestMappingHandlerMapping, className, targetClass);
                     }
                 } catch (Exception e1) {
                     e1.printStackTrace();
@@ -95,8 +71,34 @@ public class SpringUnloadFilter extends AbstractSpringUnloadFilter {
             /** 已经在spring容器就删了 */
             if (defaultListableBeanFactory.containsBeanDefinition(beanName)) {
                 defaultListableBeanFactory.removeBeanDefinition(beanName);
-                logger.info("unload->removeBeanDefinition=" + beanName);
+                logger.info("unload->removeBeanDefinition={}", beanName);
             }
+        }
+    }
+    /**
+     * 卸载Controller
+     * @param requestMappingHandlerMapping
+     * @param className
+     * @param targetClass
+     */
+    private void unloadRequestMapping(final RequestMappingHandlerMapping requestMappingHandlerMapping, String className, Class<?> targetClass) {
+        try {
+            ReflectionUtils.doWithMethods(targetClass, method -> {
+                Method specificMethod = ClassUtils.getMostSpecificMethod(method, targetClass);
+                try {
+                    RequestMappingInfo requestMappingInfo = (RequestMappingInfo) MethodUtils.invokeMethod(
+                            requestMappingHandlerMapping, true, "getMappingForMethod", specificMethod, targetClass);
+                    if (requestMappingInfo != null) {
+                        requestMappingHandlerMapping.unregisterMapping(requestMappingInfo);
+                        logger.info("unload->deleteController={}", className);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }, ReflectionUtils.USER_DECLARED_METHODS);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

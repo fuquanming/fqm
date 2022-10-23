@@ -83,7 +83,7 @@ public class MybatisMapUnloadFilter implements ModuleUnloadFilter {
     }
 
     public String resourceFilter(Configuration configuration, Set<?> loadedResourcesSet, Entry<String, byte[]> entry)
-            throws NoSuchFieldException, IllegalAccessException, ClassNotFoundException {
+            throws IllegalAccessException, ClassNotFoundException {
         String resource = entry.getKey();
         if (resource.startsWith(mapperXmlFolder) && resource.endsWith(mapperXmlSuffix)) {
             byte[] bytes = entry.getValue();
@@ -97,12 +97,9 @@ public class MybatisMapUnloadFilter implements ModuleUnloadFilter {
             /** 拿到namespace，namespace就是指Mapper接口的全限定名 */
             String namespace = context.getStringAttribute("namespace");
 
-            Field knownMappersField = configuration.getMapperRegistry().getClass().getDeclaredField("knownMappers");
-            knownMappersField.setAccessible(true);
+            Field knownMappersField = FieldUtils.getDeclaredField(configuration.getMapperRegistry().getClass(), "knownMappers", true);
 
-            /** 存放Mapper接口和对应代理子类的映射map */
-//                    Map<Class<?>, MapperProxyFactory<?>> mapConfig = 
-//                            (Map<Class<?>, MapperProxyFactory<?>>) knownMappersField.get(configuration.getMapperRegistry());
+            /** 存放Mapper接口和对应代理子类的映射map Map<Class<?>, MapperProxyFactory<?>> mapConfig */
             Map<?, ?> mapConfig = (Map<?, ?>) knownMappersField.get(configuration.getMapperRegistry());
             /** Mapper接口对应的class对象 */
             Class<?> clazz = Resources.classForName(namespace);
@@ -113,10 +110,6 @@ public class MybatisMapUnloadFilter implements ModuleUnloadFilter {
             loadedResourcesSet.remove(clazz.toString());
             loadedResourcesSet.remove("namespace:" + clazz.getName());
             configuration.getCacheNames().remove(namespace);
-
-//            /** mybatis-plus必须清除缓存 */
-//            Set<String> mapperRegistryCache = GlobalConfigUtils.getMapperRegistryCache(configuration);
-//            mapperRegistryCache.remove("interface " + namespace);
 
             /** 缓存的CRUD等 */
             Collection<MappedStatement> mappedStatements = configuration.getMappedStatements();
@@ -139,7 +132,7 @@ public class MybatisMapUnloadFilter implements ModuleUnloadFilter {
             cleanKeyGenerators(configuration, context.evalNodes("insert|update|select|delete"), namespace);
             cleanSqlElement(configuration, context.evalNodes("/mapper/sql"), namespace);
 
-            logger.info("unload->resource=" + resource);
+            logger.info("unload->resource={}", resource);
             return namespace;
         }
         return null;
@@ -175,14 +168,14 @@ public class MybatisMapUnloadFilter implements ModuleUnloadFilter {
 
     private void clearResultMap(Configuration configuration, XNode xNode, String namespace) {
         for (XNode resultChild : xNode.getChildren()) {
-            if ("association".equals(resultChild.getName()) || "collection".equals(resultChild.getName()) || "case".equals(resultChild.getName())) {
-                if (resultChild.getStringAttribute("select") == null) {
-                    configuration.getResultMapNames().remove(resultChild.getStringAttribute("id", resultChild.getValueBasedIdentifier()));
-                    configuration.getResultMapNames()
-                            .remove(namespace + "." + resultChild.getStringAttribute("id", resultChild.getValueBasedIdentifier()));
-                    if (resultChild.getChildren() != null && !resultChild.getChildren().isEmpty()) {
-                        clearResultMap(configuration, resultChild, namespace);
-                    }
+            String childName = resultChild.getName();
+            if (("association".equalsIgnoreCase(childName) || "collection".equalsIgnoreCase(childName) || "case".equalsIgnoreCase(childName))
+                    && resultChild.getStringAttribute("select") == null) {
+                configuration.getResultMapNames().remove(resultChild.getStringAttribute("id", resultChild.getValueBasedIdentifier()));
+                configuration.getResultMapNames()
+                        .remove(namespace + "." + resultChild.getStringAttribute("id", resultChild.getValueBasedIdentifier()));
+                if (resultChild.getChildren() != null && !resultChild.getChildren().isEmpty()) {
+                    clearResultMap(configuration, resultChild, namespace);
                 }
             }
         }

@@ -40,7 +40,7 @@ public abstract class AbstractSpringUnloadFilter extends SpringBeanPostProcessor
     public void unload(ModuleClassLoader moduleClassLoader) {
         init(moduleClassLoader);
         unloadClassLoader(moduleClassLoader);
-        afterUnload(moduleClassLoader);
+        afterUnload();
     }
     
     /**
@@ -54,9 +54,8 @@ public abstract class AbstractSpringUnloadFilter extends SpringBeanPostProcessor
 
     /**
      * 1、将beanFactory属性beanPostProcessors中所有对象的属性proxyClassLoader都指向原类加载器
-     * @param moduleClassLoader
      */
-    private void afterUnload(ModuleClassLoader moduleClassLoader) {
+    private void afterUnload() {
         DefaultListableBeanFactory beanFactory = (DefaultListableBeanFactory) SpringUtil.getBeanFactory();
         ClassLoader threadClassLoader = ModuleClassLoaderFactory.getThreadClassLoader();
         if (beanFactory.getBeanClassLoader() == threadClassLoader) {
@@ -65,6 +64,6 @@ public abstract class AbstractSpringUnloadFilter extends SpringBeanPostProcessor
         beanFactory.setBeanClassLoader(threadClassLoader);
         
         List<BeanPostProcessor> processors = getBeanPostProcessorsByProxyClassLoader();
-        setProxyClassLoader(processors, SPRING_PROXY_CLASSLOADER);
+        setProxyClassLoader(processors, getSpringProxyClassLoader());
     }
 }

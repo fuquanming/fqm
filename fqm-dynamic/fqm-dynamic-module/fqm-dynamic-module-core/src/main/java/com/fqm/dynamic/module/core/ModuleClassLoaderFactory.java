@@ -39,6 +39,9 @@ public class ModuleClassLoaderFactory {
     private static Map<Object, ClassLoader> cacheClassLoaderMap = new HashMap<>();
     
     private static Object obj = new Object();
+    
+    private ModuleClassLoaderFactory() {
+    }
     /**
      * 加载模块
      * 1、使用自定义类加载器初始化自定义类加载器
@@ -102,13 +105,12 @@ public class ModuleClassLoaderFactory {
                 threadClassLoader = Thread.currentThread().getContextClassLoader();
             }
             
-            ModuleClassLoader moduleClassLoader = moduleClassLoaderMap.get(moduleName);
-            if (moduleClassLoader != null) {
-                logger.info("卸载模块:{},{}", moduleName, moduleClassLoader);
-                moduleClassLoader.unload();
+            ModuleClassLoader moduleClassLoaderCache = moduleClassLoaderMap.get(moduleName);
+            if (moduleClassLoaderCache != null) {
+                logger.info("卸载模块:{},{}", moduleName, moduleClassLoaderCache);
+                moduleClassLoaderCache.unload();
                 moduleClassLoaderMap.remove(moduleName);
-                sun.misc.ClassLoaderUtil.releaseLoader(moduleClassLoader);
-                moduleClassLoader = null;
+                sun.misc.ClassLoaderUtil.releaseLoader(moduleClassLoaderCache);
                 logger.info("卸载模块完成:{}", moduleName);
             }
         }

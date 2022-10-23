@@ -45,15 +45,14 @@ public class MybatisSpringLoaderFilter extends AbstractSpringLoaderFilter {
      * 判断class对象是否带有spring的注解->Repository
      */
     public boolean isSpringDaoClass(Class<?> clazz) {
-        if ((clazz.isInterface() || Modifier.isAbstract(clazz.getModifiers())) 
-                && clazz.isAnnotationPresent(Repository.class)) {
-            return true;
-        }
-        return false;
+        return (clazz.isInterface() || Modifier.isAbstract(clazz.getModifiers())) 
+                && clazz.isAnnotationPresent(Repository.class);
     }
     
     private boolean isMapperScans(String className) {
-        if (mapperScans == null) return false;
+        if (mapperScans == null) {
+            return false;
+        }
         for (String mapperScan : mapperScans) {
             if (className.startsWith(mapperScan)) {
                 return true;
@@ -93,7 +92,7 @@ public class MybatisSpringLoaderFilter extends AbstractSpringLoaderFilter {
                 /** 以指定beanName注册上面生成的BeanDefinition */
                 defaultListableBeanFactory.registerBeanDefinition(beanName, beanDefinition);
                 
-                logger.info("loader->registerBeanDefinition=" + beanName);
+                logger.info("loader->registerBeanDefinition={}", beanName);
             }
         }
         return true;

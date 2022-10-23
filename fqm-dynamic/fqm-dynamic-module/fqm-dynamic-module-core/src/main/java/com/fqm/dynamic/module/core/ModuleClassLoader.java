@@ -12,11 +12,8 @@ package com.fqm.dynamic.module.core;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.security.AccessController;
-import java.security.PrivilegedExceptionAction;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +21,7 @@ import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import org.apache.commons.lang3.reflect.MethodUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,7 +58,7 @@ public class ModuleClassLoader extends URLClassLoader {
     public ModuleClassLoader(URL[] urls, ClassLoader parent, String moduleName, List<ModuleLoaderFilter> loaderFilters,
             List<ModuleUnloadFilter> unloadFilters) {
         super(urls, parent);
-        logger.info("loader->parent=" + parent);
+        logger.info("loader->parent={}", parent);
         URL url = urls[0];
         this.moduleName = moduleName;
         try {
@@ -71,7 +69,6 @@ public class ModuleClassLoader extends URLClassLoader {
         this.loaderFilters = loaderFilters;
         this.unloadFilters = unloadFilters;
 
-//        init();
     }
 
     /**
@@ -83,52 +80,46 @@ public class ModuleClassLoader extends URLClassLoader {
         
         //解析jar包每一项
         Enumeration<JarEntry> en = jarFile.entries();
-        InputStream input = null;
         /** class文件后缀 */
         String classSuffix = ".class";
         /** META-INF文件前缀 */
         String metaInfPrefix = "META-INF";
-        try {
-            while (en.hasMoreElements()) {
-                JarEntry je = en.nextElement();
-                String name = je.getName();
-                input = jarFile.getInputStream(je);
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                int bufferSize = 4096;
+        
+        while (en.hasMoreElements()) {
+            JarEntry je = en.nextElement();
+            String name = je.getName();
+            int bufferSize = 4096;
+            byte[] bytes = null;
+            try (InputStream input = jarFile.getInputStream(je); ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
                 byte[] buffer = new byte[bufferSize];
                 int bytesNumRead = 0;
                 while ((bytesNumRead = input.read(buffer)) != -1) {
                     baos.write(buffer, 0, bytesNumRead);
                 }
-                byte[] bytes = baos.toByteArray();
-                /** 过滤class */
-                if (name.endsWith(classSuffix)) {
-                    String className = name.replace(classSuffix, "").replaceAll("/", ".");
-                    classByteMap.put(className, bytes);
-                } else if (name.startsWith(metaInfPrefix)) {
-                    /** 过滤META-INF */
-                    metaInfMap.put(name, bytes);
-                } else {
-                    fileMap.put(name, bytes);
-                }
-            }
-        } catch (IOException e) {
-            logger.error("jarFile=" + jarFile.getName() + ",loadJar error", e);
-        } finally {
-            if (input != null) {
-                try {
-                    input.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            try {
-                jarFile.close();
-            } catch (IOException e) {
+                bytes = baos.toByteArray();
+            } catch (Exception e) {
                 e.printStackTrace();
             }
+            /** 过滤class */
+            if (name.endsWith(classSuffix)) {
+                String className = name.replace(classSuffix, "").replace("/", ".");
+                classByteMap.put(className, bytes);
+            } else if (name.startsWith(metaInfPrefix)) {
+                /** 过滤META-INF */
+                metaInfMap.put(name, bytes);
+            } else {
+                fileMap.put(name, bytes);
+            }
         }
+        try {
+            jarFile.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        initClass();
+    }
 
+    private void initClass() {
         /** 将jar中的class字节码进行Class载入 */
         for (Map.Entry<String, byte[]> entry : classByteMap.entrySet()) {
             String key = entry.getKey();
@@ -141,27 +132,25 @@ public class ModuleClassLoader extends URLClassLoader {
             classMap.put(key, clazz);
             
         }
-        
         if (loaderFilters != null) {
             for (ModuleLoaderFilter filter : loaderFilters) {
                 boolean flag = filter.loader(this);
                 if (!flag) {
-                    logger.error("moduleLoader,name=" + moduleName + ",loaderFilter error=" + filter);
+                    logger.error("moduleLoader,name={},loaderFilter error={}", moduleName, filter);
                     break;
                 }
             }
         }
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     protected Class<?> findClass(String name) throws ClassNotFoundException {
         if (classMap.containsKey(name)) {
-            logger.debug("findClass from classMap:" + name);
+            logger.debug("findClass from classMap:{}", name);
             return classMap.get(name);
         }
         
-        logger.debug("findClass:" + name);
+        logger.debug("findClass:{}", name);
         byte[] bytes = classByteMap.get(name);
         if (bytes == null) {
             return super.findClass(name);
@@ -169,27 +158,17 @@ public class ModuleClassLoader extends URLClassLoader {
 
         /** 使用AppClassLoader 加载 */
         Object[] args = new Object[] { name, bytes, 0, bytes.length };
-        ClassLoader appClassLoader = ClassLoader.getSystemClassLoader();
-        appClassLoader = Thread.currentThread().getContextClassLoader();
+        ClassLoader appClassLoader = Thread.currentThread().getContextClassLoader();
         /** 
          * SpringBoot 中JDK代理，cglib代理，初始化用的AppClassLoader加载class，外部加载的jar不在AppClassLoader范围内，从而出现 ClassNotFoundException
          * 通过反射，调用AppClassLoader.defineClass 来加载class->缺点：无法替换AppClassLoader已经加载的class
          * 使用自定义加载，通过替换Spring容器里的AppClassLoader地址实现
          * 
          **/
-        Method classLoaderDefineClass = null;
         try {
-            classLoaderDefineClass = (Method) AccessController.doPrivileged(new PrivilegedExceptionAction() {
-                @Override
-                public Object run() throws Exception {
-                    return ClassLoader.class.getDeclaredMethod("defineClass", String.class, byte[].class, Integer.TYPE, Integer.TYPE);
-                }
-            });
-            if (!classLoaderDefineClass.isAccessible()) {
-                classLoaderDefineClass.setAccessible(true);
-            }
-            logger.debug("findClass->appClassLoader defineClass:" + name);
-            return (Class<?>) classLoaderDefineClass.invoke(appClassLoader, args);
+            Class<?> clazz = (Class<?>) MethodUtils.invokeMethod(appClassLoader, true, "defineClass", args);
+            logger.debug("findClass->appClassLoader defineClass:{}", name);
+            return clazz;
         } catch (Exception e) {
             e.printStackTrace();
         }

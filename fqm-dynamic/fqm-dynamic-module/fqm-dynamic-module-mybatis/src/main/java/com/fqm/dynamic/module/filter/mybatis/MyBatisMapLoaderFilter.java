@@ -10,18 +10,10 @@
 package com.fqm.dynamic.module.filter.mybatis;
 
 import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
-import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
-import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +64,7 @@ public class MyBatisMapLoaderFilter implements ModuleLoaderFilter {
                 XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(new ByteArrayInputStream(bytes), sqlSessionFactory.getConfiguration(),
                         resource, sqlSessionFactory.getConfiguration().getSqlFragments());
                 xmlMapperBuilder.parse();
-                logger.info("loader MyBatisMap=" + resource);
+                logger.info("loader MyBatisMap={}", resource);
             }
         }
         this.sqlSessionFactory = null;

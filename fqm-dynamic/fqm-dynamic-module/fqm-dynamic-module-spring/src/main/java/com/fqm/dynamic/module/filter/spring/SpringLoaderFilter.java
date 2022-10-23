@@ -106,57 +106,54 @@ public class SpringLoaderFilter extends AbstractSpringLoaderFilter {
                 }
             }
         }
-        
-        
 
         /** 注册Controller */
         final RequestMappingHandlerMapping requestMappingHandlerMapping = SpringUtil.getBean(RequestMappingHandlerMapping.class);
         if (requestMappingHandlerMapping != null) {
-            
             for (String beanName : controllerNameSet) {
-                boolean controllerFlag = defaultListableBeanFactory.containsBean(beanName);
-                if (controllerFlag) {
-                    /**
-                     *  卸载Controller，重点，前面registerBeanDefinition后必须执行卸载，避免生成的类和方法不匹配，
-                     *  SpringUnloadFilter已经卸载成功（是否执行不重要了），但是必须在该类ClassLoader中再执行一次
-                     */
-                    try {
-                        String className = defaultListableBeanFactory.getBean(beanName).getClass().getName();
-                        Class<?> targetClass = ClassUtils.forName(className, moduleClassLoader);
-                        ReflectionUtils.doWithMethods(targetClass, new ReflectionUtils.MethodCallback() {
-                            public void doWith(Method method) {
-                                Method specificMethod = ClassUtils.getMostSpecificMethod(method, targetClass);
-                                try {
-                                    Method createMappingMethod = RequestMappingHandlerMapping.class
-                                            .getDeclaredMethod("getMappingForMethod", Method.class, Class.class);
-                                    createMappingMethod.setAccessible(true);
-                                    RequestMappingInfo requestMappingInfo = (RequestMappingInfo) createMappingMethod
-                                            .invoke(requestMappingHandlerMapping, specificMethod, targetClass);
-                                    if (requestMappingInfo != null) {
-                                        requestMappingHandlerMapping.unregisterMapping(requestMappingInfo);
-                                        logger.info("unload->deleteController=" + className);
-                                    }
-
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }, ReflectionUtils.USER_DECLARED_METHODS);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    
-                    try {
-                        MethodUtils.invokeMethod(requestMappingHandlerMapping, true, "detectHandlerMethods", beanName);
-                        logger.info("loader->addController={}", beanName);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
+                initController(moduleClassLoader, defaultListableBeanFactory, requestMappingHandlerMapping, beanName);
             }
         }
-
         return true;
+    }
+
+    private void initController(ModuleClassLoader moduleClassLoader, DefaultListableBeanFactory defaultListableBeanFactory,
+            final RequestMappingHandlerMapping requestMappingHandlerMapping, String beanName) throws LinkageError {
+        boolean controllerFlag = defaultListableBeanFactory.containsBean(beanName);
+        if (controllerFlag) {
+            /**
+             *  卸载Controller，重点，前面registerBeanDefinition后必须执行卸载，避免生成的类和方法不匹配，
+             *  SpringUnloadFilter已经卸载成功（是否执行不重要了），但是必须在该类ClassLoader中再执行一次
+             */
+            try {
+                String className = defaultListableBeanFactory.getBean(beanName).getClass().getName();
+                Class<?> targetClass = ClassUtils.forName(className, moduleClassLoader);
+                ReflectionUtils.doWithMethods(targetClass, method -> {
+                    Method specificMethod = ClassUtils.getMostSpecificMethod(method, targetClass);
+                    try {
+                        RequestMappingInfo requestMappingInfo = (RequestMappingInfo) MethodUtils.invokeMethod(
+                                requestMappingHandlerMapping, true, "getMappingForMethod", specificMethod, targetClass);
+                        
+                        if (requestMappingInfo != null) {
+                            requestMappingHandlerMapping.unregisterMapping(requestMappingInfo);
+                            logger.info("unload->deleteController={}", className);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }, ReflectionUtils.USER_DECLARED_METHODS);
+                
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            
+            try {
+                MethodUtils.invokeMethod(requestMappingHandlerMapping, true, "detectHandlerMethods", beanName);
+                logger.info("loader->addController={}", beanName);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }

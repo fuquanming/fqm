@@ -33,13 +33,13 @@ public class MybatisPlusMapUnloadFilter extends MybatisMapUnloadFilter {
     
     @Override
     public String resourceFilter(Configuration configuration, Set<?> loadedResourcesSet, Entry<String, byte[]> entry)
-            throws NoSuchFieldException, IllegalAccessException, ClassNotFoundException {
+            throws IllegalAccessException, ClassNotFoundException {
         String namespace = super.resourceFilter(configuration, loadedResourcesSet, entry);
         if (namespace != null) {
             /** mybatis-plus必须清除缓存 */
             Set<String> mapperRegistryCache = GlobalConfigUtils.getMapperRegistryCache(configuration);
             mapperRegistryCache.remove("interface " + namespace);
-            logger.info("unload->interface=" + namespace);
+            logger.info("unload->interface={}", namespace);
         }
         return namespace;
     }
