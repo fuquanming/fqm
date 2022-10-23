@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>io.github.fuquanming</groupId>
 		<artifactId>fqm-multilevel-cache</artifactId>
-		<version>1.0.0</version>
+		<version>1.0.1</version>
 	</parent>
 	<artifactId>fqm-multilevel-cache-redis</artifactId>
     <description>Redis based multi-level cache</description>
