@@ -12,6 +12,10 @@ public class MqException extends RuntimeException {
      */
     private static final long serialVersionUID = -9080981023656071927L;
 
+    public MqException(String message) {
+        super(message);
+    }
+    
     public MqException(Throwable cause) {
         super(cause);
     }

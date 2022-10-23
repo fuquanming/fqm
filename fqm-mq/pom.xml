@@ -8,7 +8,7 @@
     </parent>
     <artifactId>fqm-mq</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <name>fqm-mq</name>
     <description>The implementation of distributed message queue includes Kafka, RabbitMq, Redis, Redison, RocketMq and Zookeeper</description>
     <url>https://github.com/fuquanming/fqm.git</url>
@@ -51,10 +51,10 @@
 
     <properties>
         <fqm-common-core.version>1.0.4</fqm-common-core.version>
-        <fqm-common-redis.version>1.0.2</fqm-common-redis.version>
-        <fqm-common-redisson.version>1.0.2</fqm-common-redisson.version>
-        <fqm-common-spring.version>1.0.2</fqm-common-spring.version>
-        <fqm-lock-core.version>1.0.0</fqm-lock-core.version>
+        <fqm-common-redis.version>1.0.3</fqm-common-redis.version>
+        <fqm-common-redisson.version>1.0.3</fqm-common-redisson.version>
+        <fqm-common-spring.version>1.0.3</fqm-common-spring.version>
+        <fqm-lock-core.version>1.0.1</fqm-lock-core.version>
     </properties>
 
     <dependencyManagement>
