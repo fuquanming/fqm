@@ -60,32 +60,32 @@
         
         <!-- 自定义组件 -->
         <dependency>
-            <groupId>com.fqm</groupId>
+            <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-common-core</artifactId>
-            <version>${fqm.version}</version>
+            <version>1.0.4</version>
         </dependency>
-        
+        <!-- 
         <dependency>
-            <groupId>com.fqm</groupId>
+            <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-spring-boot-starter-web</artifactId>
-            <version>${fqm.version}</version>
+            <version>1.0.1</version>
         </dependency>
-        <!-- <dependency>
+        <dependency>
             <groupId>com.fqm</groupId>
             <artifactId>fqm-spring-boot-starter-multilevel-cache-redis</artifactId>
             <version>${fqm.version}</version>
         </dependency> -->
         <dependency>
-            <groupId>com.fqm</groupId>
+            <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-spring-boot-starter-multilevel-cache-redisson</artifactId>
-            <version>${fqm.version}</version>
+            <version>1.0.1</version>
         </dependency>
         
         <!-- 文件 -->
         <dependency>
-            <groupId>com.fqm</groupId>
+            <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-spring-boot-starter-file-minio</artifactId>
-            <version>${fqm.version}</version>
+            <version>1.0.2</version>
         </dependency>
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
@@ -95,16 +95,16 @@
         <!-- 文件 -->
         
         <!-- job -->
-        <!-- <dependency>
-            <groupId>com.fqm</groupId>
+         <dependency>
+            <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-spring-boot-starter-job-xxl</artifactId>
-            <version>${fqm.version}</version>
+            <version>1.0.1</version>
         </dependency>
         <dependency>
-            <groupId>com.fqm</groupId>
+            <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-spring-boot-starter-job-elastic</artifactId>
-            <version>${fqm.version}</version>
-        </dependency> -->
+            <version>1.0.1</version>
+        </dependency> 
        
         <!-- <dependency>
 		    <groupId>org.apache.shardingsphere.elasticjob</groupId>

@@ -26,8 +26,13 @@ public class RedissonMqController extends MqController {
     MqFactory mqFactory;
     @Value("${mq.mqs.d.binder:}")
     private String mqBinder;
+    @Value("${mq.mqs.d1.binder:}")
+    private String mqBinder1;
     
-    private String topic = "my-topic-redisson";
+    @Value("${mq.mqs.d.topic:}")
+    private String topic;
+    @Value("${mq.mqs.d1.topic:}")
+    private String topic1;
     
     @MqListener(name = "${mq.mqs.d.name}")
     public void receiveMessage1(String message) {
@@ -46,8 +51,13 @@ public class RedissonMqController extends MqController {
     }
 
     @MqListener(name = "${mq.mqs.d-dead.name}")
-    public void mqDLQ1(String message) {
+    public void mqDLQ(String message) {
         logger.info("redisson.DLQ=" + message);
+    }
+    
+    @MqListener(name = "${mq.mqs.d1-dead.name}")
+    public void mqDLQ1(String message) {
+        logger.info("redisson1.DLQ=" + message);
     }
 
     @GetMapping("/mq/redisson/sendMessage")
@@ -57,7 +67,7 @@ public class RedissonMqController extends MqController {
             boolean flag = mqFactory.getMqTemplate(mqBinder).syncSend(topic, user);
             logger.info("redisson.send->{}", flag);
             
-            mqFactory.getMqTemplate(MqMode.redisson).asyncSend(topic, user, new SendCallback() {
+            mqFactory.getMqTemplate(MqMode.REDISSON).asyncSend(topic1, user, new SendCallback() {
                 public void onSuccess(SendResult sendResult) {
                     logger.info("SendResult success,");
                 }
@@ -76,7 +86,7 @@ public class RedissonMqController extends MqController {
     public Object sendRedisDelayMessage() {
         User user = getUser();
         try {
-            boolean flag = mqFactory.getMqTemplate(MqMode.redisson).syncDelaySend(topic, user, 5, TimeUnit.SECONDS);
+            boolean flag = mqFactory.getMqTemplate(MqMode.REDISSON).syncDelaySend(topic, user, 5, TimeUnit.SECONDS);
             logger.info("redisson.sendDelay->{}", flag);
         } catch (Exception e) {
             e.printStackTrace();

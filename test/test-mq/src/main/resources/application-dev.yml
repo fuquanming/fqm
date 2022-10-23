@@ -71,43 +71,58 @@ mq:
       group: msg-group          # 消费者组，使用@MqListener时，必填
       binder: kafka             # 消息组件，参考@MqMode
     a1:                         # 业务编码，唯一
-      name: kafkamq1            # 消息名称，该值等于自定义注解@MqListener.name()，唯一值
-      topic: my-topic           # 消息主题
-      group: msg-group          # 消费者组，使用@MqListener时，必填
+      name: kafkamq-1            # 消息名称，该值等于自定义注解@MqListener.name()，唯一值
+      topic: my-topic-1           # 消息主题
+      group: msg-group-1          # 消费者组，使用@MqListener时，必填
       binder: kafka             # 消息组件，参考@MqMode
     a-dead:                     # 业务编码，唯一
-      name: kafkamq2            # 消息名称，该值等于自定义注解@MqListener.name()，唯一值
+      name: kafkamq-dead            # 消息名称，该值等于自定义注解@MqListener.name()，唯一值
       topic: my-topic.DLT       # 消息主题，死信队列：topic + ".DLT"
       group: my-topic.DLT-kafka # 消费者组，使用@MqListener时，必填
       binder: kafka             # 消息组件，参考@MqMode
+    a1-dead:                     # 业务编码，唯一
+      name: kafkamq-1-dead            # 消息名称，该值等于自定义注解@MqListener.name()，唯一值
+      topic: my-topic-1.DLT       # 消息主题，死信队列：topic + ".DLT"
+      group: my-topic-1.DLT-kafka # 消费者组，使用@MqListener时，必填
+      binder: kafka             # 消息组件，参考@MqMode      
     b:
       name: rabbitmq   
       topic: my-topic
       group: msg-group
       binder: rabbit
     b1:
-      name: rabbitmq1   
-      topic: my-topic
+      name: rabbitmq-1   
+      topic: my-topic-1
       group: msg-group
       binder: rabbit
     b-dead:
-      name: rabbitmq2   
+      name: rabbitmq-dead   
       topic: my-topic.DLQ            # 死信队列：topic + ".DLQ", 监听的Topic不能有符号：%
       group: my-topic.DLQ-rabbit
       binder: rabbit
+    b1-dead:
+      name: rabbitmq-1-dead   
+      topic: my-topic-1.DLQ            # 死信队列：topic + ".DLQ", 监听的Topic不能有符号：%
+      group: my-topic-1.DLQ-rabbit
+      binder: rabbit      
     c:
       name: redismq   
       topic: my-topic
       group: msg-group
       binder: redis
     c1:
-      name: redismq1   
-      topic: my-topic
-      group: msg-group
+      name: redismq-1   
+      topic: my-topic-1
+      group: msg-group-1
       binder: redis
     c-dead:
-      name: redismq2   
+      name: redismq-dead   
       topic: msg-group.DLQ                 # 死信队列：group + ".DLQ", 监听的Topic不能有符号：%
+      group: msg-group.DLQ-redis
+      binder: redis
+    c1-dead:
+      name: redismq-1-dead   
+      topic: msg-group-1.DLQ                 # 死信队列：group + ".DLQ", 监听的Topic不能有符号：%
       group: msg-group.DLQ-redis
       binder: redis
     d:
@@ -116,13 +131,18 @@ mq:
       group: msg-group-redisson
       binder: redisson
     d1:
-      name: redissonmq1   
-      topic: my-topic-redisson
+      name: redissonmq-1   
+      topic: my-topic-redisson-1
       group: msg-group-redisson
       binder: redisson
     d-dead:
-      name: redissonmq2   
+      name: redissonmq-dead  
       topic: my-topic-redisson.DLQ                 # 死信队列：topic + ".DLQ", 监听的Topic不能有符号：%
+      group: my-topic-redisson.DLQ-redis
+      binder: redisson
+    d1-dead:
+      name: redissonmq-1-dead 
+      topic: my-topic-redisson-1.DLQ                 # 死信队列：topic + ".DLQ", 监听的Topic不能有符号：%
       group: my-topic-redisson.DLQ-redis
       binder: redisson
     e:
@@ -131,14 +151,19 @@ mq:
       group: msg-group
       binder: rocket
     e1:
-      name: rocketmq1
-      topic: my-topic
-      group: msg-group
+      name: rocketmq-1
+      topic: my-topic-1
+      group: msg-group-1
       binder: rocket
     e-dead:
-      name: rocketmq2
+      name: rocketmq-dead
       topic: '%DLQ%msg-group'                               # 死信队列：%DLQ% + 消费组，死信队列需要在rocket控制台：主题->勾选死信->点击“TOPIC配置”->修改 perm 值，修改为6（可读可写权限）
       group: '%DLQ%msg-group-DLQ-rocket'                    # 正则表达式：^[%|a-zA-Z0-9_-]+$，不能和原topic的消费者组一样，一样消费会不及时，不全和原topic数据冲突
+      binder: rocket
+    e1-dead:
+      name: rocketmq-1-dead
+      topic: '%DLQ%msg-group-1'                               # 死信队列：%DLQ% + 消费组，死信队列需要在rocket控制台：主题->勾选死信->点击“TOPIC配置”->修改 perm 值，修改为6（可读可写权限）
+      group: '%DLQ%msg-group-1-DLQ-rocket'                    # 正则表达式：^[%|a-zA-Z0-9_-]+$，不能和原topic的消费者组一样，一样消费会不及时，不全和原topic数据冲突
       binder: rocket
     f:
       name: zookeepermq
@@ -146,12 +171,17 @@ mq:
       group: msg-group
       binder: zookeeper  
     f1:
-      name: zookeepermq1
-      topic: my-topic
+      name: zookeepermq-1
+      topic: my-topic-1
       group: msg-group
       binder: zookeeper  
     f-dead:
-      name: zookeepermq2
+      name: zookeepermq-dead
       topic: my-topic.DLQ                                      # 死信队列：topic + ".DLQ"
       group: my-topic.DLQ-zookeeper
       binder: zookeeper  
+    f1-dead:
+      name: zookeepermq-1-dead
+      topic: my-topic-1.DLQ                                      # 死信队列：topic + ".DLQ"
+      group: my-topic-1.DLQ-zookeeper
+      binder: zookeeper 

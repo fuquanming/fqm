@@ -24,8 +24,13 @@ public class KafkaMqController extends MqController {
     MqFactory mqFactory;
     @Value("${mq.mqs.a.binder:}")
     private String mqBinder;
-    @Value("${mq.topic}")
+    @Value("${mq.mqs.a1.binder:}")
+    private String mqBinder1;
+    
+    @Value("${mq.mqs.a.topic:}")
     private String topic;
+    @Value("${mq.mqs.a1.topic:}")
+    private String topic1;
 
     @MqListener(name = "${mq.mqs.a.name}")
     public void receiveMessage1(String message) {
@@ -34,7 +39,7 @@ public class KafkaMqController extends MqController {
 //            throw new RuntimeException("error 111");
 //        }
     }
-
+    
     @MqListener(name = "${mq.mqs.a1.name}")
     public void receiveMessage2(String message) {
         logger.info("receiveMessage---kafka---2=" + message);
@@ -44,8 +49,12 @@ public class KafkaMqController extends MqController {
     }
 
     @MqListener(name = "${mq.mqs.a-dead.name}")
-    public void mqDLQ1(String message) {
+    public void mqDLQ(String message) {
         logger.info("kafka.DLQ=" + message);
+    }
+    @MqListener(name = "${mq.mqs.a1-dead.name}")
+    public void mqDLQ1(String message) {
+        logger.info("kafka1.DLQ=" + message);
     }
 
     @GetMapping("/mq/kafka/sendMessage")
@@ -55,7 +64,7 @@ public class KafkaMqController extends MqController {
             boolean flag = mqFactory.getMqTemplate(mqBinder).syncSend(topic, user);
             logger.info("kafka.send->{}", flag);
 
-            mqFactory.getMqTemplate(MqMode.kafka).asyncSend(topic, user, new SendCallback() {
+            mqFactory.getMqTemplate(MqMode.KAFKA).asyncSend(topic1, user, new SendCallback() {
                 public void onSuccess(SendResult sendResult) {
                     logger.info("SendResult success,");
                 }

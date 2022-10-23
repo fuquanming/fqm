@@ -24,8 +24,13 @@ public class RedisMqController extends MqController {
     MqFactory mqFactory;
     @Value("${mq.mqs.c.binder:}")
     private String mqBinder;
-    @Value("${mq.topic}")
+    @Value("${mq.mqs.c1.binder:}")
+    private String mqBinder1;
+    
+    @Value("${mq.mqs.c.topic:}")
     private String topic;
+    @Value("${mq.mqs.c1.topic:}")
+    private String topic1;
 
     @MqListener(name = "${mq.mqs.c.name}")
     public void receiveMessage1(String message) {
@@ -44,8 +49,12 @@ public class RedisMqController extends MqController {
     }
 
     @MqListener(name = "${mq.mqs.c-dead.name}")
-    public void mqDLQ1(String message) {
+    public void mqDLQ(String message) {
         logger.info("redis.DLQ=" + message);
+    }
+    @MqListener(name = "${mq.mqs.c1-dead.name}")
+    public void mqDLQ1(String message) {
+        logger.info("redis1.DLQ=" + message);
     }
 
     @GetMapping("/mq/redis/sendMessage")
@@ -54,6 +63,7 @@ public class RedisMqController extends MqController {
         try {
             boolean flag = mqFactory.getMqTemplate(mqBinder).syncSend(topic, user);
             logger.info("redis.send->{}", flag);
+            mqFactory.getMqTemplate(mqBinder).syncSend(topic1, user);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -64,7 +74,7 @@ public class RedisMqController extends MqController {
     public Object sendRedisDelayMessage() {
         User user = getUser();
         try {
-            boolean flag = mqFactory.getMqTemplate(MqMode.redis).syncDelaySend(topic, user, 5, TimeUnit.SECONDS);
+            boolean flag = mqFactory.getMqTemplate(MqMode.REDIS).syncDelaySend(topic, user, 5, TimeUnit.SECONDS);
             logger.info("redis.sendDelay->{}", flag);
         } catch (Exception e) {
             e.printStackTrace();

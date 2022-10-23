@@ -46,7 +46,7 @@ public class LockController {
         ThreadUtil.concurrencyTest(5, new Runnable() {
             @Override
             public void run() {
-                LockMode lockMode = LockMode.zookeeper;
+                LockMode lockMode = LockMode.ZOOKEEPER;
                 logger.info("lockCode->{},{}", Thread.currentThread().getId(), lockMode);
                 Lock lock = lockFactory.getLockTemplate(lockMode).getLock("1");
                 lock.lock();
@@ -64,7 +64,7 @@ public class LockController {
         ThreadUtil.concurrencyTest(5, new Runnable() {
             @Override
             public void run() {
-                LockMode lockMode = LockMode.redis;
+                LockMode lockMode = LockMode.REDIS;
                 logger.info("lockCode->{},{}", Thread.currentThread().getId(), lockMode);
                 Lock lock = lockFactory.getLockTemplate(lockMode).getLock("1");
                 lock.lock();
@@ -82,7 +82,7 @@ public class LockController {
         ThreadUtil.concurrencyTest(5, new Runnable() {
             @Override
             public void run() {
-                LockMode lockMode = LockMode.redisson;
+                LockMode lockMode = LockMode.REDISSON;
                 logger.info("lockCode->{},{}", Thread.currentThread().getId(), lockMode);
                 Lock lock = lockFactory.getLockTemplate(lockMode).getLock("1");
                 lock.lock();
@@ -101,7 +101,7 @@ public class LockController {
         ThreadUtil.concurrencyTest(5, new Runnable() {
             @Override
             public void run() {
-                LockMode lockMode = LockMode.zookeeper;
+                LockMode lockMode = LockMode.ZOOKEEPER;
                 logger.info("lockCode->{},{}", Thread.currentThread().getId(), lockMode);
                 Lock lock = lockFactory.getLockTemplate(lockMode).getLock("1");
                 boolean flag = lock.tryLock();
@@ -122,7 +122,7 @@ public class LockController {
         ThreadUtil.concurrencyTest(5, new Runnable() {
             @Override
             public void run() {
-                LockMode lockMode = LockMode.redis;
+                LockMode lockMode = LockMode.REDIS;
                 logger.info("lockCode->{},{}", Thread.currentThread().getId(), lockMode);
                 Lock lock = lockFactory.getLockTemplate(lockMode).getLock("1");
                 boolean flag = lock.tryLock();
@@ -143,7 +143,7 @@ public class LockController {
         ThreadUtil.concurrencyTest(5, new Runnable() {
             @Override
             public void run() {
-                LockMode lockMode = LockMode.redisson;
+                LockMode lockMode = LockMode.REDISSON;
                 logger.info("lockCode->{},{}", Thread.currentThread().getId(), lockMode);
                 Lock lock = lockFactory.getLockTemplate(lockMode).getLock("1");
                 boolean flag = lock.tryLock();
