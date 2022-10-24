@@ -10,12 +10,14 @@
 package com.fqm.dynamic.module.core;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.reflect.MethodUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +41,8 @@ public class ModuleClassLoaderFactory {
     private static Map<Object, ClassLoader> cacheClassLoaderMap = new HashMap<>();
     
     private static Object obj = new Object();
+    /** jdk 版本 */
+    private static String jdk8 = "1.8.0_2";
     
     private ModuleClassLoaderFactory() {
     }
@@ -98,7 +102,6 @@ public class ModuleClassLoaderFactory {
      *  3）卸载完成，将beanFactory属性beanPostProcessors中所有对象的属性proxyClassLoader都还原为原来的AppClassLoader
      * @param moduleName
      */
-    @SuppressWarnings("restriction")
     public static void unloadModule(String moduleName) {
         synchronized (obj) {
             if (threadClassLoader == null) {
@@ -110,7 +113,19 @@ public class ModuleClassLoaderFactory {
                 logger.info("卸载模块:{},{}", moduleName, moduleClassLoaderCache);
                 moduleClassLoaderCache.unload();
                 moduleClassLoaderMap.remove(moduleName);
-                sun.misc.ClassLoaderUtil.releaseLoader(moduleClassLoaderCache);
+                String javaVersion = System.getProperty("java.version");
+                if (null != javaVersion && javaVersion.startsWith(jdk8)) {
+                    try {
+                        Class<?> clazz = Class.forName("sun.misc.ClassLoaderUtil");
+                        if (null != clazz) {
+                            MethodUtils.invokeStaticMethod(clazz, "releaseLoader", moduleClassLoaderCache);
+                        }
+                    } catch (ClassNotFoundException e) {
+                        // nothing
+                    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                        e.printStackTrace();
+                    }                    
+                }
                 logger.info("卸载模块完成:{}", moduleName);
             }
         }
