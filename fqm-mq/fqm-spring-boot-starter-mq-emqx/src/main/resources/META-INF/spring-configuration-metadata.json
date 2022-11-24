@@ -1,0 +1,48 @@
+{
+    "groups": [{
+        "name": "emqx",
+        "type": "com.fqm.framework.mq.config.EmqxProperties",
+        "description": "Mq Emqx Properties.",
+        "sourceType": "com.fqm.framework.mq.config.EmqxProperties"
+    }],
+    "properties": [{
+        "name": "emqx",
+        "type": "com.fqm.framework.mq.config.EmqxProperties",
+        "description": "emqx配置.",
+        "sourceType": "com.fqm.framework.mq.config.EmqxProperties"
+    }, {
+        "name": "emqx.connect-string",
+        "type": "java.lang.String",
+        "description": "服务器地址，如：tcp://127.0.0.1:1883.",
+        "sourceType": "com.fqm.framework.mq.config.EmqxProperties"
+    }, {
+        "name": "emqx.username",
+        "type": "java.lang.String",
+        "description": "用户名.",
+        "sourceType": "com.fqm.framework.mq.config.EmqxProperties"
+    }, {
+        "name": "emqx.password",
+        "type": "java.lang.String",
+        "description": "密码.",
+        "sourceType": "com.fqm.framework.mq.config.EmqxProperties"
+    }, {
+        "name": "emqx.cleanSession",
+        "type": "java.lang.Boolean",
+        "description": "会话持久化消息,false不清除会话并保存不在线数据,true清除会话并不保存不在线数据.",
+        "sourceType": "com.fqm.framework.mq.config.EmqxProperties",
+        "defaultValue": false
+    }, {
+        "name": "emqx.connection-timeout-second",
+        "type": "java.lang.Integer",
+        "description": "连接超时时间 单位为秒，默认30秒.",
+        "sourceType": "com.fqm.framework.mq.config.EmqxProperties",
+        "defaultValue": 30
+    }, {
+        "name": "emqx.keep-alive-interval-second",
+        "type": "java.lang.Integer",
+        "description": "设置心跳时间 单位为秒，默认30秒.",
+        "sourceType": "com.fqm.framework.mq.config.EmqxProperties",
+        "defaultValue": 30
+    }],
+    "hints": []
+}

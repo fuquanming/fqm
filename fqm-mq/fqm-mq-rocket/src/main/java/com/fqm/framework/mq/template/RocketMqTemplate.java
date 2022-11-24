@@ -63,7 +63,7 @@ public class RocketMqTemplate implements MqTemplate {
                 @Override
                 public void onSuccess(SendResult sendResult) {
                     logger.info("RocketMqProducer.asyncSend.success->topic=[{}],message=[{}],offset=[{}]", topic, str, "");
-                    sendCallback.onSuccess(null);
+                    sendCallback.onSuccess(new com.fqm.framework.mq.client.producer.SendResult().setId(sendResult.getMsgId()));
                 }
                 
                 @Override

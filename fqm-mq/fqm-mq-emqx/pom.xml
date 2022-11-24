@@ -1,0 +1,31 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.github.fuquanming</groupId>
+        <artifactId>fqm-mq</artifactId>
+        <version>1.0.3</version>
+    </parent>
+    <artifactId>fqm-mq-emqx</artifactId>
+    <description>Message sending and monitoring based on emqx</description>
+    <properties>
+        <emqx.version>1.2.5</emqx.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.github.fuquanming</groupId>
+            <artifactId>fqm-common-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.fuquanming</groupId>
+            <artifactId>fqm-mq-core</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
+        <!--mqtt相关依赖-->
+        <dependency>
+            <groupId>org.eclipse.paho</groupId>
+            <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
+            <version>${emqx.version}</version>
+        </dependency>
+    </dependencies>
+</project>

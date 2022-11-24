@@ -17,7 +17,9 @@ public enum MqMode {
     /** rocket */
     ROCKET,
     /** zookeeper */
-    ZOOKEEPER;
+    ZOOKEEPER,
+    /** emqx,mqtt */
+    EMQX;
     
     public static MqMode getMode(String mode) {
         if (mode == null || "".equals(mode)) {
