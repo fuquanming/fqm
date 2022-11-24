@@ -87,7 +87,7 @@ public class EmqxMqAutoConfiguration implements SmartInitializingSingleton, Appl
     @Bean
     @ConditionalOnMissingBean
     @Order(300)
-    public EmqxMqTemplate rabbitMqTemplate(MqFactory mqFactory, EmqxClient emqxClient) {
+    public EmqxMqTemplate emqxMqTemplate(MqFactory mqFactory, EmqxClient emqxClient) {
         EmqxMqTemplate emqxMqTemplate = new EmqxMqTemplate(emqxClient.getMqttClient());
         mqFactory.addMqTemplate(emqxMqTemplate);
         return emqxMqTemplate;
