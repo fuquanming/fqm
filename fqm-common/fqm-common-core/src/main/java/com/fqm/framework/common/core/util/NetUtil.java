@@ -64,6 +64,36 @@ public class NetUtil {
     }
     
     /**
+     * 获得指定地址信息中的MAC地址
+     *
+     * @param inetAddress {@link InetAddress}
+     * @param separator   分隔符，推荐使用“-”或者“:”
+     * @return MAC地址，用-分隔
+     */
+    public static String getMacAddress(InetAddress inetAddress, String separator) {
+        if (null == inetAddress) {
+            return null;
+        }
+
+        final byte[] mac = getHardwareAddress(inetAddress);
+        if (null != mac) {
+            final StringBuilder sb = new StringBuilder();
+            String s;
+            for (int i = 0; i < mac.length; i++) {
+                if (i != 0) {
+                    sb.append(separator);
+                }
+                // 字节转换为整数
+                s = Integer.toHexString(mac[i] & 0xFF);
+                sb.append(s.length() == 1 ? 0 + s : s);
+            }
+            return sb.toString();
+        }
+
+        return null;
+    }
+    
+    /**
      * 获得本机物理地址
      *
      * @return 本机物理地址

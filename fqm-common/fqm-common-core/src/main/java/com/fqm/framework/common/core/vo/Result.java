@@ -17,7 +17,7 @@ import io.swagger.annotations.ApiModelProperty;
  * @author 傅泉明
  */
 @ApiModel(value = "全局统一返回结果")
-public class Result<T extends Serializable> implements Serializable {
+public class Result<T> implements Serializable {
 
     /**
      * 
@@ -39,7 +39,7 @@ public class Result<T extends Serializable> implements Serializable {
     @ApiModelProperty(value = "错误信息")
     private String detailMessage;
 
-    protected static <T extends Serializable> Result<T> build(T data) {
+    protected static <T> Result<T> build(T data) {
         Result<T> r = new Result<>();
         if (data != null) {
             r.setData(data);
@@ -47,21 +47,21 @@ public class Result<T extends Serializable> implements Serializable {
         return r;
     }
 
-    public static <T extends Serializable> Result<T> build(T body, ErrorCode errorCode) {
+    public static <T> Result<T> build(T body, ErrorCode errorCode) {
         Result<T> r = build(body);
         r.setCode(errorCode.getCode());
         r.setMessage(errorCode.getMessage());
         return r;
     }
 
-    public static <T extends Serializable> Result<T> build(Integer code, String message) {
+    public static <T> Result<T> build(Integer code, String message) {
         Result<T> r = build(null);
         r.setCode(code);
         r.setMessage(message);
         return r;
     }
     
-    public static <T extends Serializable> Result<T> build(Integer code, String message, String detailMessage) {
+    public static <T> Result<T> build(Integer code, String message, String detailMessage) {
         Result<T> r = build(null);
         r.setCode(code);
         r.setMessage(message);
@@ -69,7 +69,7 @@ public class Result<T extends Serializable> implements Serializable {
         return r;
     }
 
-    public static <T extends Serializable> Result<T> ok() {
+    public static <T> Result<T> ok() {
         return Result.ok(null);
     }
 
@@ -79,11 +79,11 @@ public class Result<T extends Serializable> implements Serializable {
      * @param <T>
      * @return
      */
-    public static <T extends Serializable> Result<T> ok(T data) {
+    public static <T> Result<T> ok(T data) {
         return build(data, GlobalErrorCodeConstants.SUCCESS);
     }
 
-    public static <T extends Serializable> Result<T> fail() {
+    public static <T> Result<T> fail() {
         return Result.fail(null);
     }
 
@@ -93,7 +93,7 @@ public class Result<T extends Serializable> implements Serializable {
      * @param <T>
      * @return
      */
-    public static <T extends Serializable> Result<T> fail(T data) {
+    public static <T> Result<T> fail(T data) {
         return build(data, GlobalErrorCodeConstants.INTERNAL_SERVER_ERROR);
     }
 
