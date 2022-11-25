@@ -3,12 +3,12 @@
     <parent>
         <groupId>io.github.fuquanming</groupId>
         <artifactId>fqm-dependencies</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
         <relativePath>../fqm-dependencies</relativePath>
     </parent>
     <artifactId>fqm-lock</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     
     <description>The implementation of distributed locks includes RedisTemplate, Redisson and Zookeeper</description>
     <url>https://github.com/fuquanming/fqm.git</url>

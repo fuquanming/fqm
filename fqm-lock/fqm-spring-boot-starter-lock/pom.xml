@@ -3,10 +3,10 @@
     <parent>
         <groupId>io.github.fuquanming</groupId>
         <artifactId>fqm-lock</artifactId>
-        <version>1.0.1</version>
+        <version>1.0.2</version>
     </parent>
     <artifactId>fqm-spring-boot-starter-lock</artifactId>
-    <description>Starter for LockFactory, Custom Annotation Lock4j</description>
+    <description>Starter for LockFactory and Custom Annotation Lock4j</description>
     <dependencies>
         <dependency>
             <groupId>io.github.fuquanming</groupId>

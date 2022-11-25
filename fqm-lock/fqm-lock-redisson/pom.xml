@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>io.github.fuquanming</groupId>
 		<artifactId>fqm-lock</artifactId>
-		<version>1.0.1</version>
+		<version>1.0.2</version>
 	</parent>
 	<artifactId>fqm-lock-redisson</artifactId>
 	<description>Redis distributed locks are implemented based on Redisson (blocking locks, trying to obtain locks once, trying to obtain locks, and unlocking)</description>
