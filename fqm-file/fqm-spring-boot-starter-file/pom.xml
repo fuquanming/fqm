@@ -3,11 +3,11 @@
     <parent>
         <groupId>io.github.fuquanming</groupId>
         <artifactId>fqm-file</artifactId>
-        <version>1.0.2</version>
+        <version>1.0.3</version>
     </parent>
-    <version>1.0.3</version>
     <artifactId>fqm-spring-boot-starter-file</artifactId>
     <description>Starter for FileFactory</description>
+    
     <dependencies>
         <dependency>
             <groupId>io.github.fuquanming</groupId>

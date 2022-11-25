@@ -5,10 +5,16 @@
 	<parent>
 		<groupId>io.github.fuquanming</groupId>
 		<artifactId>fqm-file</artifactId>
-		<version>1.0.2</version>
+		<version>1.0.3</version>
 	</parent>
 	<artifactId>fqm-file-minio</artifactId>
-
+    <description>Fqm file object implemented by minio</description>
+    
+    <properties>
+        <minio.version>8.4.6</minio.version>
+        <guava.version>31.1-jre</guava.version>
+    </properties>
+    
 	<dependencies>
         <!-- 文件 相关 -->
         <dependency>
@@ -19,11 +25,13 @@
         <dependency>
             <groupId>io.minio</groupId>
             <artifactId>minio</artifactId>
+            <version>${minio.version}</version>
         </dependency>
         <!-- 需要 com.squareup.okhttp3 4.8.1 -->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
