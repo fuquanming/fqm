@@ -5,10 +5,10 @@
 	<parent>
 		<groupId>io.github.fuquanming</groupId>
 		<artifactId>fqm-job</artifactId>
-		<version>1.0.1</version>
+		<version>1.0.2</version>
 	</parent>
 	<artifactId>fqm-spring-boot-starter-job-xxl</artifactId>
-	
+	<description>Starter for xxl job listener</description>
 	<dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>

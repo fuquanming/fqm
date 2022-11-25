@@ -5,7 +5,8 @@
 	<parent>
 		<groupId>io.github.fuquanming</groupId>
 		<artifactId>fqm-job</artifactId>
-		<version>1.0.1</version>
+		<version>1.0.2</version>
 	</parent>
 	<artifactId>fqm-job-core</artifactId>
+	<description>Fqm job objects library core API and implementation</description>
 </project>
