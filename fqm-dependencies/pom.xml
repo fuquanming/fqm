@@ -10,7 +10,7 @@
     <packaging>pom</packaging>
 
 	<name>${project.artifactId}</name>
-    <description>基础 bom 文件，管理整个项目的依赖版本</description>
+    <description>Basic pom file to manage the dependent versions of the entire project</description>
     <url>https://github.com/fuquanming/fqm</url>
     
     <licenses>
