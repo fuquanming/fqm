@@ -5,10 +5,15 @@
 	<parent>
 		<groupId>io.github.fuquanming</groupId>
 		<artifactId>fqm-multilevel-cache</artifactId>
-		<version>1.0.1</version>
+		<version>1.0.2</version>
 	</parent>
 	<artifactId>fqm-spring-boot-starter-multilevel-cache-redis</artifactId>
 	<description>Starter for multi-level cache based on Caffeine and Redis</description>
+	
+	<properties>
+        <fqm-common-cache-redis-spring.version>1.0.4</fqm-common-cache-redis-spring.version>
+    </properties>
+	
     <dependencies>
         <dependency>
             <groupId>io.github.fuquanming</groupId>
@@ -18,12 +23,8 @@
 
         <dependency>
             <groupId>io.github.fuquanming</groupId>
-            <artifactId>fqm-common-redis</artifactId>
-        </dependency>
-        
-        <dependency>
-            <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-common-cache-redis-spring</artifactId>
+            <version>${fqm-common-cache-redis-spring.version}</version>
         </dependency>
     </dependencies>
 </project>

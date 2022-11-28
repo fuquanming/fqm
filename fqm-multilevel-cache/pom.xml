@@ -5,12 +5,12 @@
 	<parent>
         <groupId>io.github.fuquanming</groupId>
         <artifactId>fqm-dependencies</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
         <relativePath>../fqm-dependencies</relativePath>
     </parent>
 	<artifactId>fqm-multilevel-cache</artifactId>
 	<packaging>pom</packaging>
-	<version>1.0.1</version>
+	<version>1.0.2</version>
 	
 	<name>fqm-multilevel-cache</name>
 	<description>Multi-level cache based on spring cache</description>
@@ -43,42 +43,4 @@
             <email>67837343@qq.com</email>
         </developer>
     </developers>
-
-    <properties>
-        <fqm-common-cache-spring.version>1.0.3</fqm-common-cache-spring.version>
-        <fqm-common-cache-redis-spring.version>1.0.3</fqm-common-cache-redis-spring.version>
-        <fqm-common-redis.version>1.0.3</fqm-common-redis.version>
-        <fqm-common-redisson.version>1.0.3</fqm-common-redisson.version>
-        <fqm-common-spring.version>1.0.3</fqm-common-spring.version>
-    </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>io.github.fuquanming</groupId>
-                <artifactId>fqm-common-cache-spring</artifactId>
-                <version>${fqm-common-cache-spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.fuquanming</groupId>
-                <artifactId>fqm-common-cache-redis-spring</artifactId>
-                <version>${fqm-common-cache-redis-spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.fuquanming</groupId>
-                <artifactId>fqm-common-redis</artifactId>
-                <version>${fqm-common-redis.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.fuquanming</groupId>
-                <artifactId>fqm-common-redisson</artifactId>
-                <version>${fqm-common-redisson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.fuquanming</groupId>
-                <artifactId>fqm-common-spring</artifactId>
-                <version>${fqm-common-spring.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 </project>

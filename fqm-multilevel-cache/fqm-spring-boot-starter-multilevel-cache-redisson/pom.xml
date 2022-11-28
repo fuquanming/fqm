@@ -5,10 +5,15 @@
 	<parent>
 		<groupId>io.github.fuquanming</groupId>
 		<artifactId>fqm-multilevel-cache</artifactId>
-		<version>1.0.1</version>
+		<version>1.0.2</version>
 	</parent>
 	<artifactId>fqm-spring-boot-starter-multilevel-cache-redisson</artifactId>
 	<description>Starter for multi-level cache based on Caffeine and Redisson</description>
+	
+	<properties>
+        <fqm-common-redisson.version>1.0.4</fqm-common-redisson.version>
+    </properties>
+	
     <dependencies>
         <dependency>
             <groupId>io.github.fuquanming</groupId>
@@ -24,6 +29,7 @@
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-common-redisson</artifactId>
+            <version>${fqm-common-redisson.version}</version>
         </dependency>
     </dependencies>
 </project>
