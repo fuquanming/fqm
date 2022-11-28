@@ -12,6 +12,7 @@
 	
 	<properties>
         <fqm-lock-core.version>1.0.2</fqm-lock-core.version>
+        <fqm-common-zookeeper.version>1.0.4</fqm-common-zookeeper.version>
     </properties>
 	
 	<dependencies>
@@ -24,10 +25,13 @@
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-lock-core</artifactId>
             <version>${fqm-lock-core.version}</version>
-        </dependency>        
+        </dependency> 
+        
         <dependency>
-            <groupId>org.apache.curator</groupId>
-            <artifactId>curator-recipes</artifactId>
-        </dependency>
+            <groupId>io.github.fuquanming</groupId>
+            <artifactId>fqm-common-zookeeper</artifactId>
+            <version>${fqm-common-zookeeper.version}</version>
+        </dependency> 
+              
     </dependencies>
 </project>

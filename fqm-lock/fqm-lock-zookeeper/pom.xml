@@ -22,11 +22,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.curator</groupId>
-            <artifactId>curator-recipes</artifactId>
-        </dependency>
-        
-        <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-common-zookeeper</artifactId>
             <version>${fqm-common-zookeeper.version}</version>

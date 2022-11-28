@@ -4,7 +4,6 @@ import org.apache.curator.framework.CuratorFramework;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
@@ -42,7 +41,6 @@ public class ZookeeperLockAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean
-    @Conditional(ZookeeperCondition.class)
     @ConfigurationProperties(prefix = "spring.cloud.zookeeper")
     public ZookeeperConfig zookeeperConfig() {
         return new ZookeeperConfig();
@@ -50,6 +48,7 @@ public class ZookeeperLockAutoConfiguration {
 
     @Bean(initMethod = "start", destroyMethod = "close")
     @ConditionalOnMissingBean
+    @Order(200)
     public CuratorFramework curatorFramework(ZookeeperConfig zookeeperConfig) {
         return ZookeeperFactory.buildCuratorFramework(zookeeperConfig);
     }

@@ -1,10 +1,7 @@
 package com.fqm.framework.mq.config;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.framework.CuratorFrameworkFactory;
-import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -19,6 +16,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
+import com.fqm.framework.common.zookeeper.ZookeeperConfig;
+import com.fqm.framework.common.zookeeper.ZookeeperFactory;
 import com.fqm.framework.mq.MqFactory;
 import com.fqm.framework.mq.MqMode;
 import com.fqm.framework.mq.annotation.MqListenerAnnotationBeanPostProcessor;
@@ -40,7 +39,6 @@ public class ZookeeperMqAutoConfiguration implements SmartInitializingSingleton,
     
     private Logger logger = LoggerFactory.getLogger(getClass());
     private ApplicationContext applicationContext;
-    private int defaultConnectionTimeout = 15000;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -50,21 +48,14 @@ public class ZookeeperMqAutoConfiguration implements SmartInitializingSingleton,
     @Bean
     @ConditionalOnMissingBean
     @ConfigurationProperties(prefix = "spring.cloud.zookeeper")
-    public ZookeeperProperties zookeeperConfig() {
-        return new ZookeeperProperties();
+    public ZookeeperConfig zookeeperConfig() {
+        return new ZookeeperConfig();
     }
 
     @Bean(initMethod = "start", destroyMethod = "close")
     @ConditionalOnMissingBean(CuratorFramework.class)
-    public CuratorFramework curatorFramework(ZookeeperProperties zkProperties) {
-        if (zkProperties.getConnectionTimeout() < defaultConnectionTimeout) {
-            // 必须大于15秒
-            zkProperties.setConnectionTimeout(defaultConnectionTimeout);
-        }
-        RetryPolicy retryPolicy = new ExponentialBackoffRetry(zkProperties.getBaseSleepTimeMs(), 
-                zkProperties.getMaxRetries(), zkProperties.getMaxSleepMs());
-        return CuratorFrameworkFactory.builder().connectString(zkProperties.getConnectString()).sessionTimeoutMs(zkProperties.getSessionTimeout())
-                .connectionTimeoutMs(zkProperties.getConnectionTimeout()).retryPolicy(retryPolicy).build();
+    public CuratorFramework curatorFramework(ZookeeperConfig zookeeperConfig) {
+        return ZookeeperFactory.buildCuratorFramework(zookeeperConfig);
     }
 
     @Bean(destroyMethod = "destroy")
