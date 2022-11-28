@@ -20,7 +20,9 @@
         <module>fqm-file-minio</module>
         <module>fqm-spring-boot-starter-file-minio</module>
         <module>fqm-spring-boot-starter-file</module>
-    </modules>
+        <module>fqm-file-spring-boot-starter</module>
+        <module>fqm-file-minio-spring-boot-starter</module>
+	</modules>
 	
 	<licenses>
         <license>
