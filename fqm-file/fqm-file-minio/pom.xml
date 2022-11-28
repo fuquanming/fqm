@@ -12,7 +12,6 @@
     
     <properties>
         <minio.version>8.4.6</minio.version>
-        <guava.version>31.1-jre</guava.version>
     </properties>
     
 	<dependencies>
@@ -28,11 +27,6 @@
             <version>${minio.version}</version>
         </dependency>
         <!-- 需要 com.squareup.okhttp3 4.8.1 -->
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>${guava.version}</version>
-        </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
