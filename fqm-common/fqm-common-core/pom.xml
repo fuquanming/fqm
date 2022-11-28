@@ -18,7 +18,7 @@
         <commons-io.version>2.11.0</commons-io.version>
         <guava.version>31.1-jre</guava.version>
         <swagger-annotations.version>1.6.9</swagger-annotations.version><!-- api文档注解 -->
-        <hibernate-validator.version>8.0.0.Final</hibernate-validator.version>
+        <hibernate-validator.version>6.2.5.Final</hibernate-validator.version>
     </properties>
     
     <dependencies>
