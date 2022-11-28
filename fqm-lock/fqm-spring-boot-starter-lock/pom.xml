@@ -7,10 +7,16 @@
     </parent>
     <artifactId>fqm-spring-boot-starter-lock</artifactId>
     <description>Starter for LockFactory and Custom Annotation Lock4j</description>
+    
+    <properties>
+        <fqm-common-spring.version>1.0.4</fqm-common-spring.version>
+    </properties>
+    
     <dependencies>
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-common-spring</artifactId>
+            <version>${fqm-common-spring.version}</version>
         </dependency>
         <dependency>
             <groupId>io.github.fuquanming</groupId>

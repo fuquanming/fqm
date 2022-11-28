@@ -10,10 +10,6 @@
     <dependencies>
         <dependency>
             <groupId>io.github.fuquanming</groupId>
-            <artifactId>fqm-common-redisson</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-spring-boot-starter-lock</artifactId>
             <version>${parent.version}</version>
         </dependency>

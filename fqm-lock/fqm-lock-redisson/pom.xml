@@ -9,6 +9,11 @@
 	</parent>
 	<artifactId>fqm-lock-redisson</artifactId>
 	<description>Redis distributed locks are implemented based on Redisson (blocking locks, trying to obtain locks once, trying to obtain locks, and unlocking)</description>
+	
+	<properties>
+	   <fqm-common-redisson.version>1.0.4</fqm-common-redisson.version>
+	</properties>
+	
 	<dependencies>
         <dependency>
             <groupId>io.github.fuquanming</groupId>
@@ -17,8 +22,9 @@
         </dependency>
 
         <dependency>
-            <groupId>org.redisson</groupId>
-            <artifactId>redisson</artifactId>
+            <groupId>io.github.fuquanming</groupId>
+            <artifactId>fqm-common-redisson</artifactId>
+            <version>${fqm-common-redisson.version}</version>
         </dependency>
     </dependencies>
 </project>
