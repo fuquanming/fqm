@@ -5,10 +5,12 @@
 	<parent>
 		<groupId>io.github.fuquanming</groupId>
 		<artifactId>fqm-common</artifactId>
-		<version>1.0.2</version>
+		<version>1.0.3</version>
 	</parent>
 	<artifactId>fqm-common-spring</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
+    <description>Fqm Common Spring Standard Library</description>
+    
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

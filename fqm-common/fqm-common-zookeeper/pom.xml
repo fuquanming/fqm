@@ -3,11 +3,12 @@
     <parent>
         <groupId>io.github.fuquanming</groupId>
         <artifactId>fqm-common</artifactId>
-        <version>1.0.2</version>
+        <version>1.0.3</version>
     </parent>
     <artifactId>fqm-common-zookeeper</artifactId>
-    <version>1.0.3</version>
-    <description>zookeeper配置及工厂类</description>
+    <version>1.0.4</version>
+    <description>Fqm Common Zookeeper Standard Library</description>
+    
     <dependencies>
         <dependency>
             <groupId>org.apache.curator</groupId>

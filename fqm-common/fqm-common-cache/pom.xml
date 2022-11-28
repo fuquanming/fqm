@@ -5,10 +5,13 @@
 	<parent>
 		<groupId>io.github.fuquanming</groupId>
 		<artifactId>fqm-common</artifactId>
-		<version>1.0.2</version>
+		<version>1.0.3</version>
 	</parent>
 	<artifactId>fqm-common-cache</artifactId>
 	<packaging>pom</packaging>
+	
+	<description>Fqm Common Cache Standard Library</description>
+	
 	<modules>
 		<module>fqm-common-cache-spring</module>
 		<module>fqm-common-cache-redis-spring</module>

@@ -6,13 +6,20 @@
 	<parent>
 		<groupId>io.github.fuquanming</groupId>
 		<artifactId>fqm-common</artifactId>
-		<version>1.0.2</version>
+		<version>1.0.3</version>
 	</parent>
 	<artifactId>fqm-common-core</artifactId>
 	<version>1.0.5</version>
 	
-	<description>定义基础 pojo 类、枚举、工具类等等</description>
-    <url></url>
+	<description>Fqm Common Standard Library</description>
+    <url>https://github.com/fuquanming/fqm</url>
+    
+    <properties>
+        <commons-io.version>2.11.0</commons-io.version>
+        <guava.version>31.1-jre</guava.version>
+        <swagger-annotations.version>1.6.9</swagger-annotations.version><!-- api文档注解 -->
+        <hibernate-validator.version>8.0.0.Final</hibernate-validator.version>
+    </properties>
     
     <dependencies>
 
@@ -41,6 +48,7 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
+            <version>${commons-io.version}</version>
         </dependency>
         
         <!-- commons-collections4 --> 
@@ -53,12 +61,14 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
         </dependency>
         
         <!-- Swagger3，Bean字段注解 -->
         <dependency>
 			<groupId>io.swagger</groupId>
 			<artifactId>swagger-annotations</artifactId>
+			<version>${swagger-annotations.version}</version>
 			<scope>compile</scope>
 		</dependency>
 
@@ -66,6 +76,7 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
+            <version>${hibernate-validator.version}</version>
         </dependency>
     
         <!-- 日志 -->
@@ -74,6 +85,5 @@
 		    <artifactId>slf4j-api</artifactId>
 		</dependency>
 		        
-        
     </dependencies>
 </project>

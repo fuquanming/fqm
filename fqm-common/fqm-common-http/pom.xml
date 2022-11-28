@@ -6,10 +6,12 @@
 	<parent>
 		<groupId>io.github.fuquanming</groupId>
 		<artifactId>fqm-common</artifactId>
-		<version>1.0.2</version>
+		<version>1.0.3</version>
 	</parent>
 	<artifactId>fqm-common-http</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
+    
+    <description>Fqm Common Http Standard Library</description>
     
     <properties>
         <fqm-common-core.version>1.0.4</fqm-common-core.version>

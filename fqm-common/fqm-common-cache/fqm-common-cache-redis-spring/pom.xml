@@ -5,10 +5,11 @@
 	<parent>
 		<groupId>io.github.fuquanming</groupId>
 		<artifactId>fqm-common-cache</artifactId>
-		<version>1.0.2</version>
+		<version>1.0.3</version>
 	</parent>
 	<artifactId>fqm-common-cache-redis-spring</artifactId>
-	<version>1.0.3</version>
+	<version>1.0.4</version>
+	<description>Fqm Common Spring Redis Cache Standard Library</description>
 	
 	<properties>
         <fqm-common-cache-spring.version>1.0.3</fqm-common-cache-spring.version>
