@@ -3,13 +3,14 @@
     <parent>
         <groupId>io.github.fuquanming</groupId>
         <artifactId>fqm-dependencies</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
         <relativePath>../fqm-dependencies</relativePath>
     </parent>
     <artifactId>fqm-dynamic</artifactId>
     <packaging>pom</packaging>
     <name>fqm-dynamic</name>
-    <description>Dynamic components</description>
+    <description>Fqm Dynamic Standard Library</description>
+    
     <url>https://github.com/fuquanming/fqm.git</url>
     <modules>
         <module>fqm-dynamic-module</module>

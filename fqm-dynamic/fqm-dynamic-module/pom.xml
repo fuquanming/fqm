@@ -5,11 +5,12 @@
 	<parent>
 		<groupId>io.github.fuquanming</groupId>
 		<artifactId>fqm-dynamic</artifactId>
-		<version>1.0.0</version>
+		<version>1.0.1</version>
 	</parent>
 	<artifactId>fqm-dynamic-module</artifactId>
 	<packaging>pom</packaging>
-	<description>Dynamic loading jar</description>
+	<description>Fqm Dynamic Module Standard Library</description>
+	
 	<url>https://github.com/fuquanming/fqm.git</url>
 	<modules>
 		<module>fqm-dynamic-module-core</module>

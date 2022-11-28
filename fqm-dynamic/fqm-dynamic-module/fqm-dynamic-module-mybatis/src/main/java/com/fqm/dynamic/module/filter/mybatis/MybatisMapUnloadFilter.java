@@ -169,8 +169,11 @@ public class MybatisMapUnloadFilter implements ModuleUnloadFilter {
     private void clearResultMap(Configuration configuration, XNode xNode, String namespace) {
         for (XNode resultChild : xNode.getChildren()) {
             String childName = resultChild.getName();
-            if (("association".equalsIgnoreCase(childName) || "collection".equalsIgnoreCase(childName) || "case".equalsIgnoreCase(childName))
-                    && resultChild.getStringAttribute("select") == null) {
+            boolean isAssociation = "association".equalsIgnoreCase(childName);
+            boolean isCollection = "collection".equalsIgnoreCase(childName);
+            boolean isCase = "case".equalsIgnoreCase(childName);
+            boolean isClean = isAssociation || isCollection || isCase;
+            if (null == resultChild.getStringAttribute("select") && isClean) {
                 configuration.getResultMapNames().remove(resultChild.getStringAttribute("id", resultChild.getValueBasedIdentifier()));
                 configuration.getResultMapNames()
                         .remove(namespace + "." + resultChild.getStringAttribute("id", resultChild.getValueBasedIdentifier()));

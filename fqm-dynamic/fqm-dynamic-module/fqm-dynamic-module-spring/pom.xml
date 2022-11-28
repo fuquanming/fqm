@@ -5,10 +5,11 @@
 	<parent>
 		<groupId>io.github.fuquanming</groupId>
 		<artifactId>fqm-dynamic-module</artifactId>
-		<version>1.0.0</version>
+		<version>1.0.1</version>
 	</parent>
 	<artifactId>fqm-dynamic-module-spring</artifactId>
     <description>Dynamically load jar based on spring</description>
+    
 	<dependencies>
 		<dependency>
 			<groupId>io.github.fuquanming</groupId>
