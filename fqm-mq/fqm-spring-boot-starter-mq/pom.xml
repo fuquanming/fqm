@@ -9,6 +9,11 @@
 	</parent>
 	<artifactId>fqm-spring-boot-starter-mq</artifactId>
 	<description>Starter for message queue factory,message listener</description>
+	
+	<properties>
+        <fqm-common-spring.version>1.0.4</fqm-common-spring.version>
+    </properties>
+	
 	<dependencies>
         <dependency>
             <groupId>io.github.fuquanming</groupId>
@@ -18,12 +23,8 @@
         
         <dependency>
             <groupId>io.github.fuquanming</groupId>
-            <artifactId>fqm-common-core</artifactId>
-        </dependency>
-        
-        <dependency>
-            <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-common-spring</artifactId>
+            <version>${fqm-common-spring.version}</version>
         </dependency>
         
         <dependency>

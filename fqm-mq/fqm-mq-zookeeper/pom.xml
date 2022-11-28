@@ -9,6 +9,11 @@
 	</parent>
 	<artifactId>fqm-mq-zookeeper</artifactId>
 	<description>Message sending and monitoring based on Zookeeper</description>
+	
+	<properties>
+        <fqm-lock-core.version>1.0.2</fqm-lock-core.version>
+    </properties>
+	
 	<dependencies>
         <dependency>
             <groupId>io.github.fuquanming</groupId>
@@ -18,6 +23,7 @@
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-lock-core</artifactId>
+            <version>${fqm-lock-core.version}</version>
         </dependency>        
         <dependency>
             <groupId>org.apache.curator</groupId>

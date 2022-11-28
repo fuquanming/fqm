@@ -14,10 +14,6 @@
     <dependencies>
         <dependency>
             <groupId>io.github.fuquanming</groupId>
-            <artifactId>fqm-common-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-mq-core</artifactId>
             <version>${parent.version}</version>
         </dependency>

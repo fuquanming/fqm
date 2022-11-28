@@ -9,20 +9,22 @@
 	</parent>
 	<artifactId>fqm-mq-rabbit</artifactId>
 	<description>Message sending and monitoring based on RabbitTemplate</description>
+	
+	<properties>
+        <fqm-common-spring.version>1.0.4</fqm-common-spring.version>
+    </properties>
+	
 	<dependencies>
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-mq-core</artifactId>
             <version>${parent.version}</version>
         </dependency>
-        <dependency>
-            <groupId>io.github.fuquanming</groupId>
-            <artifactId>fqm-common-core</artifactId>
-        </dependency>
         
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-common-spring</artifactId>
+            <version>${fqm-common-spring.version}</version>
         </dependency>
         
         <dependency>

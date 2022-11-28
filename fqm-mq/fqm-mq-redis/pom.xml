@@ -9,6 +9,11 @@
 	</parent>
 	<artifactId>fqm-mq-redis</artifactId>
     <description>Message sending and monitoring based on Redis stream</description>
+    
+    <properties>
+        <fqm-common-redis.version>1.0.4</fqm-common-redis.version>
+    </properties>
+    
 	<dependencies>
         <dependency>
             <groupId>io.github.fuquanming</groupId>
@@ -19,6 +24,7 @@
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-common-redis</artifactId>
+            <version>${fqm-common-redis.version}</version>
         </dependency>
         
         <dependency>

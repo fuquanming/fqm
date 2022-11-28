@@ -25,9 +25,5 @@
 			<artifactId>fqm-mq-redisson</artifactId>
 			<version>${parent.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>io.github.fuquanming</groupId>
-			<artifactId>fqm-common-redisson</artifactId>
-		</dependency>
 	</dependencies>
 </project>

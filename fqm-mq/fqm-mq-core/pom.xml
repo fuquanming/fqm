@@ -9,6 +9,11 @@
 	</parent>
 	<artifactId>fqm-mq-core</artifactId>
 	<description>Provide message queue factory, message queue template, message queue type, message queue template, and message listener</description>
+	
+	<properties>
+        <fqm-common-core.version>1.0.5</fqm-common-core.version>
+    </properties>
+	
 	<dependencies>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -17,6 +22,7 @@
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-common-core</artifactId>
+            <version>${fqm-common-core.version}</version>
         </dependency>
     </dependencies>
 </project>
