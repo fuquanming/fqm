@@ -51,6 +51,7 @@ public class MultilevelCacheManager extends AbstractCacheManager {
     private static final ThreadFactory THREAD_FACTORY = new ThreadFactory() {
         private final ThreadFactory defaultFactory = Executors.defaultThreadFactory();
         private final AtomicInteger threadNumber = new AtomicInteger(1);
+        @Override
         public Thread newThread(Runnable r) {
             Thread thread = defaultFactory.newThread(r);
             if (!thread.isDaemon()) {

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ApplicationObjectSupport;
@@ -11,6 +12,7 @@ import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 
+import com.fqm.framework.cache.spring.CacheManagerType;
 import com.fqm.framework.cache.spring.MultilevelCacheManager;
 import com.fqm.framework.common.cache.spring.builder.CacheBuilder;
 import com.fqm.framework.common.cache.spring.builder.CaffeineCacheBuilders;
@@ -23,6 +25,7 @@ import com.fqm.framework.common.redis.listener.spring.KeyDeleteEventMessageListe
  * @version 
  * @author 傅泉明
  */
+@EnableCaching
 @Configuration
 public class MultilevelCacheManagerRedisAutoConfiguration extends ApplicationObjectSupport {
     
@@ -35,7 +38,8 @@ public class MultilevelCacheManagerRedisAutoConfiguration extends ApplicationObj
                 ;
     }
     
-    @Bean(name = "multilevelCacheRedis", destroyMethod = "destroy")
+//    @Bean(name = "multilevelCacheRedis", destroyMethod = "destroy")
+    @Bean(name = CacheManagerType.MULTI_LEVEL_CACHE_MANAGER_REDIS, destroyMethod = "destroy")
     @ConditionalOnMissingBean(value = MultilevelCacheManager.class)
     public MultilevelCacheManager multiLevelCacheManager(RedisConnectionFactory redisConnectionFactory,
             RedisCacheConfiguration redisCacheConfiguration) {
