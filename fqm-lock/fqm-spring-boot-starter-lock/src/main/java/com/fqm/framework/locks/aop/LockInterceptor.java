@@ -110,6 +110,9 @@ public class LockInterceptor implements MethodInterceptor {
                 }
             }
             return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
         } finally {
             if (lock != null && block) {
                 boolean flag = lock.unlock();
