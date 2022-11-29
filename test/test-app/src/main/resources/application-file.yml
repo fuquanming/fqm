@@ -1,0 +1,3 @@
+## 通用文件配置
+file:
+  storage: minio  # minio存储文件            

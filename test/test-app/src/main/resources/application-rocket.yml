@@ -1,0 +1,3 @@
+rocketmq:
+  name-server: http://192.168.2.100:9876 #rocketmq服务地址
+        

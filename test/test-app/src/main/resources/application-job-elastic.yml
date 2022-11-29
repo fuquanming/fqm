@@ -1,0 +1,5 @@
+## elasticjob 
+elasticjob:  
+  reg-center:
+    server-lists: 192.168.2.100:2181        # zookeeper地址
+    namespace: elasticjob-1                 # 命名空间  

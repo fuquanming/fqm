@@ -1,0 +1,14 @@
+# 通用锁配置
+lock:
+  simple:     
+    key: user # 锁的唯一key
+    lockMode: simple # simple,redisson,redisTemplate,zookeeper
+  redis:
+    key: user # 锁的唯一key
+    lockMode: redis # simple,redisson,redisTemplate,zookeeper
+  redisson:
+    key: user # 锁的唯一key
+    lockMode: redisson # simple,redisson,redisTemplate,zookeeper
+  zookeeper:
+    key: user # 锁的唯一key
+    lockMode: zookeeper # simple,redisson,redisTemplate,zookeeper                   

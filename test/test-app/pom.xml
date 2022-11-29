@@ -1,0 +1,113 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.fqm.test</groupId>
+        <artifactId>test-module</artifactId>
+        <version>1.0.0</version>
+    </parent>
+    <artifactId>test-app</artifactId>
+    
+    <dependencies>
+        <!-- MQ Start -->
+        <dependency>
+            <groupId>com.fqm.test</groupId>
+            <artifactId>test-module-mq-emqx</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fqm.test</groupId>
+            <artifactId>test-module-mq-kafka</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fqm.test</groupId>
+            <artifactId>test-module-mq-rabbit</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fqm.test</groupId>
+            <artifactId>test-module-mq-redis</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fqm.test</groupId>
+            <artifactId>test-module-mq-redisson</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fqm.test</groupId>
+            <artifactId>test-module-mq-rocket</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fqm.test</groupId>
+            <artifactId>test-module-mq-zookeeper</artifactId>
+            <version>${parent.version}</version>
+        </dependency> 
+        <!-- MQ End -->
+        
+        <!-- Lock Start -->
+        <dependency>
+            <groupId>com.fqm.test</groupId>
+            <artifactId>test-module-lock-simple</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fqm.test</groupId>
+            <artifactId>test-module-lock-redis</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fqm.test</groupId>
+            <artifactId>test-module-lock-redisson</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fqm.test</groupId>
+            <artifactId>test-module-lock-zookeeper</artifactId>
+            <version>${parent.version}</version>
+        </dependency> 
+        <!-- Lock End -->
+        
+        <!-- Cache Start -->
+        <!-- 
+        <dependency>
+            <groupId>com.fqm.test</groupId>
+            <artifactId>test-module-cache-redis</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
+        -->
+        <dependency>
+            <groupId>com.fqm.test</groupId>
+            <artifactId>test-module-cache-redisson</artifactId>
+            <version>${parent.version}</version>
+        </dependency> 
+        <!-- Cache End -->
+        
+        <!-- File Start -->
+        <dependency>
+            <groupId>com.fqm.test</groupId>
+            <artifactId>test-module-file-minio</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>4.8.1</version>
+        </dependency> 
+        <!-- File End -->
+        
+        <!-- Job Start -->
+        <dependency>
+            <groupId>com.fqm.test</groupId>
+            <artifactId>test-module-job-xxl</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fqm.test</groupId>
+            <artifactId>test-module-job-elastic</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
+        <!--  Job End -->
+    </dependencies>
+</project>

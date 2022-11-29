@@ -1,0 +1,10 @@
+# 通用缓存配置user的时间，单位秒;expire 缓存失效时间;refresh 缓存刷新时间;nullExpire null值失效时间;
+cache:
+  redis:
+    expire: 10
+    nullExpire: 5
+    refresh: 8  
+  redisson:
+    expire: 10
+    nullExpire: 5
+    refresh: 8                 

@@ -1,0 +1,21 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.fqm.test</groupId>
+        <artifactId>test-module-mq</artifactId>
+        <version>1.0.0</version>
+    </parent>
+    <artifactId>test-module-mq-redis</artifactId>
+    
+    <properties>
+        <fqm-spring-boot-starter-mq-redis.version>1.0.3</fqm-spring-boot-starter-mq-redis.version>
+    </properties>
+    
+    <dependencies>
+        <dependency>
+            <groupId>io.github.fuquanming</groupId>
+            <artifactId>fqm-spring-boot-starter-mq-redis</artifactId>
+            <version>${fqm-spring-boot-starter-mq-redis.version}</version>
+        </dependency>
+    </dependencies>
+</project>
