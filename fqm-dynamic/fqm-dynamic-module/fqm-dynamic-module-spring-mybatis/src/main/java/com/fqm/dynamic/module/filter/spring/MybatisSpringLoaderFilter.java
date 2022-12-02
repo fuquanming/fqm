@@ -13,6 +13,7 @@ import java.lang.reflect.Modifier;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.ibatis.annotations.Mapper;
 import org.mybatis.spring.mapper.MapperFactoryBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,11 +43,11 @@ public class MybatisSpringLoaderFilter extends AbstractSpringLoaderFilter {
     }
     
     /**
-     * 判断class对象是否带有spring的注解->Repository
+     * 判断class对象是否带有spring的注解->Repository、Mapper
      */
     public boolean isSpringDaoClass(Class<?> clazz) {
         return (clazz.isInterface() || Modifier.isAbstract(clazz.getModifiers())) 
-                && clazz.isAnnotationPresent(Repository.class);
+                && (clazz.isAnnotationPresent(Repository.class) || clazz.isAnnotationPresent(Mapper.class));
     }
     
     private boolean isMapperScans(String className) {

@@ -13,10 +13,12 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
@@ -71,6 +73,14 @@ public class SpringUnloadFilter extends AbstractSpringUnloadFilter {
             /** 已经在spring容器就删了 */
             if (defaultListableBeanFactory.containsBeanDefinition(beanName)) {
                 defaultListableBeanFactory.removeBeanDefinition(beanName);
+                try {
+                    // 重点：删除以前的合并的bean,removeBeanDefinition 只是设置标志位，没有删除,会在新的jar定义时引用旧的jar里的bean
+                    Map<String, RootBeanDefinition> mergedBeanDefinitions = (Map<String, RootBeanDefinition>)FieldUtils.readField(defaultListableBeanFactory, "mergedBeanDefinitions", true);
+                    mergedBeanDefinitions.remove(beanName);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                
                 logger.info("unload->removeBeanDefinition={}", beanName);
             }
         }

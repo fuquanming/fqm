@@ -31,6 +31,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+		
+		<dependency>
+            <groupId>io.github.fuquanming</groupId>
+            <artifactId>fqm-dynamic-module-mybatis</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
 
 		<dependency>
 			<groupId>org.mybatis</groupId>
