@@ -17,7 +17,6 @@ import com.fqm.framework.mq.annotation.MqListener;
 import com.fqm.framework.mq.client.producer.SendCallback;
 import com.fqm.framework.mq.client.producer.SendResult;
 import com.fqm.test.controller.BaseController;
-import com.fqm.test.model.Dept;
 import com.fqm.test.model.User;
 
 @RestController
@@ -46,8 +45,8 @@ public class RabbitMqController extends BaseController {
     }
     
     @MqListener(name = "${mq.mqs.b.name}")
-    public void receiveMessage1(Dept message) {
-        logger.info("receiveMessage---rabbit---1=" + message.getCreateTime());
+    public void receiveMessage1(User message) {
+        logger.info("receiveMessage---rabbit---1=" + message.getName());
 //        if (true) {
 //            throw new RuntimeException("error 111");
 //        }

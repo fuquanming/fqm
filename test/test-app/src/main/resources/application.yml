@@ -16,6 +16,10 @@ server:
   #    directory: D:\\eclipse-workspace\\demoDruid\\logs
   
 spring:
+  application:
+    name: test-app
+#  main:
+#    allow-bean-definition-overriding: true
   profiles:
     active: dev
     include: # 加载多个配置
@@ -33,5 +37,3 @@ spring:
     - job # 分布式任务
     - job-xxl # xxljob
     - job-elastic # elasticjob
-  application:
-    name: test-app

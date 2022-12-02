@@ -28,6 +28,7 @@
     	<module>test-module-cache</module>
     	<module>test-module-file</module>
     	<module>test-module-job</module>
+    	<module>test-module-dynamic</module>
     </modules>
     
     <dependencies>

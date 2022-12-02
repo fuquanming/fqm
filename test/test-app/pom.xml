@@ -109,5 +109,24 @@
             <version>${parent.version}</version>
         </dependency>
         <!--  Job End -->
+        
+        <!-- Dynamic-module Start -->
+        <dependency>
+            <groupId>com.fqm.test</groupId>
+            <artifactId>test-module-dynamic-module</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
+        <!--  Dynamic-module End -->
+        
     </dependencies>
+    
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.7.5</version>
+            </plugin>
+        </plugins>
+    </build>
 </project>

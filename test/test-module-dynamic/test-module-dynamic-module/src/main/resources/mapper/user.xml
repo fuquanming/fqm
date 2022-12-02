@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fqm.test.dynamic.module.dao.UserDao">
+	<resultMap id="userRes" type="com.fqm.test.model.User">
+		<id column="ID" jdbcType="BIGINT" property="id" />
+		<result column="NAME" jdbcType="VARCHAR" property="name" />
+		<result column="AGE" jdbcType="INTEGER" property="age" />
+	</resultMap>
+    <!-- 覆盖原有insert -->
+	<!-- <insert id="insert" useGeneratedKeys="true" keyProperty="id"
+		parameterType="com.fqm.test.model.User">
+		INSERT INTO user
+		(name,age)
+		VALUES (#{name},#{age})
+	</insert> -->
+
+	<select id="getById" resultMap="userRes">
+		SELECT
+		ID,
+		NAME,
+		AGE from user
+		WHERE
+		ID = #{id}
+	</select>
+</mapper>
