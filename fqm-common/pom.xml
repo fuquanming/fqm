@@ -25,6 +25,7 @@
         <module>fqm-common-redisson</module>
         <module>fqm-common-spring</module>
         <module>fqm-common-zookeeper</module>
+        <module>fqm-common-swagger</module>
     </modules>
 
     <licenses>
