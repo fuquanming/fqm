@@ -10,6 +10,10 @@
 	<artifactId>fqm-dynamic-module-spring</artifactId>
     <description>Dynamically load jar based on spring</description>
     
+    <properties>
+        <fqm-common-spring.version>1.0.4</fqm-common-spring.version>
+    </properties>
+    
 	<dependencies>
 		<dependency>
 			<groupId>io.github.fuquanming</groupId>
@@ -31,6 +35,7 @@
 		<dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-common-spring</artifactId>
+            <version>${fqm-common-spring.version}</version>
         </dependency>
 	</dependencies>
 </project>

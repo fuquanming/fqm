@@ -28,7 +28,7 @@ import com.fqm.dynamic.module.core.ModuleClassLoader;
 import com.fqm.framework.common.spring.util.SpringUtil;
 
 /**
- * 
+ * Mybatis 在 Spring下的上传过滤器
  * @version 
  * @author 傅泉明
  */
@@ -38,6 +38,10 @@ public class MybatisSpringLoaderFilter extends AbstractSpringLoaderFilter {
     /** 扫描的mybatis的包 */
     private String[] mapperScans;
     
+    /**
+     * Mybatis-Spring的加载过滤器
+     * @param mapperScans mybatis扫描的包
+     */
     public MybatisSpringLoaderFilter(String ... mapperScans) {
         this.mapperScans = mapperScans;
     }
@@ -49,7 +53,11 @@ public class MybatisSpringLoaderFilter extends AbstractSpringLoaderFilter {
         return (clazz.isInterface() || Modifier.isAbstract(clazz.getModifiers())) 
                 && (clazz.isAnnotationPresent(Repository.class) || clazz.isAnnotationPresent(Mapper.class));
     }
-    
+    /**
+     * 判断 class 是否在 mybatis 扫描的包目录下
+     * @param className
+     * @return
+     */
     private boolean isMapperScans(String className) {
         if (mapperScans == null) {
             return false;
