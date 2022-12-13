@@ -1,0 +1,101 @@
+{
+    "groups": [{
+        "name": "swagger",
+        "type": "com.fqm.framework.common.swagger.SwaggerProperties",
+        "description": "Swagger Properties.",
+        "sourceType": "com.fqm.framework.common.swagger.SwaggerProperties"
+    }, {
+        "name": "swagger.contact",
+        "type": "com.fqm.framework.common.swagger.SwaggerProperties.Contact",
+        "description": "Swagger Contact Properties.",
+        "sourceType": "com.fqm.framework.common.swagger.SwaggerProperties.Contact"
+    }],
+    "properties": [{
+        "name": "swagger",
+        "type": "com.fqm.framework.common.swagger.SwaggerProperties",
+        "description": "Swagger Properties.",
+        "sourceType": "com.fqm.framework.common.swagger.SwaggerProperties"
+    }, {
+        "name": "swagger.enabled",
+        "type": "java.lang.Boolean",
+        "description": "Enable Swagger.",
+        "sourceType": "com.fqm.framework.common.swagger.SwaggerProperties",
+        "defaultValue": "false"
+    }, {
+        "name": "swagger.title",
+        "type": "java.lang.String",
+        "description": "Swagger title.",
+        "sourceType": "com.fqm.framework.common.swagger.SwaggerProperties",
+        "defaultValue": "接口文档"
+    }, {
+        "name": "swagger.description",
+        "type": "java.lang.String",
+        "description": "Interface document description.",
+        "sourceType": "com.fqm.framework.common.swagger.SwaggerProperties",
+        "defaultValue": "本文档描述了接口定义"
+    }, {
+        "name": "swagger.version",
+        "type": "java.lang.String",
+        "description": "Interface document version.",
+        "sourceType": "com.fqm.framework.common.swagger.SwaggerProperties",
+        "defaultValue": "1.0.0"
+    }, {
+        "name": "swagger.group-name",
+        "type": "java.lang.String",
+        "description": "Interface document group name.",
+        "sourceType": "com.fqm.framework.common.swagger.SwaggerProperties",
+        "defaultValue": "default"
+    }, {
+        "name": "swagger.base-package",
+        "type": "java.lang.String",
+        "description": "Resolve package path.",
+        "sourceType": "com.fqm.framework.common.swagger.SwaggerProperties",
+        "defaultValue": ""
+    }, {
+        "name": "swagger.license",
+        "type": "java.lang.String",
+        "description": "License.",
+        "sourceType": "com.fqm.framework.common.swagger.SwaggerProperties",
+        "defaultValue": ""
+    }, {
+        "name": "swagger.license-url",
+        "type": "java.lang.String",
+        "description": "License URL.",
+        "sourceType": "com.fqm.framework.common.swagger.SwaggerProperties",
+        "defaultValue": ""
+    }, {
+        "name": "swagger.terms-of-service-url",
+        "type": "java.lang.String",
+        "description": "Terms of Service URL.",
+        "sourceType": "com.fqm.framework.common.swagger.SwaggerProperties",
+        "defaultValue": ""
+    }, {
+        "name": "swagger.contact.name",
+        "type": "java.lang.String",
+        "description": "Contact's Name.",
+        "sourceType": "com.fqm.framework.common.swagger.SwaggerProperties",
+        "defaultValue": ""
+    }, {
+        "name": "swagger.contact.url",
+        "type": "java.lang.String",
+        "description": "Contact's URL.",
+        "sourceType": "com.fqm.framework.common.swagger.SwaggerProperties",
+        "defaultValue": ""
+    }, {
+        "name": "swagger.contact.email",
+        "type": "java.lang.String",
+        "description": "Contact's Email.",
+        "sourceType": "com.fqm.framework.common.swagger.SwaggerProperties",
+        "defaultValue": ""
+    }, {
+        "name": "swagger.base-path",
+        "type": "java.util.List<java.lang.String>",
+        "description": "Parsed URL Rules.",
+        "sourceType": "com.fqm.framework.common.swagger.SwaggerProperties"
+    }, {
+        "name": "swagger.exclude-path",
+        "type": "java.util.List<java.lang.String>",
+        "description": "URL rules to be excluded based on basePath.",
+        "sourceType": "com.fqm.framework.common.swagger.SwaggerProperties"
+    }]
+}

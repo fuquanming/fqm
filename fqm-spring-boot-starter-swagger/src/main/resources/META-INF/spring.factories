@@ -1,0 +1,4 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.fqm.framework.swagger.config.Swagger3AutoConfiguration
+org.springframework.boot.env.EnvironmentPostProcessor=\
+  com.fqm.framework.swagger.config.SwaggerDynamicProperties

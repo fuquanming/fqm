@@ -1,0 +1,17 @@
+## 关闭swagger文档
+#springfox:
+#  documentation:
+#    enabled: false
+#    auto-startup: false
+#    swagger-ui:
+#      enabled: false
+#    open-api:
+#      enabled: false
+#      
+#knife4j:
+#  enable: true     # 开启功能增强 @ApiSupport、@ApiOperationSupport 
+#  basic:
+#    enable: false  # 关闭登录鉴权
+#    username: fqm
+#    password: 123456
+#  production: true # 关闭knife4j文档
