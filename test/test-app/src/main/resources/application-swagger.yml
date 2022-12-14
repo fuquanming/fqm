@@ -1,0 +1,13 @@
+# 文档配置，访问路径:/swagger-ui/index.html
+# 增强文档，访问路径:/doc.html
+swagger:
+  enabled: true
+  title: 测试应用接口文档
+  description: 测试应用接口文档
+  version: 1.0.0
+  group-name: ${spring.application.name}
+  base-package: com.fqm.test.dynamic.module.controller
+  contact:
+    url: https://github.com/fuquanming
+    email: 67837343@qq.com
+    name: 傅泉明

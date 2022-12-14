@@ -16,6 +16,8 @@
         
         <mybatis-plus.version>3.5.2</mybatis-plus.version>
         <druid.version>1.2.15</druid.version>
+        
+        <fqm-spring-boot-starter-swagger.version>1.0.0</fqm-spring-boot-starter-swagger.version>
     </properties>
     
     <dependencies>
@@ -53,22 +55,14 @@
             <scope>runtime</scope>
         </dependency>
         
+        <!-- knife4j Swagger3 -->
+        <dependency>
+            <groupId>io.github.fuquanming</groupId>
+            <artifactId>fqm-spring-boot-starter-swagger</artifactId>
+            <version>${fqm-spring-boot-starter-swagger.version}</version>
+        </dependency>
+        
         <!-- dynamic-module -->
-        <dependency>
-            <groupId>io.github.fuquanming</groupId>
-            <artifactId>fqm-dynamic-module-core</artifactId>
-            <version>${dynamic.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.github.fuquanming</groupId>
-            <artifactId>fqm-dynamic-module-mybatis</artifactId>
-            <version>${dynamic.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.github.fuquanming</groupId>
-            <artifactId>fqm-dynamic-module-spring</artifactId>
-            <version>${dynamic.version}</version>
-        </dependency>
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-dynamic-module-mybatis-plus</artifactId>
@@ -79,5 +73,11 @@
             <artifactId>fqm-dynamic-module-spring-mybatis</artifactId>
             <version>${dynamic.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.github.fuquanming</groupId>
+            <artifactId>fqm-dynamic-module-spring-swagger</artifactId>
+            <version>${dynamic.version}</version>
+        </dependency>
+        
     </dependencies>
 </project>

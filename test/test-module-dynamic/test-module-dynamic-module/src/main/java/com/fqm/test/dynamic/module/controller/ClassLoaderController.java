@@ -18,11 +18,17 @@ import com.fqm.dynamic.module.filter.mybatis.MybatisPlusMapUnloadFilter;
 import com.fqm.dynamic.module.filter.spring.MybatisSpringLoaderFilter;
 import com.fqm.dynamic.module.filter.spring.SpringLoaderFilter;
 import com.fqm.dynamic.module.filter.spring.SpringUnloadFilter;
+import com.fqm.dynamic.module.filter.spring.SwaggerSpringLoaderFilter;
+import com.fqm.dynamic.module.filter.spring.SwaggerSpringUnLoaderFilter;
+import com.fqm.framework.common.core.util.JsonUtil;
 import com.fqm.framework.common.core.vo.Result;
 import com.fqm.framework.common.spring.util.SpringUtil;
+import com.fqm.framework.common.swagger.config.SwaggerProperties;
 
 @RestController
 public class ClassLoaderController {
+    
+    public static final String DYNAMIC = "dynamic";
     
     @GetMapping(value = "/loadJar")
     public Result<List<?>> loadJar(String jarPath, int index) {
@@ -39,8 +45,6 @@ public class ClassLoaderController {
             // 子模块，二次加载失败，Dao找不到->service extends ServiceImpl<DeptDao, Dept>出现->卸载没完成deptDao卸载，加载后出现2个deptDao，无法赋值
             // 解决：SpringUnloadFilter 移除 mergedBeanDefinitions 对应的bean
             jarPath = "D:/fqm/github/fuquanming/fqm/test/test-module-dynamic/test-module-dynamic-module-dept/target/test-module-dynamic-module-dept-1.0.0.jar";
-            // 独立模块，二次加载失败，Dao找不到
-//            jarPath = "D:/fqm/github/fuquanming/fqm/test/test-module-dynamic-module-dept/target/test-module-dynamic-module-dept-1.0.0.jar";
         }
         
         try {
@@ -55,18 +59,24 @@ public class ClassLoaderController {
             List<ModuleUnloadFilter> unloadFilters = new ArrayList<>();
 
             loaderFilters.add(new MyBatisMapLoaderFilter(SpringUtil.getBean(SqlSessionFactory.class)));
-//            loaderFilters.add(new MybatisSpringLoaderFilter("com.fqm.module.dept.dao"));
             loaderFilters.add(new MybatisSpringLoaderFilter(mybatisPackage));
-            
             loaderFilters.add(new SpringLoaderFilter());
+            SwaggerProperties swaggerProperties = new SwaggerProperties();
+            swaggerProperties.setBasePackage("com.fqm.module.dept.controller");
+            swaggerProperties.setGroupName(moduleName);
+            loaderFilters.add(new SwaggerSpringLoaderFilter(swaggerProperties));
 
             unloadFilters.add(new MybatisPlusMapUnloadFilter(SpringUtil.getBean(SqlSessionFactory.class)));
+            unloadFilters.add(new SwaggerSpringUnLoaderFilter(moduleName));
             unloadFilters.add(new SpringUnloadFilter());
 
             ModuleClassLoaderFactory.build(jarPath, moduleName, loaderFilters, unloadFilters);
         } catch (Exception e) {
             e.printStackTrace();
         }
+        
+//        swagger(moduleName);
+        
         return Result.ok(getAllBean());
     }
 
@@ -76,7 +86,7 @@ public class ClassLoaderController {
 
         for (String beanName : beans) {
             Class<?> beanType = SpringUtil.getApplicationContext().getType(beanName);
-            if (beanType.getName().startsWith("com.fqm")) {
+            if (beanType.getName().startsWith("springfox.boot.starter.")) {
                 Map<String, Object> map = new HashMap<>();
                 map.put("BeanName", beanName);
                 map.put("beanType", beanType);
@@ -94,6 +104,8 @@ public class ClassLoaderController {
 ////        ((DefaultListableBeanFactory)SpringUtil.getBeanFactory()).containsSingleton("deptService")
 //        bean = SpringUtil.getBean("deptService");
 //        System.out.println(bean);
+        System.out.println(JsonUtil.toJsonStr(SpringUtil.getBean("springfox.documentation-springfox.boot.starter.autoconfigure.SpringfoxConfigurationProperties")));
+        
         return Result.ok(getAllBean());
     }
 }

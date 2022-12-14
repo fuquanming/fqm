@@ -73,7 +73,7 @@ public class GenericTypeAwareAutowireCandidateResolver extends SimpleAutowireCan
         if (rbd != null) {
             // TODO 引用了之前加载的deptDao
             targetType = rbd.targetType;
-            System.out.println("rbd=" + rbd + "\t" + targetType);
+//            System.out.println("rbd=" + rbd + "\t" + targetType);
             if (targetType == null) {
                 cacheType = true;
                 // First, check factory method return type, if applicable

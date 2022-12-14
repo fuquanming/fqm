@@ -12,8 +12,10 @@ import com.fqm.framework.common.core.vo.Result;
 import com.fqm.module.dept.model.Dept;
 import com.fqm.module.dept.service.DeptService;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
+@Api(tags = "部门管理")
 @RestController
 public class DeptController {
 
@@ -31,6 +33,7 @@ public class DeptController {
         return Result.ok(data);
     }
     
+    @ApiOperation("用户数")
     @GetMapping("/dept/count")
     public Result<Long> getDep() {
         long count = deptService.count();

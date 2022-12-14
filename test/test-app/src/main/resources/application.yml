@@ -37,3 +37,4 @@ spring:
     - job # 分布式任务
     - job-xxl # xxljob
     - job-elastic # elasticjob
+    - swagger # 文档接口
