@@ -1,0 +1,39 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.github.fuquanming</groupId>
+        <artifactId>fqm-dynamic-module</artifactId>
+        <version>1.0.1</version>
+    </parent>
+    <artifactId>fqm-dynamic-module-spring-swagger</artifactId>
+    <description>Dynamically Load Jar Based On Spring Swagger</description>
+    
+    <properties>
+        <fqm-common-swagger.version>1.0.0</fqm-common-swagger.version>
+    </properties>
+    
+    <dependencies>
+        <dependency>
+            <groupId>io.github.fuquanming</groupId>
+            <artifactId>fqm-dynamic-module-core</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>io.github.fuquanming</groupId>
+            <artifactId>fqm-dynamic-module-spring</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>io.github.fuquanming</groupId>
+            <artifactId>fqm-common-swagger</artifactId>
+            <version>${fqm-common-swagger.version}</version>
+        </dependency>
+    </dependencies>
+</project>

@@ -39,6 +39,7 @@ public class SpringUnloadFilter extends AbstractSpringUnloadFilter {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
     
+    @SuppressWarnings("unchecked")
     @Override
     public void unloadClassLoader(ModuleClassLoader moduleClassLoader) {
         /** 获取bean工厂并转换为DefaultListableBeanFactory */
