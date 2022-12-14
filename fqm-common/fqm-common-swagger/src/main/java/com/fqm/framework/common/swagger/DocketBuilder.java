@@ -69,7 +69,7 @@ public class DocketBuilder {
                 .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class)
                         .or(RequestHandlerSelectors.withMethodAnnotation(Operation.class)));
         String basePackage = swaggerProperties.getBasePackage();
-        if (!StringUtils.hasText(basePackage)) {
+        if (StringUtils.hasText(basePackage)) {
             builder.apis(RequestHandlerSelectors.basePackage(basePackage));
         }
 
