@@ -35,7 +35,7 @@ import org.springframework.core.env.PropertySource;
         open-api:
           enabled: false
  * 2、关闭 knife4j
- * 1）加载 ProductionSecurityFilter，参见：Knife4jCloseConfiguration
+ * 1）加载 ProductionSecurityFilter，参见：Swagger3AutoConfiguration.productionSecurityFilter()
  * 2）不使用配置 knife4j.enable=true 且 knife4j.production=true，才能生效，knife4j.enable=true需要swagger类，已配置swagger关闭，不会有swagger类，导致找不到类。
  * 3）因此不用加载配置文件，使用加载类的方式关闭 knife4j。源码配置类：Knife4jAutoConfiguration
  * @version 
@@ -48,7 +48,7 @@ public class SwaggerDynamicProperties implements EnvironmentPostProcessor {
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
         MutablePropertySources propertySources = environment.getPropertySources();
         Iterator<PropertySource<?>> it = propertySources.iterator();
-        PropertySource<?> findPropertySource = null;
+        String findPropertySourceName = null;
         
         String springfoxDocumentationEnabledStr = "springfox.documentation.enabled";
         String springfoxDocumentationAutostartupStr = "springfox.documentation.auto-startup";
@@ -60,7 +60,7 @@ public class SwaggerDynamicProperties implements EnvironmentPostProcessor {
         boolean enabled = false;
         while (it.hasNext()) {
             PropertySource<?> propertySource = it.next();
-            findPropertySource = propertySource;
+            findPropertySourceName = propertySource.getName();
             Object swaggerEnabled = propertySource.getProperty("swagger.enabled");
             // 有配置时 propertySource的Name=configurationProperties 和 yml（自定义） 都会有该属性，即有2个 propertySource 命中
             if (null != swaggerEnabled && Boolean.valueOf(swaggerEnabled.toString())) {
@@ -92,9 +92,9 @@ public class SwaggerDynamicProperties implements EnvironmentPostProcessor {
         }
         
         // 关闭 Swagger
-        if (!enabled && null != findPropertySource && findPropertySource.getSource() instanceof Map) {
-            // 找到 对应配置或最后一个配置
-            Map<String, Object> activeSource = (Map<String, Object>) findPropertySource.getSource();
+        if (!enabled && null != findPropertySourceName && propertySources.get(findPropertySourceName).getSource() instanceof Map) {
+            // 找到最后一个配置
+            Map<String, Object> activeSource = (Map<String, Object>) propertySources.get(findPropertySourceName).getSource();
             Map<String, Object> newConfigMap = new HashMap<>(activeSource.size() + 4);
             // value必须要放入String格式
             activeSource.forEach((k, v) -> newConfigMap.put(k, v.toString()));
@@ -104,7 +104,7 @@ public class SwaggerDynamicProperties implements EnvironmentPostProcessor {
             newConfigMap.put(springfoxDocumentationAutostartupStr, closeStr);
             newConfigMap.put(springfoxDocumentationSwaggeruiEnabledStr, closeStr);
             newConfigMap.put(springfoxDocumentationOpenapiEnabledStr, closeStr);
-            propertySources.replace(findPropertySource.getName(), new MapPropertySource(findPropertySource.getName(), newConfigMap));    
+            propertySources.replace(findPropertySourceName, new MapPropertySource(findPropertySourceName, newConfigMap));
         }
     }
 
