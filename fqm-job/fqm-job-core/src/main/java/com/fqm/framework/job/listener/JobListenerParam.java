@@ -12,7 +12,7 @@ package com.fqm.framework.job.listener;
 import java.lang.reflect.Method;
 
 /**
- * 
+ * 任务监听器参数
  * @version 
  * @author 傅泉明
  */

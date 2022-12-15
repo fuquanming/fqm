@@ -22,6 +22,11 @@ public enum JobMode {
     /** elasticjob */
     ELASTICJOB;
     
+    /**
+     * 从字符串转化为 JobMode 
+     * @param mode  任务模式的字符串
+     * @return
+     */
     public static JobMode getMode(String mode) {
         if (mode == null || "".equals(mode)) {
             return null;
@@ -33,5 +38,14 @@ public enum JobMode {
             }
         }
         return null;
+    }
+    
+    /**
+     * 是否和字符串相等，不区分大小写
+     * @param mode  任务模式的字符串
+     * @return
+     */
+    public boolean equals(String mode) {
+        return name().equalsIgnoreCase(mode);
     }
 }

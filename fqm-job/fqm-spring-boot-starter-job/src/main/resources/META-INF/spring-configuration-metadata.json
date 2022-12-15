@@ -14,7 +14,8 @@
         "name": "job.enabled",
         "type": "java.lang.Boolean",
         "description": "启用任务.",
-        "defaultValue": true
+        "sourceType": "com.fqm.framework.job.config.JobProperties",
+        "defaultValue": false
     }, {
         "name": "job.jobs",
         "type": "java.util.Map<java.lang.String,com.fqm.framework.job.config.JobConfigurationProperties>",

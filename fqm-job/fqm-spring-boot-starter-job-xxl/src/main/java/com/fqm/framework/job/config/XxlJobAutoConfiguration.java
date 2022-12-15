@@ -37,7 +37,8 @@ import com.xxl.job.core.handler.impl.MethodJobHandler;
 
 /**
  * xxl-job 自动配置类
- * JobProperties加载则JobAutoConfiguration也就加载
+ * JobProperties加载，并在JobAutoConfiguration后加载
+ * SmartInitializingSingleton接口在Bean加载完成后，加载XxlJob
  * @version 
  * @author 傅泉明
  */
@@ -88,7 +89,7 @@ public class XxlJobAutoConfiguration implements SmartInitializingSingleton, Appl
             if (properties == null) {
                 // 遍历jp.Jobs
                 for (JobConfigurationProperties jcp : jp.getJobs().values()) {
-                    if (jcp.getName().equals(jobName) && JobMode.XXLJOB.name().equalsIgnoreCase(jcp.getBinder())) {
+                    if (jcp.getName().equals(jobName) && JobMode.XXLJOB.equals(jcp.getBinder())) {
                         properties = jcp;
                         break;
                     }
@@ -100,7 +101,7 @@ public class XxlJobAutoConfiguration implements SmartInitializingSingleton, Appl
     }
 
     private void buildJob(JobListenerParam v, String jobName, JobConfigurationProperties properties) {
-        if (properties != null && JobMode.XXLJOB.name().equalsIgnoreCase(properties.getBinder()) && XxlJobExecutor.loadJobHandler(jobName) == null) {
+        if (properties != null && JobMode.XXLJOB.equals(properties.getBinder()) && XxlJobExecutor.loadJobHandler(jobName) == null) {
             XxlJobListener listener = new XxlJobListener(v.getBean(), v.getMethod());
             // 获取任务执行的方法
             Method[] ms = listener.getClass().getMethods();

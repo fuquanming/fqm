@@ -35,15 +35,17 @@ import com.fqm.framework.job.listener.JobListenerParam;
 import com.google.common.base.Preconditions;
 
 /**
- * ElasticJob自动配置类
- * JobProperties加载则JobAutoConfiguration也就加载
+ * ElasticJob 自动配置类
+ * JobProperties加载，并在JobAutoConfiguration后加载
+ * ElasticJobLiteAutoConfiguration
+ * SmartInitializingSingleton接口在Bean加载完成后，加载ElasticJob
  * @version 
  * @author 傅泉明
  */
 @Configuration
 @AutoConfigureAfter(JobAutoConfiguration.class)
-@Import(ElasticJobPropertiesBeanPostProcessor.class)
 @ConditionalOnBean(JobProperties.class)
+@Import(ElasticJobPropertiesBeanPostProcessor.class)
 public class ElasticJobAutoConfiguration implements SmartInitializingSingleton, ApplicationContextAware {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
@@ -69,7 +71,7 @@ public class ElasticJobAutoConfiguration implements SmartInitializingSingleton, 
             if (properties == null) {
                 // 遍历jp.Jobs
                 for (JobConfigurationProperties jcp : jp.getJobs().values()) {
-                    if (jcp.getName().equals(jobName) && JobMode.ELASTICJOB.name().equalsIgnoreCase(jcp.getBinder())) {
+                    if (jcp.getName().equals(jobName) && JobMode.ELASTICJOB.equals(jcp.getBinder())) {
                         properties = jcp;
                         break;
                     }
@@ -81,7 +83,7 @@ public class ElasticJobAutoConfiguration implements SmartInitializingSingleton, 
 
     private void buildJob(SingletonBeanRegistry singletonBeanRegistry, CoordinatorRegistryCenter registryCenter, JobListenerParam v, String jobName,
             JobConfigurationProperties properties) {
-        if (properties != null && JobMode.ELASTICJOB.name().equalsIgnoreCase(properties.getBinder()) && !singletonBeanRegistry.containsSingleton(jobName)) {
+        if (properties != null && JobMode.ELASTICJOB.equals(properties.getBinder()) && !singletonBeanRegistry.containsSingleton(jobName)) {
             String cron = properties.getCron();
             Preconditions.checkArgument(StringUtils.hasText(cron), "Please specific [core] under job configuration, binder is elasticjob.");
             JobConfiguration jobConfig = JobConfiguration.newBuilder(jobName, 1).cron(cron).overwrite(false).build();

@@ -21,9 +21,21 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @ConfigurationProperties(prefix = "job")
 public class JobProperties {
+    
+    /** 是否开启，默认为 false 未开启 */
+    private Boolean enabled = false;
+    
     /** 任务配置 */
     private Map<String, JobConfigurationProperties> jobs = new LinkedHashMap<>();
     
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
+
     public Map<String, JobConfigurationProperties> getJobs() {
         return jobs;
     }
