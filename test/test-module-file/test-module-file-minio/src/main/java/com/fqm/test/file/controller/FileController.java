@@ -44,7 +44,7 @@ public class FileController {
     @GetMapping("/file/delete")
     @ResponseBody
     public Result<Boolean> deleteFile(String fileId) {
-        boolean flag = fileFactory.getFileTemplate(fileConfig.getStorage()).deleteFile(fileId);
+        boolean flag = fileFactory.getFileTemplate().deleteFile(fileId);
         return Result.ok(flag);
     }
 
