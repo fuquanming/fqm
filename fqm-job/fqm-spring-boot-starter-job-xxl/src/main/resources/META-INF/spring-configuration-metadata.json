@@ -40,7 +40,7 @@
         "type": "java.lang.String",
         "description": "执行器端口号 [选填]：小于等于0则自动获取；默认端口为9999，单机部署多个执行器时，注意要配置不同执行器端口.",
         "sourceType": "com.fqm.framework.job.config.XxlJobExecutorProperties",
-        "defaultValue": "-1"
+        "defaultValue": "9999"
     }, {
         "name": "xxljob.executor.log-path",
         "type": "java.lang.String",
