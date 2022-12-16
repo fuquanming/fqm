@@ -46,7 +46,7 @@ import io.minio.messages.Tags;
 import okhttp3.HttpUrl;
 
 /**
- * 
+ * Minio 服务
  * @version 
  * @author 傅泉明
  */
@@ -98,7 +98,6 @@ public class MinioService {
      * @throws ErrorResponseException 
      * @throws InvalidKeyException 
      */
-
     public boolean makeBucket(String bucketName) throws InvalidKeyException, ErrorResponseException, InsufficientDataException, InternalException,
             InvalidResponseException, NoSuchAlgorithmException, ServerException, XmlParserException, IllegalArgumentException, IOException {
         boolean flag = bucketExists(bucketName);
@@ -125,7 +124,6 @@ public class MinioService {
      * @throws ErrorResponseException 
      * @throws InvalidKeyException 
      */
-
     public boolean removeBucket(String bucketName) throws InvalidKeyException, ErrorResponseException, InsufficientDataException, InternalException,
             InvalidResponseException, NoSuchAlgorithmException, ServerException, XmlParserException, IllegalArgumentException, IOException {
         boolean flag = bucketExists(bucketName);
@@ -184,7 +182,6 @@ public class MinioService {
      * @throws ErrorResponseException 
      * @throws InvalidKeyException 
      */
-
     public List<Bucket> listBuckets() throws InvalidKeyException, ErrorResponseException, InsufficientDataException, InternalException,
             InvalidResponseException, NoSuchAlgorithmException, ServerException, XmlParserException, IOException {
         return minioClient.listBuckets();
@@ -205,7 +202,6 @@ public class MinioService {
      * @throws ErrorResponseException 
      * @throws InvalidKeyException 
      */
-
     public List<String> listObjectNames(String bucketName)
             throws InvalidKeyException, ErrorResponseException, InsufficientDataException, InternalException, InvalidResponseException,
             NoSuchAlgorithmException, ServerException, XmlParserException, IllegalArgumentException, IOException {
@@ -226,7 +222,6 @@ public class MinioService {
      * @param bucketName 存储桶名称
      * @return
      */
-
     public Iterable<Result<Item>> listObjects(String bucketName) {
         return minioClient.listObjects(ListObjectsArgs.builder().bucket(bucketName).build());
     }
@@ -239,7 +234,6 @@ public class MinioService {
      * @param maxKeys    最大数量
      * @return
      */
-
     public Iterable<Result<Item>> listObjects(String bucketName, String prefix, String after, int maxKeys) {
         ListObjectsArgs.Builder builder = ListObjectsArgs.builder().bucket(bucketName);
         if (prefix != null && prefix.length() > 0) {
@@ -269,7 +263,6 @@ public class MinioService {
      * @throws ErrorResponseException 
      * @throws InvalidKeyException 
      */
-
     public void deleteObjectTags(String bucketName, String objectName)
             throws InvalidKeyException, ErrorResponseException, InsufficientDataException, InternalException, InvalidResponseException,
             NoSuchAlgorithmException, ServerException, XmlParserException, IllegalArgumentException, IOException {
@@ -324,7 +317,6 @@ public class MinioService {
      * @throws ErrorResponseException 
      * @throws InvalidKeyException 
      */
-
     public boolean putObject(String bucketName, String objectName, InputStream stream, long size, String contentType, Map<String, String> headers)
             throws InvalidKeyException, ErrorResponseException, InsufficientDataException, InternalException, InvalidResponseException,
             NoSuchAlgorithmException, ServerException, XmlParserException, IllegalArgumentException, IOException {
@@ -352,7 +344,6 @@ public class MinioService {
      * @throws ErrorResponseException 
      * @throws InvalidKeyException 
      */
-
     public boolean putObject(String bucketName, String objectName, InputStream stream)
             throws InvalidKeyException, ErrorResponseException, InsufficientDataException, InternalException, InvalidResponseException,
             NoSuchAlgorithmException, ServerException, XmlParserException, IllegalArgumentException, IOException {
@@ -384,7 +375,6 @@ public class MinioService {
      * @throws ErrorResponseException 
      * @throws InvalidKeyException 
      */
-
     public InputStream getObject(String bucketName, String objectName)
             throws InvalidKeyException, ErrorResponseException, InsufficientDataException, InternalException, InvalidResponseException,
             NoSuchAlgorithmException, ServerException, XmlParserException, IllegalArgumentException, IOException {
@@ -410,7 +400,6 @@ public class MinioService {
      * @throws ErrorResponseException 
      * @throws InvalidKeyException 
      */
-
     public InputStream getObject(String bucketName, String objectName, long offset, Long length)
             throws InvalidKeyException, ErrorResponseException, InsufficientDataException, InternalException, InvalidResponseException,
             NoSuchAlgorithmException, ServerException, XmlParserException, IllegalArgumentException, IOException {
@@ -452,7 +441,6 @@ public class MinioService {
      * @throws ErrorResponseException 
      * @throws InvalidKeyException 
      */
-
     public boolean removeObject(String bucketName, String objectName)
             throws InvalidKeyException, ErrorResponseException, InsufficientDataException, InternalException, InvalidResponseException,
             NoSuchAlgorithmException, ServerException, XmlParserException, IllegalArgumentException, IOException {
@@ -476,7 +464,6 @@ public class MinioService {
      * @throws ErrorResponseException 
      * @throws InvalidKeyException 
      */
-
     public List<String> removeObjects(String bucketName, List<String> objectNames)
             throws InvalidKeyException, ErrorResponseException, InsufficientDataException, InternalException, InvalidResponseException,
             NoSuchAlgorithmException, ServerException, XmlParserException, IllegalArgumentException, IOException {
@@ -511,7 +498,6 @@ public class MinioService {
      * @throws ErrorResponseException 
      * @throws InvalidKeyException 
      */
-
     public void setObjectTags(String bucketName, String objectName, Map<String, String> tags)
             throws InvalidKeyException, ErrorResponseException, InsufficientDataException, InternalException, InvalidResponseException,
             NoSuchAlgorithmException, ServerException, XmlParserException, IllegalArgumentException, IOException {
@@ -531,7 +517,6 @@ public class MinioService {
      * @throws NoSuchAlgorithmException 
      * @throws InvalidKeyException 
      */
-
     public String getPresignedObjectUrl(String bucketName, String objectName, Integer expires, Method method)
             throws MinioException, InvalidKeyException, NoSuchAlgorithmException, IllegalArgumentException, IOException {
         String url = "";
@@ -562,7 +547,6 @@ public class MinioService {
      * @throws ErrorResponseException 
      * @throws InvalidKeyException 
      */
-
     public StatObjectResponse statObject(String bucketName, String objectName)
             throws InvalidKeyException, ErrorResponseException, InsufficientDataException, InternalException, InvalidResponseException,
             NoSuchAlgorithmException, ServerException, XmlParserException, IllegalArgumentException, IOException {
@@ -604,7 +588,6 @@ public class MinioService {
      * @throws ErrorResponseException 
      * @throws InvalidKeyException 
      */
-
     public void downloadObject(String bucketName, String objectName, String fileName)
             throws InvalidKeyException, ErrorResponseException, InsufficientDataException, InternalException, InvalidResponseException,
             NoSuchAlgorithmException, ServerException, XmlParserException, IllegalArgumentException, IOException {

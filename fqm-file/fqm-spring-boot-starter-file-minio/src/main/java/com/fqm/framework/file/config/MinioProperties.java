@@ -42,9 +42,7 @@ public class MinioProperties {
     /**
      * 默认存储桶名称
      */
-    private String bucketDefaultName = "test";
-    
-    
+    private String bucketDefaultName = "config";
 
     public Boolean getEnabled() {
         return enabled;

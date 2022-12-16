@@ -21,23 +21,16 @@ import io.minio.MinioClient;
  * @author 傅泉明
  */
 @Configuration
-@ConditionalOnClass(MinioClient.class)
-@ConditionalOnProperty(prefix = "minio", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(name = "minio.enabled", havingValue = "true")
 @EnableConfigurationProperties({ MinioProperties.class })
 public class MinioFileAutoConfiguration {
 
-    private final MinioProperties properties;
-
-    public MinioFileAutoConfiguration(MinioProperties properties) {
-        this.properties = properties;
-    }
-
     @Bean
     @ConditionalOnMissingBean
-    public MinioClient getMinioClient() {
+    public MinioClient minioClient(MinioProperties properties) {
         return MinioClient.builder()
-                .endpoint(this.properties.getEndpoint(), this.properties.getPort(), this.properties.getSecure())
-                .credentials(this.properties.getAccessKey(), this.properties.getSecretKey()).build();
+                .endpoint(properties.getEndpoint(), properties.getPort(), properties.getSecure())
+                .credentials(properties.getAccessKey(), properties.getSecretKey()).build();
     }
 
     @Bean

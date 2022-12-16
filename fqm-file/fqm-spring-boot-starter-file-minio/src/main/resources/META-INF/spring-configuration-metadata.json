@@ -13,7 +13,8 @@
     }, {
         "name": "minio.enabled",
         "type": "java.lang.Boolean",
-        "description": "启用任务.",
+        "description": "启用Minio文件服务.",
+        "sourceType": "com.fqm.framework.file.config.MinioProperties",
         "defaultValue": true
     }, {
         "name": "minio.endpoint",
@@ -24,7 +25,8 @@
         "name": "minio.port",
         "type": "java.lang.String",
         "description": "Minio服务端口.",
-        "sourceType": "com.fqm.framework.file.config.MinioProperties"
+        "sourceType": "com.fqm.framework.file.config.MinioProperties",
+        "defaultValue": "11000"
     }, {
         "name": "minio.accessKey",
         "type": "java.lang.String",
@@ -45,7 +47,8 @@
         "name": "minio.bucketDefaultName",
         "type": "java.lang.String",
         "description": "Minio服务访问的文件桶.",
-        "sourceType": "com.fqm.framework.file.config.MinioProperties"
+        "sourceType": "com.fqm.framework.file.config.MinioProperties",
+        "defaultValue": "config"
     }],
     "hints": [{
         "name": "job.jobs.keys"                     
