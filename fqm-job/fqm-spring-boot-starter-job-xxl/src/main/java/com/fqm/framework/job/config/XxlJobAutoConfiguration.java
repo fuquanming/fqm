@@ -89,7 +89,7 @@ public class XxlJobAutoConfiguration implements SmartInitializingSingleton, Appl
             if (properties == null) {
                 // 遍历jp.Jobs
                 for (JobConfigurationProperties jcp : jp.getJobs().values()) {
-                    if (jcp.getName().equals(jobName) && JobMode.XXLJOB.equals(jcp.getBinder())) {
+                    if (jcp.getName().equals(jobName) && JobMode.XXLJOB.equalMode(jcp.getBinder())) {
                         properties = jcp;
                         break;
                     }
@@ -101,7 +101,7 @@ public class XxlJobAutoConfiguration implements SmartInitializingSingleton, Appl
     }
 
     private void buildJob(JobListenerParam v, String jobName, JobConfigurationProperties properties) {
-        if (properties != null && JobMode.XXLJOB.equals(properties.getBinder()) && XxlJobExecutor.loadJobHandler(jobName) == null) {
+        if (properties != null && JobMode.XXLJOB.equalMode(properties.getBinder()) && XxlJobExecutor.loadJobHandler(jobName) == null) {
             XxlJobListener listener = new XxlJobListener(v.getBean(), v.getMethod());
             // 获取任务执行的方法
             Method[] ms = listener.getClass().getMethods();

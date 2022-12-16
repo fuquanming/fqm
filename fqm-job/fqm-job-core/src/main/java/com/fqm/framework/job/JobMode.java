@@ -45,7 +45,7 @@ public enum JobMode {
      * @param mode  任务模式的字符串
      * @return
      */
-    public boolean equals(String mode) {
+    public boolean equalMode(String mode) {
         return name().equalsIgnoreCase(mode);
     }
 }

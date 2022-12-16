@@ -71,7 +71,7 @@ public class ElasticJobAutoConfiguration implements SmartInitializingSingleton, 
             if (properties == null) {
                 // 遍历jp.Jobs
                 for (JobConfigurationProperties jcp : jp.getJobs().values()) {
-                    if (jcp.getName().equals(jobName) && JobMode.ELASTICJOB.equals(jcp.getBinder())) {
+                    if (jcp.getName().equals(jobName) && JobMode.ELASTICJOB.equalMode(jcp.getBinder())) {
                         properties = jcp;
                         break;
                     }
@@ -83,7 +83,7 @@ public class ElasticJobAutoConfiguration implements SmartInitializingSingleton, 
 
     private void buildJob(SingletonBeanRegistry singletonBeanRegistry, CoordinatorRegistryCenter registryCenter, JobListenerParam v, String jobName,
             JobConfigurationProperties properties) {
-        if (properties != null && JobMode.ELASTICJOB.equals(properties.getBinder()) && !singletonBeanRegistry.containsSingleton(jobName)) {
+        if (properties != null && JobMode.ELASTICJOB.equalMode(properties.getBinder()) && !singletonBeanRegistry.containsSingleton(jobName)) {
             String cron = properties.getCron();
             Preconditions.checkArgument(StringUtils.hasText(cron), "Please specific [core] under job configuration, binder is elasticjob.");
             JobConfiguration jobConfig = JobConfiguration.newBuilder(jobName, 1).cron(cron).overwrite(false).build();

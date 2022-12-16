@@ -29,7 +29,7 @@ public class ElasticJobDynamicProperties implements EnvironmentPostProcessor {
         MutablePropertySources propertySources = environment.getPropertySources();
         Iterator<PropertySource<?>> it = propertySources.iterator();
         String findPropertySourceName = null;
-        
+
         String elasticJobEnabledStr = "elasticjob.enabled";
         // 是否开启 Swagger
         boolean enabled = false;
@@ -49,25 +49,26 @@ public class ElasticJobDynamicProperties implements EnvironmentPostProcessor {
                     Map<String, Object> activeSource = (Map<String, Object>) propertySource.getSource();
                     Map<String, Object> newConfigMap = new HashMap<>(activeSource.size());
                     activeSource.forEach((k, v) -> newConfigMap.put(k, v.toString()));
-                    
+
                     newConfigMap.remove(elasticJobEnabledStr);
                     propertySources.replace(propertySource.getName(), new MapPropertySource(propertySource.getName(), newConfigMap));
-                    System.out.println("clean=" + propertySources.get(findPropertySourceName).getSource());
                 }
             }
         }
-        
+
         // 关闭 elasticjob
-        if (!enabled && null != findPropertySourceName && propertySources.get(findPropertySourceName).getSource() instanceof Map) {
-            // 找到最后一个配置
-            Map<String, Object> activeSource = (Map<String, Object>) propertySources.get(findPropertySourceName).getSource();
-            Map<String, Object> newConfigMap = new HashMap<>(activeSource.size() + 4);
-            // value必须要放入String格式
-            activeSource.forEach((k, v) -> newConfigMap.put(k, v.toString()));
-            // elasticjob 关闭
-            newConfigMap.put(elasticJobEnabledStr, "false");
-            propertySources.replace(findPropertySourceName, new MapPropertySource(findPropertySourceName, newConfigMap));
-            System.out.println("new=" + propertySources.get(findPropertySourceName).getSource());
+        if (!enabled && null != findPropertySourceName) {
+            PropertySource<?> propertySource = propertySources.get(findPropertySourceName);
+            if (null != propertySource && propertySource.getSource() instanceof Map) {
+                // 找到最后一个配置
+                Map<String, Object> activeSource = (Map<String, Object>) propertySource.getSource();
+                Map<String, Object> newConfigMap = new HashMap<>(activeSource.size() + 4);
+                // value必须要放入String格式
+                activeSource.forEach((k, v) -> newConfigMap.put(k, v.toString()));
+                // elasticjob 关闭
+                newConfigMap.put(elasticJobEnabledStr, "false");
+                propertySources.replace(findPropertySourceName, new MapPropertySource(findPropertySourceName, newConfigMap));
+            }
         }
     }
 
