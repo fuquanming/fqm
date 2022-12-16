@@ -8,6 +8,8 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -45,6 +47,8 @@ import com.google.common.base.Preconditions;
  * @author 傅泉明
  */
 @Configuration
+@AutoConfigureAfter(MqAutoConfiguration.class)
+@ConditionalOnBean(MqProperties.class)
 public class RedisMqAutoConfiguration {
     
     private Logger logger = LoggerFactory.getLogger(getClass());
@@ -93,7 +97,7 @@ public class RedisMqAutoConfiguration {
                 if (properties == null) {
                     properties = getProperties(mp, name, properties);
                 }
-                if (properties != null && MqMode.REDIS.name().equalsIgnoreCase(properties.getBinder())) {
+                if (properties != null && MqMode.REDIS.equalMode(properties.getBinder())) {
                     buildListener(stringRedisTemplate, container, v, properties);
                 }
             }
@@ -166,7 +170,7 @@ public class RedisMqAutoConfiguration {
     private MqConfigurationProperties getProperties(MqProperties mp, String name, MqConfigurationProperties properties) {
         // 遍历mp.mqs
         for (MqConfigurationProperties mcp : mp.getMqs().values()) {
-            if (mcp.getName().equals(name) && MqMode.REDIS.name().equalsIgnoreCase(mcp.getBinder())) {
+            if (mcp.getName().equals(name) && MqMode.REDIS.equalMode(mcp.getBinder())) {
                 properties = mcp;
                 break;
             }
@@ -190,7 +194,7 @@ public class RedisMqAutoConfiguration {
             if (properties == null) {
                 // 遍历mp.mqs
                 for (MqConfigurationProperties mcp : mp.getMqs().values()) {
-                    if (mcp.getName().equals(name) && MqMode.REDIS.name().equalsIgnoreCase(mcp.getBinder())) {
+                    if (mcp.getName().equals(name) && MqMode.REDIS.equalMode(mcp.getBinder())) {
                         properties = mcp;
                         topics.add(properties.getTopic());
                         break;

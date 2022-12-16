@@ -41,6 +41,8 @@ import com.google.common.base.Preconditions;
 
 /**
  * Emqx消息队列自动装配
+ * MqProperties加载，并在MqAutoConfiguration后加载
+ * SmartInitializingSingleton接口在Bean加载完成后，加载EmqxMq
  * @version 
  * @author 傅泉明
  */
@@ -107,7 +109,7 @@ public class EmqxMqAutoConfiguration implements SmartInitializingSingleton, Appl
             if (properties == null) {
                 properties = getProperties(mp, name, properties);
             }
-            if (properties != null && MqMode.EMQX.name().equalsIgnoreCase(properties.getBinder())) {
+            if (properties != null && MqMode.EMQX.equalMode(properties.getBinder())) {
                 String group = properties.getGroup();
                 String topic = properties.getTopic();
                 Preconditions.checkArgument(StringUtils.isNotBlank(group), "Please specific [group] under mq configuration.");
@@ -153,7 +155,7 @@ public class EmqxMqAutoConfiguration implements SmartInitializingSingleton, Appl
     private MqConfigurationProperties getProperties(MqProperties mp, String name, MqConfigurationProperties properties) {
         // 遍历mp.mqs
         for (MqConfigurationProperties mcp : mp.getMqs().values()) {
-            if (mcp.getName().equals(name) && MqMode.EMQX.name().equalsIgnoreCase(mcp.getBinder())) {
+            if (mcp.getName().equals(name) && MqMode.EMQX.equalMode(mcp.getBinder())) {
                 properties = mcp;
                 break;
             }

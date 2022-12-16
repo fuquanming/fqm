@@ -79,7 +79,7 @@ public class RabbitMqAutoConfiguration implements SmartInitializingSingleton, Ap
             if (properties == null) {
                 properties = getProperties(mp, name, properties);
             }
-            if (properties != null && MqMode.RABBIT.name().equalsIgnoreCase(properties.getBinder())) {
+            if (properties != null && MqMode.RABBIT.equalMode(properties.getBinder())) {
                 String group = properties.getGroup();
                 String topic = properties.getTopic();
                 Preconditions.checkArgument(StringUtils.isNotBlank(group), "Please specific [group] under mq configuration.");
@@ -116,7 +116,7 @@ public class RabbitMqAutoConfiguration implements SmartInitializingSingleton, Ap
     private MqConfigurationProperties getProperties(MqProperties mp, String name, MqConfigurationProperties properties) {
         // 遍历mp.mqs
         for (MqConfigurationProperties mcp : mp.getMqs().values()) {
-            if (mcp.getName().equals(name) && MqMode.RABBIT.name().equalsIgnoreCase(mcp.getBinder())) {
+            if (mcp.getName().equals(name) && MqMode.RABBIT.equalMode(mcp.getBinder())) {
                 properties = mcp;
                 break;
             }

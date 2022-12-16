@@ -34,5 +34,14 @@ public enum MqMode {
         return null;
     }
     
+    /**
+     * 是否和字符串相等，不区分大小写
+     * @param mode  模式的字符串
+     * @return
+     */
+    public boolean equalMode(String mode) {
+        return name().equalsIgnoreCase(mode);
+    }
+    
 }
 

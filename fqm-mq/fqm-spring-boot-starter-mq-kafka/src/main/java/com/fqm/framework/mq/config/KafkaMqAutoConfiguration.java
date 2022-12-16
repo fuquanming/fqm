@@ -76,7 +76,7 @@ public class KafkaMqAutoConfiguration implements SmartInitializingSingleton, App
             if (properties == null) {
                 properties = getProperties(mp, name, properties);
             }
-            if (properties != null && MqMode.KAFKA.name().equalsIgnoreCase(properties.getBinder())) {
+            if (properties != null && MqMode.KAFKA.equalMode(properties.getBinder())) {
                 String group = properties.getGroup();
                 String topic = properties.getTopic();
                 Preconditions.checkArgument(StringUtils.isNotBlank(group), "Please specific [group] under mq configuration.");
@@ -117,7 +117,7 @@ public class KafkaMqAutoConfiguration implements SmartInitializingSingleton, App
     private MqConfigurationProperties getProperties(MqProperties mp, String name, MqConfigurationProperties properties) {
         // 遍历mp.mqs
         for (MqConfigurationProperties mcp : mp.getMqs().values()) {
-            if (mcp.getName().equals(name) && MqMode.KAFKA.name().equalsIgnoreCase(mcp.getBinder())) {
+            if (mcp.getName().equals(name) && MqMode.KAFKA.equalMode(mcp.getBinder())) {
                 properties = mcp;
                 break;
             }

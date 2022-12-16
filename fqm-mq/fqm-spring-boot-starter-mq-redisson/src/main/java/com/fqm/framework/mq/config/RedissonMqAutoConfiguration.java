@@ -7,6 +7,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -31,6 +33,8 @@ import com.google.common.base.Preconditions;
  * @author 傅泉明
  */
 @Configuration
+@AutoConfigureAfter(MqAutoConfiguration.class)
+@ConditionalOnBean(MqProperties.class)
 public class RedissonMqAutoConfiguration {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
@@ -54,14 +58,14 @@ public class RedissonMqAutoConfiguration {
             if (properties == null) {
                 // 遍历mp.mqs
                 for (MqConfigurationProperties mcp : mp.getMqs().values()) {
-                    if (mcp.getName().equals(name) && MqMode.REDISSON.name().equalsIgnoreCase(mcp.getBinder())) {
+                    if (mcp.getName().equals(name) && MqMode.REDISSON.equalMode(mcp.getBinder())) {
                         properties = mcp;
                         break;
                     }
                 }
 
             }
-            if (properties != null && MqMode.REDISSON.name().equalsIgnoreCase(properties.getBinder())) {
+            if (properties != null && MqMode.REDISSON.equalMode(properties.getBinder())) {
                 String group = properties.getGroup();
                 String topic = properties.getTopic();
                 Preconditions.checkArgument(StringUtils.isNotBlank(group), "Please specific [group] under mq configuration.");
