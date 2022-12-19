@@ -20,7 +20,7 @@
         "type": "java.lang.Boolean",
         "description": "Enable Swagger.",
         "sourceType": "com.fqm.framework.common.swagger.SwaggerProperties",
-        "defaultValue": "false"
+        "defaultValue": false
     }, {
         "name": "swagger.title",
         "type": "java.lang.String",

@@ -25,7 +25,7 @@ import org.springframework.core.env.PropertySource;
  * 1、关闭 swagger
  * 1）未配置 swagger.enabled        触发
  * 2）配置 swagger.enabled=false   触发
- * swagger 关闭配置：
+ * 参考 OpenApiAutoConfiguration，swagger 关闭配置：
  *  springfox:
       documentation:
         enabled: false
