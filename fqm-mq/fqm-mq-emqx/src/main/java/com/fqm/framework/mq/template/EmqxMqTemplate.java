@@ -106,7 +106,7 @@ public class EmqxMqTemplate implements MqTemplate {
         try {
             token = mqttTopic.publish(mqttMessage);
             token.waitForCompletion();
-            logger.info("EmqxMqProducer.syncDelaySend.error->topic=[{}],message=[{}],delayTime=[{}],timeUnit=[{}]", topic, str, delayTime, timeUnit);
+            logger.info("EmqxMqProducer.syncDelaySend.success->topic=[{}],message=[{}],delayTime=[{}],timeUnit=[{}]", topic, str, delayTime, timeUnit);
             return true;
         } catch (MqttException e) {
             logger.error("EmqxMqProducer.syncDelaySend.error->topic=[" + topic + messageStr + str + "],delayTime=[" + delayTime + "],timeUnit=[" + timeUnit + "]", e);
