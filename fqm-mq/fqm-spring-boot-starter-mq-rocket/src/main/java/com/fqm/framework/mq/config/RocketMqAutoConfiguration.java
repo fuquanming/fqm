@@ -1,8 +1,12 @@
 package com.fqm.framework.mq.config;
 
-import java.lang.annotation.Annotation;
-import java.nio.charset.StandardCharsets;
-
+import com.fqm.framework.mq.MqFactory;
+import com.fqm.framework.mq.MqMode;
+import com.fqm.framework.mq.annotation.MqListenerAnnotationBeanPostProcessor;
+import com.fqm.framework.mq.listener.MqListenerParam;
+import com.fqm.framework.mq.listener.RocketMqListener;
+import com.fqm.framework.mq.template.RocketMqTemplate;
+import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.rocketmq.client.AccessChannel;
@@ -35,16 +39,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.messaging.converter.StringMessageConverter;
 
-import com.fqm.framework.mq.MqFactory;
-import com.fqm.framework.mq.MqMode;
-import com.fqm.framework.mq.annotation.MqListenerAnnotationBeanPostProcessor;
-import com.fqm.framework.mq.listener.MqListenerParam;
-import com.fqm.framework.mq.listener.RocketMqListener;
-import com.fqm.framework.mq.template.RocketMqTemplate;
-import com.google.common.base.Preconditions;
+import java.lang.annotation.Annotation;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Rocket消息队列自动装配
+ * 
  * @version 
  * @author 傅泉明
  */
@@ -65,7 +65,7 @@ public class RocketMqAutoConfiguration implements SmartInitializingSingleton, Ap
     private String nameServer;
     
     /**
-     * 查看RocketMQAutoConfiguration.defaultMQProducer(RocketMQProperties rocketMQProperties)
+     * 查看 RocketMQAutoConfiguration.defaultMQProducer(RocketMQProperties rocketMQProperties)
      * 先初始化DefaultMQProducer,解决没有配置rocketmq.producer.group，就没有实例化DefaultMQProducer
      * @param rocketMqProperties
      * @return
@@ -90,7 +90,7 @@ public class RocketMqAutoConfiguration implements SmartInitializingSingleton, Ap
         DefaultMQProducer producer = RocketMQUtil.createDefaultMQProducer(groupName, ak, sk, isEnableMsgTrace, customizedTraceTopic);
 
         producer.setNamesrvAddr(nameServerProperties);
-        if (accessChannel != null && !accessChannel.equals("")) {
+        if (accessChannel != null && !"".equals(accessChannel)) {
             producer.setAccessChannel(AccessChannel.valueOf(accessChannel));
         }
         producer.setSendMsgTimeout(producerConfig.getSendMessageTimeout());

@@ -1,5 +1,12 @@
 package com.fqm.framework.mq.config;
 
+import com.fqm.framework.mq.MqFactory;
+import com.fqm.framework.mq.MqMode;
+import com.fqm.framework.mq.annotation.MqListenerAnnotationBeanPostProcessor;
+import com.fqm.framework.mq.listener.KafkaMqListener;
+import com.fqm.framework.mq.listener.MqListenerParam;
+import com.fqm.framework.mq.template.KafkaMqTemplate;
+import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,21 +30,18 @@ import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.listener.ContainerProperties.AckMode;
 import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
 import org.springframework.kafka.listener.KafkaMessageListenerContainer;
-import org.springframework.kafka.listener.SeekToCurrentErrorHandler;
+import org.springframework.lang.NonNull;
+import org.springframework.util.ClassUtils;
+import org.springframework.util.backoff.BackOff;
 import org.springframework.util.backoff.FixedBackOff;
 
-import com.fqm.framework.mq.MqFactory;
-import com.fqm.framework.mq.MqMode;
-import com.fqm.framework.mq.annotation.MqListenerAnnotationBeanPostProcessor;
-import com.fqm.framework.mq.listener.KafkaMqListener;
-import com.fqm.framework.mq.listener.MqListenerParam;
-import com.fqm.framework.mq.template.KafkaMqTemplate;
-import com.google.common.base.Preconditions;
+import java.lang.reflect.Constructor;
+import java.util.function.BiConsumer;
 
 /**
  * Kafka消息队列自动装配
  * 
- * @version 
+ * @version 1.0.3
  * @author 傅泉明
  */
 @Configuration
@@ -45,12 +49,19 @@ import com.google.common.base.Preconditions;
 @ConditionalOnBean(MqProperties.class)
 public class KafkaMqAutoConfiguration implements SmartInitializingSingleton, ApplicationContextAware {
     
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
     private ApplicationContext applicationContext;
-
+    /** spring-boot-dependencies 2.7.2,高版本类 */
+    private static final String ERROR_HANDLER_HIGHTER_CLASS = "org.springframework.kafka.listener.DefaultErrorHandler";
+    /** spring-boot-dependencies 2.4.2,低版本类，高版本中被废弃 */
+    private static final String ERROR_HANDLER_LOW_CLASS = "org.springframework.kafka.listener.SeekToCurrentErrorHandler";
+    /** errorHandler 构造方法 */
+    private Constructor<?> errorHandlerConstructor = null; 
+    
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    public void setApplicationContext(@NonNull ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
+        errorHandlerConstructor = getErrorHandlerClassConstructor();
     } 
     
     @Bean
@@ -60,6 +71,39 @@ public class KafkaMqAutoConfiguration implements SmartInitializingSingleton, App
         KafkaMqTemplate kafkaMqTemplate = new KafkaMqTemplate(kafkaTemplate);
         mqFactory.addMqTemplate(kafkaMqTemplate);
         return kafkaMqTemplate;
+    }
+    
+    /**
+     * 获取 ErrorHandlerClass 构造方法
+     * @return Constructor
+     */
+    private Constructor<?> getErrorHandlerClassConstructor() {
+        ClassLoader classLoader = this.getClass().getClassLoader();
+        try {
+            // 有高版本使用
+            Class<?> errorHandlerClass = ClassUtils.forName(ERROR_HANDLER_HIGHTER_CLASS, classLoader);
+            return errorHandlerClass.getConstructor(
+                    ClassUtils.forName("org.springframework.kafka.listener.ConsumerRecordRecoverer", classLoader), 
+                    BackOff.class);
+        } catch (Exception e) {
+            // 使用低版本
+            try {
+                Class<?> errorHandlerClass = ClassUtils.forName(ERROR_HANDLER_LOW_CLASS, classLoader);
+                return errorHandlerClass.getConstructor(BiConsumer.class, BackOff.class);
+            } catch (Exception e1) {
+                // DoNothing
+            }
+        }
+        return null;
+    }
+    
+    private Object getErrorHandlerObj(KafkaOperations<?, ?> template) {
+        try {
+            return errorHandlerConstructor.newInstance(new DeadLetterPublishingRecoverer(template), new FixedBackOff(10 * 1000L, 1L));
+        } catch (Exception e) {
+            // DoNothing
+        }
+        return null;
     }
     
     @Override
@@ -74,7 +118,7 @@ public class KafkaMqAutoConfiguration implements SmartInitializingSingleton, App
             String name = v.getName();
             MqConfigurationProperties properties = mp.getMqs().get(name);
             if (properties == null) {
-                properties = getProperties(mp, name, properties);
+                properties = getProperties(mp, name);
             }
             if (properties != null && MqMode.KAFKA.equalMode(properties.getBinder())) {
                 String group = properties.getGroup();
@@ -95,16 +139,18 @@ public class KafkaMqAutoConfiguration implements SmartInitializingSingleton, App
                     containerProperties.setAckMode(AckMode.MANUAL);
                     containerProperties.setMessageListener(new KafkaMqListener(v.getBean(), v.getMethod()));
 
-                    BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder
-                            .genericBeanDefinition(KafkaMessageListenerContainer.class);
-                                /** 并发消费 genericBeanDefinition(ConcurrentMessageListenerContainer.class);*/
+                    BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(KafkaMessageListenerContainer.class);
+                    // 并发消费的类 "ConcurrentMessageListenerContainer"
                     beanDefinitionBuilder.addConstructorArgValue(consumerFactory);
                     beanDefinitionBuilder.addConstructorArgValue(containerProperties);
                     // 失败重试1次，最后入死信队列，topic=v.getDestination() + ".DLT"
-                    beanDefinitionBuilder.addPropertyValue("errorHandler", 
-                            new SeekToCurrentErrorHandler(new DeadLetterPublishingRecoverer(template), 
-                            new FixedBackOff(10 * 1000L, 1L)));
-                    /** 并发消费 addPropertyValue("concurrency", v.getConcurrentConsumers()); */
+                    Object errorHandlerObj = getErrorHandlerObj(template);
+                    if (ERROR_HANDLER_HIGHTER_CLASS.equals(errorHandlerConstructor.getName())) {
+                        beanDefinitionBuilder.addPropertyValue("commonErrorHandler", errorHandlerObj);
+                    } else if (ERROR_HANDLER_LOW_CLASS.equals(errorHandlerConstructor.getName())) {
+                        beanDefinitionBuilder.addPropertyValue("errorHandler", errorHandlerObj);
+                    }
+                    // 并发消费 "concurrency"
                     // 注册bean
                     defaultListableBeanFactory.registerBeanDefinition(beanName, beanDefinitionBuilder.getRawBeanDefinition());
                     i++;
@@ -114,8 +160,9 @@ public class KafkaMqAutoConfiguration implements SmartInitializingSingleton, App
         }
     }
 
-    private MqConfigurationProperties getProperties(MqProperties mp, String name, MqConfigurationProperties properties) {
+    private MqConfigurationProperties getProperties(MqProperties mp, String name) {
         // 遍历mp.mqs
+        MqConfigurationProperties properties = null;
         for (MqConfigurationProperties mcp : mp.getMqs().values()) {
             if (mcp.getName().equals(name) && MqMode.KAFKA.equalMode(mcp.getBinder())) {
                 properties = mcp;
