@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,8 +18,10 @@ import com.fqm.framework.mq.client.producer.SendCallback;
 import com.fqm.framework.mq.client.producer.SendResult;
 import com.fqm.test.controller.BaseController;
 import com.fqm.test.model.User;
+import com.fqm.test.mq.config.EmqxMqProperties;
 
 @RestController
+@EnableConfigurationProperties(EmqxMqProperties.class)
 public class EmqxMqController extends BaseController {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
@@ -34,6 +37,9 @@ public class EmqxMqController extends BaseController {
     private String topic;
     @Value("${mq.mqs.g1.topic:}")
     private String topic1;
+
+    @Resource
+    EmqxMqProperties emqxMqProperties;
 
     @MqListener(name = "${mq.mqs.g.name}")
     public void receiveMessage1(String message) {
@@ -65,7 +71,7 @@ public class EmqxMqController extends BaseController {
     public Object sendEmqxMessage() {
         User user = getUser();
         try {
-            boolean flag = mqFactory.getMqTemplate(mqBinder).syncSend(topic, user);
+            boolean flag = mqFactory.getMqTemplate(emqxMqProperties.getBinder()).syncSend(emqxMqProperties.getTopic(), user);
             logger.info("emqx.send->{}", flag);
             
             mqFactory.getMqTemplate(mqBinder1).asyncSend(topic1, user, new SendCallback() {

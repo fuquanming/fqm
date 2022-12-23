@@ -17,5 +17,10 @@
             <artifactId>fqm-spring-boot-starter-mq-emqx</artifactId>
             <version>${fqm-spring-boot-starter-mq-emqx.version}</version>
         </dependency>
+        <dependency>
+        	<groupId>org.springframework.boot</groupId>
+        	<artifactId>spring-boot-configuration-processor</artifactId>
+        	<optional>true</optional>
+        </dependency>
     </dependencies>
 </project>
