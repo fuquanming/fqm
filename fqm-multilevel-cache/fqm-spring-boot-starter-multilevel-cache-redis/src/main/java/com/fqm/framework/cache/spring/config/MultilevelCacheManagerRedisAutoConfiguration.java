@@ -1,8 +1,12 @@
 package com.fqm.framework.cache.spring.config;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.fqm.framework.cache.spring.CacheManagerType;
+import com.fqm.framework.cache.spring.MultilevelCacheManager;
+import com.fqm.framework.common.cache.spring.builder.CacheBuilder;
+import com.fqm.framework.common.cache.spring.builder.CaffeineCacheBuilders;
+import com.fqm.framework.common.cache.spring.builder.RedisCacheBuilders;
+import com.fqm.framework.common.redis.listener.spring.CacheRedisKeyDeleteEventHandle;
+import com.fqm.framework.common.redis.listener.spring.KeyDeleteEventMessageListener;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -12,17 +16,11 @@ import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 
-import com.fqm.framework.cache.spring.CacheManagerType;
-import com.fqm.framework.cache.spring.MultilevelCacheManager;
-import com.fqm.framework.common.cache.spring.builder.CacheBuilder;
-import com.fqm.framework.common.cache.spring.builder.CaffeineCacheBuilders;
-import com.fqm.framework.common.cache.spring.builder.RedisCacheBuilders;
-import com.fqm.framework.common.redis.listener.spring.CacheRedisKeyDeleteEventHandle;
-import com.fqm.framework.common.redis.listener.spring.KeyDeleteEventMessageListener;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 
- * @version 
  * @author 傅泉明
  */
 @EnableCaching
@@ -38,7 +36,6 @@ public class MultilevelCacheManagerRedisAutoConfiguration extends ApplicationObj
                 ;
     }
     
-//    @Bean(name = "multilevelCacheRedis", destroyMethod = "destroy")
     @Bean(name = CacheManagerType.MULTI_LEVEL_CACHE_MANAGER_REDIS, destroyMethod = "destroy")
     @ConditionalOnMissingBean(value = MultilevelCacheManager.class)
     public MultilevelCacheManager multiLevelCacheManager(RedisConnectionFactory redisConnectionFactory,
@@ -61,21 +58,19 @@ public class MultilevelCacheManagerRedisAutoConfiguration extends ApplicationObj
     
     /**
      * 监听Redis删除key事件
-     * @param listenerContainer
-     * @param cacheManager
-     * @return
+     * @param listenerContainer redis消息监听
+     * @return KeyDeleteEventMessageListener
      */
     @Bean
     @ConditionalOnMissingBean(value = KeyDeleteEventMessageListener.class)
     KeyDeleteEventMessageListener keyDeleteEventMessageListener(RedisMessageListenerContainer listenerContainer) {
         return new KeyDeleteEventMessageListener(listenerContainer);
     }
-    
+
     /**
      * 缓存处理 监听Redis删除key事件
-     * @param listenerContainer
-     * @param cacheManager
-     * @return
+     * @param cacheManager 多级缓存管理类
+     * @return CacheRedisKeyDeleteEventHandle
      */
     @Bean
     @ConditionalOnMissingBean(value = CacheRedisKeyDeleteEventHandle.class)

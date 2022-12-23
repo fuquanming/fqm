@@ -15,6 +15,8 @@ package com.fqm.framework.cache.spring;
  * @author 傅泉明
  */
 public class CacheManagerType {
+
+    private CacheManagerType() {}
     
     public static final String MULTI_LEVEL_CACHE_MANAGER_REDIS = "multilevelCacheRedis";
     
