@@ -34,4 +34,14 @@ public class BlockLockThreadExecutor {
         return blockThread.toString() + "@deleteNotify=" + deleteNotify;
     }
     
+    @Override
+    public boolean equals(Object obj) {
+        return blockThread.equals(obj);
+    }
+    
+    @Override
+    public int hashCode() {
+        return blockThread.hashCode();
+    }
+    
 }
