@@ -37,7 +37,7 @@ public class ValueUtil {
         
         // 表达式
         if (null != resolveValue && resolveValue.startsWith(elStartStr) && resolveValue.endsWith(elEndStr)) {
-            RESSOLVER.evaluate(resolveValue, new BeanExpressionContext(beanFactory, null));
+            return RESSOLVER.evaluate(resolveValue, new BeanExpressionContext(beanFactory, null));
         }
         // 读取配置信息
         return resolveValue;
