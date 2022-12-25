@@ -14,6 +14,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.util.Assert;
 
 import com.fqm.framework.common.redisson.RedissonConfig;
 import com.fqm.framework.common.redisson.RedissonFactory;
@@ -24,7 +25,6 @@ import com.fqm.framework.mq.listener.MqListenerParam;
 import com.fqm.framework.mq.listener.RedissonMqListener;
 import com.fqm.framework.mq.listener.RedissonMqListenerContainer;
 import com.fqm.framework.mq.template.RedissonMqTemplate;
-import com.google.common.base.Preconditions;
 
 /**
  * Redisson消息队列自动装配
@@ -42,34 +42,24 @@ public class RedissonMqAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     @Order(200)
-    public RedissonMqTemplate redissonMqTemplate(MqFactory mqFactory, RedissonClient redissonClient) {
+    RedissonMqTemplate redissonMqTemplate(MqFactory mqFactory, RedissonClient redissonClient) {
         RedissonMqTemplate redissonMqTemplate = new RedissonMqTemplate(redissonClient);
         mqFactory.addMqTemplate(redissonMqTemplate);
         return redissonMqTemplate;
     }
 
     @Bean(destroyMethod = "stop")
-    public RedissonMqListenerContainer redissonMqListener(MqListenerAnnotationBeanPostProcessor mq, RedissonClient redissonClient,
+    RedissonMqListenerContainer redissonMqListener(MqListenerAnnotationBeanPostProcessor mq, RedissonClient redissonClient,
             MqProperties mp) {
         List<RedissonMqListener> listenerList = new ArrayList<>();
         for (MqListenerParam v : mq.getListeners()) {
             String name = v.getName();
             MqConfigurationProperties properties = mp.getMqs().get(name);
-            if (properties == null) {
-                // 遍历mp.mqs
-                for (MqConfigurationProperties mcp : mp.getMqs().values()) {
-                    if (mcp.getName().equals(name) && MqMode.REDISSON.equalMode(mcp.getBinder())) {
-                        properties = mcp;
-                        break;
-                    }
-                }
-
-            }
             if (properties != null && MqMode.REDISSON.equalMode(properties.getBinder())) {
                 String group = properties.getGroup();
                 String topic = properties.getTopic();
-                Preconditions.checkArgument(StringUtils.isNotBlank(group), "Please specific [group] under mq configuration.");
-                Preconditions.checkArgument(StringUtils.isNotBlank(topic), "Please specific [topic] under mq configuration.");
+                Assert.isTrue(StringUtils.isNotBlank(topic), "Please specific [topic] under mq.mqs." + name + " configuration.");
+                Assert.isTrue(StringUtils.isNotBlank(group), "Please specific [group] under mq.mqs." + name + " configuration.");
                 RedissonMqListener redissonMqListener = new RedissonMqListener(v.getBean(), v.getMethod(), redissonClient, topic);
                 listenerList.add(redissonMqListener);
                 logger.info("Init RedissonMqListener,bean={},method={},topic={},group={}", v.getBean().getClass(), v.getMethod().getName(), topic, group);
@@ -86,13 +76,13 @@ public class RedissonMqAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     @ConfigurationProperties(prefix = "spring.redis")
-    public RedissonConfig redissonProperties() {
+    RedissonConfig redissonProperties() {
         return new RedissonConfig();
     }
     
     @Bean
     @ConditionalOnMissingBean
-    public RedissonClient redissonClient(RedissonConfig redissonProperties) {
+    RedissonClient redissonClient(RedissonConfig redissonProperties) {
         return RedissonFactory.getClient(redissonProperties);
     }
 }

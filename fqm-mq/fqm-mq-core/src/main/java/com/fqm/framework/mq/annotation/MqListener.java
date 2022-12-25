@@ -16,7 +16,7 @@ import java.lang.annotation.Target;
 @Retention(value = RetentionPolicy.RUNTIME)
 @Documented
 public @interface MqListener {
-    /** 消息名称，唯一 */
+    /** 业务名称，唯一，对应配置文件 mq.mqs.xx */
     String name();
     /** 设置当前的消费者数量 */
     int concurrentConsumers() default 1;

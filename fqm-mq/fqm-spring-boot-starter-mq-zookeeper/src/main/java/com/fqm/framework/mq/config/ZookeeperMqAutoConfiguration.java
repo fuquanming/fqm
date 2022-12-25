@@ -15,6 +15,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.util.Assert;
 
 import com.fqm.framework.common.zookeeper.ZookeeperConfig;
 import com.fqm.framework.common.zookeeper.ZookeeperFactory;
@@ -24,7 +25,6 @@ import com.fqm.framework.mq.annotation.MqListenerAnnotationBeanPostProcessor;
 import com.fqm.framework.mq.listener.MqListenerParam;
 import com.fqm.framework.mq.listener.ZookeeperMqListener;
 import com.fqm.framework.mq.template.ZookeeperMqTemplate;
-import com.google.common.base.Preconditions;
 
 /**
  * Zookeeper消息队列自动装配
@@ -48,20 +48,20 @@ public class ZookeeperMqAutoConfiguration implements SmartInitializingSingleton,
     @Bean
     @ConditionalOnMissingBean
     @ConfigurationProperties(prefix = "spring.cloud.zookeeper")
-    public ZookeeperConfig zookeeperConfig() {
+    ZookeeperConfig zookeeperConfig() {
         return new ZookeeperConfig();
     }
 
     @Bean(initMethod = "start", destroyMethod = "close")
     @ConditionalOnMissingBean(CuratorFramework.class)
-    public CuratorFramework curatorFramework(ZookeeperConfig zookeeperConfig) {
+    CuratorFramework curatorFramework(ZookeeperConfig zookeeperConfig) {
         return ZookeeperFactory.buildCuratorFramework(zookeeperConfig);
     }
 
     @Bean(destroyMethod = "destroy")
     @ConditionalOnMissingBean
     @Order(200)
-    public ZookeeperMqTemplate zookeeperMqTemplate(MqFactory mqFactory, CuratorFramework curatorFramework) {
+    ZookeeperMqTemplate zookeeperMqTemplate(MqFactory mqFactory, CuratorFramework curatorFramework) {
         ZookeeperMqTemplate zookeeperMqTemplate = new ZookeeperMqTemplate(curatorFramework);
         mqFactory.addMqTemplate(zookeeperMqTemplate);
         return zookeeperMqTemplate;
@@ -76,19 +76,9 @@ public class ZookeeperMqAutoConfiguration implements SmartInitializingSingleton,
         for (MqListenerParam v : mq.getListeners()) {
             String name = v.getName();
             MqConfigurationProperties properties = mp.getMqs().get(name);
-            if (properties == null) {
-                // 遍历mp.mqs
-                for (MqConfigurationProperties mcp : mp.getMqs().values()) {
-                    if (mcp.getName().equals(name) && MqMode.ZOOKEEPER.equalMode(mcp.getBinder())) {
-                        properties = mcp;
-                        break;
-                    }
-                }
-
-            }
             if (properties != null && MqMode.ZOOKEEPER.equalMode(properties.getBinder())) {
                 String topic = properties.getTopic();
-                Preconditions.checkArgument(StringUtils.isNotBlank(topic), "Please specific [topic] under mq configuration.");
+                Assert.isTrue(StringUtils.isNotBlank(topic), "Please specific [topic] under mq.mqs." + name + " configuration.");
                 zookeeperMqTemplate.getQueue(topic, new ZookeeperMqListener(v.getBean(), v.getMethod(), zookeeperMqTemplate, topic));
                 logger.info("Init ZookeeperMqListener,bean={},method={},topic={}", v.getBean().getClass(), v.getMethod().getName(), topic);
             }

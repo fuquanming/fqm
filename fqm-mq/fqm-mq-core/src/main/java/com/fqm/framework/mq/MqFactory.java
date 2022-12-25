@@ -6,6 +6,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fqm.framework.common.core.exception.GlobalException;
+import com.fqm.framework.common.core.exception.enums.GlobalErrorCodeConstants;
 import com.fqm.framework.mq.template.MqTemplate;
 
 
@@ -28,26 +30,41 @@ public class MqFactory {
         mqTemplateMap.put(mqTemplate.getMqMode().name(), mqTemplate);
         return this;
     }
+    
+    private void checkMqTemplate(MqTemplate mqTemplate) {
+        if (null == mqTemplate) {
+            throw new GlobalException(GlobalErrorCodeConstants.NOT_FOUND.getCode(), "未注册该消息模板");
+        }
+    }
 
     public MqTemplate getMqTemplate(Class<? extends MqTemplate> mqTemplateClass) {
-        return mqTemplateMap.get(mqTemplateClass.getName());
+        MqTemplate mqTemplate = mqTemplateMap.get(mqTemplateClass.getName());
+        checkMqTemplate(mqTemplate);
+        return mqTemplate;
     }
 
     public MqTemplate getMqTemplate(MqMode mqMode) {
         if (mqMode == null) {
-            return null;
+            checkMqTemplate(null);
         }
-        return mqTemplateMap.get(mqMode.name());
+        MqTemplate mqTemplate = mqTemplateMap.get(mqMode.name());
+        checkMqTemplate(mqTemplate);
+        return mqTemplate;
     }
     
     public MqTemplate getMqTemplate(String mqMode) {
         if (mqMode == null) {
-            return null;
+            checkMqTemplate(null);
         }
-        return mqTemplateMap.get(mqMode.toUpperCase());
+        MqTemplate mqTemplate = mqTemplateMap.get(mqMode.toUpperCase());
+        checkMqTemplate(mqTemplate);
+        return mqTemplate;
     }
     
     public MqTemplate getMqTemplate() {
-        return mqTemplateMap.isEmpty() ? null : mqTemplateMap.values().iterator().next();
+        if (mqTemplateMap.isEmpty()) {
+            checkMqTemplate(null);
+        }
+        return mqTemplateMap.values().iterator().next();
     }
 }

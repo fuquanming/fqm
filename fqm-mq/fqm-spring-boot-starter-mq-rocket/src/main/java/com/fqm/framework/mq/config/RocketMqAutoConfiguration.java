@@ -1,12 +1,8 @@
 package com.fqm.framework.mq.config;
 
-import com.fqm.framework.mq.MqFactory;
-import com.fqm.framework.mq.MqMode;
-import com.fqm.framework.mq.annotation.MqListenerAnnotationBeanPostProcessor;
-import com.fqm.framework.mq.listener.MqListenerParam;
-import com.fqm.framework.mq.listener.RocketMqListener;
-import com.fqm.framework.mq.template.RocketMqTemplate;
-import com.google.common.base.Preconditions;
+import java.lang.annotation.Annotation;
+import java.nio.charset.StandardCharsets;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.rocketmq.client.AccessChannel;
@@ -38,9 +34,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.messaging.converter.StringMessageConverter;
+import org.springframework.util.Assert;
 
-import java.lang.annotation.Annotation;
-import java.nio.charset.StandardCharsets;
+import com.fqm.framework.mq.MqFactory;
+import com.fqm.framework.mq.MqMode;
+import com.fqm.framework.mq.annotation.MqListenerAnnotationBeanPostProcessor;
+import com.fqm.framework.mq.listener.MqListenerParam;
+import com.fqm.framework.mq.listener.RocketMqListener;
+import com.fqm.framework.mq.template.RocketMqTemplate;
 
 /**
  * Rocket消息队列自动装配
@@ -72,7 +73,7 @@ public class RocketMqAutoConfiguration implements SmartInitializingSingleton, Ap
      */
     @Bean("defaultMQProducer")
     @ConditionalOnMissingBean(DefaultMQProducer.class)
-    public DefaultMQProducer defaultMqProducer(RocketMQProperties rocketMqProperties) {
+    DefaultMQProducer defaultMqProducer(RocketMQProperties rocketMqProperties) {
         RocketMQProperties.Producer producerConfig = rocketMqProperties.getProducer();
         String nameServerProperties = rocketMqProperties.getNameServer();
         if (producerConfig == null) {
@@ -106,7 +107,7 @@ public class RocketMqAutoConfiguration implements SmartInitializingSingleton, Ap
     @Bean
     @ConditionalOnMissingBean
     @Order(200)
-    public RocketMqTemplate rocketMqTemplate(MqFactory mqFactory, RocketMQTemplate template) {
+    RocketMqTemplate rocketMqTemplate(MqFactory mqFactory, RocketMQTemplate template) {
         RocketMqTemplate rocketMqTemplate = new RocketMqTemplate(template);
         mqFactory.addMqTemplate(rocketMqTemplate);
         return rocketMqTemplate;
@@ -121,14 +122,11 @@ public class RocketMqAutoConfiguration implements SmartInitializingSingleton, Ap
         for (MqListenerParam v : mq.getListeners()) {
             String name = v.getName();
             MqConfigurationProperties properties = mp.getMqs().get(name);
-            if (properties == null) {
-                properties = getProperties(mp, name, properties);
-            }
             if (properties != null && MqMode.ROCKET.equalMode(properties.getBinder())) {
                 String group = properties.getGroup();
                 String topic = properties.getTopic();
-                Preconditions.checkArgument(StringUtils.isNotBlank(group), "Please specific [group] under mq configuration.");
-                Preconditions.checkArgument(StringUtils.isNotBlank(topic), "Please specific [topic] under mq configuration.");
+                Assert.isTrue(StringUtils.isNotBlank(topic), "Please specific [topic] under mq.mqs." + name + " configuration.");
+                Assert.isTrue(StringUtils.isNotBlank(group), "Please specific [group] under mq.mqs." + name + " configuration.");
                 String beanName = "rocketListener." + i;
                 // 动态注册
                 //将applicationContext转换为ConfigurableApplicationContext
@@ -168,17 +166,6 @@ public class RocketMqAutoConfiguration implements SmartInitializingSingleton, Ap
                 }
             }
         }
-    }
-
-    private MqConfigurationProperties getProperties(MqProperties mp, String name, MqConfigurationProperties properties) {
-        // 遍历mp.mqs
-        for (MqConfigurationProperties mcp : mp.getMqs().values()) {
-            if (mcp.getName().equals(name) && MqMode.ROCKET.equalMode(mcp.getBinder())) {
-                properties = mcp;
-                break;
-            }
-        }
-        return properties;
     }
 
     private RocketMQMessageListener rocketMqMessageListener(String nameServer, String topic, String group, int concurrentConsumers) {

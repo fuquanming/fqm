@@ -22,6 +22,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.util.Assert;
 
 import com.fqm.framework.mq.MqFactory;
 import com.fqm.framework.mq.MqMode;
@@ -29,7 +30,6 @@ import com.fqm.framework.mq.annotation.MqListenerAnnotationBeanPostProcessor;
 import com.fqm.framework.mq.listener.MqListenerParam;
 import com.fqm.framework.mq.listener.RabbitMqListener;
 import com.fqm.framework.mq.template.RabbitMqTemplate;
-import com.google.common.base.Preconditions;
 
 /**
  * Rabbit消息队列自动装配
@@ -53,7 +53,7 @@ public class RabbitMqAutoConfiguration implements SmartInitializingSingleton, Ap
     @Bean
     @ConditionalOnMissingBean
     @Order(300)
-    public RabbitMqTemplate rabbitMqTemplate(MqFactory mqFactory, RabbitTemplate rabbitTemplate, AmqpAdmin amqpAdmin) {
+    RabbitMqTemplate rabbitMqTemplate(MqFactory mqFactory, RabbitTemplate rabbitTemplate, AmqpAdmin amqpAdmin) {
         RabbitMqTemplate rabbitMqTemplate = new RabbitMqTemplate(rabbitTemplate, amqpAdmin);
         mqFactory.addMqTemplate(rabbitMqTemplate);
         return rabbitMqTemplate;
@@ -61,7 +61,7 @@ public class RabbitMqAutoConfiguration implements SmartInitializingSingleton, Ap
     
     @Bean
     @ConditionalOnMissingBean
-    public RabbitPropertiesBeanPostProcessor rabbitPropertiesBeanPostProcessor() {
+    RabbitPropertiesBeanPostProcessor rabbitPropertiesBeanPostProcessor() {
         return new RabbitPropertiesBeanPostProcessor();
     }
     
@@ -76,14 +76,11 @@ public class RabbitMqAutoConfiguration implements SmartInitializingSingleton, Ap
         for (MqListenerParam v : mq.getListeners()) {
             String name = v.getName();
             MqConfigurationProperties properties = mp.getMqs().get(name);
-            if (properties == null) {
-                properties = getProperties(mp, name, properties);
-            }
             if (properties != null && MqMode.RABBIT.equalMode(properties.getBinder())) {
                 String group = properties.getGroup();
                 String topic = properties.getTopic();
-                Preconditions.checkArgument(StringUtils.isNotBlank(group), "Please specific [group] under mq configuration.");
-                Preconditions.checkArgument(StringUtils.isNotBlank(topic), "Please specific [topic] under mq configuration.");
+                Assert.isTrue(StringUtils.isNotBlank(topic), "Please specific [topic] under mq.mqs." + name + " configuration.");
+                Assert.isTrue(StringUtils.isNotBlank(group), "Please specific [group] under mq.mqs." + name + " configuration.");
                 String beanName = "rabbitListener." + i;
                 // 动态注册
                 //将applicationContext转换为ConfigurableApplicationContext
@@ -113,15 +110,4 @@ public class RabbitMqAutoConfiguration implements SmartInitializingSingleton, Ap
         }
     }
 
-    private MqConfigurationProperties getProperties(MqProperties mp, String name, MqConfigurationProperties properties) {
-        // 遍历mp.mqs
-        for (MqConfigurationProperties mcp : mp.getMqs().values()) {
-            if (mcp.getName().equals(name) && MqMode.RABBIT.equalMode(mcp.getBinder())) {
-                properties = mcp;
-                break;
-            }
-        }
-        return properties;
-    }        
-    
 }

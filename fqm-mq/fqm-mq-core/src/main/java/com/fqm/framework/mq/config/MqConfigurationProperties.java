@@ -15,8 +15,6 @@ package com.fqm.framework.mq.config;
  * @author 傅泉明
  */
 public class MqConfigurationProperties {
-    /** 消息名称，该值等于自定义注解@MqListener.name()，唯一值 */
-    private String name;
     /** 消息主题，必填 */
     private String topic;
     /** 消费者组，使用@MqListener时，必填 */
@@ -24,12 +22,6 @@ public class MqConfigurationProperties {
     /** 消息的组件名 参考@MqMode，必填 */
     private String binder;
     
-    public String getName() {
-        return name;
-    }
-    public void setName(String name) {
-        this.name = name;
-    }
     public String getTopic() {
         return topic;
     }

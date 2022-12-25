@@ -7,33 +7,31 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.MergedAnnotation;
 import org.springframework.core.annotation.MergedAnnotations;
 import org.springframework.core.annotation.MergedAnnotations.SearchStrategy;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.util.StringUtils;
 
-import com.fqm.framework.common.spring.util.ValueUtil;
 import com.fqm.framework.mq.listener.MqListenerParam;
 import com.google.common.base.Preconditions;
 
 /**
  * @MqListener 注解监听，并转换为 List<MqListenerParam> 对象
  * 参考 RabbitListenerAnnotationBeanPostProcessor
- * 
+ * 拦截 @ConfigurationProperties 配置为 mq.mqs 的所有配置，为@MqListener 中使用#{}，调用 @ConfigurationProperties 的方法准备，
+ * 如果 @ConfigurationProperties 下的bean 通过 @Component 等注入到工厂，则beanName为类名：xxxProperties,
+ * 如果 @ConfigurationProperties 下的bean 没有 @Component 等注入到工厂，则beanName为配置前缀+类全包名：mq.mqs.a-xx.xx.xxxProperties
  * @version 
  * @author 傅泉明
  */
-public class MqListenerAnnotationBeanPostProcessor implements BeanPostProcessor, Ordered, BeanFactoryAware {
+public class MqListenerAnnotationBeanPostProcessor implements BeanPostProcessor, Ordered {
 
-    private BeanFactory beanFactory;
+    /** 获取使用 @MqListener 的类及方法  */
     private List<MqListenerParam> listeners = new ArrayList<>();
     
     @Override
@@ -52,10 +50,9 @@ public class MqListenerAnnotationBeanPostProcessor implements BeanPostProcessor,
                 for (MqListener mqListener : method.annotations) {
                     // 消息名称
                     String name = mqListener.name();
-                    String nameStr = ValueUtil.resolveExpression((ConfigurableBeanFactory)beanFactory, name).toString();
-                    Preconditions.checkArgument(StringUtils.isNotBlank(nameStr), "Please specific [name] under mq configuration.");
+                    Preconditions.checkArgument(StringUtils.hasText(name), "Please specific [name] under @MqListener.");
                     MqListenerParam param = new MqListenerParam();
-                    param.setName(nameStr).setBean(bean).setMethod(method.method);
+                    param.setName(name).setBean(bean).setMethod(method.method);
                     listeners.add(param);
                 }
             }
@@ -67,12 +64,7 @@ public class MqListenerAnnotationBeanPostProcessor implements BeanPostProcessor,
     public List<MqListenerParam> getListeners() {
         return listeners;
     }
-
-    @Override
-    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        this.beanFactory = beanFactory;
-    }
-
+    
     @Override
     public int getOrder() {
         return 0;

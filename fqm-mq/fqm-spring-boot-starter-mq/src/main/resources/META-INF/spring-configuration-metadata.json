@@ -14,6 +14,7 @@
         "name": "mq.enabled",
         "type": "java.lang.Boolean",
         "description": "启用消息.",
+        "sourceType": "com.fqm.framework.mq.config.MqProperties",
         "defaultValue": true
     }, {
         "name": "mq.mqs",
@@ -21,7 +22,5 @@
         "description": "Mq Configuration",
         "sourceType": "com.fqm.framework.mq.config.MqProperties"
     }],
-    "hints": [{
-        "name": "mq.mqs.keys"                     
-    }]
+    "hints": []
 }

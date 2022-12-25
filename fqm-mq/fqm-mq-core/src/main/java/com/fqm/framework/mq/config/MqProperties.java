@@ -12,18 +12,15 @@ package com.fqm.framework.mq.config;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
 /**
  * Mq properties
  * @version 
  * @author 傅泉明
  */
-@ConfigurationProperties(prefix = "mq")
 public class MqProperties {
     /** 任务配置 */
     private Map<String, MqConfigurationProperties> mqs = new LinkedHashMap<>();
-
+    
     public Map<String, MqConfigurationProperties> getMqs() {
         return mqs;
     }

@@ -1,12 +1,8 @@
 package com.fqm.framework.mq.config;
 
-import com.fqm.framework.mq.MqFactory;
-import com.fqm.framework.mq.MqMode;
-import com.fqm.framework.mq.annotation.MqListenerAnnotationBeanPostProcessor;
-import com.fqm.framework.mq.listener.KafkaMqListener;
-import com.fqm.framework.mq.listener.MqListenerParam;
-import com.fqm.framework.mq.template.KafkaMqTemplate;
-import com.google.common.base.Preconditions;
+import java.lang.reflect.Constructor;
+import java.util.function.BiConsumer;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,12 +27,17 @@ import org.springframework.kafka.listener.ContainerProperties.AckMode;
 import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
 import org.springframework.kafka.listener.KafkaMessageListenerContainer;
 import org.springframework.lang.NonNull;
+import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.backoff.BackOff;
 import org.springframework.util.backoff.FixedBackOff;
 
-import java.lang.reflect.Constructor;
-import java.util.function.BiConsumer;
+import com.fqm.framework.mq.MqFactory;
+import com.fqm.framework.mq.MqMode;
+import com.fqm.framework.mq.annotation.MqListenerAnnotationBeanPostProcessor;
+import com.fqm.framework.mq.listener.KafkaMqListener;
+import com.fqm.framework.mq.listener.MqListenerParam;
+import com.fqm.framework.mq.template.KafkaMqTemplate;
 
 /**
  * Kafka消息队列自动装配
@@ -67,7 +68,7 @@ public class KafkaMqAutoConfiguration implements SmartInitializingSingleton, App
     @Bean
     @ConditionalOnMissingBean
     @Order(200)
-    public KafkaMqTemplate kafkaMqTemplate(MqFactory mqFactory, KafkaTemplate<?, ?> kafkaTemplate) {
+    KafkaMqTemplate kafkaMqTemplate(MqFactory mqFactory, KafkaTemplate<?, ?> kafkaTemplate) {
         KafkaMqTemplate kafkaMqTemplate = new KafkaMqTemplate(kafkaTemplate);
         mqFactory.addMqTemplate(kafkaMqTemplate);
         return kafkaMqTemplate;
@@ -117,14 +118,11 @@ public class KafkaMqAutoConfiguration implements SmartInitializingSingleton, App
         for (MqListenerParam v : mq.getListeners()) {
             String name = v.getName();
             MqConfigurationProperties properties = mp.getMqs().get(name);
-            if (properties == null) {
-                properties = getProperties(mp, name);
-            }
             if (properties != null && MqMode.KAFKA.equalMode(properties.getBinder())) {
                 String group = properties.getGroup();
                 String topic = properties.getTopic();
-                Preconditions.checkArgument(StringUtils.isNotBlank(group), "Please specific [group] under mq configuration.");
-                Preconditions.checkArgument(StringUtils.isNotBlank(topic), "Please specific [topic] under mq configuration.");
+                Assert.isTrue(StringUtils.isNotBlank(topic), "Please specific [topic] under mq.mqs." + name + " configuration.");
+                Assert.isTrue(StringUtils.isNotBlank(group), "Please specific [group] under mq.mqs." + name + " configuration.");
                 String beanName = "kafkaListener." + i;
                 // 动态注册
                 //将applicationContext转换为ConfigurableApplicationContext
@@ -160,15 +158,4 @@ public class KafkaMqAutoConfiguration implements SmartInitializingSingleton, App
         }
     }
 
-    private MqConfigurationProperties getProperties(MqProperties mp, String name) {
-        // 遍历mp.mqs
-        MqConfigurationProperties properties = null;
-        for (MqConfigurationProperties mcp : mp.getMqs().values()) {
-            if (mcp.getName().equals(name) && MqMode.KAFKA.equalMode(mcp.getBinder())) {
-                properties = mcp;
-                break;
-            }
-        }
-        return properties;
-    }
 }

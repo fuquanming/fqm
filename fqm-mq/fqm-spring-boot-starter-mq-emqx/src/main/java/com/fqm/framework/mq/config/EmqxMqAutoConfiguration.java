@@ -28,6 +28,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.util.Assert;
 
 import com.fqm.framework.mq.MqFactory;
 import com.fqm.framework.mq.MqMode;
@@ -37,7 +38,6 @@ import com.fqm.framework.mq.exception.MqException;
 import com.fqm.framework.mq.listener.EmqxMqListener;
 import com.fqm.framework.mq.listener.MqListenerParam;
 import com.fqm.framework.mq.template.EmqxMqTemplate;
-import com.google.common.base.Preconditions;
 
 /**
  * Emqx消息队列自动装配
@@ -53,7 +53,7 @@ public class EmqxMqAutoConfiguration implements SmartInitializingSingleton, Appl
 
     private Logger logger = LoggerFactory.getLogger(getClass());
     private ApplicationContext applicationContext;
-
+    
     @Value("${server.port:}")
     private String port;
     
@@ -61,14 +61,14 @@ public class EmqxMqAutoConfiguration implements SmartInitializingSingleton, Appl
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     } 
-    
+
     @Bean
     @ConditionalOnMissingBean
     @ConfigurationProperties(prefix = "emqx")
-    public EmqxProperties emqxProperties() {
+    EmqxProperties emqxProperties() {
         return new EmqxProperties();
     }
-    
+
     /**
      * 发送消息的客户端
      * @param properties
@@ -76,7 +76,7 @@ public class EmqxMqAutoConfiguration implements SmartInitializingSingleton, Appl
      */
     @Bean(name = "emqxClient", initMethod = "connect", destroyMethod = "destroy")
     @ConditionalOnMissingBean
-    public EmqxClient emqxClient(EmqxProperties properties) {
+    EmqxClient emqxClient(EmqxProperties properties) {
         EmqxClient emqxClient = null;
         try {
             emqxClient = new EmqxClient(properties);
@@ -85,11 +85,11 @@ public class EmqxMqAutoConfiguration implements SmartInitializingSingleton, Appl
         }
         return emqxClient;
     }
-    
+
     @Bean
     @ConditionalOnMissingBean
     @Order(300)
-    public EmqxMqTemplate emqxMqTemplate(MqFactory mqFactory, EmqxClient emqxClient) {
+    EmqxMqTemplate emqxMqTemplate(MqFactory mqFactory, EmqxClient emqxClient) {
         EmqxMqTemplate emqxMqTemplate = new EmqxMqTemplate(emqxClient.getMqttClient());
         mqFactory.addMqTemplate(emqxMqTemplate);
         return emqxMqTemplate;
@@ -101,19 +101,15 @@ public class EmqxMqAutoConfiguration implements SmartInitializingSingleton, Appl
         MqProperties mp = applicationContext.getBean(MqProperties.class);
         EmqxProperties emqxProperties = applicationContext.getBean(EmqxProperties.class);
         // 注册 监听消息的客户端
-        
         int i = 0;
         for (MqListenerParam v : mq.getListeners()) {
             String name = v.getName();
             MqConfigurationProperties properties = mp.getMqs().get(name);
-            if (properties == null) {
-                properties = getProperties(mp, name, properties);
-            }
             if (properties != null && MqMode.EMQX.equalMode(properties.getBinder())) {
                 String group = properties.getGroup();
                 String topic = properties.getTopic();
-                Preconditions.checkArgument(StringUtils.isNotBlank(group), "Please specific [group] under mq configuration.");
-                Preconditions.checkArgument(StringUtils.isNotBlank(topic), "Please specific [topic] under mq configuration.");
+                Assert.isTrue(StringUtils.isNotBlank(topic), "Please specific [topic] under mq.mqs." + name + " configuration.");
+                Assert.isTrue(StringUtils.isNotBlank(group), "Please specific [group] under mq.mqs." + name + " configuration.");
                 String beanName = "emqxListener." + i;
                 // 动态注册
                 //将applicationContext转换为ConfigurableApplicationContext
@@ -152,15 +148,4 @@ public class EmqxMqAutoConfiguration implements SmartInitializingSingleton, Appl
         }
     }
 
-    private MqConfigurationProperties getProperties(MqProperties mp, String name, MqConfigurationProperties properties) {
-        // 遍历mp.mqs
-        for (MqConfigurationProperties mcp : mp.getMqs().values()) {
-            if (mcp.getName().equals(name) && MqMode.EMQX.equalMode(mcp.getBinder())) {
-                properties = mcp;
-                break;
-            }
-        }
-        return properties;
-    }
-    
 }

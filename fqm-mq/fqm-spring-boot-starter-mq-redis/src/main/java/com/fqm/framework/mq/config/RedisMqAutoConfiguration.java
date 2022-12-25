@@ -56,7 +56,7 @@ public class RedisMqAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     @Order(200)
-    public RedisMqTemplate redisMqTemplate(
+    RedisMqTemplate redisMqTemplate(
             MqFactory mqFactory,
             StringRedisTemplate stringRedisTemplate) {
         RedisMqTemplate redisMqTemplate = new RedisMqTemplate(stringRedisTemplate);
@@ -70,7 +70,7 @@ public class RedisMqAutoConfiguration {
      * Redis Stream 的 xreadgroup 命令：https://www.geek-book.com/src/docs/redis/redis/redis.io/commands/xreadgroup.html
      */
     @Bean(initMethod = "start", destroyMethod = "stop")
-    public StreamMessageListenerContainer<String, MapRecord<String, String, String>> streamMessageListenerContainer(
+    StreamMessageListenerContainer<String, MapRecord<String, String, String>> streamMessageListenerContainer(
             RedisConnectionFactory redisConnectionFactory,
             MqListenerAnnotationBeanPostProcessor mq, StringRedisTemplate stringRedisTemplate
             , MqProperties mp
@@ -94,9 +94,6 @@ public class RedisMqAutoConfiguration {
             for (MqListenerParam v : mq.getListeners()) {
                 String name = v.getName();
                 MqConfigurationProperties properties = mp.getMqs().get(name);
-                if (properties == null) {
-                    properties = getProperties(mp, name, properties);
-                }
                 if (properties != null && MqMode.REDIS.equalMode(properties.getBinder())) {
                     buildListener(stringRedisTemplate, container, v, properties);
                 }
@@ -167,17 +164,6 @@ public class RedisMqAutoConfiguration {
         logger.info("Init RedisMqListener,bean={},method={},topic={},group={}", v.getBean().getClass(), v.getMethod().getName(), topic, group);
     }
 
-    private MqConfigurationProperties getProperties(MqProperties mp, String name, MqConfigurationProperties properties) {
-        // 遍历mp.mqs
-        for (MqConfigurationProperties mcp : mp.getMqs().values()) {
-            if (mcp.getName().equals(name) && MqMode.REDIS.equalMode(mcp.getBinder())) {
-                properties = mcp;
-                break;
-            }
-        }
-        return properties;
-    }
-    
     /**
      * redis消息队列，未消费成功入死信队列的任务
      * @param mq
@@ -185,7 +171,7 @@ public class RedisMqAutoConfiguration {
      * @return
      */
     @Bean(initMethod = "start", destroyMethod = "stop")
-    public RedisMqDeadMessageTasker redisMqDeadMessageTasker(MqListenerAnnotationBeanPostProcessor mq, StringRedisTemplate stringRedisTemplate
+    RedisMqDeadMessageTasker redisMqDeadMessageTasker(MqListenerAnnotationBeanPostProcessor mq, StringRedisTemplate stringRedisTemplate
             , MqProperties mp) {
         Set<String> topics = new HashSet<>();
         for (MqListenerParam v : mq.getListeners()) {
@@ -194,9 +180,8 @@ public class RedisMqAutoConfiguration {
             if (properties == null) {
                 // 遍历mp.mqs
                 for (MqConfigurationProperties mcp : mp.getMqs().values()) {
-                    if (mcp.getName().equals(name) && MqMode.REDIS.equalMode(mcp.getBinder())) {
-                        properties = mcp;
-                        topics.add(properties.getTopic());
+                    if (MqMode.REDIS.equalMode(mcp.getBinder())) {
+                        topics.add(mcp.getTopic());
                         break;
                     }
                 }

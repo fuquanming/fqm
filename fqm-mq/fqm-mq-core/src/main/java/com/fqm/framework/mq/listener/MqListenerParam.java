@@ -8,12 +8,22 @@ import java.lang.reflect.Method;
  * @author 傅泉明
  */
 public class MqListenerParam {
-    
+    /**
+     * MqProperties 属性mqs（Map）里的Key
+     */
     private String name;
-    
+    /**
+     * 使用 @MqListener 监听的Bean 
+     */
     private Object bean;
+    /**
+     * 使用 @MqListener 监听的Bean的方法
+     */
     private Method method;
     
+    /**
+     * MqProperties 属性mqs（Map）里的Key
+     */
     public String getName() {
         return name;
     }
