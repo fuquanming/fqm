@@ -31,39 +31,55 @@ public class MqFactory {
         return this;
     }
     
-    private void checkMqTemplate(MqTemplate mqTemplate) {
+    private void checkMqTemplate(MqTemplate mqTemplate, String msg) {
         if (null == mqTemplate) {
-            throw new GlobalException(GlobalErrorCodeConstants.NOT_FOUND.getCode(), "未注册该消息模板");
+            throw new GlobalException(GlobalErrorCodeConstants.NOT_FOUND.getCode(), "未注册该消息模板," + msg);
         }
     }
-
+    /**
+     * 通过消息模板Class获取消息模板
+     * @param mqTemplateClass 
+     * @return
+     */
     public MqTemplate getMqTemplate(Class<? extends MqTemplate> mqTemplateClass) {
         MqTemplate mqTemplate = mqTemplateMap.get(mqTemplateClass.getName());
-        checkMqTemplate(mqTemplate);
+        checkMqTemplate(mqTemplate, mqTemplateClass.getName());
         return mqTemplate;
     }
-
+    /**
+     * 通过消息模式获取消息模板
+     * @param mqMode    参考 @MqMode 
+     * @return
+     */
     public MqTemplate getMqTemplate(MqMode mqMode) {
         if (mqMode == null) {
-            checkMqTemplate(null);
+            throw new GlobalException(GlobalErrorCodeConstants.NOT_FOUND.getCode(), "mqMode is null");
         }
         MqTemplate mqTemplate = mqTemplateMap.get(mqMode.name());
-        checkMqTemplate(mqTemplate);
+        checkMqTemplate(mqTemplate, mqMode.name());
         return mqTemplate;
     }
-    
+    /**
+     * 通过消息模式获取消息模板
+     * @param mqMode    参考 @MqMode 
+     * @return
+     */
     public MqTemplate getMqTemplate(String mqMode) {
         if (mqMode == null) {
-            checkMqTemplate(null);
+            throw new GlobalException(GlobalErrorCodeConstants.NOT_FOUND.getCode(), "mqMode is null");
         }
-        MqTemplate mqTemplate = mqTemplateMap.get(mqMode.toUpperCase());
-        checkMqTemplate(mqTemplate);
+        String mqModeStr = mqMode.toUpperCase();
+        MqTemplate mqTemplate = mqTemplateMap.get(mqModeStr);
+        checkMqTemplate(mqTemplate, mqModeStr);
         return mqTemplate;
     }
-    
+    /**
+     * 获取其中一个消息模板
+     * @return
+     */
     public MqTemplate getMqTemplate() {
         if (mqTemplateMap.isEmpty()) {
-            checkMqTemplate(null);
+            throw new GlobalException(GlobalErrorCodeConstants.NOT_FOUND.getCode(), "MqTemplate is empty");
         }
         return mqTemplateMap.values().iterator().next();
     }
