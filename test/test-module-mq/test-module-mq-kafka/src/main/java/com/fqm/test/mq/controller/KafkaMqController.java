@@ -4,15 +4,14 @@ import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fqm.framework.mq.MqFactory;
-import com.fqm.framework.mq.MqMode;
 import com.fqm.framework.mq.annotation.MqListener;
 import com.fqm.framework.mq.client.producer.SendCallback;
 import com.fqm.framework.mq.client.producer.SendResult;
+import com.fqm.framework.mq.util.MqProducer;
 import com.fqm.test.controller.BaseController;
 import com.fqm.test.model.User;
 
@@ -23,57 +22,59 @@ public class KafkaMqController extends BaseController {
 
     @Resource
     MqFactory mqFactory;
-    @Value("${mq.mqs.a.binder:}")
-    private String mqBinder;
-    @Value("${mq.mqs.a1.binder:}")
-    private String mqBinder1;
     
-    @Value("${mq.mqs.a.topic:}")
-    private String topic;
-    @Value("${mq.mqs.a1.topic:}")
-    private String topic1;
+    public static final String BUSINESS_CREATE_ORDER = "a";
+    public static final String BUSINESS_CREATE_ORDER_1 = "a1";
+    public static final String BUSINESS_CREATE_ORDER_DEAD = "a-dead";
+    public static final String BUSINESS_CREATE_ORDER_DEAD_1 = "a1-dead";
+    @Resource
+    MqProducer mqProducer;
 
-    @MqListener(name = "${mq.mqs.a.name}")
+    @MqListener(name = BUSINESS_CREATE_ORDER)
     public void receiveMessage1(String message) {
-        logger.info("receiveMessage---kafka---1=" + message);
+        logger.info("receiveMessage---kafka---1={}", message);
 //        if (true) {
 //            throw new RuntimeException("error 111");
 //        }
     }
     
-    @MqListener(name = "${mq.mqs.a1.name}")
-    public void receiveMessage2(String message) {
-        logger.info("receiveMessage---kafka---2=" + message);
+    @MqListener(name = BUSINESS_CREATE_ORDER_1)
+    public void receiveMessage2(User message) {
+        logger.info("receiveMessage---kafka---2={}", message.getName());
 //        if (true) {
 //            throw new RuntimeException("error 222");
 //        }
     }
 
-    @MqListener(name = "${mq.mqs.a-dead.name}")
+    @MqListener(name = BUSINESS_CREATE_ORDER_DEAD)
     public void mqDLQ(String message) {
-        logger.info("kafka.DLQ=" + message);
+        logger.info("kafka.DLQ={}", message);
     }
-    @MqListener(name = "${mq.mqs.a1-dead.name}")
+    @MqListener(name = BUSINESS_CREATE_ORDER_DEAD_1)
     public void mqDLQ1(String message) {
-        logger.info("kafka1.DLQ=" + message);
+        logger.info("kafka1.DLQ={}", message);
     }
-
+    
     @GetMapping("/mq/kafka/sendMessage")
     public Object sendKafkaMessage() {
         User user = getUser();
         try {
-            boolean flag = mqFactory.getMqTemplate(mqBinder).syncSend(topic, user);
+            boolean flag = mqProducer.getProducer(BUSINESS_CREATE_ORDER).syncSend(user);
             logger.info("kafka.send->{}", flag);
 
-            mqFactory.getMqTemplate(MqMode.KAFKA).asyncSend(topic1, user, new SendCallback() {
+            mqProducer.getProducer(BUSINESS_CREATE_ORDER_1).asyncSend(user, new SendCallback() {
+                @Override
                 public void onSuccess(SendResult sendResult) {
-                    logger.info("SendResult success,");
+                    System.out.println("onSuccess");
                 }
-
+                @Override
                 public void onException(Throwable e) {
-                    logger.info("SendResult onException," + e.getMessage());
+                    System.out.println("onException");
                 }
             });
+            // 通过消息模板发送消息
+//            mqFactory.getMqTemplate(mqProducer.getBinder(BUSINESS_CREATE_ORDER_1))
+//                .syncSend(mqProducer.getTopic(BUSINESS_CREATE_ORDER_1), user);
         } catch (Exception e) {
             e.printStackTrace();
         }

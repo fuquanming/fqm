@@ -34,15 +34,15 @@ public class EmqxMqController extends BaseController {
     
     @MqListener(name = BUSINESS_CREATE_ORDER)
     public void receiveMessage1(String message) {
-        logger.info("receiveMessage---emqx---1=" + message);
+        logger.info("receiveMessage---emqx---1={}", message);
 //        if (true) {
 //            throw new RuntimeException("error 111");
 //        }
     }
 
-    @MqListener(name = BUSINESS_CREATE_ORDER)
-    public void receiveMessage2(String message) {
-        logger.info("receiveMessage---emqx---2=" + message);
+    @MqListener(name = BUSINESS_CREATE_ORDER_1)
+    public void receiveMessage2(User message) {
+        logger.info("receiveMessage---emqx---2={}", message.getName());
 //        if (true) {
 //            throw new RuntimeException("error 222");
 //        }
@@ -50,40 +50,34 @@ public class EmqxMqController extends BaseController {
     
     @MqListener(name = BUSINESS_CREATE_ORDER_DEAD)
     public void mqDLQ(String message) {
-        logger.info("emqx.DLQ=" + message);
+        logger.info("emqx.DLQ={}", message);
     }
     
     @MqListener(name = BUSINESS_CREATE_ORDER_DEAD_1)
     public void mqDLQ1(String message) {
-        logger.info("emqx1.DLQ=" + message);
-    }
-    
-    private String getBinder() {
-        return mqProducer.getBinder(BUSINESS_CREATE_ORDER);
-    }
-    
-    private String getTopic() {
-        return mqProducer.getTopic(BUSINESS_CREATE_ORDER);
+        logger.info("emqx1.DLQ={}", message);
     }
 
     @GetMapping("/mq/emqx/sendMessage")
     public Object sendEmqxMessage() {
         User user = getUser();
         try {
-            boolean flag = mqProducer.syncSend(BUSINESS_CREATE_ORDER, user);
+            boolean flag = mqProducer.getProducer(BUSINESS_CREATE_ORDER).syncSend(user);
             logger.info("emqx.send->{}", flag);
             
-            mqFactory.getMqTemplate(getBinder()).asyncSend(getTopic(), user, new SendCallback() {
+            mqProducer.getProducer(BUSINESS_CREATE_ORDER_1).asyncSend(user, new SendCallback() {
                 @Override
                 public void onSuccess(SendResult sendResult) {
                     System.out.println("onSuccess");
                 }
-                
                 @Override
                 public void onException(Throwable e) {
                     System.out.println("onException");
                 }
             });
+            // 通过消息模板发送消息
+//            mqFactory.getMqTemplate(mqProducer.getBinder(BUSINESS_CREATE_ORDER_1))
+//                .syncSend(mqProducer.getTopic(BUSINESS_CREATE_ORDER_1), user);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -94,7 +88,7 @@ public class EmqxMqController extends BaseController {
     public Object sendEmqxDelayMessage() {
         User user = getUser();
         try {
-            boolean flag = mqProducer.syncDelaySend(BUSINESS_CREATE_ORDER, user, 3, TimeUnit.SECONDS);
+            boolean flag = mqProducer.getProducer(BUSINESS_CREATE_ORDER).syncDelaySend(user, 3, TimeUnit.SECONDS);
             logger.info("emqx.sendDelay->{}", flag);
         } catch (Exception e) {
             e.printStackTrace();

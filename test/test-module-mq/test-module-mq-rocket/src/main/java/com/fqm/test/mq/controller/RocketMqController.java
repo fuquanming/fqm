@@ -6,15 +6,14 @@ import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fqm.framework.mq.MqFactory;
-import com.fqm.framework.mq.MqMode;
 import com.fqm.framework.mq.annotation.MqListener;
 import com.fqm.framework.mq.client.producer.SendCallback;
 import com.fqm.framework.mq.client.producer.SendResult;
+import com.fqm.framework.mq.util.MqProducer;
 import com.fqm.test.controller.BaseController;
 import com.fqm.test.model.User;
 
@@ -25,57 +24,60 @@ public class RocketMqController extends BaseController {
 
     @Resource
     MqFactory mqFactory;
-    @Value("${mq.mqs.e.binder:}")
-    private String mqBinder;
-    @Value("${mq.mqs.e1.binder:}")
-    private String mqBinder1;
     
-    @Value("${mq.mqs.e.topic:}")
-    private String topic;
-    @Value("${mq.mqs.e1.topic:}")
-    private String topic1;
+    public static final String BUSINESS_CREATE_ORDER = "e";
+    public static final String BUSINESS_CREATE_ORDER_1 = "e1";
+    public static final String BUSINESS_CREATE_ORDER_DEAD = "e-dead";
+    public static final String BUSINESS_CREATE_ORDER_DEAD_1 = "e1-dead";
+    @Resource
+    MqProducer mqProducer;
 
-    @MqListener(name = "${mq.mqs.e.name}")
+    @MqListener(name = BUSINESS_CREATE_ORDER)
     public void receiveMessage1(String message) {
-        logger.info("receiveMessage---rocket---1=" + message);
+        logger.info("receiveMessage---rocket---1={}", message);
 //        if (true) {
 //            throw new RuntimeException("error 111");
 //        }
     }
     
-    @MqListener(name = "${mq.mqs.e1.name}")
-    public void receiveMessage2(String message) {
-        logger.info("receiveMessage---rocket---2=" + message);
+    @MqListener(name = BUSINESS_CREATE_ORDER_1)
+    public void receiveMessage2(User message) {
+        logger.info("receiveMessage---rocket---2={}", message.getName());
 //        if (true) {
 //            throw new RuntimeException("error 222");
 //        }
     }
 
 //     死信队列需要在rocket控制台：主题->勾选死信->点击“TOPIC配置”->修改 perm 值，修改为6（可读可写权限）
-    @MqListener(name = "${mq.mqs.e-dead.name}")
+    @MqListener(name = BUSINESS_CREATE_ORDER_DEAD)
     public void mqDLQ(String message) {
-        logger.info("rocket.DLQ=" + message);
+        logger.info("rocket.DLQ={}", message);
     }
-    @MqListener(name = "${mq.mqs.e1-dead.name}")
+    @MqListener(name = BUSINESS_CREATE_ORDER_DEAD_1)
     public void mqDLQ1(String message) {
-        logger.info("rocket1.DLQ=" + message);
+        logger.info("rocket1.DLQ={}", message);
     }
 
     @GetMapping("/mq/rocket/sendMessage")
     public Object sendrocketMessage() {
         User user = getUser();
         try {
-            boolean flag = mqFactory.getMqTemplate(mqBinder).syncSend(topic, user);
+            boolean flag = mqProducer.getProducer(BUSINESS_CREATE_ORDER).syncSend(user);
             logger.info("rocket.send->{}", flag);
-            mqFactory.getMqTemplate(MqMode.ROCKET).asyncSend(topic1, user, new SendCallback() {
+            
+            mqProducer.getProducer(BUSINESS_CREATE_ORDER_1).asyncSend(user, new SendCallback() {
+                @Override
                 public void onSuccess(SendResult sendResult) {
-                    logger.info("SendResult success," + sendResult.getId());
+                    System.out.println("onSuccess");
                 }
-
+                @Override
                 public void onException(Throwable e) {
-                    logger.info("SendResult onException," + e.getMessage());
+                    System.out.println("onException");
                 }
             });
+            // 通过消息模板发送消息
+//            mqFactory.getMqTemplate(mqProducer.getBinder(BUSINESS_CREATE_ORDER_1))
+//                .syncSend(mqProducer.getTopic(BUSINESS_CREATE_ORDER_1), user);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -86,7 +88,7 @@ public class RocketMqController extends BaseController {
     public Object sendRocketDelayMessage() {
         User user = getUser();
         try {
-            boolean flag = mqFactory.getMqTemplate(MqMode.ROCKET).syncDelaySend(topic, user, 3, TimeUnit.SECONDS);
+            boolean flag = mqProducer.getProducer(BUSINESS_CREATE_ORDER).syncDelaySend(user, 3, TimeUnit.SECONDS);
             logger.info("rocket.sendDelay->{}", flag);
         } catch (Exception e) {
             e.printStackTrace();
