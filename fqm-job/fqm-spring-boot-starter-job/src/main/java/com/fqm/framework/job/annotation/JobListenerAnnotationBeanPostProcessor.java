@@ -20,10 +20,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.MergedAnnotation;
 import org.springframework.core.annotation.MergedAnnotations;
@@ -32,7 +29,6 @@ import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 
-import com.fqm.framework.common.spring.util.ValueUtil;
 import com.fqm.framework.job.listener.JobListenerParam;
 
 /**
@@ -40,9 +36,7 @@ import com.fqm.framework.job.listener.JobListenerParam;
  * @version 
  * @author 傅泉明
  */
-public class JobListenerAnnotationBeanPostProcessor implements BeanPostProcessor, Ordered, BeanFactoryAware {
-
-    private BeanFactory beanFactory;
+public class JobListenerAnnotationBeanPostProcessor implements BeanPostProcessor, Ordered {
 
     private List<JobListenerParam> listeners = new ArrayList<>();
 
@@ -64,10 +58,9 @@ public class JobListenerAnnotationBeanPostProcessor implements BeanPostProcessor
                 for (JobListener listener : method.annotations) {
                     // jobName
                     String name = listener.name();
-                    String nameStr = ValueUtil.resolveExpression((ConfigurableBeanFactory) beanFactory, name).toString();
-                    Assert.isTrue(StringUtils.hasText(nameStr), "Please specific [name] under job configuration.");
+                    Assert.isTrue(StringUtils.hasText(name), "Please specific [name] under @JobListener.");
                     JobListenerParam param = new JobListenerParam();
-                    param.setName(nameStr).setBean(bean).setMethod(method.method);
+                    param.setName(name).setBean(bean).setMethod(method.method);
                     listeners.add(param);
                 }
             }
@@ -85,15 +78,9 @@ public class JobListenerAnnotationBeanPostProcessor implements BeanPostProcessor
     }
 
     @Override
-    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        this.beanFactory = beanFactory;
-    }
-
-    @Override
     public int getOrder() {
         return 0;
     }
-
     
     private Collection<JobListener> findListenerAnnotations(AnnotatedElement element) {
         // .map(ann -> ann.synthesize()).collect(Collectors.toList())

@@ -26,6 +26,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import com.fqm.framework.job.JobMode;
@@ -68,16 +69,11 @@ public class ElasticJobAutoConfiguration implements SmartInitializingSingleton, 
         for (JobListenerParam v : job.getListeners()) {
             String jobName = v.getName();
             JobConfigurationProperties properties = jp.getJobs().get(jobName);
-            if (properties == null) {
-                // 遍历jp.Jobs
-                for (JobConfigurationProperties jcp : jp.getJobs().values()) {
-                    if (jcp.getName().equals(jobName) && JobMode.ELASTICJOB.equalMode(jcp.getBinder())) {
-                        properties = jcp;
-                        break;
-                    }
-                }
+            if (properties != null && JobMode.ELASTICJOB.equalMode(properties.getBinder())) {
+                String cron = properties.getCron();
+                Assert.isTrue(StringUtils.hasText(cron), "Please specific [cron] under job.jobs." + jobName + " configuration.");
+                buildJob(singletonBeanRegistry, registryCenter, v, jobName, properties);
             }
-            buildJob(singletonBeanRegistry, registryCenter, v, jobName, properties);
         }
     }
 

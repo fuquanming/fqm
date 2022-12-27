@@ -17,12 +17,21 @@ import java.lang.reflect.Method;
  * @author 傅泉明
  */
 public class JobListenerParam {
-
+    /**
+     * JobProperties 属性mqs（Map）里的Key
+     */
     private String name;
-    
+    /**
+     * 使用 @JobListener 监听的Bean 
+     */
     private Object bean;
+    /**
+     * 使用 @JobListener 监听的Bean的方法
+     */
     private Method method;
-    
+    /**
+     * JobProperties 属性mqs（Map）里的Key
+     */
     public String getName() {
         return name;
     }

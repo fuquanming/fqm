@@ -18,7 +18,7 @@ import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
@@ -45,7 +45,6 @@ import com.xxl.job.core.handler.impl.MethodJobHandler;
 @Configuration
 @AutoConfigureAfter(JobAutoConfiguration.class)
 @ConditionalOnBean(JobProperties.class)
-@EnableConfigurationProperties({ XxlJobProperties.class })
 public class XxlJobAutoConfiguration implements SmartInitializingSingleton, ApplicationContextAware {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
@@ -55,6 +54,12 @@ public class XxlJobAutoConfiguration implements SmartInitializingSingleton, Appl
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
+    }
+    
+    @Bean
+    @ConfigurationProperties("xxljob")
+    XxlJobProperties xxlJobProperties() {
+        return new XxlJobProperties();
     }
 
     @Bean(initMethod = "start", destroyMethod = "destroy")
@@ -86,17 +91,9 @@ public class XxlJobAutoConfiguration implements SmartInitializingSingleton, Appl
         for (JobListenerParam v : job.getListeners()) {
             String jobName = v.getName();
             JobConfigurationProperties properties = jp.getJobs().get(jobName);
-            if (properties == null) {
-                // 遍历jp.Jobs
-                for (JobConfigurationProperties jcp : jp.getJobs().values()) {
-                    if (jcp.getName().equals(jobName) && JobMode.XXLJOB.equalMode(jcp.getBinder())) {
-                        properties = jcp;
-                        break;
-                    }
-                }
-
+            if (properties != null && JobMode.XXLJOB.equalMode(properties.getBinder())) {
+                buildJob(v, jobName, properties);
             }
-            buildJob(v, jobName, properties);
         }
     }
 

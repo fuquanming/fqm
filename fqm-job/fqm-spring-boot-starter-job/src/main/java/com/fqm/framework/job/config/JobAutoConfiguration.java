@@ -10,7 +10,7 @@
 package com.fqm.framework.job.config;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -24,11 +24,16 @@ import com.fqm.framework.job.annotation.JobListenerAnnotationBeanPostProcessor;
  */
 @Configuration
 @ConditionalOnProperty(name = "job.enabled", havingValue = "true")
-@EnableConfigurationProperties(JobProperties.class)
 public class JobAutoConfiguration {
 
     @Bean
-    public JobListenerAnnotationBeanPostProcessor jobListenerAnnotationBeanPostProcessor() {
+    @ConfigurationProperties(prefix = "job")
+    JobProperties jobProperties() {
+        return new JobProperties();
+    }
+    
+    @Bean
+    JobListenerAnnotationBeanPostProcessor jobListenerAnnotationBeanPostProcessor() {
         return new JobListenerAnnotationBeanPostProcessor();
     }
     
