@@ -18,9 +18,20 @@ import java.util.Map;
  * @author 傅泉明
  */
 public class MqProperties {
+    
+    /** 是否开启，默认为 true 开启 */
+    private Boolean enabled = true;
     /** 任务配置 */
     private Map<String, MqConfigurationProperties> mqs = new LinkedHashMap<>();
     
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
+
     public Map<String, MqConfigurationProperties> getMqs() {
         return mqs;
     }
