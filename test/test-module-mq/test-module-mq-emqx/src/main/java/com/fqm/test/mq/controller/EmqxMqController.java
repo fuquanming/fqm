@@ -24,7 +24,7 @@ public class EmqxMqController extends BaseController {
 
     @Resource
     MqFactory mqFactory;
-    
+    /** 业务消息名称：对应配置文件 mq.mqs.xxx */
     public static final String BUSINESS_CREATE_ORDER = "g";
     public static final String BUSINESS_CREATE_ORDER_1 = "g1";
     public static final String BUSINESS_CREATE_ORDER_DEAD = "g-dead";

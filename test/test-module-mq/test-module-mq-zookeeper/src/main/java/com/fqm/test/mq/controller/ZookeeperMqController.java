@@ -22,7 +22,7 @@ public class ZookeeperMqController extends BaseController {
 
     @Resource
     MqFactory mqFactory;
-    
+    /** 业务消息名称：对应配置文件 mq.mqs.xxx */
     public static final String BUSINESS_CREATE_ORDER = "f";
     public static final String BUSINESS_CREATE_ORDER_1 = "f1";
     public static final String BUSINESS_CREATE_ORDER_DEAD = "f-dead";

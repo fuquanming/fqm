@@ -11,8 +11,10 @@ import com.fqm.framework.job.core.JobContext;
 public class XxlJobController {
 
     public Logger logger = LoggerFactory.getLogger(getClass());
-
-    @JobListener(name = "${job.jobs.xjob.name:}")
+    /** 任务名称：对应配置文件 job.jobs.xxx */
+    public static final String JOB_CREATE_ORDER = "xjob";
+    
+    @JobListener(name = JOB_CREATE_ORDER)
     public void xjob(JobContext jobContext) {
         logger.info("XxlJobParam=" + jobContext.getJobParam());
         // 分片参数

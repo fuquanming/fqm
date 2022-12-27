@@ -11,8 +11,10 @@ import com.fqm.framework.job.core.JobContext;
 public class ElasticJobController {
 
     public Logger logger = LoggerFactory.getLogger(getClass());
+    /** 任务名称：对应配置文件 job.jobs.xxx */
+    public static final String JOB_CREATE_ORDER = "ejob";
     
-    @JobListener(name = "${job.jobs.ejob.name:}")
+    @JobListener(name = JOB_CREATE_ORDER)
     public void ejob(JobContext jobContext) {
         logger.info("ElasticJobParam=" + jobContext.getJobParam());
         // 分片参数

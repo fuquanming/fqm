@@ -2,10 +2,8 @@
 job:
   enabled: true
   jobs:
-    ejob:                   # 任务索引，唯一，建议该值等于自定义注解JobListener.name()
-      name: ejob            # 任务名称，该值等于自定义注解JobListener.name()
+    ejob:                   # 任务名称，唯一，该值等于自定义注解JobListener.name()
       binder: elasticjob    # 执行任务组件
       cron: 0/5 * * * * ?   # 执行任务时间表达式，对应的管理控台可以修改，elasticjob必填
-    xjob:                   # 任务索引，唯一，建议该值等于自定义注解JobListener.name()
-      name: xjob            # 任务名称，该值等于自定义注解JobListener.name()
+    xjob:                   # 任务名称，唯一，该值等于自定义注解JobListener.name()
       binder: xxljob        # 执行任务组件

@@ -24,7 +24,7 @@ public class RedissonMqController extends BaseController {
 
     @Resource
     MqFactory mqFactory;
-    
+    /** 业务消息名称：对应配置文件 mq.mqs.xxx */
     public static final String BUSINESS_CREATE_ORDER = "d";
     public static final String BUSINESS_CREATE_ORDER_1 = "d1";
     public static final String BUSINESS_CREATE_ORDER_DEAD = "d-dead";
