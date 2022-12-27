@@ -1,12 +1,6 @@
 package com.fqm.framework.mq.annotation;
 
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import com.fqm.framework.mq.listener.MqListenerParam;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -14,11 +8,16 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.MergedAnnotation;
 import org.springframework.core.annotation.MergedAnnotations;
 import org.springframework.core.annotation.MergedAnnotations.SearchStrategy;
+import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 
-import com.fqm.framework.mq.listener.MqListenerParam;
-import com.google.common.base.Preconditions;
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @MqListener 注解监听，并转换为 List<MqListenerParam> 对象
@@ -50,7 +49,7 @@ public class MqListenerAnnotationBeanPostProcessor implements BeanPostProcessor,
                 for (MqListener mqListener : method.annotations) {
                     // 消息名称
                     String name = mqListener.name();
-                    Preconditions.checkArgument(StringUtils.hasText(name), "Please specific [name] under @MqListener.");
+                    Assert.isTrue(StringUtils.hasText(name), "Please specific [name] under @MqListener.");
                     MqListenerParam param = new MqListenerParam();
                     param.setName(name).setBean(bean).setMethod(method.method);
                     listeners.add(param);

@@ -3,7 +3,6 @@ package com.fqm.framework.mq.config;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 import com.fqm.framework.common.redisson.RedissonConfig;
 import com.fqm.framework.common.redisson.RedissonFactory;
@@ -58,8 +58,8 @@ public class RedissonMqAutoConfiguration {
             if (properties != null && MqMode.REDISSON.equalMode(properties.getBinder())) {
                 String group = properties.getGroup();
                 String topic = properties.getTopic();
-                Assert.isTrue(StringUtils.isNotBlank(topic), "Please specific [topic] under mq.mqs." + name + " configuration.");
-                Assert.isTrue(StringUtils.isNotBlank(group), "Please specific [group] under mq.mqs." + name + " configuration.");
+                Assert.isTrue(StringUtils.hasText(topic), "Please specific [topic] under mq.mqs." + name + " configuration.");
+                Assert.isTrue(StringUtils.hasText(group), "Please specific [group] under mq.mqs." + name + " configuration.");
                 RedissonMqListener redissonMqListener = new RedissonMqListener(v.getBean(), v.getMethod(), redissonClient, topic);
                 listenerList.add(redissonMqListener);
                 logger.info("Init RedissonMqListener,bean={},method={},topic={},group={}", v.getBean().getClass(), v.getMethod().getName(), topic, group);

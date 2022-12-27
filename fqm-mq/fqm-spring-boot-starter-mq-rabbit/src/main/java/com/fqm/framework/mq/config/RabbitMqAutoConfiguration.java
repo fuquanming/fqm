@@ -1,6 +1,5 @@
 package com.fqm.framework.mq.config;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.AcknowledgeMode;
@@ -23,6 +22,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 import com.fqm.framework.mq.MqFactory;
 import com.fqm.framework.mq.MqMode;
@@ -79,8 +79,8 @@ public class RabbitMqAutoConfiguration implements SmartInitializingSingleton, Ap
             if (properties != null && MqMode.RABBIT.equalMode(properties.getBinder())) {
                 String group = properties.getGroup();
                 String topic = properties.getTopic();
-                Assert.isTrue(StringUtils.isNotBlank(topic), "Please specific [topic] under mq.mqs." + name + " configuration.");
-                Assert.isTrue(StringUtils.isNotBlank(group), "Please specific [group] under mq.mqs." + name + " configuration.");
+                Assert.isTrue(StringUtils.hasText(topic), "Please specific [topic] under mq.mqs." + name + " configuration.");
+                Assert.isTrue(StringUtils.hasText(group), "Please specific [group] under mq.mqs." + name + " configuration.");
                 String beanName = "rabbitListener." + i;
                 // 动态注册
                 //将applicationContext转换为ConfigurableApplicationContext

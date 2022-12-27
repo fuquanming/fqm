@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -24,6 +23,8 @@ import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.data.redis.stream.StreamMessageListenerContainer;
 import org.springframework.data.redis.stream.StreamMessageListenerContainer.StreamMessageListenerContainerOptions;
+import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 import com.fqm.framework.common.core.util.system.SystemUtil;
 import com.fqm.framework.common.redis.listener.spring.KeyExpiredEventMessageListener;
@@ -38,7 +39,6 @@ import com.fqm.framework.mq.redis.StreamInfo.InfoGroups;
 import com.fqm.framework.mq.scripts.LuaScriptUtil;
 import com.fqm.framework.mq.tasker.RedisMqDeadMessageTasker;
 import com.fqm.framework.mq.template.RedisMqTemplate;
-import com.google.common.base.Preconditions;
 
 /**
  * Redis消息队列自动装配
@@ -122,8 +122,8 @@ public class RedisMqAutoConfiguration {
         
         String group = properties.getGroup();
         String topic = properties.getTopic();
-        Preconditions.checkArgument(StringUtils.isNotBlank(group), "Please specific [group] under mq configuration.");
-        Preconditions.checkArgument(StringUtils.isNotBlank(topic), "Please specific [topic] under mq configuration.");
+        Assert.isTrue(StringUtils.hasText(group), "Please specific [group] under mq configuration.");
+        Assert.isTrue(StringUtils.hasText(topic), "Please specific [topic] under mq configuration.");
         // Lua获取消费者组
         try {
             InfoGroups gs = LuaScriptUtil.getInfoGroups(topic, stringRedisTemplate);

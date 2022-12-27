@@ -3,7 +3,6 @@ package com.fqm.framework.mq.config;
 import java.lang.reflect.Constructor;
 import java.util.function.BiConsumer;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -29,6 +28,7 @@ import org.springframework.kafka.listener.KafkaMessageListenerContainer;
 import org.springframework.lang.NonNull;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.util.backoff.BackOff;
 import org.springframework.util.backoff.FixedBackOff;
 
@@ -121,8 +121,8 @@ public class KafkaMqAutoConfiguration implements SmartInitializingSingleton, App
             if (properties != null && MqMode.KAFKA.equalMode(properties.getBinder())) {
                 String group = properties.getGroup();
                 String topic = properties.getTopic();
-                Assert.isTrue(StringUtils.isNotBlank(topic), "Please specific [topic] under mq.mqs." + name + " configuration.");
-                Assert.isTrue(StringUtils.isNotBlank(group), "Please specific [group] under mq.mqs." + name + " configuration.");
+                Assert.isTrue(StringUtils.hasText(topic), "Please specific [topic] under mq.mqs." + name + " configuration.");
+                Assert.isTrue(StringUtils.hasText(group), "Please specific [group] under mq.mqs." + name + " configuration.");
                 String beanName = "kafkaListener." + i;
                 // 动态注册
                 //将applicationContext转换为ConfigurableApplicationContext
