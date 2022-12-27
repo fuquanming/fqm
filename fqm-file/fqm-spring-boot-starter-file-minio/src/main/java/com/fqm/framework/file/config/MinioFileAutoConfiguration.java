@@ -2,7 +2,7 @@ package com.fqm.framework.file.config;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -21,12 +21,17 @@ import io.minio.MinioClient;
  */
 @Configuration
 @ConditionalOnProperty(name = "minio.enabled", havingValue = "true")
-@EnableConfigurationProperties({ MinioProperties.class })
 public class MinioFileAutoConfiguration {
+    
+    @Bean
+    @ConfigurationProperties("minio")
+    MinioProperties minioProperties() {
+        return new MinioProperties();
+    }
 
     @Bean
     @ConditionalOnMissingBean
-    public MinioClient minioClient(MinioProperties properties) {
+    MinioClient minioClient(MinioProperties properties) {
         return MinioClient.builder()
                 .endpoint(properties.getEndpoint(), properties.getPort(), properties.getSecure())
                 .credentials(properties.getAccessKey(), properties.getSecretKey()).build();
@@ -35,7 +40,7 @@ public class MinioFileAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     @Order(200)
-    public MinioFileTemplate minioFileTemplate(FileFactory fileFactory, MinioClient minioClient, MinioProperties minioProperties) {
+    MinioFileTemplate minioFileTemplate(FileFactory fileFactory, MinioClient minioClient, MinioProperties minioProperties) {
         MinioFileTemplate minioFileTemplate = new MinioFileTemplate(new MinioService(minioClient), minioProperties.getBucketDefaultName());
         fileFactory.addFileTemplate(minioFileTemplate);
         return minioFileTemplate;

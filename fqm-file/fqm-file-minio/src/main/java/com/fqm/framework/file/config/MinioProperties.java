@@ -1,13 +1,10 @@
 package com.fqm.framework.file.config;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
 /**
  * MinIO 配置类
  * @version 
  * @author 傅泉明
  */
-@ConfigurationProperties("minio")
 public class MinioProperties {
 
     /**
