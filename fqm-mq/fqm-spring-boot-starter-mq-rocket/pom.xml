@@ -8,17 +8,25 @@
 		<version>1.0.3</version>
 	</parent>
 	<artifactId>fqm-spring-boot-starter-mq-rocket</artifactId>
+	<version>1.0.4</version>
+	
 	<description>Starter for rocket message queue</description>
+	
+	<properties>
+		<fqm-spring-boot-starter-mq.version>1.0.4</fqm-spring-boot-starter-mq.version>
+		<fqm-mq-rocket.version>1.0.4</fqm-mq-rocket.version>
+    </properties>
+	
 	<dependencies>
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-spring-boot-starter-mq</artifactId>
-            <version>${parent.version}</version>
+            <version>${fqm-spring-boot-starter-mq.version}</version>
         </dependency>
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-mq-rocket</artifactId>
-            <version>${parent.version}</version>
+            <version>${fqm-mq-rocket.version}</version>
         </dependency>
     </dependencies>
 </project>

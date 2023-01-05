@@ -6,17 +6,25 @@
         <version>1.0.3</version>
     </parent>
     <artifactId>fqm-spring-boot-starter-mq-emqx</artifactId>
+    <version>1.0.4</version>
+    
     <description>Starter for emqx message queue</description>
+    
+    <properties>
+		<fqm-spring-boot-starter-mq.version>1.0.4</fqm-spring-boot-starter-mq.version>
+		<fqm-mq-emqx.version>1.0.4</fqm-mq-emqx.version>
+    </properties>
+    
     <dependencies>
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-spring-boot-starter-mq</artifactId>
-            <version>${parent.version}</version>
+            <version>${fqm-spring-boot-starter-mq.version}</version>
         </dependency>
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-mq-emqx</artifactId>
-            <version>${parent.version}</version>
+            <version>${fqm-mq-emqx.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

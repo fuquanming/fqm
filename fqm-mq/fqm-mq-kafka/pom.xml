@@ -8,12 +8,18 @@
 		<version>1.0.3</version>
 	</parent>
 	<artifactId>fqm-mq-kafka</artifactId>
+	<version>1.0.4</version>
+	
 	<description>Message sending and monitoring based on kafkaTemplate</description>
+	<properties>
+		<fqm-mq-core.version>1.0.4</fqm-mq-core.version>
+    </properties>
+	
 	<dependencies>
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-mq-core</artifactId>
-            <version>${parent.version}</version>
+            <version>${fqm-mq-core.version}</version>
         </dependency>
         
         <dependency>

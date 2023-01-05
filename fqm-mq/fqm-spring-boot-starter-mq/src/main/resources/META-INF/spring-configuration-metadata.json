@@ -2,7 +2,7 @@
     "groups": [{
         "name": "mq",
         "type": "com.fqm.framework.mq.config.JobProperties",
-        "description": "Job Properties.",
+        "description": "Message Queue Properties.",
         "sourceType": "com.fqm.framework.mq.config.MqProperties"
     }],
     "properties": [{
@@ -19,7 +19,7 @@
     }, {
         "name": "mq.mqs",
         "type": "java.util.Map<java.lang.String,com.fqm.framework.mq.config.MqConfigurationProperties>",
-        "description": "Mq Configuration",
+        "description": "消息配置，key：消息主题，value：消息主题配置",
         "sourceType": "com.fqm.framework.mq.config.MqProperties"
     }],
     "hints": []

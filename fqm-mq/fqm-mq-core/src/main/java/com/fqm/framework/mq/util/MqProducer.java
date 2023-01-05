@@ -34,7 +34,7 @@ public class MqProducer {
     private MqFactory mqFactory;
     /** 消息配置 */
     private MqProperties mqProperties;
-    /** 业务消息生产者 */
+    /** 业务消息生产者，key：消息主题 */
     private Map<String, Producer> producerMap;
     
     public MqProducer(MqFactory mqFactory, MqProperties mqProperties) {
@@ -47,15 +47,13 @@ public class MqProducer {
     private void init() {
         // 1、初始化业务对应的消息生产者
         for (Map.Entry<String, MqConfigurationProperties> entry : mqProperties.getMqs().entrySet()) {
-            String businessName = entry.getKey();
+            String topic = entry.getKey();
             MqConfigurationProperties mcp = entry.getValue();
             String binder = mcp.getBinder();
-            String topic = mcp.getTopic();
             Producer producer = new Producer();
-            producer.businessName = businessName;
             producer.topic = topic;
             producer.mqMode = MqMode.getMode(binder);
-            producerMap.put(businessName, producer);
+            producerMap.put(topic, producer);
         }
     }
     
@@ -79,30 +77,22 @@ public class MqProducer {
     }
     /**
      * 获取消息组件
-     * @param businessName
+     * @param topic 消息主题
      * @return
      */
-    public String getBinder(String businessName) {
-        return getMqConfigurationProperties(businessName).getBinder();
-    }
-    /**
-     * 获取消息主题 
-     * @param businessName
-     * @return
-     */
-    public String getTopic(String businessName) {
-        return getMqConfigurationProperties(businessName).getTopic();
+    public String getBinder(String topic) {
+        return getMqConfigurationProperties(topic).getBinder();
     }
     
     /**
      * 获取消息生产者
-     * @param businessName  业务名称
+     * @param topic  消息主题
      * @return
      */
-    public Producer getProducer(String businessName) {
-        Producer producer = producerMap.get(businessName);
+    public Producer getProducer(String topic) {
+        Producer producer = producerMap.get(topic);
         if (null == producer) {
-            throw new ServiceException(new ErrorCode(GlobalErrorCodeConstants.NOT_FOUND.getCode(), "未找到该业务的消息通道，" + businessName));
+            throw new ServiceException(new ErrorCode(GlobalErrorCodeConstants.NOT_FOUND.getCode(), "未找到该业务的消息通道，" + topic));
         }
         return producer;
     }
@@ -112,7 +102,6 @@ public class MqProducer {
      * @author 傅泉明
      */
     public class Producer {
-        String businessName;
         MqMode mqMode;
         String topic;
         /**

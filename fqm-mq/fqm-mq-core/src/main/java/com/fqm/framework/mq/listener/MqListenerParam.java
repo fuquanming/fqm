@@ -9,7 +9,7 @@ import java.lang.reflect.Method;
  */
 public class MqListenerParam {
     /**
-     * MqProperties 属性mqs（Map）里的Key
+     * MqProperties 属性mqs（Map）里的Key，即消息主题topic
      */
     private String name;
     /**

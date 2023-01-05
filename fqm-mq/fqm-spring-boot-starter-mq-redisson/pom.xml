@@ -8,22 +8,30 @@
 		<version>1.0.3</version>
 	</parent>
 	<artifactId>fqm-spring-boot-starter-mq-redisson</artifactId>
+	<version>1.0.4</version>
+	
     <description>Starter for redisson message queue</description>
+    
+    <properties>
+		<fqm-spring-boot-starter-mq.version>1.0.4</fqm-spring-boot-starter-mq.version>
+		<fqm-mq-redisson.version>1.0.4</fqm-mq-redisson.version>
+    </properties>
+    
 	<dependencies>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-configuration-processor</artifactId>
-			<optional>true</optional>
-		</dependency>
 		<dependency>
 			<groupId>io.github.fuquanming</groupId>
 			<artifactId>fqm-spring-boot-starter-mq</artifactId>
-			<version>${parent.version}</version>
+			<version>${fqm-spring-boot-starter-mq.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>io.github.fuquanming</groupId>
 			<artifactId>fqm-mq-redisson</artifactId>
-			<version>${parent.version}</version>
+			<version>${fqm-mq-redisson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+			<optional>true</optional>
 		</dependency>
 	</dependencies>
 </project>

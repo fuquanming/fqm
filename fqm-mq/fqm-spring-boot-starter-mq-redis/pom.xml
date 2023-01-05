@@ -8,17 +8,25 @@
 		<version>1.0.3</version>
 	</parent>
 	<artifactId>fqm-spring-boot-starter-mq-redis</artifactId>
+	<version>1.0.4</version>
+	
 	<description>Starter for redis stream message queue</description>
+	
+	<properties>
+		<fqm-spring-boot-starter-mq.version>1.0.4</fqm-spring-boot-starter-mq.version>
+		<fqm-mq-redis.version>1.0.4</fqm-mq-redis.version>
+    </properties>
+	
 	<dependencies>
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-spring-boot-starter-mq</artifactId>
-            <version>${parent.version}</version>
+            <version>${fqm-spring-boot-starter-mq.version}</version>
         </dependency>
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-mq-redis</artifactId>
-            <version>${parent.version}</version>
+            <version>${fqm-mq-redis.version}</version>
         </dependency>
     </dependencies>
 </project>

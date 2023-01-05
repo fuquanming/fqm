@@ -8,17 +8,25 @@
 		<version>1.0.3</version>
 	</parent>
 	<artifactId>fqm-spring-boot-starter-mq-rabbit</artifactId>
+	<version>1.0.4</version>
+	
 	<description>Starter for rabbit message queue</description>
+	
+	<properties>
+		<fqm-spring-boot-starter-mq.version>1.0.4</fqm-spring-boot-starter-mq.version>
+		<fqm-mq-rabbit.version>1.0.4</fqm-mq-rabbit.version>
+    </properties>
+	
 	<dependencies>
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-spring-boot-starter-mq</artifactId>
-            <version>${parent.version}</version>
+            <version>${fqm-spring-boot-starter-mq.version}</version>
         </dependency>
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-mq-rabbit</artifactId>
-            <version>${parent.version}</version>
+            <version>${fqm-mq-rabbit.version}</version>
         </dependency>
     </dependencies>
 </project>

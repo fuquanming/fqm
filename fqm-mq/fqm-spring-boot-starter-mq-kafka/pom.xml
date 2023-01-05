@@ -8,17 +8,25 @@
 		<version>1.0.3</version>
 	</parent>
 	<artifactId>fqm-spring-boot-starter-mq-kafka</artifactId>
+	<version>1.0.4</version>
+	
 	<description>Starter for kafka message queue</description>
+	
+	<properties>
+		<fqm-spring-boot-starter-mq.version>1.0.4</fqm-spring-boot-starter-mq.version>
+		<fqm-mq-kafka.version>1.0.4</fqm-mq-kafka.version>
+    </properties>
+	
 	<dependencies>
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-spring-boot-starter-mq</artifactId>
-            <version>${parent.version}</version>
+            <version>${fqm-spring-boot-starter-mq.version}</version>
         </dependency>
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-mq-kafka</artifactId>
-            <version>${parent.version}</version>
+            <version>${fqm-mq-kafka.version}</version>
         </dependency>
     </dependencies>
 </project>

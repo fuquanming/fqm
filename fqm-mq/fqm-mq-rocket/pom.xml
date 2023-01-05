@@ -8,17 +8,20 @@
 		<version>1.0.3</version>
 	</parent>
 	<artifactId>fqm-mq-rocket</artifactId>
+	<version>1.0.4</version>
+	
 	<description>Message sending and monitoring based on RocketMQTemplate</description>
 	
 	<properties>
-	   <rocketmq-spring-boot-starter.version>2.2.1</rocketmq-spring-boot-starter.version>
+		<fqm-mq-core.version>1.0.4</fqm-mq-core.version>
+	   	<rocketmq-spring-boot-starter.version>2.2.1</rocketmq-spring-boot-starter.version>
 	</properties>
 	
 	<dependencies>
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-mq-core</artifactId>
-            <version>${parent.version}</version>
+            <version>${fqm-mq-core.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.rocketmq</groupId>

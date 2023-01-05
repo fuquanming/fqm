@@ -177,13 +177,9 @@ public class RedisMqAutoConfiguration {
         for (MqListenerParam v : mq.getListeners()) {
             String name = v.getName();
             MqConfigurationProperties properties = mp.getMqs().get(name);
-            if (properties == null) {
-                // 遍历mp.mqs
-                for (MqConfigurationProperties mcp : mp.getMqs().values()) {
-                    if (MqMode.REDIS.equalMode(mcp.getBinder())) {
-                        topics.add(mcp.getTopic());
-                        break;
-                    }
+            if (properties != null) {
+                if (MqMode.REDIS.equalMode(properties.getBinder())) {
+                    topics.add(properties.getTopic());
                 }
             }
         }

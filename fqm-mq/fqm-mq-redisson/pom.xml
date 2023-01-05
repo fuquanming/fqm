@@ -8,9 +8,12 @@
 		<version>1.0.3</version>
 	</parent>
 	<artifactId>fqm-mq-redisson</artifactId>
+	<version>1.0.4</version>
+	
 	<description>Message sending and monitoring based on Redisson</description>
 	
 	<properties>
+		<fqm-mq-core.version>1.0.4</fqm-mq-core.version>
         <fqm-common-redisson.version>1.0.4</fqm-common-redisson.version>
     </properties>
 	
@@ -18,7 +21,7 @@
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-mq-core</artifactId>
-            <version>${parent.version}</version>
+            <version>${fqm-mq-core.version}</version>
         </dependency>
 
         <dependency>
