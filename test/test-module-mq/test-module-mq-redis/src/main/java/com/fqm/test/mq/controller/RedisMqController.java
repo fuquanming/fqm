@@ -22,15 +22,16 @@ public class RedisMqController extends BaseController {
 
     @Resource
     MqFactory mqFactory;
-    /** 业务消息名称：对应配置文件 mq.mqs.xxx */
-    public static final String BUSINESS_CREATE_ORDER = "c";
-    public static final String BUSINESS_CREATE_ORDER_1 = "c1";
-    public static final String BUSINESS_CREATE_ORDER_DEAD = "c-dead";
-    public static final String BUSINESS_CREATE_ORDER_DEAD_1 = "c1-dead";
+    /** 消息主题名称：对应配置文件 mq.mqs.xxx */
+    public static final String TOPIC = "redis-topic";
+    public static final String TOPIC_1 = "redis-topic1";
+    /** 死信主题名称：对应配置文件 mq.mqs.xxx，死信主题：group + ".DLQ" */
+    public static final String TOPIC_DEAD = "msg-group.DLQ";
+    public static final String TOPIC_1_DEAD = "msg-group-1.DLQ";
     @Resource
     MqProducer mqProducer;
 
-    @MqListener(name = BUSINESS_CREATE_ORDER)
+    @MqListener(name = TOPIC)
     public void receiveMessage1(String message) {
         logger.info("receiveMessage---redis---1={}", message);
 //        if (true) {
@@ -38,7 +39,7 @@ public class RedisMqController extends BaseController {
 //        }
     }
 
-    @MqListener(name = BUSINESS_CREATE_ORDER_1)
+    @MqListener(name = TOPIC_1)
     public void receiveMessage2(User message) {
         logger.info("receiveMessage---redis---2={}", message.getName());
 //        if (true) {
@@ -46,11 +47,11 @@ public class RedisMqController extends BaseController {
 //        }
     }
 
-    @MqListener(name = BUSINESS_CREATE_ORDER_DEAD)
+    @MqListener(name = TOPIC_DEAD)
     public void mqDLQ(String message) {
         logger.info("redis.DLQ={}", message);
     }
-    @MqListener(name = BUSINESS_CREATE_ORDER_DEAD_1)
+    @MqListener(name = TOPIC_1_DEAD)
     public void mqDLQ1(String message) {
         logger.info("redis1.DLQ={}", message);
     }
@@ -59,9 +60,9 @@ public class RedisMqController extends BaseController {
     public Object sendRedisMessage() {
         User user = getUser();
         try {
-            boolean flag = mqProducer.getProducer(BUSINESS_CREATE_ORDER).syncSend(user);
+            boolean flag = mqProducer.getProducer(TOPIC).syncSend(user);
             logger.info("redis.send->{}", flag);
-            mqProducer.getProducer(BUSINESS_CREATE_ORDER_1).syncSend(user);
+            mqProducer.getProducer(TOPIC_1).syncSend(user);
             // 通过消息模板发送消息
 //            mqFactory.getMqTemplate(mqProducer.getBinder(BUSINESS_CREATE_ORDER_1))
 //                .syncSend(mqProducer.getTopic(BUSINESS_CREATE_ORDER_1), user);
@@ -75,7 +76,7 @@ public class RedisMqController extends BaseController {
     public Object sendRedisDelayMessage() {
         User user = getUser();
         try {
-            boolean flag = mqProducer.getProducer(BUSINESS_CREATE_ORDER).syncDelaySend(user, 3, TimeUnit.SECONDS);
+            boolean flag = mqProducer.getProducer(TOPIC).syncDelaySend(user, 3, TimeUnit.SECONDS);
             logger.info("redis.sendDelay->{}", flag);
         } catch (Exception e) {
             e.printStackTrace();

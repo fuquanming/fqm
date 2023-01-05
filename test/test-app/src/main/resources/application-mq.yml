@@ -2,115 +2,87 @@
 mq:
   enabled: true
   mqs:
-    a:                          # 业务编码，唯一
-      topic: my-topic           # 消息主题
-      group: msg-group          # 消费者组，使用@MqListener时，必填
-      binder: kafka             # 消息组件，参考@MqMode
-    a1:                         # 业务编码，唯一
-      topic: my-topic-1           # 消息主题
-      group: msg-group-1          # 消费者组，使用@MqListener时，必填
-      binder: kafka             # 消息组件，参考@MqMode
-    a-dead:                     # 业务编码，唯一
-      topic: my-topic.DLT       # 消息主题，死信队列：topic + ".DLT"
-      group: my-topic.DLT-kafka # 消费者组，使用@MqListener时，必填
-      binder: kafka             # 消息组件，参考@MqMode
-    a1-dead:                     # 业务编码，唯一
-      topic: my-topic-1.DLT       # 消息主题，死信队列：topic + ".DLT"
-      group: my-topic-1.DLT-kafka # 消费者组，使用@MqListener时，必填
-      binder: kafka             # 消息组件，参考@MqMode      
-    b:
-      topic: my-topic
+    kafka-topic:                            # 消息主题，唯一
+      group: msg-group                      # 消费者组，使用 @MqListener时，必填
+      binder: kafka                         # 消息组件，参考@MqMode
+    kafka-topic1:                           # 消息主题，唯一
+      group: msg-group-1                    # 消费者组，使用 @MqListener时，必填
+      binder: kafka                         # 消息组件，参考 @MqMode
+    "[kafka-topic.DLT]":                    # 死信主题：topic + ".DLT", 用 "[]" 处理特殊字符，如. %
+      group: my-topic.DLT-kafka             # 消费者组，使用 @MqListener时，必填
+      binder: kafka                         # 消息组件，参考 @MqMode
+    "[kafka-topic1.DLT]":                   # 死信主题：topic + ".DLT", 用 "[]" 处理特殊字符，如. %
+      group: my-topic-1.DLT-kafka           # 消费者组，使用 @MqListener时，必填
+      binder: kafka                         # 消息组件，参考 @MqMode      
+    rabbit-topic:                           # 消息主题，唯一
       group: msg-group
       binder: rabbit
-    b1:
-      topic: my-topic-1
+    rabbit-topic1:                          # 消息主题，唯一
       group: msg-group
       binder: rabbit
-    b-dead:
-      topic: my-topic.DLQ            # 死信队列：topic + ".DLQ", 监听的Topic不能有符号：%
+    "[rabbit-topic.DLQ]":                   # 死信主题：topic + ".DLQ", 用 "[]" 处理特殊字符，如. %
       group: my-topic.DLQ-rabbit
       binder: rabbit
-    b1-dead:
-      topic: my-topic-1.DLQ            # 死信队列：topic + ".DLQ", 监听的Topic不能有符号：%
+    "[rabbit-topic1.DLQ]":                  # 死信主题：topic + ".DLQ", 用 "[]" 处理特殊字符，如. %
       group: my-topic-1.DLQ-rabbit
       binder: rabbit      
-    c:
-      topic: my-topic
+    redis-topic:                            # 消息主题，唯一
       group: msg-group
       binder: redis
-    c1:
-      topic: my-topic-1
+    redis-topic1:                           # 消息主题，唯一
       group: msg-group-1
       binder: redis
-    c-dead:
-      topic: msg-group.DLQ                 # 死信队列：group + ".DLQ", 监听的Topic不能有符号：%
+    "[msg-group.DLQ]":                      # 死信主题：group + ".DLQ", 用 "[]" 处理特殊字符，如. %，监听的Topic不能有符号：%
       group: msg-group.DLQ-redis
       binder: redis
-    c1-dead:
-      topic: msg-group-1.DLQ                 # 死信队列：group + ".DLQ", 监听的Topic不能有符号：%
-      group: msg-group.DLQ-redis
+    "[msg-group-1.DLQ]":                    # 死信主题：group + ".DLQ", 用 "[]" 处理特殊字符，如. %，监听的Topic不能有符号：%
+      group: msg-group-1.DLQ-redis
       binder: redis
-    d:
-      topic: my-topic-redisson
+    redisson-topic:                         # 消息主题，唯一
       group: msg-group-redisson
       binder: redisson
-    d1:
-      topic: my-topic-redisson-1
+    redisson-topic1:                        # 消息主题，唯一
       group: msg-group-redisson
       binder: redisson
-    d-dead:
-      topic: my-topic-redisson.DLQ                 # 死信队列：topic + ".DLQ", 监听的Topic不能有符号：%
+    "[redisson-topic.DLQ]":                 # 死信主题：topic + ".DLQ"，用 "[]" 处理特殊字符，如. %，监听的Topic不能有符号：%
       group: my-topic-redisson.DLQ-redis
       binder: redisson
-    d1-dead:
-      topic: my-topic-redisson-1.DLQ                 # 死信队列：topic + ".DLQ", 监听的Topic不能有符号：%
+    "[redisson-topic1.DLQ]":                # 死信主题：topic + ".DLQ"，用 "[]" 处理特殊字符，如. %，监听的Topic不能有符号：%
       group: my-topic-redisson.DLQ-redis
       binder: redisson
-    e:
-      topic: my-topic
+    rocket-topic:                           # 消息主题，唯一
       group: msg-group
       binder: rocket
-    e1:
-      topic: my-topic-1
+    rocket-topic1:                          # 消息主题，唯一
       group: msg-group-1
       binder: rocket
-    e-dead:
-      topic: '%DLQ%msg-group'                               # 死信队列：%DLQ% + 消费组，死信队列需要在rocket控制台：主题->勾选死信->点击“TOPIC配置”->修改 perm 值，修改为6（可读可写权限）
-      group: '%DLQ%msg-group-DLQ-rocket'                    # 正则表达式：^[%|a-zA-Z0-9_-]+$，不能和原topic的消费者组一样，一样消费会不及时，不全和原topic数据冲突
+    "[%DLQ%msg-group]":                     # 死信主题：%DLQ% + 消费组，死信主题需要在rocket控制台：主题->勾选死信->点击“TOPIC配置”->修改 perm 值，修改为6（可读可写权限）
+      group: '%DLQ%msg-group-DLQ-rocket'    # 正则表达式：^[%|a-zA-Z0-9_-]+$，不能和原topic的消费者组一样，一样消费会不及时，不全和原topic数据冲突
       binder: rocket
-    e1-dead:
-      topic: '%DLQ%msg-group-1'                               # 死信队列：%DLQ% + 消费组，死信队列需要在rocket控制台：主题->勾选死信->点击“TOPIC配置”->修改 perm 值，修改为6（可读可写权限）
-      group: '%DLQ%msg-group-1-DLQ-rocket'                    # 正则表达式：^[%|a-zA-Z0-9_-]+$，不能和原topic的消费者组一样，一样消费会不及时，不全和原topic数据冲突
+    "[%DLQ%msg-group-1]":                   # 死信主题：%DLQ% + 消费组，死信主题需要在rocket控制台：主题->勾选死信->点击“TOPIC配置”->修改 perm 值，修改为6（可读可写权限）
+      group: '%DLQ%msg-group-1-DLQ-rocket'  # 正则表达式：^[%|a-zA-Z0-9_-]+$，不能和原topic的消费者组一样，一样消费会不及时，不全和原topic数据冲突
       binder: rocket
-    f:
-      topic: my-topic
+    zookeeper-topic:                        # 消息主题，唯一
       group: msg-group
       binder: zookeeper  
-    f1:
-      topic: my-topic-1
+    zookeeper-topic1:                       # 消息主题，唯一
       group: msg-group
       binder: zookeeper  
-    f-dead:
-      topic: my-topic.DLQ                                      # 死信队列：topic + ".DLQ"
+    "[zookeeper-topic.DLQ]":                # 死信主题：topic + ".DLQ"，用 "[]" 处理特殊字符，如. % 
       group: my-topic.DLQ-zookeeper
       binder: zookeeper  
-    f1-dead:
-      topic: my-topic-1.DLQ                                      # 死信队列：topic + ".DLQ"
+    "[zookeeper-topic1.DLQ]":               # 死信主题：topic + ".DLQ"，用 "[]" 处理特殊字符，如. % 
       group: my-topic-1.DLQ-zookeeper
       binder: zookeeper 
-    g:
-      topic: my-topic
+    emqx-topic:                             # 消息主题，唯一
       group: msg-group
       binder: emqx  
-    g1:
-      topic: my-topic-1
+    emqx-topic1:                            # 消息主题，唯一
       group: msg-group
       binder: emqx  
-    g-dead:
-      topic: my-topic.DLQ                                      # 死信队列：topic + ".DLQ"
+    "[emqx-topic.DLQ]":                     # 死信主题：topic + ".DLQ"，用 "[]" 处理特殊字符，如. % 
       group: my-topic.DLQ-zookeeper
       binder: emqx  
-    g1-dead:
-      topic: my-topic-1.DLQ                                      # 死信队列：topic + ".DLQ"
+    "[emqx-topic1.DLQ]":                    # 死信主题：topic + ".DLQ"，用 "[]" 处理特殊字符
       group: my-topic-1.DLQ-zookeeper
       binder: emqx   

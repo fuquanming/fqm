@@ -22,15 +22,16 @@ public class KafkaMqController extends BaseController {
 
     @Resource
     MqFactory mqFactory;
-    /** 业务消息名称：对应配置文件 mq.mqs.xxx */
-    public static final String BUSINESS_CREATE_ORDER = "a";
-    public static final String BUSINESS_CREATE_ORDER_1 = "a1";
-    public static final String BUSINESS_CREATE_ORDER_DEAD = "a-dead";
-    public static final String BUSINESS_CREATE_ORDER_DEAD_1 = "a1-dead";
+    /** 消息主题名称：对应配置文件 mq.mqs.xxx */
+    public static final String TOPIC = "kafka-topic";
+    public static final String TOPIC_1 = "kafka-topic1";
+    /** 死信主题名称：对应配置文件 mq.mqs.xxx，死信主题：topic + ".DLT" */
+    public static final String TOPIC_DEAD = "kafka-topic.DLT";
+    public static final String TOPIC_1_DEAD = "kafka-topic1.DLT";
     @Resource
     MqProducer mqProducer;
 
-    @MqListener(name = BUSINESS_CREATE_ORDER)
+    @MqListener(name = TOPIC)
     public void receiveMessage1(String message) {
         logger.info("receiveMessage---kafka---1={}", message);
 //        if (true) {
@@ -38,7 +39,7 @@ public class KafkaMqController extends BaseController {
 //        }
     }
     
-    @MqListener(name = BUSINESS_CREATE_ORDER_1)
+    @MqListener(name = TOPIC_1)
     public void receiveMessage2(User message) {
         logger.info("receiveMessage---kafka---2={}", message.getName());
 //        if (true) {
@@ -46,11 +47,11 @@ public class KafkaMqController extends BaseController {
 //        }
     }
 
-    @MqListener(name = BUSINESS_CREATE_ORDER_DEAD)
+    @MqListener(name = TOPIC_DEAD)
     public void mqDLQ(String message) {
         logger.info("kafka.DLQ={}", message);
     }
-    @MqListener(name = BUSINESS_CREATE_ORDER_DEAD_1)
+    @MqListener(name = TOPIC_1_DEAD)
     public void mqDLQ1(String message) {
         logger.info("kafka1.DLQ={}", message);
     }
@@ -59,10 +60,10 @@ public class KafkaMqController extends BaseController {
     public Object sendKafkaMessage() {
         User user = getUser();
         try {
-            boolean flag = mqProducer.getProducer(BUSINESS_CREATE_ORDER).syncSend(user);
+            boolean flag = mqProducer.getProducer(TOPIC).syncSend(user);
             logger.info("kafka.send->{}", flag);
 
-            mqProducer.getProducer(BUSINESS_CREATE_ORDER_1).asyncSend(user, new SendCallback() {
+            mqProducer.getProducer(TOPIC_1).asyncSend(user, new SendCallback() {
                 @Override
                 public void onSuccess(SendResult sendResult) {
                     System.out.println("onSuccess");

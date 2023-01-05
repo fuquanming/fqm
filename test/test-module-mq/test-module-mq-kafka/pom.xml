@@ -8,7 +8,7 @@
     <artifactId>test-module-mq-kafka</artifactId>
     
     <properties>
-        <fqm-spring-boot-starter-mq-kafka.version>1.0.3</fqm-spring-boot-starter-mq-kafka.version>
+        <fqm-spring-boot-starter-mq-kafka.version>1.0.4</fqm-spring-boot-starter-mq-kafka.version>
     </properties>
     
     <dependencies>

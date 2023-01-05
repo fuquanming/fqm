@@ -24,15 +24,16 @@ public class RocketMqController extends BaseController {
 
     @Resource
     MqFactory mqFactory;
-    /** 业务消息名称：对应配置文件 mq.mqs.xxx */
-    public static final String BUSINESS_CREATE_ORDER = "e";
-    public static final String BUSINESS_CREATE_ORDER_1 = "e1";
-    public static final String BUSINESS_CREATE_ORDER_DEAD = "e-dead";
-    public static final String BUSINESS_CREATE_ORDER_DEAD_1 = "e1-dead";
+    /** 消息主题名称：对应配置文件 mq.mqs.xxx */
+    public static final String TOPIC = "rocket-topic";
+    public static final String TOPIC_1 = "rocket-topic1";
+    /** 死信主题名称：对应配置文件 mq.mqs.xxx，死信主题：%DLQ% + 消费组，死信主题需要在rocket控制台：主题->勾选死信->点击“TOPIC配置”->修改 perm 值，修改为6（可读可写权限） */
+    public static final String TOPIC_DEAD = "%DLQ%msg-group";
+    public static final String TOPIC_1_DEAD = "%DLQ%msg-group-1";
     @Resource
     MqProducer mqProducer;
 
-    @MqListener(name = BUSINESS_CREATE_ORDER)
+    @MqListener(name = TOPIC)
     public void receiveMessage1(String message) {
         logger.info("receiveMessage---rocket---1={}", message);
 //        if (true) {
@@ -40,7 +41,7 @@ public class RocketMqController extends BaseController {
 //        }
     }
     
-    @MqListener(name = BUSINESS_CREATE_ORDER_1)
+    @MqListener(name = TOPIC_1)
     public void receiveMessage2(User message) {
         logger.info("receiveMessage---rocket---2={}", message.getName());
 //        if (true) {
@@ -49,11 +50,11 @@ public class RocketMqController extends BaseController {
     }
 
 //     死信队列需要在rocket控制台：主题->勾选死信->点击“TOPIC配置”->修改 perm 值，修改为6（可读可写权限）
-    @MqListener(name = BUSINESS_CREATE_ORDER_DEAD)
+    @MqListener(name = TOPIC_DEAD)
     public void mqDLQ(String message) {
         logger.info("rocket.DLQ={}", message);
     }
-    @MqListener(name = BUSINESS_CREATE_ORDER_DEAD_1)
+    @MqListener(name = TOPIC_1_DEAD)
     public void mqDLQ1(String message) {
         logger.info("rocket1.DLQ={}", message);
     }
@@ -62,10 +63,10 @@ public class RocketMqController extends BaseController {
     public Object sendrocketMessage() {
         User user = getUser();
         try {
-            boolean flag = mqProducer.getProducer(BUSINESS_CREATE_ORDER).syncSend(user);
+            boolean flag = mqProducer.getProducer(TOPIC).syncSend(user);
             logger.info("rocket.send->{}", flag);
             
-            mqProducer.getProducer(BUSINESS_CREATE_ORDER_1).asyncSend(user, new SendCallback() {
+            mqProducer.getProducer(TOPIC_1).asyncSend(user, new SendCallback() {
                 @Override
                 public void onSuccess(SendResult sendResult) {
                     System.out.println("onSuccess");
@@ -88,7 +89,7 @@ public class RocketMqController extends BaseController {
     public Object sendRocketDelayMessage() {
         User user = getUser();
         try {
-            boolean flag = mqProducer.getProducer(BUSINESS_CREATE_ORDER).syncDelaySend(user, 3, TimeUnit.SECONDS);
+            boolean flag = mqProducer.getProducer(TOPIC).syncDelaySend(user, 3, TimeUnit.SECONDS);
             logger.info("rocket.sendDelay->{}", flag);
         } catch (Exception e) {
             e.printStackTrace();
