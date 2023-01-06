@@ -12,8 +12,6 @@ package com.fqm.framework.mq.config;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.fqm.framework.common.core.util.JsonUtil;
-
 /**
  * Mq properties
  * @version 

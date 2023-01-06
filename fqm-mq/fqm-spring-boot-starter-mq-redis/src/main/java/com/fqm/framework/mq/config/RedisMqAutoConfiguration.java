@@ -1,10 +1,18 @@
 package com.fqm.framework.mq.config;
 
-import java.time.Duration;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
+import com.fqm.framework.common.core.util.system.SystemUtil;
+import com.fqm.framework.common.redis.listener.spring.KeyExpiredEventMessageListener;
+import com.fqm.framework.mq.MqFactory;
+import com.fqm.framework.mq.MqMode;
+import com.fqm.framework.mq.annotation.MqListenerAnnotationBeanPostProcessor;
+import com.fqm.framework.mq.listener.MqListenerParam;
+import com.fqm.framework.mq.listener.MqRedisKeyExpiredEventHandle;
+import com.fqm.framework.mq.listener.RedisMqListener;
+import com.fqm.framework.mq.redis.StreamInfo.InfoGroup;
+import com.fqm.framework.mq.redis.StreamInfo.InfoGroups;
+import com.fqm.framework.mq.scripts.LuaScriptUtil;
+import com.fqm.framework.mq.tasker.RedisMqDeadMessageTasker;
+import com.fqm.framework.mq.template.RedisMqTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -26,19 +34,10 @@ import org.springframework.data.redis.stream.StreamMessageListenerContainer.Stre
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
-import com.fqm.framework.common.core.util.system.SystemUtil;
-import com.fqm.framework.common.redis.listener.spring.KeyExpiredEventMessageListener;
-import com.fqm.framework.mq.MqFactory;
-import com.fqm.framework.mq.MqMode;
-import com.fqm.framework.mq.annotation.MqListenerAnnotationBeanPostProcessor;
-import com.fqm.framework.mq.listener.MqListenerParam;
-import com.fqm.framework.mq.listener.MqRedisKeyExpiredEventHandle;
-import com.fqm.framework.mq.listener.RedisMqListener;
-import com.fqm.framework.mq.redis.StreamInfo.InfoGroup;
-import com.fqm.framework.mq.redis.StreamInfo.InfoGroups;
-import com.fqm.framework.mq.scripts.LuaScriptUtil;
-import com.fqm.framework.mq.tasker.RedisMqDeadMessageTasker;
-import com.fqm.framework.mq.template.RedisMqTemplate;
+import java.time.Duration;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Redis消息队列自动装配
@@ -177,10 +176,8 @@ public class RedisMqAutoConfiguration {
         for (MqListenerParam v : mq.getListeners()) {
             String name = v.getName();
             MqConfigurationProperties properties = mp.getMqs().get(name);
-            if (properties != null) {
-                if (MqMode.REDIS.equalMode(properties.getBinder())) {
-                    topics.add(properties.getTopic());
-                }
+            if (properties != null && MqMode.REDIS.equalMode(properties.getBinder())) {
+                topics.add(properties.getTopic());
             }
         }
         
