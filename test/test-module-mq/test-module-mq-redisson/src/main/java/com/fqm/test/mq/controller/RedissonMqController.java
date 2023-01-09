@@ -77,8 +77,7 @@ public class RedissonMqController extends BaseController {
                 }
             });
             // 通过消息模板发送消息
-//            mqFactory.getMqTemplate(mqProducer.getBinder(BUSINESS_CREATE_ORDER_1))
-//                .syncSend(mqProducer.getTopic(BUSINESS_CREATE_ORDER_1), user);
+//            mqFactory.getMqTemplate(mqProducer.getBinder(TOPIC)).syncSend(TOPIC, user);
         } catch (Exception e) {
             e.printStackTrace();
         }
