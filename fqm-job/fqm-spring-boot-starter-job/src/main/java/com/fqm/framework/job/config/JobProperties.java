@@ -22,7 +22,7 @@ public class JobProperties {
     /** 是否开启，默认为 false 未开启 */
     private Boolean enabled = false;
     
-    /** 任务配置 */
+    /** 任务配置，key：任务名称，value：任务配置 */
     private Map<String, JobConfigurationProperties> jobs = new LinkedHashMap<>();
     
     public Boolean getEnabled() {

@@ -21,10 +21,20 @@
         "description": "xxljob配置.",
         "sourceType": "com.fqm.framework.job.config.XxlJobProperties"
     }, {
+        "name": "xxljob.admin",
+        "type": "com.fqm.framework.job.config.XxlJobProperties.AdminProperties",
+        "description": "调度中心配置.",
+        "sourceType": "com.fqm.framework.job.config.XxlJobProperties.AdminProperties"
+    }, {
         "name": "xxljob.admin.addresses",
         "type": "java.lang.String",
         "description": "调度中心部署跟地址：如调度中心集群部署存在多个地址则用逗号分隔.",
         "sourceType": "com.fqm.framework.job.config.XxlJobProperties.AdminProperties"
+    }, {
+        "name": "xxljob.executor",
+        "type": "com.fqm.framework.job.config.XxlJobProperties.ExecutorProperties",
+        "description": "执行器配置.",
+        "sourceType": "com.fqm.framework.job.config.XxlJobProperties.ExecutorProperties"
     }, {
         "name": "xxljob.executor.app-name",
         "type": "java.lang.String",

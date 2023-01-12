@@ -64,7 +64,7 @@ public class XxlJobAutoConfiguration implements SmartInitializingSingleton, Appl
 
     @Bean(initMethod = "start", destroyMethod = "destroy")
     @ConditionalOnMissingBean
-    public XxlJobExecutor xxlJobExecutor(XxlJobProperties properties) {
+    XxlJobExecutor xxlJobExecutor(XxlJobProperties properties) {
         logger.info("初始化 XXL-Job 执行器的配置");
         // 参数校验
         AdminProperties admin = properties.getAdmin();
