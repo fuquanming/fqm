@@ -6,7 +6,13 @@
         <version>1.0.2</version>
     </parent>
     <artifactId>fqm-spring-boot-starter-lock-redisson</artifactId>
+    <version>1.0.3</version>
     <description>Starter for RedissonLock</description>
+    
+    <properties>
+        <fqm-lock-redisson.version>1.0.3</fqm-lock-redisson.version>
+    </properties>
+    
     <dependencies>
         <dependency>
             <groupId>io.github.fuquanming</groupId>
@@ -16,7 +22,7 @@
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-lock-redisson</artifactId>
-            <version>${parent.version}</version>
+            <version>${fqm-lock-redisson.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

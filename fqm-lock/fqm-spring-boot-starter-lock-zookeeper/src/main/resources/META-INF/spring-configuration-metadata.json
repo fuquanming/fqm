@@ -1,0 +1,50 @@
+{
+    "groups": [{
+        "name": "spring.cloud.zookeeper",
+        "type": "com.fqm.framework.common.zookeeper.ZookeeperProperties",
+        "description": "zookeeper配置.",
+        "sourceType": "com.fqm.framework.common.zookeeper.ZookeeperProperties"
+    }],
+    "properties": [{
+        "name": "spring.cloud.zookeeper",
+        "type": "com.fqm.framework.common.zookeeper.ZookeeperProperties",
+        "description": "zookeeper配置.",
+        "sourceType": "com.fqm.framework.common.zookeeper.ZookeeperProperties"
+    }, {
+        "name": "spring.cloud.zookeeper.connect-string",
+        "type": "java.lang.String",
+        "description": "服务器地址,分隔，如：127.0.0.1:2181.",
+        "sourceType": "com.fqm.framework.common.zookeeper.ZookeeperProperties"
+    }, {
+        "name": "spring.cloud.zookeeper.connection-timeout",
+        "type": "java.lang.Integer",
+        "description": "连接超时时间,毫秒.",
+        "sourceType": "com.fqm.framework.common.zookeeper.ZookeeperProperties",
+         "defaultValue": 15000
+    }, {
+        "name": "spring.cloud.zookeeper.base-sleep-time-ms",
+        "type": "java.lang.Integer",
+        "description": "初始休眠时间,毫秒.",
+        "sourceType": "com.fqm.framework.common.zookeeper.ZookeeperProperties",
+        "defaultValue": 1000
+    }, {
+        "name": "spring.cloud.zookeeper.max-retries",
+        "type": "java.lang.Integer",
+        "description": "最大重试次数.",
+        "sourceType": "com.fqm.framework.common.zookeeper.ZookeeperProperties",
+        "defaultValue": 3
+    }, {
+        "name": "spring.cloud.zookeeper.max-sleep-ms",
+        "type": "java.lang.Integer",
+        "description": "最大休眠时间，毫秒.",
+        "sourceType": "com.fqm.framework.common.zookeeper.ZookeeperProperties",
+        "defaultValue": 10000
+    }, {
+        "name": "spring.cloud.zookeeper.session-timeout",
+        "type": "java.lang.Integer",
+        "description": "会话超时时间，毫秒.",
+        "sourceType": "com.fqm.framework.common.zookeeper.ZookeeperProperties",
+        "defaultValue": 30000
+    }],
+    "hints": []
+}

@@ -8,10 +8,11 @@
 		<version>1.0.2</version>
 	</parent>
 	<artifactId>fqm-lock-redisson</artifactId>
+	<version>1.0.3</version>
 	<description>Redis distributed locks are implemented based on Redisson (blocking locks, trying to obtain locks once, trying to obtain locks, and unlocking)</description>
 	
 	<properties>
-	   <fqm-common-redisson.version>1.0.4</fqm-common-redisson.version>
+	   <fqm-common-redisson.version>1.0.5</fqm-common-redisson.version>
 	</properties>
 	
 	<dependencies>
