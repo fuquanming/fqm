@@ -9,14 +9,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
-import com.fqm.framework.common.redisson.RedissonConfig;
 import com.fqm.framework.common.redisson.RedissonFactory;
 import com.fqm.framework.mq.MqFactory;
 import com.fqm.framework.mq.MqMode;
@@ -73,16 +72,14 @@ public class RedissonMqAutoConfiguration {
         return null;
     }
 
-    @Bean
-    @ConditionalOnMissingBean
-    @ConfigurationProperties(prefix = "spring.redis")
-    RedissonConfig redissonProperties() {
-        return new RedissonConfig();
-    }
-    
-    @Bean
-    @ConditionalOnMissingBean
-    RedissonClient redissonClient(RedissonConfig redissonProperties) {
-        return RedissonFactory.getClient(redissonProperties);
+    /**
+     * 使用 redisson-spring-boot-starter 初始化RedissonClient，不用初始化RedissonConfig及RedissonClient，
+     * 会自动初始化RedissonClient，使用spring.redis配置或spring.redis.redisson配置
+     * @return
+     */
+    @Bean(destroyMethod = "shutdown")
+    @ConditionalOnMissingBean(RedissonClient.class)
+    RedissonClient redissonClient(RedisProperties redisProperties) {
+        return RedissonFactory.getClient(redisProperties);
     }
 }

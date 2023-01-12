@@ -15,11 +15,11 @@ package com.fqm.framework.mq.config;
  * @author 傅泉明
  */
 public class MqConfigurationProperties {
-    /** 消息主题，取值为：MqProperties.mqs 的key */
+    /** 消息主题，必填 */
     private String topic;
-    /** 消费者组，使用@MqListener时，必填 */
+    /** 消费者组，使用@MqListener时（接收消息），必填 */
     private String group;
-    /** 消息的组件名 参考 @MqMode，必填 */
+    /** 消息的组件名，必填，参考 @MqMode， */
     private String binder;
     
     public String getTopic() {

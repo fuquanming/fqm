@@ -21,7 +21,7 @@ public class MqProperties {
     
     /** 是否开启，默认为 true 开启 */
     private Boolean enabled = true;
-    /** 任务配置，key：消息主题 */
+    /** 任务配置，key：业务名称 */
     private Map<String, MqConfigurationProperties> mqs = new LinkedHashMap<>();
     
     public Boolean getEnabled() {
@@ -38,12 +38,6 @@ public class MqProperties {
 
     public void setMqs(Map<String, MqConfigurationProperties> mqs) {
         this.mqs = mqs;
-        // 设置Topic
-        for (Map.Entry<String, MqConfigurationProperties> entry : this.mqs.entrySet()) {
-            String topic = entry.getKey();
-            MqConfigurationProperties mcp = entry.getValue();
-            mcp.setTopic(topic);
-        }
     }
     
 }

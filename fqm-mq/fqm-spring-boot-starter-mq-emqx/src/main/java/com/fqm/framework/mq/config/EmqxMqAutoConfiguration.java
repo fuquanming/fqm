@@ -79,7 +79,12 @@ public class EmqxMqAutoConfiguration implements SmartInitializingSingleton, Appl
     EmqxClient emqxClient(EmqxProperties properties) {
         EmqxClient emqxClient = null;
         try {
-            emqxClient = new EmqxClient(properties);
+            emqxClient = new EmqxClient(properties.getConnectString())
+            .setCleanSession(properties.getCleanSession())
+            .setConnectionTimeoutSecond(properties.getConnectionTimeoutSecond())
+            .setKeepAliveIntervalSecond(properties.getKeepAliveIntervalSecond())
+            .setPassword(properties.getPassword())
+            .setUsername(properties.getUsername());
         } catch (MqttException e) {
             e.printStackTrace();
         }
@@ -123,12 +128,19 @@ public class EmqxMqAutoConfiguration implements SmartInitializingSingleton, Appl
                     // 通过BeanDefinitionBuilder创建bean定义
                     BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder
                             .genericBeanDefinition(EmqxClient.class);
-                    beanDefinitionBuilder.addConstructorArgValue(emqxProperties);
+                    beanDefinitionBuilder.addConstructorArgValue(emqxProperties.getConnectString());
                     beanDefinitionBuilder.addConstructorArgValue(emqxMqListener);
                     beanDefinitionBuilder.addConstructorArgValue(topic);
                     // 应用程序的端口号
                     beanDefinitionBuilder.addConstructorArgValue(port);
                     beanDefinitionBuilder.setDestroyMethodName("destroy");
+                    
+                    beanDefinitionBuilder.addPropertyValue("cleanSession", emqxProperties.getCleanSession());
+                    beanDefinitionBuilder.addPropertyValue("connectionTimeoutSecond", emqxProperties.getConnectionTimeoutSecond());
+                    beanDefinitionBuilder.addPropertyValue("keepAliveIntervalSecond", emqxProperties.getKeepAliveIntervalSecond());
+                    beanDefinitionBuilder.addPropertyValue("password", emqxProperties.getPassword());
+                    beanDefinitionBuilder.addPropertyValue("username", emqxProperties.getUsername());
+                    
                     // 注册bean
                     defaultListableBeanFactory.registerBeanDefinition(beanName, beanDefinitionBuilder.getRawBeanDefinition());
                     // 实例化

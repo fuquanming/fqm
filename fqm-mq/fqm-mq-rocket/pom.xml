@@ -8,12 +8,12 @@
 		<version>1.0.3</version>
 	</parent>
 	<artifactId>fqm-mq-rocket</artifactId>
-	<version>1.0.4</version>
+	<version>1.0.5</version>
 	
 	<description>Message sending and monitoring based on RocketMQTemplate</description>
 	
 	<properties>
-		<fqm-mq-core.version>1.0.4</fqm-mq-core.version>
+		<fqm-mq-core.version>1.0.5</fqm-mq-core.version>
 	   	<rocketmq-spring-boot-starter.version>2.2.1</rocketmq-spring-boot-starter.version>
 	</properties>
 	

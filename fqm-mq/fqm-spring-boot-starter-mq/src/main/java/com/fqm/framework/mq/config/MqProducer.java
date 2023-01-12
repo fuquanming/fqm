@@ -7,7 +7,11 @@
  * 修改历史 : 
  *     1. [2022年12月25日]创建文件 by 傅泉明
  */
-package com.fqm.framework.mq.util;
+package com.fqm.framework.mq.config;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 import com.fqm.framework.common.core.exception.ErrorCode;
 import com.fqm.framework.common.core.exception.ServiceException;
@@ -15,13 +19,7 @@ import com.fqm.framework.common.core.exception.enums.GlobalErrorCodeConstants;
 import com.fqm.framework.mq.MqFactory;
 import com.fqm.framework.mq.MqMode;
 import com.fqm.framework.mq.client.producer.SendCallback;
-import com.fqm.framework.mq.config.MqConfigurationProperties;
-import com.fqm.framework.mq.config.MqProperties;
 import com.fqm.framework.mq.template.MqTemplate;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 消息发送者，通过业务名称发送消息
@@ -34,7 +32,7 @@ public class MqProducer {
     private MqFactory mqFactory;
     /** 消息配置 */
     private MqProperties mqProperties;
-    /** 业务消息生产者，key：消息主题 */
+    /** 业务消息生产者，key：业务名称 */
     private Map<String, Producer> producerMap;
     
     public MqProducer(MqFactory mqFactory, MqProperties mqProperties) {
@@ -47,13 +45,13 @@ public class MqProducer {
     private void init() {
         // 1、初始化业务对应的消息生产者
         for (Map.Entry<String, MqConfigurationProperties> entry : mqProperties.getMqs().entrySet()) {
-            String topic = entry.getKey();
+            String businessName = entry.getKey();
             MqConfigurationProperties mcp = entry.getValue();
             String binder = mcp.getBinder();
             Producer producer = new Producer();
-            producer.topic = topic;
+            producer.topic = mcp.getTopic();
             producer.mqMode = MqMode.getMode(binder);
-            producerMap.put(topic, producer);
+            producerMap.put(businessName, producer);
         }
     }
     
@@ -64,35 +62,43 @@ public class MqProducer {
         }
         return mqConfigurationProperties;
     }
+    
     /**
      * 获取消息模板
      * @param businessName
      * @return
      */
     public MqTemplate getMqTemplate(String businessName) {
-        MqConfigurationProperties mqConfigurationProperties = getMqConfigurationProperties(businessName);
-        // 消息组件
-        String binder = mqConfigurationProperties.getBinder();
-        return mqFactory.getMqTemplate(binder);
+        return mqFactory.getMqTemplate(getBinder(businessName));
     }
+    
     /**
      * 获取消息组件
-     * @param topic 消息主题
+     * @param businessName 业务名称
      * @return
      */
-    public String getBinder(String topic) {
-        return getMqConfigurationProperties(topic).getBinder();
+    public String getBinder(String businessName) {
+        return getMqConfigurationProperties(businessName).getBinder();
+    }
+    
+    /**
+     * 获取消息主题
+     * @param businessName 业务名称
+     * @return
+     */
+    public String getTopic(String businessName) {
+        return getMqConfigurationProperties(businessName).getTopic();
     }
     
     /**
      * 获取消息生产者
-     * @param topic  消息主题
+     * @param businessName  业务名称
      * @return
      */
-    public Producer getProducer(String topic) {
-        Producer producer = producerMap.get(topic);
+    public Producer getProducer(String businessName) {
+        Producer producer = producerMap.get(businessName);
         if (null == producer) {
-            throw new ServiceException(new ErrorCode(GlobalErrorCodeConstants.NOT_FOUND.getCode(), "未找到该业务的消息通道，" + topic));
+            throw new ServiceException(new ErrorCode(GlobalErrorCodeConstants.NOT_FOUND.getCode(), "未找到该业务的消息通道，" + businessName));
         }
         return producer;
     }

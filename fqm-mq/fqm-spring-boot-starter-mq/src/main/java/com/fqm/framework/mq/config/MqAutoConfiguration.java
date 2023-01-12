@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Configuration;
 
 import com.fqm.framework.mq.MqFactory;
 import com.fqm.framework.mq.annotation.MqListenerAnnotationBeanPostProcessor;
-import com.fqm.framework.mq.util.MqProducer;
 
 /**
  * 消息队列自动注册

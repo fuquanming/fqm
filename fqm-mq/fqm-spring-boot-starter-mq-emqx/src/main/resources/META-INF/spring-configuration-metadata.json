@@ -2,7 +2,7 @@
     "groups": [{
         "name": "emqx",
         "type": "com.fqm.framework.mq.config.EmqxProperties",
-        "description": "Mq Emqx Properties.",
+        "description": "emqx配置.",
         "sourceType": "com.fqm.framework.mq.config.EmqxProperties"
     }],
     "properties": [{

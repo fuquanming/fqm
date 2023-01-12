@@ -17,7 +17,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
-import com.fqm.framework.common.zookeeper.ZookeeperConfig;
+import com.fqm.framework.common.zookeeper.ZookeeperProperties;
 import com.fqm.framework.common.zookeeper.ZookeeperFactory;
 import com.fqm.framework.mq.MqFactory;
 import com.fqm.framework.mq.MqMode;
@@ -48,14 +48,15 @@ public class ZookeeperMqAutoConfiguration implements SmartInitializingSingleton,
     @Bean
     @ConditionalOnMissingBean
     @ConfigurationProperties(prefix = "spring.cloud.zookeeper")
-    ZookeeperConfig zookeeperConfig() {
-        return new ZookeeperConfig();
+    ZookeeperProperties zookeeperProperties() {
+        return new ZookeeperProperties();
     }
 
     @Bean(initMethod = "start", destroyMethod = "close")
     @ConditionalOnMissingBean(CuratorFramework.class)
-    CuratorFramework curatorFramework(ZookeeperConfig zookeeperConfig) {
-        return ZookeeperFactory.buildCuratorFramework(zookeeperConfig);
+    @Order(200)
+    public CuratorFramework curatorFramework(ZookeeperProperties zookeeperProperties) {
+        return ZookeeperFactory.buildCuratorFramework(zookeeperProperties);
     }
 
     @Bean(destroyMethod = "destroy")
