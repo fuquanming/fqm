@@ -8,6 +8,7 @@
 		<version>1.0.4</version>
 	</parent>
 	<artifactId>fqm-file-minio</artifactId>
+	<version>1.0.5</version>
     <description>Fqm file object implemented by minio</description>
     
     <properties>
