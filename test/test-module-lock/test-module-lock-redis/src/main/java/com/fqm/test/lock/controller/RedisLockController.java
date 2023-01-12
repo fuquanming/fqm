@@ -88,19 +88,21 @@ public class RedisLockController {
         return new HashMap<>();
     }
     
-    @Service
-    class RedisLockUserService {
-        @Lock4j(key = "${lock.redis.key}", block = true, lockTemplate = RedisLockTemplate.class, lockMode = "${lock.redis.lockMode}")
-        public Object getUserByLock4jLock() {
-            logger.info("RedisLockUserService");
-            HashMap<String, Object> user = new HashMap<>();
-            try {
-                TimeUnit.SECONDS.sleep(2);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            return user;
+}
+
+@Service
+class RedisLockUserService {
+    private Logger logger = LoggerFactory.getLogger(getClass());
+    @Lock4j(key = "${lock.redis.key}", block = true, lockTemplate = RedisLockTemplate.class, lockMode = "${lock.redis.lockMode}")
+    public Object getUserByLock4jLock() {
+        logger.info("RedisLockUserService");
+        HashMap<String, Object> user = new HashMap<>();
+        try {
+            TimeUnit.SECONDS.sleep(2);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
+        return user;
     }
 }
 

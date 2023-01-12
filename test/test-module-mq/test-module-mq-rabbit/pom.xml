@@ -8,7 +8,7 @@
     <artifactId>test-module-mq-rabbit</artifactId>
     
     <properties>
-        <fqm-spring-boot-starter-mq-rabbit.version>1.0.4</fqm-spring-boot-starter-mq-rabbit.version>
+        <fqm-spring-boot-starter-mq-rabbit.version>1.0.5</fqm-spring-boot-starter-mq-rabbit.version>
     </properties>
     
     <dependencies>

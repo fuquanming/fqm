@@ -8,7 +8,7 @@
     <artifactId>test-module-mq-zookeeper</artifactId>
     
     <properties>
-        <fqm-spring-boot-starter-mq-zookeeper.version>1.0.4</fqm-spring-boot-starter-mq-zookeeper.version>
+        <fqm-spring-boot-starter-mq-zookeeper.version>1.0.5</fqm-spring-boot-starter-mq-zookeeper.version>
     </properties>
     
     <dependencies>

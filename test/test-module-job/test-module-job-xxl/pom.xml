@@ -8,7 +8,7 @@
     <artifactId>test-module-job-xxl</artifactId>
     
     <properties>
-        <fqm-spring-boot-starter-job-xxl.version>1.0.2</fqm-spring-boot-starter-job-xxl.version>
+        <fqm-spring-boot-starter-job-xxl.version>1.0.3</fqm-spring-boot-starter-job-xxl.version>
     </properties>
     
     <dependencies>

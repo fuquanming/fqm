@@ -88,20 +88,22 @@ public class SimpleLockController {
         return new HashMap<>();
     }
     
-    @Service
-    class SimpleLockUserService {
-        @Lock4j(key = "${lock.simple.key}", block = true, lockTemplate = SimpleLockTemplate.class, lockMode = "${lock.simple.lockMode}")
-        public Object getUserByLock4jLock() {
-            logger.info("SimpleLockUserService");
-            HashMap<String, Object> user = new HashMap<>();
-            try {
-                TimeUnit.SECONDS.sleep(2);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            return user;
-        }
-    }
+    
 }
 
+@Service
+class SimpleLockUserService {
+    private Logger logger = LoggerFactory.getLogger(getClass());
+    @Lock4j(key = "${lock.simple.key}", block = true, lockTemplate = SimpleLockTemplate.class, lockMode = "${lock.simple.lockMode}")
+    public Object getUserByLock4jLock() {
+        logger.info("SimpleLockUserService");
+        HashMap<String, Object> user = new HashMap<>();
+        try {
+            TimeUnit.SECONDS.sleep(2);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
+}
 

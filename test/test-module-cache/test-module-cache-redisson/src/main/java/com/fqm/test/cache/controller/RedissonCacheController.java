@@ -36,16 +36,18 @@ public class RedissonCacheController {
         return cacheUserService.getCacheById(id);
     }
     
-    @Service
-    class RedissonCacheUserService {
-        @Cacheable(value = "user|${cache.redisson.expire}|${cache.redisson.nullExpire}|${cache.redisson.refresh}", key = "'cache_user_id_' + #id", sync = true
-        //          @Cacheable(value = "user|110|90", key = "'cache_user_id_' + #id", sync = true
-        //                  , cacheManager = CacheManagerType.MULTI_LEVEL_CACHE_MANAGER_REDIS
-        )
-        //          @Cacheable(value = "CAFFEINE", key = "'cache_user_id_' + #id", sync = true, cacheManager = "caffeineCacheManager")
-        public HashMap<String, Object> getCacheById(Long id) {
-            logger.info("load db...getCacheById");
-            return new HashMap<>();
-        }
+}
+
+@Service
+class RedissonCacheUserService {
+    private Logger logger = LoggerFactory.getLogger(getClass());
+    @Cacheable(value = "user|${cache.redisson.expire}|${cache.redisson.nullExpire}|${cache.redisson.refresh}", key = "'cache_user_id_' + #id", sync = true
+    //          @Cacheable(value = "user|110|90", key = "'cache_user_id_' + #id", sync = true
+    //                  , cacheManager = CacheManagerType.MULTI_LEVEL_CACHE_MANAGER_REDIS
+    )
+    //          @Cacheable(value = "CAFFEINE", key = "'cache_user_id_' + #id", sync = true, cacheManager = "caffeineCacheManager")
+    public HashMap<String, Object> getCacheById(Long id) {
+        logger.info("load db...getCacheById");
+        return new HashMap<>();
     }
 }

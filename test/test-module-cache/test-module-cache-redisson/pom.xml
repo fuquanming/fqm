@@ -8,7 +8,7 @@
     <artifactId>test-module-cache-redisson</artifactId>
     
     <properties>
-        <fqm-spring-boot-starter-multilevel-cache-redisson.version>1.0.2</fqm-spring-boot-starter-multilevel-cache-redisson.version>
+        <fqm-spring-boot-starter-multilevel-cache-redisson.version>1.0.3</fqm-spring-boot-starter-multilevel-cache-redisson.version>
     </properties>
     
     <dependencies>

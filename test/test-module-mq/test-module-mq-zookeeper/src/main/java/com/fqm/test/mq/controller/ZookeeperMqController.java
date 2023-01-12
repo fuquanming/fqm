@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fqm.framework.mq.MqFactory;
 import com.fqm.framework.mq.annotation.MqListener;
-import com.fqm.framework.mq.util.MqProducer;
+import com.fqm.framework.mq.config.MqProducer;
 import com.fqm.test.controller.BaseController;
 import com.fqm.test.model.User;
 
@@ -22,16 +22,16 @@ public class ZookeeperMqController extends BaseController {
 
     @Resource
     MqFactory mqFactory;
-    /** 消息主题名称：对应配置文件 mq.mqs.xxx */
-    public static final String TOPIC = "zookeeper-topic";
-    public static final String TOPIC_1 = "zookeeper-topic1";
-    /** 死信主题名称：对应配置文件 mq.mqs.xxx，死信主题：topic + ".DLQ" */
-    public static final String TOPIC_DEAD = "zookeeper-topic.DLQ";
-    public static final String TOPIC_1_DEAD = "zookeeper-topic1.DLQ";
+    /** 业务名称：对应配置文件 mq.mqs.xxx */
+    public static final String BUSINESS_NAME = "zookeeper-topic";
+    public static final String BUSINESS_NAME_1 = "zookeeper-topic1";
+    /** 死信业务名称：对应配置文件 mq.mqs.xxx，死信主题：topic + ".DLQ" */
+    public static final String BUSINESS_NAME_DEAD = BUSINESS_NAME + "-dead";
+    public static final String BUSINESS_NAME_1_DEAD = BUSINESS_NAME_1 + "-dead";
     @Resource
     MqProducer mqProducer;
 
-    @MqListener(name = TOPIC)
+    @MqListener(name = BUSINESS_NAME)
     public void receiveMessage1(String message) {
         logger.info("receiveMessage---zookeeper---1={}", message);
 //        if (true) {
@@ -39,7 +39,7 @@ public class ZookeeperMqController extends BaseController {
 //        }
     }
 
-    @MqListener(name = TOPIC_1)
+    @MqListener(name = BUSINESS_NAME_1)
     public void receiveMessage2(User message) {
         logger.info("receiveMessage---zookeeper---2={}", message.getName());
 //        if (true) {
@@ -47,12 +47,12 @@ public class ZookeeperMqController extends BaseController {
 //        }
     }
     
-    @MqListener(name = TOPIC_DEAD)
+    @MqListener(name = BUSINESS_NAME_DEAD)
     public void mqDLQ(String message) {
         logger.info("zookeeper.DLQ={}", message);
     }
     
-    @MqListener(name = TOPIC_1_DEAD)
+    @MqListener(name = BUSINESS_NAME_1_DEAD)
     public void mqDLQ1(String message) {
         logger.info("zookeeper1.DLQ={}", message);
     }
@@ -61,10 +61,10 @@ public class ZookeeperMqController extends BaseController {
     public Object sendZookeeperMessage() {
         User user = getUser();
         try {
-            boolean flag = mqProducer.getProducer(TOPIC).syncSend(user);
+            boolean flag = mqProducer.getProducer(BUSINESS_NAME).syncSend(user);
             logger.info("zookeeper.send->{}", flag);
             
-            mqProducer.getProducer(TOPIC_1).syncSend(user);
+            mqProducer.getProducer(BUSINESS_NAME_1).syncSend(user);
             // 通过消息模板发送消息
 //            mqFactory.getMqTemplate(mqProducer.getBinder(TOPIC)).syncSend(TOPIC, user);
         } catch (Exception e) {
@@ -77,7 +77,7 @@ public class ZookeeperMqController extends BaseController {
     public Object sendZookeeperDelayMessage() {
         User user = getUser();
         try {
-            boolean flag = mqProducer.getProducer(TOPIC).syncDelaySend(user, 3, TimeUnit.SECONDS);
+            boolean flag = mqProducer.getProducer(BUSINESS_NAME).syncDelaySend(user, 3, TimeUnit.SECONDS);
             logger.info("zookeeper.sendDelay->{}", flag);
         } catch (Exception e) {
             e.printStackTrace();

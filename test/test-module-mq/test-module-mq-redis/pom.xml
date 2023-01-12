@@ -8,7 +8,7 @@
     <artifactId>test-module-mq-redis</artifactId>
     
     <properties>
-        <fqm-spring-boot-starter-mq-redis.version>1.0.4</fqm-spring-boot-starter-mq-redis.version>
+        <fqm-spring-boot-starter-mq-redis.version>1.0.5</fqm-spring-boot-starter-mq-redis.version>
     </properties>
     
     <dependencies>

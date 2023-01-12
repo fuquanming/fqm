@@ -88,20 +88,21 @@ public class RedissonLockController {
         return new HashMap<>();
     }
     
-    @Service
-    class RedissonLockUserService {
-        @Lock4j(key = "${lock.redisson.key}", block = true, lockTemplate = RedissonLockTemplate.class, lockMode = "${lock.redisson.lockMode}")
-        public Object getUserByLock4jLock() {
-            logger.info("RedissonLockUserService");
-            HashMap<String, Object> user = new HashMap<>();
-            try {
-                TimeUnit.SECONDS.sleep(2);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            return user;
-        }
-    }
 }
 
+@Service
+class RedissonLockUserService {
+    private Logger logger = LoggerFactory.getLogger(getClass());
+    @Lock4j(key = "${lock.redisson.key}", block = true, lockTemplate = RedissonLockTemplate.class, lockMode = "${lock.redisson.lockMode}")
+    public Object getUserByLock4jLock() {
+        logger.info("RedissonLockUserService");
+        HashMap<String, Object> user = new HashMap<>();
+        try {
+            TimeUnit.SECONDS.sleep(2);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
+}
 
