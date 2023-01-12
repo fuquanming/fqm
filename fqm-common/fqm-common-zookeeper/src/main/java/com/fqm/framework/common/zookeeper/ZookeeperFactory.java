@@ -21,7 +21,7 @@ public class ZookeeperFactory {
      * @param config
      * @return
      */
-    public static CuratorFramework buildCuratorFramework(ZookeeperConfig config) {
+    public static CuratorFramework buildCuratorFramework(ZookeeperProperties config) {
         if (config.getConnectionTimeout() < defaultConnectionTimeout) {
             // 必须大于15秒
             config.setConnectionTimeout(defaultConnectionTimeout);

@@ -6,7 +6,7 @@
         <version>1.0.3</version>
     </parent>
     <artifactId>fqm-common-zookeeper</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
     <description>Fqm Common Zookeeper Standard Library</description>
     
     <dependencies>
