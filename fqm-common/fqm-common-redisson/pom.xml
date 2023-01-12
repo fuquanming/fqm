@@ -8,7 +8,7 @@
 		<version>1.0.3</version>
 	</parent>
 	<artifactId>fqm-common-redisson</artifactId>
-	<version>1.0.4</version>
+	<version>1.0.5</version>
 	<description>Fqm Common Redisson Standard Library</description>
 	
 	<properties>
@@ -20,6 +20,10 @@
             <groupId>org.redisson</groupId>
             <artifactId>redisson</artifactId>
             <version>${redisson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
     </dependencies>
 </project>
