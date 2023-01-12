@@ -10,8 +10,7 @@
         <relativePath>../fqm-dependencies</relativePath>
     </parent>
 	<artifactId>fqm-spring-boot-starter-swagger</artifactId>
-	<version>1.0.0</version>
-	
+		
 	<description>Starter for Swagger3, Knife4j</description>
 	
 	<properties>

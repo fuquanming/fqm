@@ -13,89 +13,95 @@
     "properties": [{
         "name": "swagger",
         "type": "com.fqm.framework.common.swagger.SwaggerProperties",
-        "description": "Swagger Properties.",
+        "description": "Swagger配置.",
         "sourceType": "com.fqm.framework.common.swagger.SwaggerProperties"
     }, {
         "name": "swagger.enabled",
         "type": "java.lang.Boolean",
-        "description": "Enable Swagger.",
+        "description": "启用状态.",
         "sourceType": "com.fqm.framework.common.swagger.SwaggerProperties",
         "defaultValue": false
     }, {
         "name": "swagger.title",
         "type": "java.lang.String",
-        "description": "Swagger title.",
+        "description": "接口文档的标题.",
         "sourceType": "com.fqm.framework.common.swagger.SwaggerProperties",
         "defaultValue": "接口文档"
     }, {
         "name": "swagger.description",
         "type": "java.lang.String",
-        "description": "Interface document description.",
+        "description": "接口文档的描述.",
         "sourceType": "com.fqm.framework.common.swagger.SwaggerProperties",
         "defaultValue": "本文档描述了接口定义"
     }, {
         "name": "swagger.version",
         "type": "java.lang.String",
-        "description": "Interface document version.",
+        "description": "接口文档的版本.",
         "sourceType": "com.fqm.framework.common.swagger.SwaggerProperties",
         "defaultValue": "1.0.0"
     }, {
         "name": "swagger.group-name",
         "type": "java.lang.String",
-        "description": "Interface document group name.",
+        "description": "接口文档的组名称.",
         "sourceType": "com.fqm.framework.common.swagger.SwaggerProperties",
         "defaultValue": "default"
     }, {
         "name": "swagger.base-package",
         "type": "java.lang.String",
-        "description": "Resolve package path.",
+        "description": "解析包的路径，即Controller层.",
         "sourceType": "com.fqm.framework.common.swagger.SwaggerProperties",
         "defaultValue": ""
     }, {
         "name": "swagger.license",
         "type": "java.lang.String",
-        "description": "License.",
+        "description": "许可证.",
         "sourceType": "com.fqm.framework.common.swagger.SwaggerProperties",
         "defaultValue": ""
     }, {
         "name": "swagger.license-url",
         "type": "java.lang.String",
-        "description": "License URL.",
+        "description": "许可证URL.",
         "sourceType": "com.fqm.framework.common.swagger.SwaggerProperties",
         "defaultValue": ""
     }, {
         "name": "swagger.terms-of-service-url",
         "type": "java.lang.String",
-        "description": "Terms of Service URL.",
+        "description": "服务条款URL.",
+        "sourceType": "com.fqm.framework.common.swagger.SwaggerProperties",
+        "defaultValue": ""
+    }, {
+        "name": "swagger.contact",
+        "type": "com.fqm.framework.common.swagger.SwaggerProperties",
+        "description": "联系人.",
         "sourceType": "com.fqm.framework.common.swagger.SwaggerProperties",
         "defaultValue": ""
     }, {
         "name": "swagger.contact.name",
         "type": "java.lang.String",
-        "description": "Contact's Name.",
+        "description": "联系人姓名.",
         "sourceType": "com.fqm.framework.common.swagger.SwaggerProperties",
         "defaultValue": ""
     }, {
         "name": "swagger.contact.url",
         "type": "java.lang.String",
-        "description": "Contact's URL.",
+        "description": "联系人的URL.",
         "sourceType": "com.fqm.framework.common.swagger.SwaggerProperties",
         "defaultValue": ""
     }, {
         "name": "swagger.contact.email",
         "type": "java.lang.String",
-        "description": "Contact's Email.",
+        "description": "联系人的邮箱.",
         "sourceType": "com.fqm.framework.common.swagger.SwaggerProperties",
         "defaultValue": ""
     }, {
         "name": "swagger.base-path",
         "type": "java.util.List<java.lang.String>",
-        "description": "Parsed URL Rules.",
+        "description": "解析的URL规则.",
         "sourceType": "com.fqm.framework.common.swagger.SwaggerProperties"
     }, {
         "name": "swagger.exclude-path",
         "type": "java.util.List<java.lang.String>",
-        "description": "URL rules to be excluded based on basePath.",
+        "description": "基于BasePath排除的URL规则.",
         "sourceType": "com.fqm.framework.common.swagger.SwaggerProperties"
     }]
 }
