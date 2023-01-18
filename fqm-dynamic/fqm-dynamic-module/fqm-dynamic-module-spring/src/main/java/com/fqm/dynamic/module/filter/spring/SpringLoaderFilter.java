@@ -108,7 +108,7 @@ public class SpringLoaderFilter extends AbstractSpringLoaderFilter {
         }
 
         /** 注册Controller */
-        final RequestMappingHandlerMapping requestMappingHandlerMapping = SpringUtil.getBean(RequestMappingHandlerMapping.class);
+        final RequestMappingHandlerMapping requestMappingHandlerMapping = getRequestMappingHandlerMapping();
         if (requestMappingHandlerMapping != null) {
             for (String beanName : controllerNameSet) {
                 initController(moduleClassLoader, defaultListableBeanFactory, requestMappingHandlerMapping, beanName);

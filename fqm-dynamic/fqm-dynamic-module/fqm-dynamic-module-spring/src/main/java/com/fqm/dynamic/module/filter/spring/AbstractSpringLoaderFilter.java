@@ -11,7 +11,7 @@ import com.fqm.dynamic.module.filter.ModuleLoaderFilter;
  * @version 
  * @author 傅泉明
  */
-public abstract class AbstractSpringLoaderFilter extends SpringBeanPostProcessorFilter implements ModuleLoaderFilter {
+public abstract class AbstractSpringLoaderFilter extends SpringBeanPostProcessorFilter implements ModuleLoaderFilter, SpringFilter {
     
     @Override
     public boolean loader(ModuleClassLoader moduleClassLoader) {

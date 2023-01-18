@@ -39,7 +39,6 @@ public class SpringUnloadFilter extends AbstractSpringUnloadFilter {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
     
-    @SuppressWarnings("unchecked")
     @Override
     public void unloadClassLoader(ModuleClassLoader moduleClassLoader) {
         /** 获取bean工厂并转换为DefaultListableBeanFactory */
@@ -48,7 +47,7 @@ public class SpringUnloadFilter extends AbstractSpringUnloadFilter {
         Map<String, Class<?>> classMap = moduleClassLoader.getClassMap();
 
         /** 卸载Controller */
-        final RequestMappingHandlerMapping requestMappingHandlerMapping = SpringUtil.getBean(RequestMappingHandlerMapping.class);
+        final RequestMappingHandlerMapping requestMappingHandlerMapping = getRequestMappingHandlerMapping();
         if (requestMappingHandlerMapping != null) {
             for (Entry<String, Class<?>> entry : classMap.entrySet()) {
                 String className = entry.getKey();
@@ -71,19 +70,29 @@ public class SpringUnloadFilter extends AbstractSpringUnloadFilter {
             beanName = beanName.substring(beanName.lastIndexOf(".") + 1);
             beanName = StringUtils.uncapitalize(beanName);
 
-            /** 已经在spring容器就删了 */
-            if (defaultListableBeanFactory.containsBeanDefinition(beanName)) {
-                defaultListableBeanFactory.removeBeanDefinition(beanName);
-                try {
-                    // 重点：删除以前的合并的bean,removeBeanDefinition 只是设置标志位，没有删除,会在新的jar定义时引用旧的jar里的bean
-                    Map<String, RootBeanDefinition> mergedBeanDefinitions = (Map<String, RootBeanDefinition>)FieldUtils.readField(defaultListableBeanFactory, "mergedBeanDefinitions", true);
-                    mergedBeanDefinitions.remove(beanName);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                
-                logger.info("unload->removeBeanDefinition={}", beanName);
+            unloadBeanCache(defaultListableBeanFactory, beanName);
+        }
+    }
+    
+    /**
+     * 卸载Bean缓存
+     * @param defaultListableBeanFactory
+     * @param beanName
+     */
+    @SuppressWarnings("unchecked")
+    private void unloadBeanCache(DefaultListableBeanFactory defaultListableBeanFactory, String beanName) {
+        /** 已经在spring容器就删了 */
+        if (defaultListableBeanFactory.containsBeanDefinition(beanName)) {
+            defaultListableBeanFactory.removeBeanDefinition(beanName);
+            try {
+                // 重点：删除以前的合并的bean,removeBeanDefinition 只是设置标志位，没有删除,会在新的jar定义时引用旧的jar里的bean
+                Map<String, RootBeanDefinition> mergedBeanDefinitions = (Map<String, RootBeanDefinition>)FieldUtils.readField(defaultListableBeanFactory, "mergedBeanDefinitions", true);
+                mergedBeanDefinitions.remove(beanName);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+            
+            logger.info("unload->removeBeanDefinition={}", beanName);
         }
     }
     /**

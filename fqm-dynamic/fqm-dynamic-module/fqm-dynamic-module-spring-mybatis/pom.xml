@@ -8,10 +8,13 @@
 		<version>1.0.1</version>
 	</parent>
 	<artifactId>fqm-dynamic-module-spring-mybatis</artifactId>
+	<version>1.0.2</version>
+	
     <description>Dynamically load jar based on spring mybatis</description>
     
     <properties>
         <mybatis-spring.version>3.0.0</mybatis-spring.version><!-- 对应mybatis 3.5.10,mybatis-spring 2.0.6 -->
+        <fqm-dynamic-module-spring.version>1.0.2</fqm-dynamic-module-spring.version>
     </properties>
     
 	<dependencies>
@@ -24,7 +27,7 @@
 		<dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-dynamic-module-spring</artifactId>
-            <version>${parent.version}</version>
+            <version>${fqm-dynamic-module-spring.version}</version>
         </dependency>
 
 		<dependency>

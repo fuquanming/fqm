@@ -27,7 +27,7 @@ import com.fqm.framework.common.spring.util.SpringUtil;
  * @version 
  * @author 傅泉明
  */
-public abstract class AbstractSpringUnloadFilter extends SpringBeanPostProcessorFilter implements ModuleUnloadFilter {
+public abstract class AbstractSpringUnloadFilter extends SpringBeanPostProcessorFilter implements ModuleUnloadFilter, SpringFilter {
 
     /**
      * 加载类加载器

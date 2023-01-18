@@ -6,10 +6,13 @@
         <version>1.0.1</version>
     </parent>
     <artifactId>fqm-dynamic-module-spring-swagger</artifactId>
+    <version>1.0.2</version>
+    
     <description>Dynamically Load Jar Based On Spring Swagger</description>
     
     <properties>
         <fqm-common-swagger.version>1.0.0</fqm-common-swagger.version>
+    	<fqm-dynamic-module-spring.version>1.0.2</fqm-dynamic-module-spring.version>
     </properties>
     
     <dependencies>
@@ -22,7 +25,7 @@
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-dynamic-module-spring</artifactId>
-            <version>${parent.version}</version>
+            <version>${fqm-dynamic-module-spring.version}</version>
         </dependency>
 
         <dependency>
