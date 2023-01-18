@@ -66,17 +66,17 @@
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-dynamic-module-mybatis-plus</artifactId>
-            <version>${dynamic.version}</version>
+            <version>1.0.1</version>
         </dependency>
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-dynamic-module-spring-mybatis</artifactId>
-            <version>${dynamic.version}</version>
+            <version>1.0.2</version>
         </dependency>
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-dynamic-module-spring-swagger</artifactId>
-            <version>${dynamic.version}</version>
+            <version>1.0.2</version>
         </dependency>
         
     </dependencies>
