@@ -47,10 +47,9 @@ public class MqProducer {
         for (Map.Entry<String, MqConfigurationProperties> entry : mqProperties.getMqs().entrySet()) {
             String businessName = entry.getKey();
             MqConfigurationProperties mcp = entry.getValue();
-            String binder = mcp.getBinder();
             Producer producer = new Producer();
             producer.topic = mcp.getTopic();
-            producer.mqMode = MqMode.getMode(binder);
+            producer.mqMode = mcp.getBinder();
             producerMap.put(businessName, producer);
         }
     }
@@ -77,7 +76,7 @@ public class MqProducer {
      * @param businessName 业务名称
      * @return
      */
-    public String getBinder(String businessName) {
+    public MqMode getBinder(String businessName) {
         return getMqConfigurationProperties(businessName).getBinder();
     }
     

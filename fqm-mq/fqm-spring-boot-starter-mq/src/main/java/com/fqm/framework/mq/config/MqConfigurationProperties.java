@@ -9,6 +9,8 @@
  */
 package com.fqm.framework.mq.config;
 
+import com.fqm.framework.mq.MqMode;
+
 /**
  * 消息自动注册配置
  * @version 
@@ -20,7 +22,7 @@ public class MqConfigurationProperties {
     /** 消费者组，使用@MqListener时（接收消息），必填 */
     private String group;
     /** 消息的组件名，必填，参考 @MqMode， */
-    private String binder;
+    private MqMode binder;
     
     public String getTopic() {
         return topic;
@@ -34,10 +36,10 @@ public class MqConfigurationProperties {
     public void setGroup(String group) {
         this.group = group;
     }
-    public String getBinder() {
+    public MqMode getBinder() {
         return binder;
     }
-    public void setBinder(String binder) {
+    public void setBinder(MqMode binder) {
         this.binder = binder;
     }
 }

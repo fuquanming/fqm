@@ -93,7 +93,7 @@ public class RedisMqAutoConfiguration {
             for (MqListenerParam v : mq.getListeners()) {
                 String name = v.getName();
                 MqConfigurationProperties properties = mp.getMqs().get(name);
-                if (properties != null && MqMode.REDIS.equalMode(properties.getBinder())) {
+                if (properties != null && MqMode.REDIS == properties.getBinder()) {
                     buildListener(stringRedisTemplate, container, v, properties);
                 }
             }
@@ -176,7 +176,7 @@ public class RedisMqAutoConfiguration {
         for (MqListenerParam v : mq.getListeners()) {
             String name = v.getName();
             MqConfigurationProperties properties = mp.getMqs().get(name);
-            if (properties != null && MqMode.REDIS.equalMode(properties.getBinder())) {
+            if (properties != null && MqMode.REDIS == properties.getBinder()) {
                 topics.add(properties.getTopic());
             }
         }

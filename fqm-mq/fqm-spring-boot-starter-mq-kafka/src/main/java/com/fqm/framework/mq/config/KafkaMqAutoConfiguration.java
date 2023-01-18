@@ -118,7 +118,7 @@ public class KafkaMqAutoConfiguration implements SmartInitializingSingleton, App
         for (MqListenerParam v : mq.getListeners()) {
             String name = v.getName();
             MqConfigurationProperties properties = mp.getMqs().get(name);
-            if (properties != null && MqMode.KAFKA.equalMode(properties.getBinder())) {
+            if (properties != null && MqMode.KAFKA == properties.getBinder()) {
                 String group = properties.getGroup();
                 String topic = properties.getTopic();
                 Assert.isTrue(StringUtils.hasText(topic), "Please specific [topic] under mq.mqs." + name + " configuration.");

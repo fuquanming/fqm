@@ -21,27 +21,5 @@ public enum MqMode {
     /** emqx,mqtt */
     EMQX;
     
-    public static MqMode getMode(String mode) {
-        if (mode == null || "".equals(mode)) {
-            return null;
-        }
-        MqMode[] modes = values();
-        for (MqMode m : modes) {
-            if (mode.equalsIgnoreCase(m.name())) {
-                return m;
-            }
-        }
-        return null;
-    }
-    
-    /**
-     * 是否和字符串相等，不区分大小写
-     * @param mode  模式的字符串
-     * @return
-     */
-    public boolean equalMode(String mode) {
-        return name().equalsIgnoreCase(mode);
-    }
-    
 }
 
