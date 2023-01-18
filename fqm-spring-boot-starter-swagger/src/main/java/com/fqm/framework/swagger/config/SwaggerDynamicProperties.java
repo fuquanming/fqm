@@ -9,16 +9,17 @@
  */
 package com.fqm.framework.swagger.config;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcProperties;
 import org.springframework.boot.env.EnvironmentPostProcessor;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * 配置文件，动态修改
@@ -38,6 +39,8 @@ import org.springframework.core.env.PropertySource;
  * 1）加载 ProductionSecurityFilter，参见：Swagger3AutoConfiguration.productionSecurityFilter()
  * 2）不使用配置 knife4j.enable=true 且 knife4j.production=true，才能生效，knife4j.enable=true需要swagger类，已配置swagger关闭，不会有swagger类，导致找不到类。
  * 3）因此不用加载配置文件，使用加载类的方式关闭 knife4j。源码配置类：Knife4jAutoConfiguration
+ * 3、如果开启Swagger，则添加配置 spring.mvc.pathmatch.matching-strategy=ant_path_matcher
+ * 解决：Spring Boot 2.6 与 swagger3 不兼容解决
  * @version 
  * @author 傅泉明
  */
@@ -56,6 +59,9 @@ public class SwaggerDynamicProperties implements EnvironmentPostProcessor {
         String springfoxDocumentationOpenapiEnabledStr = "springfox.documentation.open-api.enabled";
         
         String knife4jEnabledStr = "knife4j.enable";
+        
+        String mvcPathmatchMatchingStrategy = "spring.mvc.pathmatch.matching-strategy";
+        
         // 是否开启 Swagger
         boolean enabled = false;
         while (it.hasNext()) {
@@ -73,8 +79,11 @@ public class SwaggerDynamicProperties implements EnvironmentPostProcessor {
             boolean springfoxOpenapiEnabledFlag = propertySource.containsProperty(springfoxDocumentationOpenapiEnabledStr);
             // 清除 knife4j 配置
             boolean knife4jEnabledFlag = propertySource.containsProperty(knife4jEnabledStr);
+            // 清除 路径匹配方式
+            boolean mvcPathmatchMatchingStrategyFlag = propertySource.containsProperty(mvcPathmatchMatchingStrategy);
+            
             if (springfoxEnabledFlag || springfoxAutostartupFlag || springfoxSwaggeruiEnabledFlag 
-                    || springfoxOpenapiEnabledFlag || knife4jEnabledFlag) {
+                    || springfoxOpenapiEnabledFlag || knife4jEnabledFlag || mvcPathmatchMatchingStrategyFlag) {
                 Object source = propertySource.getSource();
                 if (source instanceof Map) {
                     Map<String, Object> activeSource = (Map<String, Object>) propertySource.getSource();
@@ -86,9 +95,12 @@ public class SwaggerDynamicProperties implements EnvironmentPostProcessor {
                     newConfigMap.remove(springfoxDocumentationOpenapiEnabledStr);
                     
                     newConfigMap.remove(knife4jEnabledStr);
+                    
+                    newConfigMap.remove(mvcPathmatchMatchingStrategy);
                     propertySources.replace(propertySource.getName(), new MapPropertySource(propertySource.getName(), newConfigMap));
                 }
             }
+            
         }
         
         // 关闭 Swagger
@@ -104,6 +116,28 @@ public class SwaggerDynamicProperties implements EnvironmentPostProcessor {
             newConfigMap.put(springfoxDocumentationAutostartupStr, closeStr);
             newConfigMap.put(springfoxDocumentationSwaggeruiEnabledStr, closeStr);
             newConfigMap.put(springfoxDocumentationOpenapiEnabledStr, closeStr);
+            propertySources.replace(findPropertySourceName, new MapPropertySource(findPropertySourceName, newConfigMap));
+        }
+        
+        // 开启 Swagger 时，设置路径匹配方式
+        if (enabled && null != findPropertySourceName) {
+            openSwagger(propertySources, findPropertySourceName, mvcPathmatchMatchingStrategy);
+        }
+        
+    }
+
+    @SuppressWarnings("unchecked")
+    private void openSwagger(MutablePropertySources propertySources, String findPropertySourceName, String mvcPathmatchMatchingStrategy) {
+        PropertySource<?> propertySource = propertySources.get(findPropertySourceName);
+        if (null != propertySource && propertySource.getSource() instanceof Map) {
+            Map<String, Object> activeSource = (Map<String, Object>) propertySource.getSource();
+            // 找到最后一个配置
+            Map<String, Object> newConfigMap = new HashMap<>(activeSource.size() + 4);
+            // value必须要放入String格式
+            activeSource.forEach((k, v) -> newConfigMap.put(k, v.toString()));
+            
+            // 设置路径匹配方式 spring.mvc.pathmatch.matching-strategy=ant_path_matcher
+            newConfigMap.put(mvcPathmatchMatchingStrategy, WebMvcProperties.MatchingStrategy.ANT_PATH_MATCHER);
             propertySources.replace(findPropertySourceName, new MapPropertySource(findPropertySourceName, newConfigMap));
         }
     }
