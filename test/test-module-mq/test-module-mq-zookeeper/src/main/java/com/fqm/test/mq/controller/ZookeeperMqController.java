@@ -75,7 +75,7 @@ public class ZookeeperMqController extends BaseController {
     
     @GetMapping("/mq/zookeeper/sendDelayMessage")
     public Object sendZookeeperDelayMessage() {
-        User user = getUser();
+        User user = getDelayUser();
         try {
             boolean flag = mqProducer.getProducer(BUSINESS_NAME).syncDelaySend(user, 3, TimeUnit.SECONDS);
             logger.info("zookeeper.sendDelay->{}", flag);

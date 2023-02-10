@@ -88,7 +88,7 @@ public class RabbitMqController extends BaseController {
 
     @GetMapping("/mq/rabbit/sendDelayMessage")
     public Object sendRabbitDelayMessage() {
-        User user = getUser();
+        User user = getDelayUser();
         try {
             boolean flag = mqProducer.getProducer(BUSINESS_NAME).syncDelaySend(user, 3, TimeUnit.SECONDS);
             logger.info("rabbit.sendDelay->{}", flag);

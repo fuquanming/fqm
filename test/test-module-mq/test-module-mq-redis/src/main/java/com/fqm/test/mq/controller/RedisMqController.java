@@ -73,7 +73,7 @@ public class RedisMqController extends BaseController {
 
     @GetMapping("/mq/redis/sendDelayMessage")
     public Object sendRedisDelayMessage() {
-        User user = getUser();
+        User user = getDelayUser();
         try {
             boolean flag = mqProducer.getProducer(BUSINESS_NAME).syncDelaySend(user, 3, TimeUnit.SECONDS);
             logger.info("redis.sendDelay->{}", flag);
