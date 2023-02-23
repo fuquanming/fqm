@@ -9,6 +9,8 @@
  */
 package com.fqm.framework.mq.config;
 
+import java.util.List;
+
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,11 +29,10 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
 import com.fqm.framework.mq.MqFactory;
 import com.fqm.framework.mq.MqMode;
+import com.fqm.framework.mq.annotation.MqListener;
 import com.fqm.framework.mq.annotation.MqListenerAnnotationBeanPostProcessor;
 import com.fqm.framework.mq.client.EmqxClient;
 import com.fqm.framework.mq.exception.MqException;
@@ -52,15 +53,16 @@ import com.fqm.framework.mq.template.EmqxMqTemplate;
 public class EmqxMqAutoConfiguration implements SmartInitializingSingleton, ApplicationContextAware {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
+
     private ApplicationContext applicationContext;
-    
+
     @Value("${server.port:}")
     private String port;
-    
+
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
-    } 
+    }
 
     @Bean
     @ConditionalOnMissingBean
@@ -79,12 +81,10 @@ public class EmqxMqAutoConfiguration implements SmartInitializingSingleton, Appl
     EmqxClient emqxClient(EmqxProperties properties) {
         EmqxClient emqxClient = null;
         try {
-            emqxClient = new EmqxClient(properties.getConnectString())
-            .setCleanSession(properties.getCleanSession())
-            .setConnectionTimeoutSecond(properties.getConnectionTimeoutSecond())
-            .setKeepAliveIntervalSecond(properties.getKeepAliveIntervalSecond())
-            .setPassword(properties.getPassword())
-            .setUsername(properties.getUsername());
+            emqxClient = new EmqxClient(properties.getConnectString()).setCleanSession(properties.getCleanSession())
+                    .setConnectionTimeoutSecond(properties.getConnectionTimeoutSecond())
+                    .setKeepAliveIntervalSecond(properties.getKeepAliveIntervalSecond()).setPassword(properties.getPassword())
+                    .setUsername(properties.getUsername());
         } catch (MqttException e) {
             e.printStackTrace();
         }
@@ -99,65 +99,62 @@ public class EmqxMqAutoConfiguration implements SmartInitializingSingleton, Appl
         mqFactory.addMqTemplate(emqxMqTemplate);
         return emqxMqTemplate;
     }
-    
+
     @Override
     public void afterSingletonsInstantiated() {
         MqListenerAnnotationBeanPostProcessor mq = applicationContext.getBean(MqListenerAnnotationBeanPostProcessor.class);
-        MqProperties mp = applicationContext.getBean(MqProperties.class);
+        List<MqListenerParam> listenerParams = mq.getListeners(MqMode.EMQX);
+        if (null == listenerParams || listenerParams.isEmpty()) {
+            return;
+        }
         EmqxProperties emqxProperties = applicationContext.getBean(EmqxProperties.class);
         // 注册 监听消息的客户端
         int i = 0;
-        for (MqListenerParam v : mq.getListeners()) {
-            String name = v.getName();
-            MqConfigurationProperties properties = mp.getMqs().get(name);
-            if (properties != null && MqMode.EMQX == properties.getBinder()) {
-                String group = properties.getGroup();
-                String topic = properties.getTopic();
-                Assert.isTrue(StringUtils.hasText(topic), "Please specific [topic] under mq.mqs." + name + " configuration.");
-                Assert.isTrue(StringUtils.hasText(group), "Please specific [group] under mq.mqs." + name + " configuration.");
-                String beanName = "emqxListener." + i;
-                // 动态注册
-                //将applicationContext转换为ConfigurableApplicationContext
-                ConfigurableApplicationContext configurableApplicationContext = (ConfigurableApplicationContext) applicationContext;
-                // 获取bean工厂并转换为DefaultListableBeanFactory
-                DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory) configurableApplicationContext.getBeanFactory();
-                if (!applicationContext.containsBean(beanName)) {
-                    
-                    EmqxMqListener emqxMqListener = new EmqxMqListener(v.getMethod(), v.getBean(), null, topic, group);
-                    
-                    // 通过BeanDefinitionBuilder创建bean定义
-                    BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder
-                            .genericBeanDefinition(EmqxClient.class);
-                    beanDefinitionBuilder.addConstructorArgValue(emqxProperties.getConnectString());
-                    beanDefinitionBuilder.addConstructorArgValue(emqxMqListener);
-                    beanDefinitionBuilder.addConstructorArgValue(topic);
-                    // 应用程序的端口号
-                    beanDefinitionBuilder.addConstructorArgValue(port);
-                    beanDefinitionBuilder.setDestroyMethodName("destroy");
-                    
-                    beanDefinitionBuilder.addPropertyValue("cleanSession", emqxProperties.getCleanSession());
-                    beanDefinitionBuilder.addPropertyValue("connectionTimeoutSecond", emqxProperties.getConnectionTimeoutSecond());
-                    beanDefinitionBuilder.addPropertyValue("keepAliveIntervalSecond", emqxProperties.getKeepAliveIntervalSecond());
-                    beanDefinitionBuilder.addPropertyValue("password", emqxProperties.getPassword());
-                    beanDefinitionBuilder.addPropertyValue("username", emqxProperties.getUsername());
-                    
-                    // 注册bean
-                    defaultListableBeanFactory.registerBeanDefinition(beanName, beanDefinitionBuilder.getRawBeanDefinition());
-                    // 实例化
-                    EmqxClient client = (EmqxClient) applicationContext.getBean(beanName);
-                    // 在 client 连接之前，初始化 EmqxMqListener 的 client
-                    emqxMqListener.setClient(client.getMqttClient());
-                    // 建立连接
-                    try {
-                        client.connect();
-                    } catch (MqttException e) {
-                        throw new MqException(e);
-                    }
-                    i++;
-                    logger.info("Init EmqxMqListener,bean={},method={},topic={},group={}", v.getBean().getClass(), v.getMethod().getName(), topic, group);
+        for (MqListenerParam v : listenerParams) {
+            MqListener mqListener = v.getMqListener();
+            // 1、解析@MqListener
+            String topic = mqListener.topic();
+            String group = mqListener.group();
+            String beanName = "emqxListener." + i;
+            // 动态注册
+            //将applicationContext转换为ConfigurableApplicationContext
+            ConfigurableApplicationContext configurableApplicationContext = (ConfigurableApplicationContext) applicationContext;
+            // 获取bean工厂并转换为DefaultListableBeanFactory
+            DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory) configurableApplicationContext.getBeanFactory();
+            if (!applicationContext.containsBean(beanName)) {
+
+                EmqxMqListener emqxMqListener = new EmqxMqListener(v.getMethod(), v.getBean(), null, topic, group);
+
+                // 通过BeanDefinitionBuilder创建bean定义
+                BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(EmqxClient.class);
+                beanDefinitionBuilder.addConstructorArgValue(emqxProperties.getConnectString());
+                beanDefinitionBuilder.addConstructorArgValue(emqxMqListener);
+                beanDefinitionBuilder.addConstructorArgValue(topic);
+                // 应用程序的端口号
+                beanDefinitionBuilder.addConstructorArgValue(port);
+                beanDefinitionBuilder.setDestroyMethodName("destroy");
+
+                beanDefinitionBuilder.addPropertyValue("cleanSession", emqxProperties.getCleanSession());
+                beanDefinitionBuilder.addPropertyValue("connectionTimeoutSecond", emqxProperties.getConnectionTimeoutSecond());
+                beanDefinitionBuilder.addPropertyValue("keepAliveIntervalSecond", emqxProperties.getKeepAliveIntervalSecond());
+                beanDefinitionBuilder.addPropertyValue("password", emqxProperties.getPassword());
+                beanDefinitionBuilder.addPropertyValue("username", emqxProperties.getUsername());
+
+                // 注册bean
+                defaultListableBeanFactory.registerBeanDefinition(beanName, beanDefinitionBuilder.getRawBeanDefinition());
+                // 实例化
+                EmqxClient client = (EmqxClient) applicationContext.getBean(beanName);
+                // 在 client 连接之前，初始化 EmqxMqListener 的 client
+                emqxMqListener.setClient(client.getMqttClient());
+                // 建立连接
+                try {
+                    client.connect();
+                } catch (MqttException e) {
+                    throw new MqException(e);
                 }
+                i++;
+                logger.info("Init EmqxMqListener,bean={},method={},topic={},group={}", v.getBean().getClass(), v.getMethod().getName(), topic, group);
             }
         }
     }
-
 }

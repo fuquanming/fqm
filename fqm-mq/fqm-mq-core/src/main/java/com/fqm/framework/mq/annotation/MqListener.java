@@ -8,7 +8,6 @@ import java.lang.annotation.Target;
 
 /**
  * mq消息监听
- * 
  * @version 
  * @author 傅泉明
  */
@@ -16,14 +15,12 @@ import java.lang.annotation.Target;
 @Retention(value = RetentionPolicy.RUNTIME)
 @Documented
 public @interface MqListener {
-    /** 消息主题topic，唯一，对应配置文件 mq.mqs.xx */
-    String name();
+    /** 消息业务名称，唯一，对应配置文件 mq.mqs.xx，使用其配置的（topic、group、binder）和 优先级小于属性 topic、group  */
+    String name() default "";
     /** 设置当前的消费者数量 */
     int concurrentConsumers() default 1;
-    /** @MqMode 类型:kafka,rabbit,redis,rocket,zookeeper */
-    String binder() default "";
-    /** 主题topic */
+    /** 主题topic，则 @MqMode 取配置文件 mq.binder */
     String topic() default "";
-    /** 消费分组 */
+    /** 消费分组，则 @MqMode 取配置文件 mq.binder */
     String group() default "";
 }

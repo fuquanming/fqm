@@ -13,12 +13,11 @@ import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
 import com.fqm.framework.common.redisson.RedissonFactory;
 import com.fqm.framework.mq.MqFactory;
 import com.fqm.framework.mq.MqMode;
+import com.fqm.framework.mq.annotation.MqListener;
 import com.fqm.framework.mq.annotation.MqListenerAnnotationBeanPostProcessor;
 import com.fqm.framework.mq.listener.MqListenerParam;
 import com.fqm.framework.mq.listener.RedissonMqListener;
@@ -50,19 +49,20 @@ public class RedissonMqAutoConfiguration {
     @Bean(destroyMethod = "stop")
     RedissonMqListenerContainer redissonMqListener(MqListenerAnnotationBeanPostProcessor mq, RedissonClient redissonClient,
             MqProperties mp) {
+        List<MqListenerParam> listenerParams = mq.getListeners(MqMode.REDISSON);
+        if (null == listenerParams || listenerParams.isEmpty()) {
+            return null;
+        }
+        
         List<RedissonMqListener> listenerList = new ArrayList<>();
-        for (MqListenerParam v : mq.getListeners()) {
-            String name = v.getName();
-            MqConfigurationProperties properties = mp.getMqs().get(name);
-            if (properties != null && MqMode.REDISSON == properties.getBinder()) {
-                String group = properties.getGroup();
-                String topic = properties.getTopic();
-                Assert.isTrue(StringUtils.hasText(topic), "Please specific [topic] under mq.mqs." + name + " configuration.");
-                Assert.isTrue(StringUtils.hasText(group), "Please specific [group] under mq.mqs." + name + " configuration.");
-                RedissonMqListener redissonMqListener = new RedissonMqListener(v.getBean(), v.getMethod(), redissonClient, topic);
-                listenerList.add(redissonMqListener);
-                logger.info("Init RedissonMqListener,bean={},method={},topic={},group={}", v.getBean().getClass(), v.getMethod().getName(), topic, group);
-            }
+        for (MqListenerParam v : listenerParams) {
+            MqListener mqListener = v.getMqListener();
+            // 1、解析@MqListener
+            String topic = mqListener.topic();
+            String group = mqListener.group();
+            RedissonMqListener redissonMqListener = new RedissonMqListener(v.getBean(), v.getMethod(), redissonClient, topic);
+            listenerList.add(redissonMqListener);
+            logger.info("Init RedissonMqListener,bean={},method={},topic={},group={}", v.getBean().getClass(), v.getMethod().getName(), topic, group);
         }
         if (!listenerList.isEmpty()) {
             RedissonMqListenerContainer container = new RedissonMqListenerContainer(listenerList.size());

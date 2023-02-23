@@ -59,10 +59,10 @@ public class EmqxMqTemplate implements MqTemplate {
             //将指定消息发布到主题，但不等待消息传递完成，返回的token可用于跟踪消息的传递状态
             token = mqttTopic.publish(mqttMessage);
             token.waitForCompletion();
-            logger.info("EmqxMqProducer.syncSend.success->topic=[{}],message=[{}]", topic, str);
+            logger.info("syncSend.success->topic=[{}],message=[{}]", topic, str);
             return true;
         } catch (MqttException e) {
-            logger.error("EmqxMqProducer.syncSend.error->topic=[" + topic + messageStr + str + "]", e);
+            logger.error("syncSend.error->topic=[" + topic + messageStr + str + "]", e);
             e.printStackTrace();
         }
         return false;
@@ -88,9 +88,9 @@ public class EmqxMqTemplate implements MqTemplate {
                     sendCallback.onException(exception);
                 }
             });
-            logger.info("EmqxMqProducer.asyncSend.success->topic=[{}],message=[{}]", topic, str);
+            logger.info("asyncSend.success->topic=[{}],message=[{}]", topic, str);
         } catch (MqttException e) {
-            logger.error("EmqxMqProducer.asyncSend.error->topic=[" + topic + messageStr + str + "]", e);
+            logger.error("asyncSend.error->topic=[" + topic + messageStr + str + "]", e);
             e.printStackTrace();
         }
     }
@@ -106,10 +106,10 @@ public class EmqxMqTemplate implements MqTemplate {
         try {
             token = mqttTopic.publish(mqttMessage);
             token.waitForCompletion();
-            logger.info("EmqxMqProducer.syncDelaySend.success->topic=[{}],message=[{}],delayTime=[{}],timeUnit=[{}]", topic, str, delayTime, timeUnit);
+            logger.info("syncDelaySend.success->topic=[{}],message=[{}],delayTime=[{}],timeUnit=[{}]", topic, str, delayTime, timeUnit);
             return true;
         } catch (MqttException e) {
-            logger.error("EmqxMqProducer.syncDelaySend.error->topic=[" + topic + messageStr + str + "],delayTime=[" + delayTime + "],timeUnit=[" + timeUnit + "]", e);
+            logger.error("syncDelaySend.error->topic=[" + topic + messageStr + str + "],delayTime=[" + delayTime + "],timeUnit=[" + timeUnit + "]", e);
             e.printStackTrace();
         }
         return false;

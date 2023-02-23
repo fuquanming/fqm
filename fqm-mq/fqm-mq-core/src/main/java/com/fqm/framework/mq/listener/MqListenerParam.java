@@ -1,6 +1,9 @@
 package com.fqm.framework.mq.listener;
 
 import java.lang.reflect.Method;
+
+import com.fqm.framework.mq.MqMode;
+import com.fqm.framework.mq.annotation.MqListener;
 /**
  * 消息队列监听参数
  * 
@@ -9,9 +12,13 @@ import java.lang.reflect.Method;
  */
 public class MqListenerParam {
     /**
-     * MqProperties 属性mqs（Map）里的Key，即消息主题topic
+     * 消息监听注解
      */
-    private String name;
+    private MqListener mqListener;
+    /**
+     * 消息监听使用的消息方式
+     */
+    private MqMode mqMode;
     /**
      * 使用 @MqListener 监听的Bean 
      */
@@ -21,14 +28,18 @@ public class MqListenerParam {
      */
     private Method method;
     
-    /**
-     * MqProperties 属性mqs（Map）里的Key
-     */
-    public String getName() {
-        return name;
+    public MqListener getMqListener() {
+        return mqListener;
     }
-    public MqListenerParam setName(String name) {
-        this.name = name;
+    public MqListenerParam setMqListener(MqListener mqListener) {
+        this.mqListener = mqListener;
+        return this;
+    }
+    public MqMode getMqMode() {
+        return mqMode;
+    }
+    public MqListenerParam setMqMode(MqMode mqMode) {
+        this.mqMode = mqMode;
         return this;
     }
     public Object getBean() {

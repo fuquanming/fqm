@@ -12,6 +12,8 @@ package com.fqm.framework.mq.config;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.fqm.framework.mq.MqMode;
+
 /**
  * Mq properties
  * @version 
@@ -21,7 +23,9 @@ public class MqProperties {
     
     /** 是否开启，默认为 true 开启 */
     private Boolean enabled = true;
-    /** 任务配置，key：业务名称 */
+    /** 消息队列方式，指定所有消息队列的方式 */
+    private MqMode binder;
+    /** 消息队列配置，key：业务名称(多个消息队列共存时或使用死信队列时) */
     private Map<String, MqConfigurationProperties> mqs = new LinkedHashMap<>();
     
     public Boolean getEnabled() {
@@ -30,6 +34,14 @@ public class MqProperties {
 
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
+    }
+    
+    public MqMode getBinder() {
+        return binder;
+    }
+
+    public void setBinder(MqMode binder) {
+        this.binder = binder;
     }
 
     public Map<String, MqConfigurationProperties> getMqs() {

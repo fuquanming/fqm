@@ -17,10 +17,39 @@
         "sourceType": "com.fqm.framework.mq.config.MqProperties",
         "defaultValue": true
     }, {
+        "name": "mq.binder",
+        "type": "java.lang.String",
+        "description": "消息方式.",
+        "sourceType": "com.fqm.framework.mq.config.MqProperties"
+    }, {
         "name": "mq.mqs",
         "type": "java.util.Map<java.lang.String,com.fqm.framework.mq.config.MqConfigurationProperties>",
         "description": "消息配置，key：业务名称，value：消息主题配置",
         "sourceType": "com.fqm.framework.mq.config.MqProperties"
     }],
-    "hints": []
+    "hints": [{
+        "name": "mq.binder",
+        "values": [{
+    		"value": "emqx",
+    		"description": "emqx 消息队列"
+		}, {
+    		"value": "kafka",
+    		"description": "kafka 消息队列"
+    	}, {
+    		"value": "rabbit",
+    		"description": "rabbit 消息队列"
+    	}, {
+    		"value": "redis",
+    		"description": "redis 消息队列"
+    	}, {
+    		"value": "redisson",
+    		"description": "redisson 消息队列"
+    	}, {
+    		"value": "rocket",
+    		"description": "rocket 消息队列"
+    	}, {
+    		"value": "zookeeper",
+    		"description": "zookeeper 消息队列"
+		}]
+    }]
 }

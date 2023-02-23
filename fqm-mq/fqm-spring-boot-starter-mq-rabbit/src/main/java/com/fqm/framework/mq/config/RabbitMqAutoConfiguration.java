@@ -1,5 +1,7 @@
 package com.fqm.framework.mq.config;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.AcknowledgeMode;
@@ -21,11 +23,10 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
 import com.fqm.framework.mq.MqFactory;
 import com.fqm.framework.mq.MqMode;
+import com.fqm.framework.mq.annotation.MqListener;
 import com.fqm.framework.mq.annotation.MqListenerAnnotationBeanPostProcessor;
 import com.fqm.framework.mq.listener.MqListenerParam;
 import com.fqm.framework.mq.listener.RabbitMqListener;
@@ -68,44 +69,43 @@ public class RabbitMqAutoConfiguration implements SmartInitializingSingleton, Ap
     @Override
     public void afterSingletonsInstantiated() {
         MqListenerAnnotationBeanPostProcessor mq = applicationContext.getBean(MqListenerAnnotationBeanPostProcessor.class);
-        MqProperties mp = applicationContext.getBean(MqProperties.class);
+        List<MqListenerParam> listenerParams = mq.getListeners(MqMode.RABBIT);
+        if (null == listenerParams || listenerParams.isEmpty()) {
+            return;
+        }
         
         RabbitMqTemplate rabbitMqTemplate = applicationContext.getBean(RabbitMqTemplate.class);
         ConnectionFactory connectionFactory = applicationContext.getBean(ConnectionFactory.class);
         int i = 0;
-        for (MqListenerParam v : mq.getListeners()) {
-            String name = v.getName();
-            MqConfigurationProperties properties = mp.getMqs().get(name);
-            if (properties != null && MqMode.RABBIT == properties.getBinder()) {
-                String group = properties.getGroup();
-                String topic = properties.getTopic();
-                Assert.isTrue(StringUtils.hasText(topic), "Please specific [topic] under mq.mqs." + name + " configuration.");
-                Assert.isTrue(StringUtils.hasText(group), "Please specific [group] under mq.mqs." + name + " configuration.");
-                String beanName = "rabbitListener." + i;
-                // 动态注册
-                //将applicationContext转换为ConfigurableApplicationContext
-                ConfigurableApplicationContext configurableApplicationContext = (ConfigurableApplicationContext) applicationContext;
-                // 获取bean工厂并转换为DefaultListableBeanFactory
-                DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory) configurableApplicationContext.getBeanFactory();
-                if (!applicationContext.containsBean(beanName)) {
-                    rabbitMqTemplate.initTopic(topic, false);
-                    
-                    // 通过BeanDefinitionBuilder创建bean定义
-                    BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder
-                            .genericBeanDefinition(SimpleMessageListenerContainer.class);
-                    beanDefinitionBuilder.addConstructorArgValue(connectionFactory);
-                    beanDefinitionBuilder.addPropertyValue("messageListener", new RabbitMqListener(v.getBean(), v.getMethod(), topic, rabbitMqTemplate));
-                    beanDefinitionBuilder.addPropertyValue("queues", new Queue(topic));
-                    //设置当前的消费者数量
-                    beanDefinitionBuilder.addPropertyValue("concurrentConsumers", 1);
-                    //设置手动签收
-                    beanDefinitionBuilder.addPropertyValue("acknowledgeMode", AcknowledgeMode.MANUAL);
+        for (MqListenerParam v : listenerParams) {
+            MqListener mqListener = v.getMqListener();
+            // 1、解析@MqListener
+            String topic = mqListener.topic();
+            String group = mqListener.group();
+            String beanName = "rabbitListener." + i;
+            // 动态注册
+            //将applicationContext转换为ConfigurableApplicationContext
+            ConfigurableApplicationContext configurableApplicationContext = (ConfigurableApplicationContext) applicationContext;
+            // 获取bean工厂并转换为DefaultListableBeanFactory
+            DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory) configurableApplicationContext.getBeanFactory();
+            if (!applicationContext.containsBean(beanName)) {
+                rabbitMqTemplate.initTopic(topic, false);
+                
+                // 通过BeanDefinitionBuilder创建bean定义
+                BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder
+                        .genericBeanDefinition(SimpleMessageListenerContainer.class);
+                beanDefinitionBuilder.addConstructorArgValue(connectionFactory);
+                beanDefinitionBuilder.addPropertyValue("messageListener", new RabbitMqListener(v.getBean(), v.getMethod(), topic, rabbitMqTemplate));
+                beanDefinitionBuilder.addPropertyValue("queues", new Queue(topic));
+                //设置当前的消费者数量
+                beanDefinitionBuilder.addPropertyValue("concurrentConsumers", 1);
+                //设置手动签收
+                beanDefinitionBuilder.addPropertyValue("acknowledgeMode", AcknowledgeMode.MANUAL);
 //                        beanDefinitionBuilder.addPropertyValue("transactionManager", new RabbitTransactionManager(connectionFactory));//设置事务
-                    // 注册bean
-                    defaultListableBeanFactory.registerBeanDefinition(beanName, beanDefinitionBuilder.getRawBeanDefinition());
-                    i++;
-                    logger.info("Init RabbitMqListener,bean={},method={},topic={},group={}", v.getBean().getClass(), v.getMethod().getName(), topic, group);
-                }
+                // 注册bean
+                defaultListableBeanFactory.registerBeanDefinition(beanName, beanDefinitionBuilder.getRawBeanDefinition());
+                i++;
+                logger.info("Init RabbitMqListener,bean={},method={},topic={},group={}", v.getBean().getClass(), v.getMethod().getName(), topic, group);
             }
         }
     }

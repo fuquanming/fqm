@@ -43,13 +43,13 @@ public class KafkaMqTemplate implements MqTemplate {
             future.addCallback(new ListenableFutureCallback<SendResult<String, String>>() {
                 @Override
                 public void onFailure(Throwable e) {
-                    logger.error("KafkaMqProducer.syncSend.error->topic=[" + topic + messageStr + str + "]", e);
+                    logger.error("syncSend.error->topic=[" + topic + messageStr + str + "]", e);
                     e.printStackTrace();
                     flag[0] = false;
                 }
                 @Override
                 public void onSuccess(SendResult<String, String> result) {
-                    logger.info("KafkaMqProducer.syncSend.success->topic=[{}],message=[{}],offset=[{}]", topic, str, result.getRecordMetadata().offset());
+                    logger.info("syncSend.success->topic=[{}],message=[{}],offset=[{}]", topic, str, result.getRecordMetadata().offset());
                 }
             });
             future.get();
@@ -58,7 +58,7 @@ public class KafkaMqTemplate implements MqTemplate {
             e.printStackTrace();
             Thread.currentThread().interrupt();
         } catch (Exception e) {
-            logger.error("KafkaMqProducer.syncSend.error->topic=[" + topic + messageStr + str + "]", e);
+            logger.error("syncSend.error->topic=[" + topic + messageStr + str + "]", e);
             e.printStackTrace();
         }
         return false;
@@ -72,18 +72,18 @@ public class KafkaMqTemplate implements MqTemplate {
             future.addCallback(new ListenableFutureCallback<SendResult<String, String>>() {
                 @Override
                 public void onFailure(Throwable e) {
-                    logger.error("KafkaMqProducer.asyncSend.error->topic=[" + topic + messageStr + str + "]", e);
+                    logger.error("asyncSend.error->topic=[" + topic + messageStr + str + "]", e);
                     sendCallback.onException(e);
                     e.printStackTrace();
                 }
                 @Override
                 public void onSuccess(SendResult<String, String> result) {
-                    logger.info("KafkaMqProducer.asyncSend.success->topic=[{}],message=[{}],offset=[{}]", topic, str, result.getRecordMetadata().offset());
+                    logger.info("asyncSend.success->topic=[{}],message=[{}],offset=[{}]", topic, str, result.getRecordMetadata().offset());
                     sendCallback.onSuccess(null);
                 }
             });
         } catch (Exception e) {
-            logger.error("KafkaMqProducer.asyncSend.error->topic=[" + topic + messageStr + str + "]", e);
+            logger.error("asyncSend.error->topic=[" + topic + messageStr + str + "]", e);
             e.printStackTrace();
         }
     }

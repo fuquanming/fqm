@@ -63,7 +63,6 @@ public class RedisMqTemplate implements MqTemplate {
         String str = null;
         try {
             str = getJsonStr(msg);
-            logger.info("RedisMqProducer->{},{}", topic, str);
             /**
              * 查看数据：XRANGE topic - +
              * 如：payload为key
@@ -80,10 +79,10 @@ public class RedisMqTemplate implements MqTemplate {
                     Collections.singletonList(topic),
                     String.valueOf(Constants.MAX_QUEUE_SIZE), str
                     );
-            logger.info("RedisMqProducer.success->topic=[{}],message=[{}],offset=[{}]", topic, str, messageFlag);
+            logger.info("syncSend.success->topic=[{}],message=[{}],offset=[{}]", topic, str, messageFlag);
             return true;
         } catch (Exception e) {
-            logger.error("RedisMqProducer-error->" + topic + "," + str, e);
+            logger.error("syncSend.error->" + topic + "," + str, e);
             e.printStackTrace();
         }
         return false;
@@ -133,13 +132,13 @@ public class RedisMqTemplate implements MqTemplate {
             flag = Objects.equals(delayMessageFlag, Constants.EXECUTE_SUCCESS);
             
             if (flag) {
-                logger.info("RedisMqProducer.syncDelaySend.success->topic=[{}],message=[{}],delayTime=[{}],timeUnit=[{}]", topic, str, delayTime, timeUnit);
+                logger.info("syncDelaySend.success->topic=[{}],message=[{}],delayTime=[{}],timeUnit=[{}]", topic, str, delayTime, timeUnit);
                 return true;
             } else {
-                logger.info("RedisMqProducer.syncDelaySend.fail->topic=[{}],message=[{}],delayTime=[{}],timeUnit=[{}]", topic, str, delayTime, timeUnit);
+                logger.info("syncDelaySend.fail->topic=[{}],message=[{}],delayTime=[{}],timeUnit=[{}]", topic, str, delayTime, timeUnit);
             }
         } catch (Exception e) {
-            logger.error("RedisMqProducer.syncDelaySend.error->topic=[" + topic + "],message=[" + str + "],delayTime=[" + delayTime + "],timeUnit=[" + timeUnit + "]", e);
+            logger.error("syncDelaySend.error->topic=[" + topic + "],message=[" + str + "],delayTime=[" + delayTime + "],timeUnit=[" + timeUnit + "]", e);
             e.printStackTrace();
         }
         return false;

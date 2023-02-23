@@ -43,13 +43,13 @@ public class RocketMqTemplate implements MqTemplate {
         try {
             SendResult sendResult = template.syncSend(topic, MessageBuilder.withPayload(str).build());
             if (sendResult.getSendStatus() == SendStatus.SEND_OK) {
-                logger.info("RocketMqProducer.syncSend.success->topic=[{}],message=[{}],offset=[{}]", topic, str, "");
+                logger.info("syncSend.success->topic=[{}],message=[{}],offset=[{}]", topic, str, "");
                 return true;
             } else {
-                logger.error("RocketMqProducer.syncSend.error->topic=[{}],message=[{}],msg=[{}]", topic, str, sendResult);
+                logger.error("syncSend.error->topic=[{}],message=[{}],msg=[{}]", topic, str, sendResult);
             }
         } catch (Exception e) {
-            logger.error("RocketMqProducer.syncSend.error->topic=[" + topic + messageStr + str + "]", e);
+            logger.error("syncSend.error->topic=[" + topic + messageStr + str + "]", e);
             e.printStackTrace();
         }
         return false;
@@ -62,18 +62,18 @@ public class RocketMqTemplate implements MqTemplate {
             template.asyncSend(topic, MessageBuilder.withPayload(str).build(), new org.apache.rocketmq.client.producer.SendCallback() {
                 @Override
                 public void onSuccess(SendResult sendResult) {
-                    logger.info("RocketMqProducer.asyncSend.success->topic=[{}],message=[{}],offset=[{}]", topic, str, "");
+                    logger.info("asyncSend.success->topic=[{}],message=[{}],offset=[{}]", topic, str, "");
                     sendCallback.onSuccess(new com.fqm.framework.mq.client.producer.SendResult().setId(sendResult.getMsgId()));
                 }
                 
                 @Override
                 public void onException(Throwable e) {
-                    logger.error("RocketMqProducer.asyncSend.error->topic=[" + topic + messageStr + str + "]", e);
+                    logger.error("asyncSend.error->topic=[" + topic + messageStr + str + "]", e);
                     sendCallback.onException(e);
                 }
             });
         } catch (Exception e) {
-            logger.error("RocketMqProducer.asyncSend.error->topic=[" + topic + messageStr + str + "]", e);
+            logger.error("asyncSend.error->topic=[" + topic + messageStr + str + "]", e);
             e.printStackTrace();
         }
     }
@@ -89,10 +89,10 @@ public class RocketMqTemplate implements MqTemplate {
             // 通过18级的时间，每次比较最近所在的级别时间投递进去。
             SendResult sendResult = template.syncSend(topic, message, 5000, RocketDelayUtil.getDelayLevel(delayTime, timeUnit));
             if (sendResult.getSendStatus() == SendStatus.SEND_OK) {
-                logger.info("RocketMqProducer.syncDelaySend.success->topic=[{}],message=[{}],delayTime=[{}],timeUnit=[{}]", topic, str, delayTime, timeUnit);
+                logger.info("syncDelaySend.success->topic=[{}],message=[{}],delayTime=[{}],timeUnit=[{}]", topic, str, delayTime, timeUnit);
                 return true;
             } else {
-                logger.error("RocketMqProducer.syncDelaySend.success->topic=[{}],message=[{}],delayTime=[{}],timeUnit=[{}]", topic, str, delayTime, timeUnit);
+                logger.error("syncDelaySend.success->topic=[{}],message=[{}],delayTime=[{}],timeUnit=[{}]", topic, str, delayTime, timeUnit);
             }
             
             // 二、设置DefaultRocketMQListenerContainer.DefaultMQPushConsumer.DefaultMQPushConsumerImpl.isPause(true) 暂停消费
@@ -103,7 +103,7 @@ public class RocketMqTemplate implements MqTemplate {
             // 3、客户端获取到延迟的topic消息，投递到正常监听topic下。
             // 4、客户端获取到延迟消息
         } catch (Exception e) {
-            logger.error("RocketMqProducer.syncDelaySend.error->topic=[" + topic + messageStr + str + "],delayTime=[" + delayTime + "],timeUnit=[" + timeUnit + "]", e);
+            logger.error("syncDelaySend.error->topic=[" + topic + messageStr + str + "],delayTime=[" + delayTime + "],timeUnit=[" + timeUnit + "]", e);
             e.printStackTrace();
         }
         return false;

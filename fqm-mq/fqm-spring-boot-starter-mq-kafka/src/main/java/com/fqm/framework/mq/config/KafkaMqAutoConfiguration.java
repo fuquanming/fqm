@@ -1,6 +1,7 @@
 package com.fqm.framework.mq.config;
 
 import java.lang.reflect.Constructor;
+import java.util.List;
 import java.util.function.BiConsumer;
 
 import org.slf4j.Logger;
@@ -26,14 +27,13 @@ import org.springframework.kafka.listener.ContainerProperties.AckMode;
 import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
 import org.springframework.kafka.listener.KafkaMessageListenerContainer;
 import org.springframework.lang.NonNull;
-import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
-import org.springframework.util.StringUtils;
 import org.springframework.util.backoff.BackOff;
 import org.springframework.util.backoff.FixedBackOff;
 
 import com.fqm.framework.mq.MqFactory;
 import com.fqm.framework.mq.MqMode;
+import com.fqm.framework.mq.annotation.MqListener;
 import com.fqm.framework.mq.annotation.MqListenerAnnotationBeanPostProcessor;
 import com.fqm.framework.mq.listener.KafkaMqListener;
 import com.fqm.framework.mq.listener.MqListenerParam;
@@ -110,50 +110,49 @@ public class KafkaMqAutoConfiguration implements SmartInitializingSingleton, App
     @Override
     public void afterSingletonsInstantiated() {
         MqListenerAnnotationBeanPostProcessor mq = applicationContext.getBean(MqListenerAnnotationBeanPostProcessor.class);
-        MqProperties mp = applicationContext.getBean(MqProperties.class);
+        List<MqListenerParam> listenerParams = mq.getListeners(MqMode.KAFKA);
+        if (null == listenerParams || listenerParams.isEmpty()) {
+            return;
+        }
         
         ConsumerFactory<?, ?> consumerFactory = applicationContext.getBean(ConsumerFactory.class);
         KafkaOperations<?, ?> template = applicationContext.getBean(KafkaOperations.class);
         int i = 0;
-        for (MqListenerParam v : mq.getListeners()) {
-            String name = v.getName();
-            MqConfigurationProperties properties = mp.getMqs().get(name);
-            if (properties != null && MqMode.KAFKA == properties.getBinder()) {
-                String group = properties.getGroup();
-                String topic = properties.getTopic();
-                Assert.isTrue(StringUtils.hasText(topic), "Please specific [topic] under mq.mqs." + name + " configuration.");
-                Assert.isTrue(StringUtils.hasText(group), "Please specific [group] under mq.mqs." + name + " configuration.");
-                String beanName = "kafkaListener." + i;
-                // 动态注册
-                //将applicationContext转换为ConfigurableApplicationContext
-                ConfigurableApplicationContext configurableApplicationContext = (ConfigurableApplicationContext) applicationContext;
-                // 获取bean工厂并转换为DefaultListableBeanFactory
-                DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory) configurableApplicationContext.getBeanFactory();
-                if (!applicationContext.containsBean(beanName)) {
-                    // 通过BeanDefinitionBuilder创建bean定义
-                    ContainerProperties containerProperties = new ContainerProperties(topic);
-                    containerProperties.setGroupId(group);
-                    // 手动ack
-                    containerProperties.setAckMode(AckMode.MANUAL);
-                    containerProperties.setMessageListener(new KafkaMqListener(v.getBean(), v.getMethod()));
+        
+        for (MqListenerParam v : listenerParams) {
+            MqListener mqListener = v.getMqListener();
+            String topic = mqListener.topic();
+            String group = mqListener.group();
+            String beanName = "kafkaListener." + i;
+            // 动态注册
+            //将applicationContext转换为ConfigurableApplicationContext
+            ConfigurableApplicationContext configurableApplicationContext = (ConfigurableApplicationContext) applicationContext;
+            // 获取bean工厂并转换为DefaultListableBeanFactory
+            DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory) configurableApplicationContext.getBeanFactory();
+            if (!applicationContext.containsBean(beanName)) {
+                // 通过BeanDefinitionBuilder创建bean定义
+                ContainerProperties containerProperties = new ContainerProperties(topic);
+                containerProperties.setGroupId(group);
+                // 手动ack
+                containerProperties.setAckMode(AckMode.MANUAL);
+                containerProperties.setMessageListener(new KafkaMqListener(v.getBean(), v.getMethod()));
 
-                    BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(KafkaMessageListenerContainer.class);
-                    // 并发消费的类 "ConcurrentMessageListenerContainer"
-                    beanDefinitionBuilder.addConstructorArgValue(consumerFactory);
-                    beanDefinitionBuilder.addConstructorArgValue(containerProperties);
-                    // 失败重试1次，最后入死信队列，topic=v.getDestination() + ".DLT"
-                    Object errorHandlerObj = getErrorHandlerObj(template);
-                    if (ERROR_HANDLER_HIGHTER_CLASS.equals(errorHandlerConstructor.getName())) {
-                        beanDefinitionBuilder.addPropertyValue("commonErrorHandler", errorHandlerObj);
-                    } else if (ERROR_HANDLER_LOW_CLASS.equals(errorHandlerConstructor.getName())) {
-                        beanDefinitionBuilder.addPropertyValue("errorHandler", errorHandlerObj);
-                    }
-                    // 并发消费 "concurrency"
-                    // 注册bean
-                    defaultListableBeanFactory.registerBeanDefinition(beanName, beanDefinitionBuilder.getRawBeanDefinition());
-                    i++;
-                    logger.info("Init KafkaMqListener,bean={},method={},topic={},group={}", v.getBean().getClass(), v.getMethod().getName(), topic, group);
+                BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(KafkaMessageListenerContainer.class);
+                // 并发消费的类 "ConcurrentMessageListenerContainer"
+                beanDefinitionBuilder.addConstructorArgValue(consumerFactory);
+                beanDefinitionBuilder.addConstructorArgValue(containerProperties);
+                // 失败重试1次，最后入死信队列，topic=v.getDestination() + ".DLT"
+                Object errorHandlerObj = getErrorHandlerObj(template);
+                if (ERROR_HANDLER_HIGHTER_CLASS.equals(errorHandlerConstructor.getName())) {
+                    beanDefinitionBuilder.addPropertyValue("commonErrorHandler", errorHandlerObj);
+                } else if (ERROR_HANDLER_LOW_CLASS.equals(errorHandlerConstructor.getName())) {
+                    beanDefinitionBuilder.addPropertyValue("errorHandler", errorHandlerObj);
                 }
+                // 并发消费 "concurrency"
+                // 注册bean
+                defaultListableBeanFactory.registerBeanDefinition(beanName, beanDefinitionBuilder.getRawBeanDefinition());
+                i++;
+                logger.info("Init KafkaMqListener,bean={},method={},topic={},group={}", v.getBean().getClass(), v.getMethod().getName(), topic, group);
             }
         }
     }

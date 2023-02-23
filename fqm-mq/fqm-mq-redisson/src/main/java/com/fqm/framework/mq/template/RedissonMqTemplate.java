@@ -38,11 +38,11 @@ public class RedissonMqTemplate implements MqTemplate {
             RBlockingDeque<Object> topicQueue = redissonClient.getBlockingDeque(topic);
             RDelayedQueue<Object> delayedQueue = redissonClient.getDelayedQueue(topicQueue);
             delayedQueue.offer(str, 0, TimeUnit.SECONDS);
-            logger.info("RedissonMqProducer.syncSend.success->topic=[{}],message=[{}]", topic, str);
+            logger.info("syncSend.success->topic=[{}],message=[{}]", topic, str);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
-            logger.error("RedissonMqProducer.syncSend.error->topic=[{}],message=[{}]", topic, str);
+            logger.error("syncSend.error->topic=[{}],message=[{}]", topic, str);
         }
         return false;
     }
@@ -55,11 +55,11 @@ public class RedissonMqTemplate implements MqTemplate {
             RDelayedQueue<Object> delayedQueue = redissonClient.getDelayedQueue(topicQueue);
             delayedQueue.offer(str, 0, TimeUnit.SECONDS);
             sendCallback.onSuccess(null);
-            logger.info("RedissonMqProducer.asyncSend.success->topic=[{}],message=[{}]", topic, str);
+            logger.info("asyncSend.success->topic=[{}],message=[{}]", topic, str);
         } catch (Exception e) {
             e.printStackTrace();
             sendCallback.onException(e);
-            logger.error("RedissonMqProducer.asyncSend.error->topic=[{}],message=[{}]", topic, str);
+            logger.error("asyncSend.error->topic=[{}],message=[{}]", topic, str);
         }
     }
     
@@ -75,10 +75,10 @@ public class RedissonMqTemplate implements MqTemplate {
             RBlockingDeque<Object> topicQueue = redissonClient.getBlockingDeque(topic);
             RDelayedQueue<Object> delayedQueue = redissonClient.getDelayedQueue(topicQueue);
             delayedQueue.offer(str, delayTime, timeUnit);
-            logger.info("RedissonMqProducer.syncDelaySend.success->topic=[{}],message=[{}],delayTime=[{}],timeUnit=[{}]", topic, str, delayTime, timeUnit);
+            logger.info("syncDelaySend.success->topic=[{}],message=[{}],delayTime=[{}],timeUnit=[{}]", topic, str, delayTime, timeUnit);
             return true;
         } catch (Exception e) {
-            logger.error("RedissonMqProducer.syncDelaySend.error->topic=[" + topic + "],message=[" + str + "],delayTime=[" + delayTime + "],timeUnit=[" + timeUnit + "]", e);
+            logger.error("syncDelaySend.error->topic=[" + topic + "],message=[" + str + "],delayTime=[" + delayTime + "],timeUnit=[" + timeUnit + "]", e);
             e.printStackTrace();
         }
         return false;

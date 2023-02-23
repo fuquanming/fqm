@@ -1,18 +1,11 @@
 package com.fqm.framework.mq.config;
 
-import com.fqm.framework.common.core.util.system.SystemUtil;
-import com.fqm.framework.common.redis.listener.spring.KeyExpiredEventMessageListener;
-import com.fqm.framework.mq.MqFactory;
-import com.fqm.framework.mq.MqMode;
-import com.fqm.framework.mq.annotation.MqListenerAnnotationBeanPostProcessor;
-import com.fqm.framework.mq.listener.MqListenerParam;
-import com.fqm.framework.mq.listener.MqRedisKeyExpiredEventHandle;
-import com.fqm.framework.mq.listener.RedisMqListener;
-import com.fqm.framework.mq.redis.StreamInfo.InfoGroup;
-import com.fqm.framework.mq.redis.StreamInfo.InfoGroups;
-import com.fqm.framework.mq.scripts.LuaScriptUtil;
-import com.fqm.framework.mq.tasker.RedisMqDeadMessageTasker;
-import com.fqm.framework.mq.template.RedisMqTemplate;
+import java.time.Duration;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -31,13 +24,21 @@ import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.data.redis.stream.StreamMessageListenerContainer;
 import org.springframework.data.redis.stream.StreamMessageListenerContainer.StreamMessageListenerContainerOptions;
-import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
-import java.time.Duration;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import com.fqm.framework.common.core.util.system.SystemUtil;
+import com.fqm.framework.common.redis.listener.spring.KeyExpiredEventMessageListener;
+import com.fqm.framework.mq.MqFactory;
+import com.fqm.framework.mq.MqMode;
+import com.fqm.framework.mq.annotation.MqListener;
+import com.fqm.framework.mq.annotation.MqListenerAnnotationBeanPostProcessor;
+import com.fqm.framework.mq.listener.MqListenerParam;
+import com.fqm.framework.mq.listener.MqRedisKeyExpiredEventHandle;
+import com.fqm.framework.mq.listener.RedisMqListener;
+import com.fqm.framework.mq.redis.StreamInfo.InfoGroup;
+import com.fqm.framework.mq.redis.StreamInfo.InfoGroups;
+import com.fqm.framework.mq.scripts.LuaScriptUtil;
+import com.fqm.framework.mq.tasker.RedisMqDeadMessageTasker;
+import com.fqm.framework.mq.template.RedisMqTemplate;
 
 /**
  * Redis消息队列自动装配
@@ -72,38 +73,40 @@ public class RedisMqAutoConfiguration {
     StreamMessageListenerContainer<String, MapRecord<String, String, String>> streamMessageListenerContainer(
             RedisConnectionFactory redisConnectionFactory,
             MqListenerAnnotationBeanPostProcessor mq, StringRedisTemplate stringRedisTemplate
-            , MqProperties mp
             ) {
+        List<MqListenerParam> listenerParams = mq.getListeners(MqMode.REDIS);
+        if (null == listenerParams || listenerParams.isEmpty()) {
+            return null;
+        }
         // 创建配置对象
         StreamMessageListenerContainerOptions<String, MapRecord<String, String, String>> containerOptions = null;
         // 根据配置对象创建监听容器对象
         StreamMessageListenerContainer<String, MapRecord<String, String, String>> container = null;
-        if (mq.getListeners() != null && !mq.getListeners().isEmpty()) {
-            containerOptions = StreamMessageListenerContainerOptions.builder()
-                    // 一次性最多拉取多少条消息
-                    .batchSize(10) 
-                    .errorHandler(Throwable::printStackTrace)
-                    // 超时时间，设置为0，表示不超时（超时后会抛出异常）
-                    .pollTimeout(Duration.ZERO)
-                    .serializer(new StringRedisSerializer())
-                    .build();
-            // 根据配置对象创建监听容器对象
-            container = StreamMessageListenerContainer.create(redisConnectionFactory, containerOptions);
-            
-            for (MqListenerParam v : mq.getListeners()) {
-                String name = v.getName();
-                MqConfigurationProperties properties = mp.getMqs().get(name);
-                if (properties != null && MqMode.REDIS == properties.getBinder()) {
-                    buildListener(stringRedisTemplate, container, v, properties);
-                }
-            }
+        
+        containerOptions = StreamMessageListenerContainerOptions.builder()
+                // 一次性最多拉取多少条消息
+                .batchSize(10) 
+                .errorHandler(Throwable::printStackTrace)
+                // 超时时间，设置为0，表示不超时（超时后会抛出异常）
+                .pollTimeout(Duration.ZERO)
+                .serializer(new StringRedisSerializer())
+                .build();
+        // 根据配置对象创建监听容器对象
+        container = StreamMessageListenerContainer.create(redisConnectionFactory, containerOptions);
+        
+        for (MqListenerParam v : listenerParams) {
+            MqListener mqListener = v.getMqListener();
+            // 1、解析@MqListener
+            String topic = mqListener.topic();
+            String group = mqListener.group();
+            buildListener(stringRedisTemplate, container, v, topic, group);
         }
         return container;
     }
 
     private void buildListener(StringRedisTemplate stringRedisTemplate,
             StreamMessageListenerContainer<String, MapRecord<String, String, String>> container, MqListenerParam v,
-            MqConfigurationProperties properties) {
+            String topic, String group) {
         // 创建 listener 对应的消费者分组
         boolean createGroup = true;
         // 
@@ -118,11 +121,6 @@ public class RedisMqAutoConfiguration {
          */
         /** spring-boot->2.2.0.RELEASE,redisson-spring-boot-starter->3.13.1，初始化数据 */
         /** spring-boot->2.2.0.RELEASE,redisson-spring-boot-starter->3.13.1，初始化数据 */
-        
-        String group = properties.getGroup();
-        String topic = properties.getTopic();
-        Assert.isTrue(StringUtils.hasText(group), "Please specific [group] under mq configuration.");
-        Assert.isTrue(StringUtils.hasText(topic), "Please specific [topic] under mq configuration.");
         // Lua获取消费者组
         try {
             InfoGroups gs = LuaScriptUtil.getInfoGroups(topic, stringRedisTemplate);
@@ -170,15 +168,18 @@ public class RedisMqAutoConfiguration {
      * @return
      */
     @Bean(initMethod = "start", destroyMethod = "stop")
-    RedisMqDeadMessageTasker redisMqDeadMessageTasker(MqListenerAnnotationBeanPostProcessor mq, StringRedisTemplate stringRedisTemplate
-            , MqProperties mp) {
+    RedisMqDeadMessageTasker redisMqDeadMessageTasker(MqListenerAnnotationBeanPostProcessor mq, StringRedisTemplate stringRedisTemplate) {
+        List<MqListenerParam> listenerParams = mq.getListeners(MqMode.REDIS);
+        if (null == listenerParams || listenerParams.isEmpty()) {
+            return null;
+        }
+        
         Set<String> topics = new HashSet<>();
-        for (MqListenerParam v : mq.getListeners()) {
-            String name = v.getName();
-            MqConfigurationProperties properties = mp.getMqs().get(name);
-            if (properties != null && MqMode.REDIS == properties.getBinder()) {
-                topics.add(properties.getTopic());
-            }
+        for (MqListenerParam v : listenerParams) {
+            MqListener mqListener = v.getMqListener();
+            // 1、解析@MqListener
+            String topic = mqListener.topic();
+            topics.add(topic);
         }
         
         return new RedisMqDeadMessageTasker(stringRedisTemplate, topics, 1, 60);

@@ -52,10 +52,10 @@ public class ZookeeperMqTemplate implements MqTemplate {
         try {
             DistributedDelayQueue<String> queue = getQueue(topic, null);
             queue.put(str, System.currentTimeMillis());
-            logger.info("ZookeeperMqProducer.syncSend.success->topic=[{}],message=[{}]", topic, str);
+            logger.info("syncSend.success->topic=[{}],message=[{}]", topic, str);
             return true;
         } catch (Exception e) {
-            logger.error("ZookeeperMqProducer.syncSend.error->topic=[" + topic + "],message=[" + str + "]", e);
+            logger.error("syncSend.error->topic=[" + topic + "],message=[" + str + "]", e);
             e.printStackTrace();
         }
         return false;
@@ -67,10 +67,10 @@ public class ZookeeperMqTemplate implements MqTemplate {
         try {
             DistributedDelayQueue<String> queue = getQueue(topic, null);
             queue.put(str, System.currentTimeMillis() + timeUnit.toMillis(delayTime));
-            logger.info("ZookeeperMqProducer.syncDelaySend.success->topic=[{}],message=[{}],delayTime=[{}],timeUnit=[{}]", topic, str, delayTime, timeUnit);
+            logger.info("syncDelaySend.success->topic=[{}],message=[{}],delayTime=[{}],timeUnit=[{}]", topic, str, delayTime, timeUnit);
             return true;
         } catch (Exception e) {
-            logger.error("ZookeeperMqProducer.syncDelaySend.error->topic=[" + topic + "],message=[" + str + "],delayTime=[" + delayTime + "],timeUnit=[" + timeUnit + "]", e);
+            logger.error("syncDelaySend.error->topic=[" + topic + "],message=[" + str + "],delayTime=[" + delayTime + "],timeUnit=[" + timeUnit + "]", e);
             e.printStackTrace();
         }
         return false;
@@ -111,7 +111,7 @@ public class ZookeeperMqTemplate implements MqTemplate {
                     e.printStackTrace();
                 }
                 queueMap.put(topic, queue);
-                logger.info("InIt Zookeeper Listener,{}{}", "/mq/", topic);
+                logger.info("Init Zookeeper Listener,{}{}", "/mq/", topic);
             } finally {
                 lock.unlock();
             }

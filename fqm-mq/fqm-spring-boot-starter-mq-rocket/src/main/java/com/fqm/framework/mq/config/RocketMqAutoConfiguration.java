@@ -2,6 +2,7 @@ package com.fqm.framework.mq.config;
 
 import java.lang.annotation.Annotation;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.rocketmq.client.AccessChannel;
@@ -33,11 +34,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.messaging.converter.StringMessageConverter;
-import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
 import com.fqm.framework.mq.MqFactory;
 import com.fqm.framework.mq.MqMode;
+import com.fqm.framework.mq.annotation.MqListener;
 import com.fqm.framework.mq.annotation.MqListenerAnnotationBeanPostProcessor;
 import com.fqm.framework.mq.listener.MqListenerParam;
 import com.fqm.framework.mq.listener.RocketMqListener;
@@ -116,54 +116,53 @@ public class RocketMqAutoConfiguration implements SmartInitializingSingleton, Ap
     @Override
     public void afterSingletonsInstantiated() {
         MqListenerAnnotationBeanPostProcessor mq = applicationContext.getBean(MqListenerAnnotationBeanPostProcessor.class);
-        MqProperties mp = applicationContext.getBean(MqProperties.class);
+        List<MqListenerParam> listenerParams = mq.getListeners(MqMode.ROCKET);
+        if (null == listenerParams || listenerParams.isEmpty()) {
+            return;
+        }
         
         int i = 0;
-        for (MqListenerParam v : mq.getListeners()) {
-            String name = v.getName();
-            MqConfigurationProperties properties = mp.getMqs().get(name);
-            if (properties != null && MqMode.ROCKET == properties.getBinder()) {
-                String group = properties.getGroup();
-                String topic = properties.getTopic();
-                Assert.isTrue(StringUtils.hasText(topic), "Please specific [topic] under mq.mqs." + name + " configuration.");
-                Assert.isTrue(StringUtils.hasText(group), "Please specific [group] under mq.mqs." + name + " configuration.");
-                String beanName = "rocketListener." + i;
-                // 动态注册
-                //将applicationContext转换为ConfigurableApplicationContext
-                ConfigurableApplicationContext configurableApplicationContext = (ConfigurableApplicationContext) applicationContext;
-                // 获取bean工厂并转换为DefaultListableBeanFactory
-                DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory) configurableApplicationContext.getBeanFactory();
-                if (!applicationContext.containsBean(beanName)) {
-                    BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(DefaultRocketMQListenerContainer.class);
-                    beanDefinitionBuilder.addPropertyValue("consumerGroup", group);
-                    beanDefinitionBuilder.addPropertyValue("nameServer", nameServer);
-                    beanDefinitionBuilder.addPropertyValue("topic", topic);
-                    
-                    beanDefinitionBuilder.addPropertyValue("messageConverter", new StringMessageConverter(StandardCharsets.UTF_8));
-                    
-                    beanDefinitionBuilder.addPropertyValue("rocketMQMessageListener", rocketMqMessageListener(nameServer, topic, group, 1));
-                    beanDefinitionBuilder.addPropertyValue("rocketMQListener", new RocketMqListener(v.getBean(), v.getMethod(), topic, applicationContext.getBean(RocketMqTemplate.class)));
-                    // 注册bean
-                    AbstractBeanDefinition bean = beanDefinitionBuilder.getRawBeanDefinition();
-                    
-                    defaultListableBeanFactory.registerBeanDefinition(beanName, bean);
-                    
-                    try {
-                        DefaultRocketMQListenerContainer container = (DefaultRocketMQListenerContainer) applicationContext.getBean(beanName);
-                        // 修改私有属性，数据传输类型，为string
-                        FieldUtils.writeDeclaredField(container, "messageType", String.class, true);
-                        // 指定从第一条消息开始消费
-                        container.getConsumer().setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
-                        container.getConsumer().setInstanceName(beanName);
-                        // 消费失败1次，立即入死信队列 topic="%DLQ%" + v.getGroup()
-                        // 第一次10s，第二次30s，第三次60s
-                        container.getConsumer().setMaxReconsumeTimes(1);
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    }
-                    i++;
-                    logger.info("Init RocketMqListener,bean={},method={},topic={},group={}", v.getBean().getClass(), v.getMethod().getName(), topic, group);
+        for (MqListenerParam v : listenerParams) {
+            MqListener mqListener = v.getMqListener();
+            // 1、解析@MqListener
+            String topic = mqListener.topic();
+            String group = mqListener.group();
+            String beanName = "rocketListener." + i;
+            // 动态注册
+            //将applicationContext转换为ConfigurableApplicationContext
+            ConfigurableApplicationContext configurableApplicationContext = (ConfigurableApplicationContext) applicationContext;
+            // 获取bean工厂并转换为DefaultListableBeanFactory
+            DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory) configurableApplicationContext.getBeanFactory();
+            if (!applicationContext.containsBean(beanName)) {
+                BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(DefaultRocketMQListenerContainer.class);
+                beanDefinitionBuilder.addPropertyValue("consumerGroup", group);
+                beanDefinitionBuilder.addPropertyValue("nameServer", nameServer);
+                beanDefinitionBuilder.addPropertyValue("topic", topic);
+                
+                beanDefinitionBuilder.addPropertyValue("messageConverter", new StringMessageConverter(StandardCharsets.UTF_8));
+                
+                beanDefinitionBuilder.addPropertyValue("rocketMQMessageListener", rocketMqMessageListener(nameServer, topic, group, 1));
+                beanDefinitionBuilder.addPropertyValue("rocketMQListener", new RocketMqListener(v.getBean(), v.getMethod(), topic, applicationContext.getBean(RocketMqTemplate.class)));
+                // 注册bean
+                AbstractBeanDefinition bean = beanDefinitionBuilder.getRawBeanDefinition();
+                
+                defaultListableBeanFactory.registerBeanDefinition(beanName, bean);
+                
+                try {
+                    DefaultRocketMQListenerContainer container = (DefaultRocketMQListenerContainer) applicationContext.getBean(beanName);
+                    // 修改私有属性，数据传输类型，为string
+                    FieldUtils.writeDeclaredField(container, "messageType", String.class, true);
+                    // 指定从第一条消息开始消费
+                    container.getConsumer().setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);
+                    container.getConsumer().setInstanceName(beanName);
+                    // 消费失败1次，立即入死信队列 topic="%DLQ%" + v.getGroup()
+                    // 第一次10s，第二次30s，第三次60s
+                    container.getConsumer().setMaxReconsumeTimes(1);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
                 }
+                i++;
+                logger.info("Init RocketMqListener,bean={},method={},topic={},group={}", v.getBean().getClass(), v.getMethod().getName(), topic, group);
             }
         }
     }

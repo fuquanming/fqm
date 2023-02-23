@@ -41,7 +41,7 @@ public class MqAutoConfiguration {
     }
 
     @Bean
-    MqListenerAnnotationBeanPostProcessor mqListenerAnnotationBeanPostProcessor() {
-        return new MqListenerAnnotationBeanPostProcessor();
+    MqListenerAnnotationBeanPostProcessor mqListenerAnnotationBeanPostProcessor(MqProperties mqProperties) {
+        return new MqListenerAnnotationBeanPostProcessor(mqProperties);
     }
 }
