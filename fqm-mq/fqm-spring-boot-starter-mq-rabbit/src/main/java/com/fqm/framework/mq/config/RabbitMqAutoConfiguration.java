@@ -2,6 +2,7 @@ package com.fqm.framework.mq.config;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.AcknowledgeMode;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.amqp.RabbitProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
@@ -24,6 +26,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 
+import com.fqm.framework.common.spring.util.SpringUtil;
 import com.fqm.framework.mq.MqFactory;
 import com.fqm.framework.mq.MqMode;
 import com.fqm.framework.mq.annotation.MqListener;
@@ -45,7 +48,7 @@ public class RabbitMqAutoConfiguration implements SmartInitializingSingleton, Ap
     
     private Logger logger = LoggerFactory.getLogger(getClass());
     private ApplicationContext applicationContext;
-
+    
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
@@ -54,8 +57,14 @@ public class RabbitMqAutoConfiguration implements SmartInitializingSingleton, Ap
     @Bean
     @ConditionalOnMissingBean
     @Order(300)
-    RabbitMqTemplate rabbitMqTemplate(MqFactory mqFactory, RabbitTemplate rabbitTemplate, AmqpAdmin amqpAdmin) {
-        RabbitMqTemplate rabbitMqTemplate = new RabbitMqTemplate(rabbitTemplate, amqpAdmin);
+    RabbitMqTemplate rabbitMqTemplate(MqFactory mqFactory, RabbitTemplate rabbitTemplate, AmqpAdmin amqpAdmin, RabbitProperties rabbitProperties) {
+        // Rabbitmq控台访问端口 
+        String apiPortStr = SpringUtil.getProperty("spring.rabbitmq.api-port");
+        int apiPort = 15672;
+        if (StringUtils.isNoneBlank(apiPortStr)) {
+            apiPort = Integer.parseInt(apiPortStr);
+        }
+        RabbitMqTemplate rabbitMqTemplate = new RabbitMqTemplate(rabbitTemplate, amqpAdmin, rabbitProperties, apiPort);
         mqFactory.addMqTemplate(rabbitMqTemplate);
         return rabbitMqTemplate;
     }
@@ -69,6 +78,7 @@ public class RabbitMqAutoConfiguration implements SmartInitializingSingleton, Ap
     @Override
     public void afterSingletonsInstantiated() {
         MqListenerAnnotationBeanPostProcessor mq = applicationContext.getBean(MqListenerAnnotationBeanPostProcessor.class);
+        // 初始化监听器
         List<MqListenerParam> listenerParams = mq.getListeners(MqMode.RABBIT);
         if (null == listenerParams || listenerParams.isEmpty()) {
             return;
@@ -89,14 +99,14 @@ public class RabbitMqAutoConfiguration implements SmartInitializingSingleton, Ap
             // 获取bean工厂并转换为DefaultListableBeanFactory
             DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory) configurableApplicationContext.getBeanFactory();
             if (!applicationContext.containsBean(beanName)) {
-                rabbitMqTemplate.initTopic(topic, false);
+                String queueName = rabbitMqTemplate.initTopic(topic, group);
                 
                 // 通过BeanDefinitionBuilder创建bean定义
                 BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder
                         .genericBeanDefinition(SimpleMessageListenerContainer.class);
                 beanDefinitionBuilder.addConstructorArgValue(connectionFactory);
-                beanDefinitionBuilder.addPropertyValue("messageListener", new RabbitMqListener(v.getBean(), v.getMethod(), topic, rabbitMqTemplate));
-                beanDefinitionBuilder.addPropertyValue("queues", new Queue(topic));
+                beanDefinitionBuilder.addPropertyValue("messageListener", new RabbitMqListener(v.getBean(), v.getMethod()));
+                beanDefinitionBuilder.addPropertyValue("queues", new Queue(queueName));
                 //设置当前的消费者数量
                 beanDefinitionBuilder.addPropertyValue("concurrentConsumers", 1);
                 //设置手动签收

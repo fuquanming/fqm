@@ -1,0 +1,15 @@
+{
+	"groups": [{
+        "name": "spring.rabbitmq.api-port",
+        "type": "java.lang.Integer",
+        "description": "消息队列配置."
+    }],
+    "properties": [{
+        "name": "spring.rabbitmq.api-port",
+        "type": "java.lang.Integer",
+        "description": "控台访问端口.",
+        "defaultValue": 15672
+    }],
+    "hints": [{
+    }]
+}

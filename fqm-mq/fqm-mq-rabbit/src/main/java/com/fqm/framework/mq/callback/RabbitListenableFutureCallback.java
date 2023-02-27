@@ -28,8 +28,7 @@ public class RabbitListenableFutureCallback implements ListenableFutureCallback<
     private volatile boolean error = false;
     /** 异常信息 */
     private volatile String errorMsg;
-    /** ack回调线程 */
-    private Thread callbackThread;
+//    /** ack回调线程 */
     
     private SendCallback sendCallback;
     
@@ -55,12 +54,12 @@ public class RabbitListenableFutureCallback implements ListenableFutureCallback<
         if (sendCallback != null) {
             sendCallback.onException(ex);
         }
+        productThread = null;
     }
     @Override
     public void onSuccess(Confirm confirm) {
         // @RabbitPropertiesBeanPostProcessor 参考
         // 设置确认回调 ACK
-        callbackThread = Thread.currentThread();
         // 入交换机失败
         if (!confirm.isAck()) {
             error = true;
@@ -77,6 +76,7 @@ public class RabbitListenableFutureCallback implements ListenableFutureCallback<
                 sendCallback.onSuccess(new SendResult().setId(id));
             }
         }
+        productThread = null;
     }
     
     public Thread getProductThread() {
@@ -111,20 +111,4 @@ public class RabbitListenableFutureCallback implements ListenableFutureCallback<
         this.errorMsg = errorMsg;
     }
 
-    public Thread getCallbackThread() {
-        return callbackThread;
-    }
-
-    public void setCallbackThread(Thread callbackThread) {
-        this.callbackThread = callbackThread;
-    }
-
-    public SendCallback getSendCallback() {
-        return sendCallback;
-    }
-
-    public void setSendCallback(SendCallback sendCallback) {
-        this.sendCallback = sendCallback;
-    }
-    
 }
