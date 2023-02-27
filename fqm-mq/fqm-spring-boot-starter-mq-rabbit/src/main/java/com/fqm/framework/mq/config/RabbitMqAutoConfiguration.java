@@ -54,7 +54,7 @@ public class RabbitMqAutoConfiguration implements SmartInitializingSingleton, Ap
         this.applicationContext = applicationContext;
     } 
     
-    @Bean
+    @Bean(destroyMethod = "destroy")
     @ConditionalOnMissingBean
     @Order(300)
     RabbitMqTemplate rabbitMqTemplate(MqFactory mqFactory, RabbitTemplate rabbitTemplate, AmqpAdmin amqpAdmin, RabbitProperties rabbitProperties) {
