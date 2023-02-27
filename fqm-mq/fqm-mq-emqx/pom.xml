@@ -6,11 +6,11 @@
         <version>1.0.3</version>
     </parent>
     <artifactId>fqm-mq-emqx</artifactId>
-    <version>1.0.5</version>
+    <version>1.0.6</version>
     
     <description>Message sending and monitoring based on emqx</description>
     <properties>
-		<fqm-mq-core.version>1.0.5</fqm-mq-core.version>
+		<fqm-mq-core.version>1.0.6</fqm-mq-core.version>
         <emqx.version>1.2.5</emqx.version>
     </properties>
 

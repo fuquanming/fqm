@@ -8,13 +8,13 @@
 		<version>1.0.3</version>
 	</parent>
 	<artifactId>fqm-spring-boot-starter-mq-rabbit</artifactId>
-	<version>1.0.5</version>
+	<version>1.0.6</version>
 	
 	<description>Starter for rabbit message queue</description>
 	
 	<properties>
-		<fqm-spring-boot-starter-mq.version>1.0.5</fqm-spring-boot-starter-mq.version>
-		<fqm-mq-rabbit.version>1.0.5</fqm-mq-rabbit.version>
+		<fqm-spring-boot-starter-mq.version>1.0.6</fqm-spring-boot-starter-mq.version>
+		<fqm-mq-rabbit.version>1.0.6</fqm-mq-rabbit.version>
     </properties>
 	
 	<dependencies>

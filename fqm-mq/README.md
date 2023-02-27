@@ -19,15 +19,15 @@ MQ 的全部功能：
 
 ## 版本
 
-| 消息组件名称                         | 版本号 | 说明                       |
-| ------------------------------------ | ------ | -------------------------- |
-| fqm-spring-boot-starter-mq-emqx      | 1.0.5  |                            |
-| fqm-spring-boot-starter-mq-kafka     | 1.0.5  | 不支持【发送同步延迟消息】 |
-| fqm-spring-boot-starter-mq-rabbit    | 1.0.5  |                            |
-| fqm-spring-boot-starter-mq-redis     | 1.0.5  | 不支持【发送异步消息】     |
-| fqm-spring-boot-starter-mq-redisson  | 1.0.5  |                            |
-| fqm-spring-boot-starter-mq-rocket    | 1.0.5  |                            |
-| fqm-spring-boot-starter-mq-zookeeper | 1.0.5  | 不支持【发送异步消息】     |
+| 消息组件名称                         | 版本号 | 说明                                     |
+| ------------------------------------ | ------ | ---------------------------------------- |
+| fqm-spring-boot-starter-mq-emqx      | 1.0.6  | 支持消费者组，但是需要订阅后才能接收消息 |
+| fqm-spring-boot-starter-mq-kafka     | 1.0.6  | 不支持【发送同步延迟消息】               |
+| fqm-spring-boot-starter-mq-rabbit    | 1.0.6  |                                          |
+| fqm-spring-boot-starter-mq-redis     | 1.0.6  | 不支持【发送异步消息】                   |
+| fqm-spring-boot-starter-mq-redisson  | 1.0.6  | 不支持消费者组                           |
+| fqm-spring-boot-starter-mq-rocket    | 1.0.6  |                                          |
+| fqm-spring-boot-starter-mq-zookeeper | 1.0.6  | 不支持【发送异步消息】，不支持消费者组   |
 
 ## 快速开始
 

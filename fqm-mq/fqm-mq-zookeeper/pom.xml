@@ -8,12 +8,12 @@
 		<version>1.0.3</version>
 	</parent>
 	<artifactId>fqm-mq-zookeeper</artifactId>
-	<version>1.0.5</version>
+	<version>1.0.6</version>
 	
 	<description>Message sending and monitoring based on Zookeeper</description>
 	
 	<properties>
-		<fqm-mq-core.version>1.0.5</fqm-mq-core.version>
+		<fqm-mq-core.version>1.0.6</fqm-mq-core.version>
         <fqm-lock-core.version>1.0.2</fqm-lock-core.version>
         <fqm-common-zookeeper.version>1.0.5</fqm-common-zookeeper.version>
     </properties>

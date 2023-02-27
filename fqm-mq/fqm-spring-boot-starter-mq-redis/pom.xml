@@ -8,13 +8,13 @@
 		<version>1.0.3</version>
 	</parent>
 	<artifactId>fqm-spring-boot-starter-mq-redis</artifactId>
-	<version>1.0.5</version>
+	<version>1.0.6</version>
 	
 	<description>Starter for redis stream message queue</description>
 	
 	<properties>
-		<fqm-spring-boot-starter-mq.version>1.0.5</fqm-spring-boot-starter-mq.version>
-		<fqm-mq-redis.version>1.0.5</fqm-mq-redis.version>
+		<fqm-spring-boot-starter-mq.version>1.0.6</fqm-spring-boot-starter-mq.version>
+		<fqm-mq-redis.version>1.0.6</fqm-mq-redis.version>
     </properties>
 	
 	<dependencies>
