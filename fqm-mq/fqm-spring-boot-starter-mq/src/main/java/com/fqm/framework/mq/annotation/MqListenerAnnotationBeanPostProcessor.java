@@ -100,7 +100,7 @@ public class MqListenerAnnotationBeanPostProcessor implements BeanPostProcessor,
             if (null == mqMode) {
                 mqMode = mqProperties.getBinder();
             }
-            Assert.isTrue(null != mqMode, "Please specific [binder] under [mq.mqs." + name + " configuration.");
+            Assert.isTrue(null != mqMode, "Please specific [binder] under [mq.mqs." + name + "] configuration  or [binder] under [mq] configuration.");
             
             MqListenerParam param = new MqListenerParam();
             try {

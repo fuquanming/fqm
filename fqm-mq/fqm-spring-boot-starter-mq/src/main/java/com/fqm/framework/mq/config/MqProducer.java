@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
+import org.springframework.util.Assert;
+
 import com.fqm.framework.common.core.exception.ErrorCode;
 import com.fqm.framework.common.core.exception.ServiceException;
 import com.fqm.framework.common.core.exception.enums.GlobalErrorCodeConstants;
@@ -43,13 +45,19 @@ public class MqProducer {
     }
     /** 初始化 */
     private void init() {
+        MqMode mqMode = mqProperties.getBinder();
         // 1、初始化业务对应的消息生产者
         for (Map.Entry<String, MqConfigurationProperties> entry : mqProperties.getMqs().entrySet()) {
             String businessName = entry.getKey();
             MqConfigurationProperties mcp = entry.getValue();
+            MqMode binder = mcp.getBinder();
+            if (null == binder) {
+                binder = mqMode;
+            }
+            Assert.isTrue(null != binder, "Please specific [binder] under [mq.mqs." + businessName + "] configuration or [binder] under [mq] configuration.");
             Producer producer = new Producer();
             producer.topic = mcp.getTopic();
-            producer.mqMode = mcp.getBinder();
+            producer.mqMode = binder;
             producerMap.put(businessName, producer);
         }
     }
