@@ -25,7 +25,7 @@ public class RedisLockAutoConfiguration {
     @Bean(destroyMethod = "destory")
     @ConditionalOnMissingBean
     @Order(300)
-    public RedisLockTemplate redisLockTemplate(
+    RedisLockTemplate redisLockTemplate(
             LockFactory lockFactory,
             StringRedisTemplate stringRedisTemplate) {
         RedisLockTemplate redisLockTemplate = new RedisLockTemplate(stringRedisTemplate, lockFactory);

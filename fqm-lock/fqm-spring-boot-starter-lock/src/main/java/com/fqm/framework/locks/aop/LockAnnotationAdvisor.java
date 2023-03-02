@@ -5,9 +5,6 @@ import org.springframework.aop.Pointcut;
 import org.springframework.aop.PointcutAdvisor;
 import org.springframework.aop.support.AbstractPointcutAdvisor;
 import org.springframework.aop.support.annotation.AnnotationMatchingPointcut;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.lang.NonNull;
 
 import com.fqm.framework.locks.annotation.Lock4j;
@@ -18,7 +15,7 @@ import com.fqm.framework.locks.annotation.Lock4j;
  * @version 
  * @author 傅泉明
  */
-public class LockAnnotationAdvisor extends AbstractPointcutAdvisor implements BeanFactoryAware {
+public class LockAnnotationAdvisor extends AbstractPointcutAdvisor {
 
     private static final long serialVersionUID = 1L;
 
@@ -40,13 +37,6 @@ public class LockAnnotationAdvisor extends AbstractPointcutAdvisor implements Be
     public Advice getAdvice() {
         return this.advice;
     }
-
-    @Override
-    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        if (this.advice instanceof BeanFactoryAware) {
-            ((BeanFactoryAware) this.advice).setBeanFactory(beanFactory);
-        }
-    }
     
     @Override
     public boolean equals(Object other) {
@@ -57,5 +47,5 @@ public class LockAnnotationAdvisor extends AbstractPointcutAdvisor implements Be
     public int hashCode() {
         return PointcutAdvisor.class.hashCode();
     }
-
+    
 }

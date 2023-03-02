@@ -10,6 +10,7 @@
     
     <properties>
         <fqm-common-spring.version>1.0.4</fqm-common-spring.version>
+        <fqm-common-core.version>1.0.5</fqm-common-core.version>
     </properties>
     
     <dependencies>
@@ -17,6 +18,11 @@
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-common-spring</artifactId>
             <version>${fqm-common-spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.fuquanming</groupId>
+            <artifactId>fqm-common-core</artifactId>
+            <version>${fqm-common-core.version}</version>
         </dependency>
         <dependency>
             <groupId>io.github.fuquanming</groupId>

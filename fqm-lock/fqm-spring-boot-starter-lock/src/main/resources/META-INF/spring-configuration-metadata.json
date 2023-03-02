@@ -1,0 +1,52 @@
+{
+    "groups": [{
+        "name": "lock",
+        "type": "com.fqm.framework.locks.config.LockProperties",
+        "description": "锁配置.",
+        "sourceType": "com.fqm.framework.locks.config.LockProperties"
+    }],
+    "properties": [{
+        "name": "lock",
+        "type": "com.fqm.framework.locks.config.LockProperties",
+        "description": "通用锁配置.",
+        "sourceType": "com.fqm.framework.locks.config.LockProperties"
+    }, {
+        "name": "lock.enabled",
+        "type": "java.lang.Boolean",
+        "description": "启用锁.",
+        "sourceType": "com.fqm.framework.locks.config.LockProperties",
+        "defaultValue": true
+    }, {
+        "name": "lock.verify",
+        "type": "java.lang.Boolean",
+        "description": "校验加载的锁组件.",
+        "sourceType": "com.fqm.framework.locks.config.LockProperties",
+        "defaultValue": true
+    }, {
+        "name": "lock.binder",
+        "type": "java.lang.String",
+        "description": "锁方式.",
+        "sourceType": "com.fqm.framework.locks.config.LockProperties"
+    }, {
+        "name": "lock.locks",
+        "type": "java.util.Map<java.lang.String,com.fqm.framework.locks.config.MqConfigurationProperties>",
+        "description": "锁配置，key：业务名称，value：锁名称配置",
+        "sourceType": "com.fqm.framework.locks.config.LockProperties"
+    }],
+    "hints": [{
+        "name": "locks.binder",
+        "values": [{
+    		"value": "simple",
+    		"description": "单机锁"
+		}, {
+    		"value": "redis",
+    		"description": "redis 分布式锁"
+    	}, {
+    		"value": "redisson",
+    		"description": "redisson 分布式锁"
+    	}, {
+    		"value": "zookeeper",
+    		"description": "zookeeper 分布式锁"
+    	}]
+    }]
+}
