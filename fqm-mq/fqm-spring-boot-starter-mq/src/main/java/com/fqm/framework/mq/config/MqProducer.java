@@ -65,7 +65,7 @@ public class MqProducer {
     private MqConfigurationProperties getMqConfigurationProperties(String businessName) {
         MqConfigurationProperties mqConfigurationProperties = mqProperties.getMqs().get(businessName);
         if (null == mqConfigurationProperties) {
-            throw new ServiceException(new ErrorCode(GlobalErrorCodeConstants.NOT_FOUND.getCode(), "未配置该业务的消息送通道"));
+            throw new ServiceException(new ErrorCode(GlobalErrorCodeConstants.NOT_FOUND.getCode(), "未配置该业务的消息通道"));
         }
         return mqConfigurationProperties;
     }
@@ -85,7 +85,11 @@ public class MqProducer {
      * @return
      */
     public MqMode getBinder(String businessName) {
-        return getMqConfigurationProperties(businessName).getBinder();
+        MqMode mqMode = getMqConfigurationProperties(businessName).getBinder();
+        if (null == mqMode) {
+            mqMode = mqProperties.getBinder();
+        }
+        return mqMode; 
     }
     
     /**
