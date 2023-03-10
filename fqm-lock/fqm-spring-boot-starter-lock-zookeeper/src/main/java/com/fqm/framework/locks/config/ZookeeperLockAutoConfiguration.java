@@ -1,6 +1,7 @@
 package com.fqm.framework.locks.config;
 
 import org.apache.curator.framework.CuratorFramework;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -24,12 +25,13 @@ import com.fqm.framework.locks.template.ZookeeperLockTemplate;
  * @author 傅泉明
  */
 @Configuration
+@AutoConfigureAfter(LockAutoConfiguration.class)
 public class ZookeeperLockAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
     @Order(300)
-    public ZookeeperLockTemplate zookeeperLockTemplate(LockFactory lockFactory, CuratorFramework curatorFramework) {
+    ZookeeperLockTemplate zookeeperLockTemplate(LockFactory lockFactory, CuratorFramework curatorFramework) {
         ZookeeperLockTemplate zookeeperLockTemplate = new ZookeeperLockTemplate(curatorFramework);
         lockFactory.addLockTemplate(zookeeperLockTemplate);
         return zookeeperLockTemplate;
@@ -42,14 +44,14 @@ public class ZookeeperLockAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     @ConfigurationProperties(prefix = "spring.cloud.zookeeper")
-    public ZookeeperProperties zookeeperProperties() {
+    ZookeeperProperties zookeeperProperties() {
         return new ZookeeperProperties();
     }
 
     @Bean(initMethod = "start", destroyMethod = "close")
     @ConditionalOnMissingBean(CuratorFramework.class)
     @Order(200)
-    public CuratorFramework curatorFramework(ZookeeperProperties zookeeperProperties) {
+    CuratorFramework curatorFramework(ZookeeperProperties zookeeperProperties) {
         return ZookeeperFactory.buildCuratorFramework(zookeeperProperties);
     }
 

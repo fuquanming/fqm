@@ -6,18 +6,19 @@
         <version>1.0.2</version>
     </parent>
     <artifactId>fqm-spring-boot-starter-lock-zookeeper</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
     <description>Starter for ZookeeperLock</description>
     
     <properties>
-        <fqm-lock-zookeeper.version>1.0.3</fqm-lock-zookeeper.version>
+        <fqm-lock-zookeeper.version>1.0.4</fqm-lock-zookeeper.version>
+    	<fqm-spring-boot-starter-lock.version>1.0.3</fqm-spring-boot-starter-lock.version>
     </properties>
     
     <dependencies>
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-spring-boot-starter-lock</artifactId>
-            <version>${parent.version}</version>
+            <version>${fqm-spring-boot-starter-lock.version}</version>
         </dependency>
         <dependency>
             <groupId>io.github.fuquanming</groupId>

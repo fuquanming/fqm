@@ -6,9 +6,11 @@
         <version>1.0.2</version>
     </parent>
     <artifactId>fqm-spring-boot-starter-lock</artifactId>
+    <version>1.0.3</version>
     <description>Starter for LockFactory and Custom Annotation Lock4j</description>
     
     <properties>
+		<fqm-lock-core.version>1.0.3</fqm-lock-core.version>
         <fqm-common-spring.version>1.0.4</fqm-common-spring.version>
         <fqm-common-core.version>1.0.5</fqm-common-core.version>
     </properties>
@@ -27,7 +29,7 @@
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-lock-core</artifactId>
-            <version>${parent.version}</version>
+            <version>${fqm-lock-core.version}</version>
         </dependency>
         <!-- Spring 核心 -->
         <dependency>

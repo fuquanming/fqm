@@ -1,5 +1,6 @@
 package com.fqm.framework.locks.config;
 
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +21,7 @@ import com.fqm.framework.locks.template.RedisLockTemplate;
  * @author 傅泉明
  */
 @Configuration
+@AutoConfigureAfter(LockAutoConfiguration.class)
 public class RedisLockAutoConfiguration {
     
     @Bean(destroyMethod = "destory")

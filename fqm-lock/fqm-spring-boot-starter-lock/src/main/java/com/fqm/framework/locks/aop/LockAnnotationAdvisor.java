@@ -5,17 +5,19 @@ import org.springframework.aop.Pointcut;
 import org.springframework.aop.PointcutAdvisor;
 import org.springframework.aop.support.AbstractPointcutAdvisor;
 import org.springframework.aop.support.annotation.AnnotationMatchingPointcut;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.lang.NonNull;
 
 import com.fqm.framework.locks.annotation.Lock4j;
 
 /**
- * 分布式锁aop通知
+ * 分布式锁aop通知，
+ * Advisor 会在其他类之前加载，可能不能被所有的 BeanPostProcessor 过滤，启动时会出现提示信息，通过实现BeanPostProcessor来规避
  * 
  * @version 
  * @author 傅泉明
  */
-public class LockAnnotationAdvisor extends AbstractPointcutAdvisor {
+public class LockAnnotationAdvisor extends AbstractPointcutAdvisor implements BeanPostProcessor {
 
     private static final long serialVersionUID = 1L;
 
@@ -23,9 +25,8 @@ public class LockAnnotationAdvisor extends AbstractPointcutAdvisor {
 
     private final transient Pointcut pointcut = AnnotationMatchingPointcut.forMethodAnnotation(Lock4j.class);
 
-    public LockAnnotationAdvisor(@NonNull LockInterceptor lockInterceptor, int order) {
+    public LockAnnotationAdvisor(@NonNull LockInterceptor lockInterceptor) {
         this.advice = lockInterceptor;
-        setOrder(order);
     }
 
     @Override

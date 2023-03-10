@@ -8,10 +8,11 @@
 		<version>1.0.2</version>
 	</parent>
 	<artifactId>fqm-lock-zookeeper</artifactId>
-	<version>1.0.3</version>
+	<version>1.0.4</version>
 	<description>Zookeeper distributed lock is implemented based on Curator (blocking lock, trying to acquire a lock, trying to acquire a lock, unlocking)</description>
 	
 	<properties>
+		<fqm-lock-core.version>1.0.3</fqm-lock-core.version>
         <fqm-common-zookeeper.version>1.0.5</fqm-common-zookeeper.version>
     </properties>
 	
@@ -19,7 +20,7 @@
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-lock-core</artifactId>
-            <version>${parent.version}</version>
+            <version>${fqm-lock-core.version}</version>
         </dependency>
 
         <dependency>

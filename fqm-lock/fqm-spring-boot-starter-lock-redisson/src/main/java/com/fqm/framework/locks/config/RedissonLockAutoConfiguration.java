@@ -1,6 +1,7 @@
 package com.fqm.framework.locks.config;
 
 import org.redisson.api.RedissonClient;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +19,7 @@ import com.fqm.framework.locks.template.RedissonLockTemplate;
  * @author 傅泉明
  */
 @Configuration
+@AutoConfigureAfter(LockAutoConfiguration.class)
 public class RedissonLockAutoConfiguration {
     
     @Bean

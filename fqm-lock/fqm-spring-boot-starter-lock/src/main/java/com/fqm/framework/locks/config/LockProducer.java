@@ -13,8 +13,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
-import org.springframework.util.Assert;
-
 import com.fqm.framework.common.core.exception.ErrorCode;
 import com.fqm.framework.common.core.exception.ServiceException;
 import com.fqm.framework.common.core.exception.enums.GlobalErrorCodeConstants;
@@ -52,9 +50,6 @@ public class LockProducer {
             if (null == binder) {
                 binder = lockMode;
             }
-            Assert.isTrue(null != binder, "Please specific [binder] under [lock.locks." + businessName + "] configuration or [binder] under [lock] configuration.");
-            Assert.hasText(mcp.getKey(), "Please specific [key] under [lock.locks." + businessName + "] configuration.");
-            
             Producer producer = new Producer();
             producer.key = mcp.getKey();
             producer.lockMode = binder;

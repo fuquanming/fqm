@@ -18,10 +18,10 @@ import org.springframework.data.redis.core.script.RedisScript;
 
 import com.fqm.framework.locks.Lock;
 import com.fqm.framework.locks.LockFactory;
+import com.fqm.framework.locks.LockMode;
 import com.fqm.framework.locks.executor.BlockLockThreadExecutor;
 import com.fqm.framework.locks.redis.listener.spring.LockRedisKeyDeleteEventHandle;
 import com.fqm.framework.locks.template.LockTemplate;
-import com.fqm.framework.locks.template.SimpleLockTemplate;
 
 import io.netty.util.HashedWheelTimer;
 import io.netty.util.Timeout;
@@ -87,7 +87,7 @@ public class RedisLock implements Lock {
      */
     private void initBlockThreads() {
         // 初始化阻塞线程集合
-        LockTemplate<?> lockTemplate = lockFactory.getLockTemplate(SimpleLockTemplate.class);
+        LockTemplate<?> lockTemplate = lockFactory.getLockTemplate(LockMode.SIMPLE);
         Lock lockKeyLock = lockTemplate.getLock(lockKey);
         lockKeyLock.lock();
         Set<BlockLockThreadExecutor> threads = BLOCK_THREADS.computeIfAbsent(lockKey, k -> ConcurrentHashMap.newKeySet());

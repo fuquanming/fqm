@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.util.Assert;
 
 import com.fqm.framework.common.spring.util.ValueUtil;
 import com.fqm.framework.locks.Lock;
@@ -18,8 +17,8 @@ import com.fqm.framework.locks.LockFactory;
 import com.fqm.framework.locks.LockMode;
 import com.fqm.framework.locks.annotation.Lock4j;
 import com.fqm.framework.locks.config.LockProducer;
-import com.fqm.framework.locks.config.LockProperties;
 import com.fqm.framework.locks.config.LockProducer.Producer;
+import com.fqm.framework.locks.config.LockProperties;
 import com.fqm.framework.locks.template.LockTemplate;
 
 /**
@@ -32,15 +31,9 @@ public class LockInterceptor implements MethodInterceptor {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    private LockFactory lockFactory;
-
-    private LockProducer lockProducer;
-
     private ApplicationContext applicationContext;
 
-    public LockInterceptor(LockFactory lockFactory, LockProducer lockProducer, ApplicationContext applicationContext) {
-        this.lockFactory = lockFactory;
-        this.lockProducer = lockProducer;
+    public LockInterceptor(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 
@@ -86,7 +79,7 @@ public class LockInterceptor implements MethodInterceptor {
         // 是否调用lock
         boolean block = lock4j.block();
         try {
-
+            LockFactory lockFactory = applicationContext.getBean(LockFactory.class);
             LockTemplate<?> lockTemplate = lockFactory.getLockTemplate(lockMode);
 
             // 获取锁超时时间
@@ -95,8 +88,6 @@ public class LockInterceptor implements MethodInterceptor {
             key = lock4j.key();
 
             key = ValueUtil.resolveExpression(factory, key).toString();
-
-            Assert.hasText(key, "lock key must be not empty, see the @Lock4j");
 
             lock = lockTemplate.getLock(key);
 
@@ -119,9 +110,6 @@ public class LockInterceptor implements MethodInterceptor {
                     return invocation.proceed();
                 }
             }
-        } catch (Throwable e) {
-            e.printStackTrace();
-            logger.error("lock4j error", e);
         } finally {
             if (lock != null && block) {
                 boolean flag = lock.unlock();
@@ -141,12 +129,13 @@ public class LockInterceptor implements MethodInterceptor {
      * @param lockMode
      * @param businessName
      */
-    private Object propertiesLock(MethodInvocation invocation, String businessName) {
+    private Object propertiesLock(MethodInvocation invocation, String businessName) throws Throwable {
         boolean lockFlag = false;
         com.fqm.framework.locks.config.LockProducer.Lock lock = null;
         String key = null;
         LockMode lockMode = null;
         try {
+            LockProducer lockProducer = applicationContext.getBean(LockProducer.class);
             Producer producer = lockProducer.getProducer(businessName);
             lock = producer.getLock();
             key = producer.getKey();
@@ -156,9 +145,6 @@ public class LockInterceptor implements MethodInterceptor {
                 logger.info("lock()->{},{}", lockMode, key);
                 return invocation.proceed();
             }
-        } catch (Throwable e) {
-            e.printStackTrace();
-            logger.error("lock4j error", e);
         } finally {
             if (null != lock && lockFlag) {
                 boolean flag = lock.unLock();

@@ -5,9 +5,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.fqm.framework.locks.LockMode;
-import com.fqm.framework.locks.template.LockTemplate;
-
 /**
  * 分布式锁 
  * Lock For Java
@@ -18,20 +15,6 @@ import com.fqm.framework.locks.template.LockTemplate;
 @Target(value = {ElementType.METHOD})
 @Retention(value = RetentionPolicy.RUNTIME)
 public @interface Lock4j {
-
-//    /**
-//     * 锁模板
-//     * @return
-//     */
-//    @SuppressWarnings("rawtypes")
-//    Class<? extends LockTemplate> lockTemplate() default LockTemplate.class;
-//    
-//    /**
-//     * 锁方式，优先级大于锁模板
-//     * {@link LockMode}
-//     * @return
-//     */
-//    String lockMode() default "";
 
     /**
      * 锁的业务名称，唯一，对应配置文件 lock.locks.xx，使用其配置的（name、binder、block、acquireTimeout）和 优先级小于属性 key、block、acquireTimeout
