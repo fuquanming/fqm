@@ -8,7 +8,7 @@
     <artifactId>test-module-lock-simple</artifactId>
     
     <properties>
-        <fqm-spring-boot-starter-lock.version>1.0.2</fqm-spring-boot-starter-lock.version>
+        <fqm-spring-boot-starter-lock.version>1.0.3</fqm-spring-boot-starter-lock.version>
     </properties>
     
     <dependencies>

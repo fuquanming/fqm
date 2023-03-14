@@ -1,6 +1,8 @@
 package com.fqm.test.lock.controller;
 
 import java.util.HashMap;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
@@ -11,80 +13,157 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fqm.framework.locks.Lock;
-import com.fqm.framework.locks.LockFactory;
-import com.fqm.framework.locks.LockMode;
 import com.fqm.framework.locks.annotation.Lock4j;
-import com.fqm.framework.locks.template.RedissonLockTemplate;
+import com.fqm.framework.locks.config.LockProducer;
+import com.fqm.framework.locks.config.LockProducer.Lock;
 
 import cn.hutool.core.thread.ThreadUtil;
 
 @RestController
 public class RedissonLockController {
     
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private Logger logger = LoggerFactory.getLogger(RedissonLockController.class);
 
     @Resource
     RedissonLockUserService lockUserService;
-    
     @Resource
-    LockFactory lockFactory;
+    LockProducer lockProducer;
+    
+    public static final String BUSINESS_NAME = "redisson";
+    public static final String BUSINESS_NAME_1 = "redisson1";
     
     @GetMapping("/lock4j/redisson")
-    public Object lockSimpleTemplate() {
-        System.out.println("lockRedissonTemplate");
-        ThreadUtil.concurrencyTest(3, new Runnable() {
+    public Object lock4j() {
+        System.out.println("lock4j");
+        CyclicBarrier cb = new CyclicBarrier(2);
+        Thread t1 = new Thread(new Runnable() {
             @Override
             public void run() {
-                lockUserService.getUserByLock4jLock();
+                try {
+                    cb.await();
+                } catch (InterruptedException | BrokenBarrierException e) {
+                    e.printStackTrace();
+                }
+                ThreadUtil.concurrencyTest(3, new Runnable() {
+                    @Override
+                    public void run() {
+                        logger.info("Thread:{},begin", Thread.currentThread().getName());
+                        Object obj = null;
+                        try {
+                            obj = lockUserService.getUserByLock4jLock();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        logger.info("Thread:{},end,{}", Thread.currentThread().getName(), obj);
+                    }
+                });
             }
         });
+        t1.start();
+        
+        Thread t2 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    cb.await();
+                } catch (InterruptedException | BrokenBarrierException e) {
+                    e.printStackTrace();
+                }
+                ThreadUtil.concurrencyTest(3, new Runnable() {
+                    @Override
+                    public void run() {
+                        logger.info("Thread2:{},begin", Thread.currentThread().getName());
+                        Object obj = null;
+                        try {
+                            obj = lockUserService.getUserByLock4jLock2();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        logger.info("Thread2:{},end,{}", Thread.currentThread().getName(), obj);
+                    }
+                });
+            }
+        });
+        t2.start();
+        
         return new HashMap<>();
     }
     
     @GetMapping("/lock/redisson")
     public Object lockCode() {
         System.out.println("lock/redisson");
-        ThreadUtil.concurrencyTest(3, new Runnable() {
+        CyclicBarrier cb = new CyclicBarrier(2);
+        Thread t1 = new Thread(new Runnable() {
             @Override
             public void run() {
-                LockMode lockMode = LockMode.REDISSON;
-                logger.info("lockCode->{},{}", Thread.currentThread().getId(), lockMode);
-                Lock lock = lockFactory.getLockTemplate(lockMode).getLock("1");
-                lock.lock();
                 try {
-                    logger.info("lockCode->{},{}", lockMode, Thread.currentThread().getId());
-                    TimeUnit.SECONDS.sleep(2);
-                } catch (Exception e) {
+                    cb.await();
+                } catch (InterruptedException | BrokenBarrierException e) {
                     e.printStackTrace();
-                } finally {
-                    lock.unlock();
                 }
+                ThreadUtil.concurrencyTest(3, new Runnable() {
+                    @Override
+                    public void run() {
+                        logger.info("Thread:{},begin", Thread.currentThread().getName());
+                        Lock lock = null;
+                        boolean flag = false;
+                        try {
+                            lock = lockProducer.getLock(BUSINESS_NAME);
+                            flag = lock.lock();
+                            if (flag) {
+                                logger.info("Thread:{},lock", Thread.currentThread().getName());
+                                TimeUnit.SECONDS.sleep(2);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        } finally {
+                            if (flag) {
+                                flag = lock.unLock();
+                                logger.info("Thread:{},unlock", Thread.currentThread().getName());
+                            }
+                        }
+                    }
+                });
             }
         });
-        System.out.println("--------------------------------------------------------------");
-        //--------------------------------------------------------------
-        ThreadUtil.concurrencyTest(3, new Runnable() {
+        t1.start();
+        
+        Thread t2 = new Thread(new Runnable() {
             @Override
             public void run() {
-                LockMode lockMode = LockMode.REDISSON;
-                logger.info("lockCode->{},{}", Thread.currentThread().getId(), lockMode);
-                Lock lock = lockFactory.getLockTemplate(lockMode).getLock("1");
-                boolean flag = lock.tryLock();
                 try {
-                    if (flag) {
-                        logger.info("lockCode->{},{}", lockMode, Thread.currentThread().getId());
-                        TimeUnit.SECONDS.sleep(2);
-                    }
-                } catch (Exception e) {
+                    cb.await();
+                } catch (InterruptedException | BrokenBarrierException e) {
                     e.printStackTrace();
-                } finally {
-                    if (flag) {
-                        lock.unlock();
-                    }
                 }
+                ThreadUtil.concurrencyTest(3, new Runnable() {
+                    @Override
+                    public void run() {
+                        logger.info("Thread2:{},begin", Thread.currentThread().getName());
+                        Lock lock = null;
+                        boolean flag = false;
+                        try {
+                            lock = lockProducer.getLock(BUSINESS_NAME_1);
+                            flag = lock.lock();
+                            if (flag) {
+                                logger.info("Thread2:{},lock", Thread.currentThread().getName());
+                                TimeUnit.SECONDS.sleep(2);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        } finally {
+                            if (flag) {
+                                flag = lock.unLock();
+                                logger.info("Thread2:{},unlock", Thread.currentThread().getName());
+                            }
+                        }
+                    }
+                });
             }
         });
+        t2.start();
+        
+        
         return new HashMap<>();
     }
     
@@ -93,9 +172,20 @@ public class RedissonLockController {
 @Service
 class RedissonLockUserService {
     private Logger logger = LoggerFactory.getLogger(getClass());
-    @Lock4j(key = "${lock.redisson.key}", block = true, lockTemplate = RedissonLockTemplate.class, lockMode = "${lock.redisson.lockMode}")
+    @Lock4j(name = RedissonLockController.BUSINESS_NAME)
     public Object getUserByLock4jLock() {
-        logger.info("RedissonLockUserService");
+        logger.info("Thread:{},RedissonLockUserService", Thread.currentThread().getName());
+        HashMap<String, Object> user = new HashMap<>();
+        try {
+            TimeUnit.SECONDS.sleep(2);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
+    @Lock4j(name = RedissonLockController.BUSINESS_NAME_1)
+    public Object getUserByLock4jLock2() {
+        logger.info("Thread2:{},RedissonLockUserService2", Thread.currentThread().getName());
         HashMap<String, Object> user = new HashMap<>();
         try {
             TimeUnit.SECONDS.sleep(2);
@@ -105,4 +195,3 @@ class RedissonLockUserService {
         return user;
     }
 }
-
