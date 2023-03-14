@@ -21,13 +21,11 @@ public class MqFactory {
     
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    private Map<String, MqTemplate> mqTemplateMap = new ConcurrentHashMap<>();
+    private Map<MqMode, MqTemplate> mqTemplateMap = new ConcurrentHashMap<>();
 
     public MqFactory addMqTemplate(MqTemplate mqTemplate) {
         logger.info("Init MqTemplate->{}", mqTemplate.getClass());
-        String mqTemplateName = mqTemplate.getClass().getName();
-        mqTemplateMap.put(mqTemplateName, mqTemplate);
-        mqTemplateMap.put(mqTemplate.getMqMode().name(), mqTemplate);
+        mqTemplateMap.put(mqTemplate.getMqMode(), mqTemplate);
         return this;
     }
     
@@ -36,16 +34,7 @@ public class MqFactory {
             throw new GlobalException(GlobalErrorCodeConstants.NOT_FOUND.getCode(), "未注册该消息模板," + msg);
         }
     }
-    /**
-     * 通过消息模板Class获取消息模板
-     * @param mqTemplateClass 
-     * @return
-     */
-    public MqTemplate getMqTemplate(Class<? extends MqTemplate> mqTemplateClass) {
-        MqTemplate mqTemplate = mqTemplateMap.get(mqTemplateClass.getName());
-        checkMqTemplate(mqTemplate, mqTemplateClass.getName());
-        return mqTemplate;
-    }
+
     /**
      * 通过消息模式获取消息模板
      * @param mqMode    参考 @MqMode 
@@ -55,22 +44,8 @@ public class MqFactory {
         if (mqMode == null) {
             throw new GlobalException(GlobalErrorCodeConstants.NOT_FOUND.getCode(), "mqMode is null");
         }
-        MqTemplate mqTemplate = mqTemplateMap.get(mqMode.name());
+        MqTemplate mqTemplate = mqTemplateMap.get(mqMode);
         checkMqTemplate(mqTemplate, mqMode.name());
-        return mqTemplate;
-    }
-    /**
-     * 通过消息模式获取消息模板
-     * @param mqMode    参考 @MqMode 
-     * @return
-     */
-    public MqTemplate getMqTemplate(String mqMode) {
-        if (mqMode == null) {
-            throw new GlobalException(GlobalErrorCodeConstants.NOT_FOUND.getCode(), "mqMode is null");
-        }
-        String mqModeStr = mqMode.toUpperCase();
-        MqTemplate mqTemplate = mqTemplateMap.get(mqModeStr);
-        checkMqTemplate(mqTemplate, mqModeStr);
         return mqTemplate;
     }
     /**
@@ -82,5 +57,9 @@ public class MqFactory {
             throw new GlobalException(GlobalErrorCodeConstants.NOT_FOUND.getCode(), "MqTemplate is empty");
         }
         return mqTemplateMap.values().iterator().next();
+    }
+    
+    public boolean containsMqTemplate(MqMode mqMode) {
+        return mqTemplateMap.containsKey(mqMode);
     }
 }

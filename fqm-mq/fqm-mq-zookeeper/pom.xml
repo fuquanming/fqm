@@ -14,7 +14,7 @@
 	
 	<properties>
 		<fqm-mq-core.version>1.0.6</fqm-mq-core.version>
-        <fqm-lock-core.version>1.0.2</fqm-lock-core.version>
+        <fqm-lock-core.version>1.0.3</fqm-lock-core.version>
         <fqm-common-zookeeper.version>1.0.5</fqm-common-zookeeper.version>
     </properties>
 	

@@ -14,8 +14,8 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.core.Ordered;
 import org.springframework.core.annotation.MergedAnnotation;
 import org.springframework.core.annotation.MergedAnnotations;
 import org.springframework.core.annotation.MergedAnnotations.SearchStrategy;
@@ -23,6 +23,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 
+import com.fqm.framework.common.spring.util.SpringUtil;
 import com.fqm.framework.mq.MqMode;
 import com.fqm.framework.mq.config.MqConfigurationProperties;
 import com.fqm.framework.mq.config.MqProperties;
@@ -37,16 +38,12 @@ import com.fqm.framework.mq.listener.MqListenerParam;
  * @version 
  * @author 傅泉明
  */
-public class MqListenerAnnotationBeanPostProcessor implements BeanPostProcessor, Ordered {
+public class MqListenerAnnotationBeanPostProcessor implements BeanPostProcessor, SmartInitializingSingleton {
 
     /** 获取使用 @MqListener 的类及方法  */
     private Map<MqMode, List<MqListenerParam>> listenerParams = new EnumMap<>(MqMode.class);
     
-    private MqProperties mqProperties;
-    
-    public MqListenerAnnotationBeanPostProcessor(MqProperties mqProperties) {
-        this.mqProperties = mqProperties;
-    }
+    private List<ListenerMethod> listenerMethods = new ArrayList<>();
     
     @Override
     public Object postProcessAfterInitialization(final Object bean, final String beanName) throws BeansException {
@@ -55,23 +52,19 @@ public class MqListenerAnnotationBeanPostProcessor implements BeanPostProcessor,
         ReflectionUtils.doWithMethods(targetClass, method -> {
             Collection<MqListener> listenerAnnotations = findListenerAnnotations(method);
             if (!listenerAnnotations.isEmpty()) {
-                methods.add(new ListenerMethod(method, listenerAnnotations.toArray(new MqListener[listenerAnnotations.size()])));
+                methods.add(new ListenerMethod(bean, method, listenerAnnotations.toArray(new MqListener[listenerAnnotations.size()])));
             }
         }, ReflectionUtils.USER_DECLARED_METHODS);
         
         if (!methods.isEmpty()) {
-            for (ListenerMethod method : methods) {
-                for (MqListener mqListener : method.mqListener) {
-                    buildMqListenerParam(bean, method, mqListener);
-                }
-            }
+            listenerMethods.addAll(methods);
         }
 
         return bean;
     }
 
     @SuppressWarnings("unchecked")
-    private void buildMqListenerParam(final Object bean, ListenerMethod method, MqListener mqListener) {
+    private void buildMqListenerParam(final Object bean, ListenerMethod method, MqListener mqListener, MqProperties mqProperties) {
         // 消息的业务名称
         String name = mqListener.name();
         // 消息主题
@@ -135,11 +128,6 @@ public class MqListenerAnnotationBeanPostProcessor implements BeanPostProcessor,
         return listenerParams.get(mqMode);
     }
     
-    @Override
-    public int getOrder() {
-        return 0;
-    }
-
     private Collection<MqListener> findListenerAnnotations(AnnotatedElement element) {
         return MergedAnnotations.from(element, SearchStrategy.TYPE_HIERARCHY).stream(MqListener.class).map(MergedAnnotation::synthesize)
                 .collect(Collectors.toList());
@@ -147,15 +135,27 @@ public class MqListenerAnnotationBeanPostProcessor implements BeanPostProcessor,
     
     private static class ListenerMethod {
 
+        final Object bean;
         final Method method; // NOSONAR
-
         final MqListener[] mqListener; // NOSONAR
-
-        ListenerMethod(Method method, MqListener[] mqListener) { // NOSONAR
+        ListenerMethod(Object bean, Method method, MqListener[] mqListener) { // NOSONAR
+            this.bean = bean;
             this.method = method;
             this.mqListener = mqListener;
         }
 
+    }
+    
+    @Override
+    public void afterSingletonsInstantiated() {
+        MqProperties properties = SpringUtil.getBean(MqProperties.class);
+        // 1、@Lock4j 校验配置文件和属性
+        for (ListenerMethod method : listenerMethods) {
+            for (MqListener listener : method.mqListener) {
+                buildMqListenerParam(method.bean, method, listener, properties);
+            }
+        }
+        listenerMethods.clear();
     }
 
 }

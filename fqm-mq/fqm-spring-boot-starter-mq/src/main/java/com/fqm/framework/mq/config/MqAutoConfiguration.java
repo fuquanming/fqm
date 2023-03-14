@@ -40,8 +40,17 @@ public class MqAutoConfiguration {
         return new MqProducer(mqFactory, mqProperties);
     }
 
+    /**
+     * stataic 装饰：先MqAutoConfiguration初始化，MqListenerAnnotationBeanPostProcessor 是BeanPostProcessor 拦截器
+     * @return
+     */
     @Bean
-    MqListenerAnnotationBeanPostProcessor mqListenerAnnotationBeanPostProcessor(MqProperties mqProperties) {
-        return new MqListenerAnnotationBeanPostProcessor(mqProperties);
+    static MqListenerAnnotationBeanPostProcessor mqListenerAnnotationBeanPostProcessor() {
+        return new MqListenerAnnotationBeanPostProcessor();
+    }
+    
+    @Bean
+    MqVerification mqVerification(MqFactory mqFactory, MqProperties mqProperties) {
+        return new MqVerification(mqFactory, mqProperties);
     }
 }
