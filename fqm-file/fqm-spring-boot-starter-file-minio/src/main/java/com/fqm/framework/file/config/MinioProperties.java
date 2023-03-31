@@ -17,11 +17,6 @@ public class MinioProperties {
     private String endpoint;
 
     /**
-     * TCP/IP端口号
-     */
-    private int port;
-
-    /**
      * accessKey类似于用户ID，用于唯一标识你的账户
      */
     private String accessKey;
@@ -30,11 +25,6 @@ public class MinioProperties {
      * secretKey是你账户的密码
      */
     private String secretKey;
-
-    /**
-     * 如果是true，则用的是https而不是http,默认值是true
-     */
-    private Boolean secure;
 
     /**
      * 默认存储桶名称
@@ -57,14 +47,6 @@ public class MinioProperties {
         this.endpoint = endpoint;
     }
 
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
-
     public String getAccessKey() {
         return accessKey;
     }
@@ -79,14 +61,6 @@ public class MinioProperties {
 
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
-    }
-
-    public Boolean getSecure() {
-        return secure;
-    }
-
-    public void setSecure(Boolean secure) {
-        this.secure = secure;
     }
 
     public String getBucketDefaultName() {

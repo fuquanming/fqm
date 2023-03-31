@@ -17,19 +17,8 @@ package com.fqm.framework.file;
  */
 public enum FileMode {
     /** Minio存储 */
-    MINIO;
-    
-    public static FileMode getMode(String mode) {
-        if (mode == null || "".equals(mode)) {
-            return null;
-        }
-        FileMode[] modes = values();
-        for (FileMode m : modes) {
-            if (mode.toUpperCase().equals(m.name())) {
-                return m;
-            }
-        }
-        return null;
-    }
+    MINIO,
+    /** Amazon S3协议存储 */
+    AMAZONS3;
     
 }

@@ -2,6 +2,7 @@ package com.fqm.framework.file.template;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.List;
 
 import com.fqm.framework.file.FileMode;
 /**
@@ -25,6 +26,22 @@ public interface FileTemplate {
     public boolean deleteFile(String fileId);
     
     /**
+     * 删除文件 根据 文件标识 来删除多个文件（上传文件时直接将fileId保存在了数据库中）
+     * @param fileIds    文件标识，如：group1/M00/00/00/wKjTgFo7cNGAI8TvAALa-N2N974394.jpg
+     * @return          
+     */
+    public boolean deleteFile(List<String> fileIds);
+    
+    /**
+     * 删除文件目录 根据 文件夹路径 来删除文件目录（上传文件时直接将fileId保存在了数据库中）
+     * @param filePath    文件标识，如：group1/M00/00/00
+     * @return          
+     */
+    default boolean deleteDir(String filePath) {
+        throw new com.fqm.framework.common.core.exception.ServiceException(12, getFileMode() + ":未实现->删除文件目录");
+    }
+    
+    /**
      * 文件下载
      * @param fileId            文件标识  如：group1/M00/00/00/wKjTgFo7cNGAI8TvAALa-N2N974394_181x161.jpg
      * @param downloadFileName  保存的文件，全路径
@@ -33,12 +50,19 @@ public interface FileTemplate {
     public boolean downloadFile(String fileId, String downloadFileName);
     
     /**
+     * 文件下载
+     * @param fileId            文件标识  如：group1/M00/00/00/wKjTgFo7cNGAI8TvAALa-N2N974394_181x161.jpg
+     * @return
+     */
+    public InputStream downloadFile(String fileId);
+    
+    /**
      * 获取文件访问的URL地址
      * @param fileId            文件标识  如：group1/M00/00/00/wKjTgFo7cNGAI8TvAALa-N2N974394_181x161.jpg
      * @return
      */
     default String getFileUrl(String fileId) {
-        return null;
+        throw new com.fqm.framework.common.core.exception.ServiceException(12, getFileMode() + ":未实现->获取文件访问的URL地址");
     }
     
     /**
@@ -48,7 +72,7 @@ public interface FileTemplate {
      * @return
      */
     default String getFileUrlExpires(String fileId, Integer expireSecond) {
-        return null;
+        throw new com.fqm.framework.common.core.exception.ServiceException(12, getFileMode() + ":未实现->获取有时效文件访问的URL地址");
     }
     
     /**

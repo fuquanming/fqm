@@ -231,10 +231,11 @@ public class MinioService {
      * @param bucketName 存储桶名称
      * @param prefix     前缀
      * @param after      后缀
+     * @param recursive  是否递归
      * @param maxKeys    最大数量
      * @return
      */
-    public Iterable<Result<Item>> listObjects(String bucketName, String prefix, String after, int maxKeys) {
+    public Iterable<Result<Item>> listObjects(String bucketName, String prefix, String after, boolean recursive, int maxKeys) {
         ListObjectsArgs.Builder builder = ListObjectsArgs.builder().bucket(bucketName);
         if (prefix != null && prefix.length() > 0) {
             builder.prefix(prefix);
@@ -245,6 +246,8 @@ public class MinioService {
         if (maxKeys > 0) {
             builder.maxKeys(maxKeys);
         }
+        // 递归
+        builder.recursive(recursive);
         return minioClient.listObjects(builder.build());
     }
 
@@ -427,7 +430,7 @@ public class MinioService {
     }
 
     /**
-     * 删除一个对象
+     * 删除一个对象，只能是文件，不支持目录
      * @param bucketName 存储桶名称
      * @param objectName 存储桶里的对象名称
      * @throws IOException 
@@ -592,5 +595,28 @@ public class MinioService {
             throws InvalidKeyException, ErrorResponseException, InsufficientDataException, InternalException, InvalidResponseException,
             NoSuchAlgorithmException, ServerException, XmlParserException, IllegalArgumentException, IOException {
         minioClient.downloadObject(DownloadObjectArgs.builder().bucket(bucketName).object(objectName).filename(fileName).build());
+    }
+    
+    /**
+     * 下载文件
+     * @param bucketName
+     * @param objectName
+     * @return
+     * @throws InvalidKeyException
+     * @throws ErrorResponseException
+     * @throws InsufficientDataException
+     * @throws InternalException
+     * @throws InvalidResponseException
+     * @throws NoSuchAlgorithmException
+     * @throws ServerException
+     * @throws XmlParserException
+     * @throws IOException
+     */
+    public InputStream downloadObject(String bucketName, String objectName) throws InvalidKeyException, ErrorResponseException, InsufficientDataException, InternalException, InvalidResponseException, NoSuchAlgorithmException, ServerException, XmlParserException, IOException {
+        return minioClient.getObject(GetObjectArgs.builder().bucket(bucketName).object(objectName).build());
+    }
+    
+    public MinioClient getMinioClient() {
+        return this.minioClient;
     }
 }

@@ -19,32 +19,19 @@ public class FileFactory {
     
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    private Map<String, FileTemplate> fileTemplateMap = new ConcurrentHashMap<>();
+    private Map<FileMode, FileTemplate> fileTemplateMap = new ConcurrentHashMap<>();
 
     public FileFactory addFileTemplate(FileTemplate fileTemplate) {
         logger.info("Init FileTemplate->{}", fileTemplate.getClass());
-        String fileTemplateName = fileTemplate.getClass().getName();
-        fileTemplateMap.put(fileTemplateName, fileTemplate);
-        fileTemplateMap.put(fileTemplate.getFileMode().name(), fileTemplate);
+        fileTemplateMap.put(fileTemplate.getFileMode(), fileTemplate);
         return this;
-    }
-
-    public FileTemplate getFileTemplate(Class<? extends FileTemplate> fileTemplateClass) {
-        return fileTemplateMap.get(fileTemplateClass.getName());
     }
 
     public FileTemplate getFileTemplate(FileMode fileMode) {
         if (fileMode == null) {
             return null;
         }
-        return fileTemplateMap.get(fileMode.name());
-    }
-    
-    public FileTemplate getFileTemplate(String fileMode) {
-        if (fileMode == null) {
-            return null;
-        }
-        return fileTemplateMap.get(fileMode.toUpperCase());
+        return fileTemplateMap.get(fileMode);
     }
     
     public FileTemplate getFileTemplate() {

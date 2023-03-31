@@ -5,14 +5,22 @@
 	<parent>
 		<groupId>io.github.fuquanming</groupId>
 		<artifactId>fqm-file</artifactId>
-		<version>1.0.4</version>
+		<version>1.0.5</version>
 	</parent>
 	<artifactId>fqm-file-core</artifactId>
     <description>Fqm file objects library core API and implementation</description>
+    <properties>
+        <fqm-common-core.version>1.0.5</fqm-common-core.version>
+    </properties>
 	<dependencies>
 	   <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.fuquanming</groupId>
+            <artifactId>fqm-common-core</artifactId>
+            <version>${fqm-common-core.version}</version>
         </dependency>
 	</dependencies>
 </project>

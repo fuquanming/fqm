@@ -11,13 +11,14 @@
     </parent>
     
 	<artifactId>fqm-file</artifactId>
-	<version>1.0.4</version>
+	<version>1.0.5</version>
 	<packaging>pom</packaging>
 	<description>Parent project for fqm file objects</description>
 	
 	<modules>
         <module>fqm-file-core</module>
         <module>fqm-file-minio</module>
+        <module>fqm-file-amazons3</module>
         <module>fqm-spring-boot-starter-file-minio</module>
         <module>fqm-spring-boot-starter-file</module>
 	</modules>

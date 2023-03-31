@@ -1,0 +1,38 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>io.github.fuquanming</groupId>
+		<artifactId>fqm-file</artifactId>
+		<version>1.0.5</version>
+	</parent>
+	<artifactId>fqm-file-amazons3</artifactId>
+
+	<properties>
+		<fqm-file-core.version>1.0.5</fqm-file-core.version>
+		<fqm-common-core.version>1.0.5</fqm-common-core.version>
+		<aws-java-sdk-s3.version>1.12.439</aws-java-sdk-s3.version>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+		<dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-s3</artifactId>
+            <version>${aws-java-sdk-s3.version}</version>
+        </dependency>
+		<dependency>
+			<groupId>io.github.fuquanming</groupId>
+			<artifactId>fqm-common-core</artifactId>
+			<version>${fqm-common-core.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.github.fuquanming</groupId>
+			<artifactId>fqm-file-core</artifactId>
+			<version>${fqm-file-core.version}</version>
+		</dependency>
+	</dependencies>
+</project>

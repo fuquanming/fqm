@@ -25,7 +25,7 @@ public class FileAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public FileFactory fileFactory() {
+    FileFactory fileFactory() {
         return new FileFactory();
     }
 
