@@ -23,6 +23,8 @@ public class MqProperties {
     
     /** 是否开启，默认为 true 开启 */
     private Boolean enabled = true;
+    /** 校验加载的消息组件，默认为 true */
+    private Boolean verify = true;
     /** 消息队列方式，指定所有消息队列的方式 */
     private MqMode binder;
     /** 消息队列配置，key：业务名称(多个消息队列共存时或使用死信队列时) */
@@ -34,6 +36,14 @@ public class MqProperties {
 
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
+    }
+    
+    public Boolean getVerify() {
+        return verify;
+    }
+
+    public void setVerify(Boolean verify) {
+        this.verify = verify;
     }
     
     public MqMode getBinder() {

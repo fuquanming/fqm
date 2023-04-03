@@ -16,6 +16,12 @@
         "description": "启用消息.",
         "sourceType": "com.fqm.framework.mq.config.MqProperties",
         "defaultValue": true
+	}, {
+        "name": "mq.verify",
+        "type": "java.lang.Boolean",
+        "description": "校验加载的消息组件.",
+        "sourceType": "com.fqm.framework.mq.config.MqProperties",
+        "defaultValue": true        
     }, {
         "name": "mq.binder",
         "type": "java.lang.String",

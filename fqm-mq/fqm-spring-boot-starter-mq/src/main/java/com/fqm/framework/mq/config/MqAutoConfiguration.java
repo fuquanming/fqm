@@ -50,6 +50,7 @@ public class MqAutoConfiguration {
     }
     
     @Bean
+    @ConditionalOnProperty(name = "mq.verify", havingValue = "true")
     MqVerification mqVerification(MqFactory mqFactory, MqProperties mqProperties) {
         return new MqVerification(mqFactory, mqProperties);
     }
