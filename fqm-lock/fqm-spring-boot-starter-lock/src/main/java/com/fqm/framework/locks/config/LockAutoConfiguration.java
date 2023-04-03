@@ -64,6 +64,7 @@ public class LockAutoConfiguration {
     }
 
     @Bean
+    @ConditionalOnProperty(name = "lock.verify", havingValue = "true")
     LockVerification lockVerification(LockFactory lockFactory, LockProperties lockProperties) {
         return new LockVerification(lockFactory, lockProperties);
     }
