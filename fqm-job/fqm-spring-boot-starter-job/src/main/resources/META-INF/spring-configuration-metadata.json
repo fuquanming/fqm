@@ -17,12 +17,25 @@
         "sourceType": "com.fqm.framework.job.config.JobProperties",
         "defaultValue": false
     }, {
+        "name": "job.verify",
+        "type": "java.lang.Boolean",
+        "description": "校验加载的任务组件.",
+        "sourceType": "com.fqm.framework.job.config.JobProperties",
+        "defaultValue": true   
+    }, {
         "name": "job.jobs",
         "type": "java.util.Map<java.lang.String,com.fqm.framework.job.config.JobConfigurationProperties>",
         "description": "任务列表，key：任务名称，value：任务配置；参见@link JobConfigurationProperties,例如:job.jobs.job1.binder...,job.jobs.job2.binder...",
         "sourceType": "com.fqm.framework.job.config.JobProperties"
     }],
     "hints": [{
-        "name": "job.jobs.keys"                     
+        "name": "job.binder",
+        "values": [{
+    		"value": "elasticjob",
+    		"description": "elasticjob 任务调度"
+		}, {
+    		"value": "xxljob",
+    		"description": "xxljob 任务调度"
+    	}]
     }]
 }

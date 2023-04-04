@@ -10,7 +10,7 @@
 package com.fqm.framework.job.config;
 
 /**
- * xxl-job 配置类
+ * xxljob 配置类
  * @version 
  * @author 傅泉明
  */

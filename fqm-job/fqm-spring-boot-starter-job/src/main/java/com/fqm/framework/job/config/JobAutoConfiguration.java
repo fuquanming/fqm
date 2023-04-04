@@ -37,4 +37,11 @@ public class JobAutoConfiguration {
         return new JobListenerAnnotationBeanPostProcessor();
     }
     
+    @Bean
+    @ConditionalOnProperty(name = "job.verify", havingValue = "true")
+    JobVerification jobVerification(JobProperties jobProperties) {
+        return new JobVerification(jobProperties);
+        
+    }
+    
 }

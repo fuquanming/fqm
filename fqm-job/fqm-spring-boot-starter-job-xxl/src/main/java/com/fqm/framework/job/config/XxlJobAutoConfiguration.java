@@ -10,6 +10,7 @@
 package com.fqm.framework.job.config;
 
 import java.lang.reflect.Method;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +55,7 @@ public class XxlJobAutoConfiguration implements SmartInitializingSingleton, Appl
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
+        JobProperties.JOB_MODE_MAP.add(JobMode.XXLJOB);
     }
     
     @Bean
@@ -87,18 +89,18 @@ public class XxlJobAutoConfiguration implements SmartInitializingSingleton, Appl
     @Override
     public void afterSingletonsInstantiated() {
         JobListenerAnnotationBeanPostProcessor job = applicationContext.getBean(JobListenerAnnotationBeanPostProcessor.class);
-        JobProperties jp = applicationContext.getBean(JobProperties.class);
-        for (JobListenerParam v : job.getListeners()) {
+        List<JobListenerParam> listenerParams = job.getListeners(JobMode.XXLJOB);
+        if (null == listenerParams || listenerParams.isEmpty()) {
+            return;
+        }
+        for (JobListenerParam v : listenerParams) {
             String jobName = v.getName();
-            JobConfigurationProperties properties = jp.getJobs().get(jobName);
-            if (properties != null && JobMode.XXLJOB.equalMode(properties.getBinder())) {
-                buildJob(v, jobName, properties);
-            }
+            buildJob(v, jobName);
         }
     }
 
-    private void buildJob(JobListenerParam v, String jobName, JobConfigurationProperties properties) {
-        if (properties != null && JobMode.XXLJOB.equalMode(properties.getBinder()) && XxlJobExecutor.loadJobHandler(jobName) == null) {
+    private void buildJob(JobListenerParam v, String jobName) {
+        if (XxlJobExecutor.loadJobHandler(jobName) == null) {
             XxlJobListener listener = new XxlJobListener(v.getBean(), v.getMethod());
             // 获取任务执行的方法
             Method[] ms = listener.getClass().getMethods();

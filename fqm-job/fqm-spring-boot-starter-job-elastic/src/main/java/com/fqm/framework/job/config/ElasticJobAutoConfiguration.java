@@ -9,6 +9,8 @@
  */
 package com.fqm.framework.job.config;
 
+import java.util.List;
+
 import org.apache.shardingsphere.elasticjob.api.ElasticJob;
 import org.apache.shardingsphere.elasticjob.api.JobConfiguration;
 import org.apache.shardingsphere.elasticjob.lite.api.bootstrap.impl.OneOffJobBootstrap;
@@ -33,7 +35,6 @@ import com.fqm.framework.job.JobMode;
 import com.fqm.framework.job.annotation.JobListenerAnnotationBeanPostProcessor;
 import com.fqm.framework.job.listener.ElasticJobListener;
 import com.fqm.framework.job.listener.JobListenerParam;
-import com.google.common.base.Preconditions;
 
 /**
  * ElasticJob 自动配置类
@@ -56,32 +57,35 @@ public class ElasticJobAutoConfiguration implements SmartInitializingSingleton, 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
+        JobProperties.JOB_MODE_MAP.add(JobMode.ELASTICJOB);
     }    
 
     @Override
     public void afterSingletonsInstantiated() {
         JobListenerAnnotationBeanPostProcessor job = applicationContext.getBean(JobListenerAnnotationBeanPostProcessor.class);
+        List<JobListenerParam> listenerParams = job.getListeners(JobMode.ELASTICJOB);
+        if (null == listenerParams || listenerParams.isEmpty()) {
+            return;
+        }
         SingletonBeanRegistry singletonBeanRegistry = ((ConfigurableApplicationContext) applicationContext).getBeanFactory();
         CoordinatorRegistryCenter registryCenter = applicationContext.getBean(CoordinatorRegistryCenter.class);
 
         JobProperties jp = applicationContext.getBean(JobProperties.class);
-
-        for (JobListenerParam v : job.getListeners()) {
+        
+        // 注册 监听任务的客户端
+        for (JobListenerParam v : listenerParams) {
             String jobName = v.getName();
             JobConfigurationProperties properties = jp.getJobs().get(jobName);
-            if (properties != null && JobMode.ELASTICJOB.equalMode(properties.getBinder())) {
-                String cron = properties.getCron();
-                Assert.isTrue(StringUtils.hasText(cron), "Please specific [cron] under job.jobs." + jobName + " configuration.");
-                buildJob(singletonBeanRegistry, registryCenter, v, jobName, properties);
-            }
+            String cron = properties.getCron();
+            Assert.isTrue(StringUtils.hasText(cron), "Please specific [cron] under job.jobs." + jobName + " configuration.");
+            buildJob(singletonBeanRegistry, registryCenter, v, jobName, properties);
         }
     }
 
     private void buildJob(SingletonBeanRegistry singletonBeanRegistry, CoordinatorRegistryCenter registryCenter, JobListenerParam v, String jobName,
             JobConfigurationProperties properties) {
-        if (properties != null && JobMode.ELASTICJOB.equalMode(properties.getBinder()) && !singletonBeanRegistry.containsSingleton(jobName)) {
+        if (!singletonBeanRegistry.containsSingleton(jobName)) {
             String cron = properties.getCron();
-            Preconditions.checkArgument(StringUtils.hasText(cron), "Please specific [core] under job configuration, binder is elasticjob.");
             JobConfiguration jobConfig = JobConfiguration.newBuilder(jobName, 1).cron(cron).overwrite(false).build();
             ElasticJob elasticJob = new ElasticJobListener(v.getBean(), v.getMethod());
             if (StringUtils.hasText(cron)) {

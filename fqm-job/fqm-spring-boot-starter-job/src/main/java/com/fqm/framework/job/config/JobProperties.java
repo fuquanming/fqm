@@ -9,8 +9,12 @@
  */
 package com.fqm.framework.job.config;
 
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
+
+import com.fqm.framework.job.JobMode;
 
 /**
  * Job properties
@@ -19,9 +23,15 @@ import java.util.Map;
  */
 public class JobProperties {
     
+    /** 记录加载的job */
+    public static Set<JobMode> JOB_MODE_MAP = new HashSet<>();
+    
     /** 是否开启，默认为 false 未开启 */
     private Boolean enabled = false;
-    
+    /** 校验加载的任务组件，默认为 true */
+    private Boolean verify = true;
+    /** 任务方式，指定所有任务的实现方式 */
+    private JobMode binder;
     /** 任务配置，key：任务名称，value：任务配置 */
     private Map<String, JobConfigurationProperties> jobs = new LinkedHashMap<>();
     
@@ -32,7 +42,23 @@ public class JobProperties {
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
+    
+    public Boolean getVerify() {
+        return verify;
+    }
 
+    public void setVerify(Boolean verify) {
+        this.verify = verify;
+    }
+
+    public JobMode getBinder() {
+        return binder;
+    }
+
+    public void setBinder(JobMode binder) {
+        this.binder = binder;
+    }
+    
     public Map<String, JobConfigurationProperties> getJobs() {
         return jobs;
     }

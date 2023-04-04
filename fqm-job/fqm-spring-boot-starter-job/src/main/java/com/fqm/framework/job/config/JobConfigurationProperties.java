@@ -1,4 +1,7 @@
 package com.fqm.framework.job.config;
+
+import com.fqm.framework.job.JobMode;
+
 /**
  * 任务自动注册配置
  * 
@@ -7,14 +10,14 @@ package com.fqm.framework.job.config;
  */
 public class JobConfigurationProperties {
     /** 执行任务的组件名 参考@JobMode,必填 */
-    private String binder;
+    private JobMode binder;
     /** 执行任务的时间,elasticjob必填 */
     private String cron;
     
-    public String getBinder() {
+    public JobMode getBinder() {
         return binder;
     }
-    public void setBinder(String binder) {
+    public void setBinder(JobMode binder) {
         this.binder = binder;
     }
     public String getCron() {

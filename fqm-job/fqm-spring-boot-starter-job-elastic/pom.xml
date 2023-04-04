@@ -5,10 +5,10 @@
 	<parent>
 		<groupId>io.github.fuquanming</groupId>
 		<artifactId>fqm-job</artifactId>
-		<version>1.0.3</version>
+		<version>1.0.4</version>
 	</parent>
 	<artifactId>fqm-spring-boot-starter-job-elastic</artifactId>
-    <description>Starter for elastic job listener</description>
+    <description>Starter for elasticjob listener</description>
     <properties>
        <elastic-job.version>3.0.2</elastic-job.version>
     </properties>
