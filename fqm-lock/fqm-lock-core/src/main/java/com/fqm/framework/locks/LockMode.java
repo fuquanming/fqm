@@ -15,18 +15,4 @@ public enum LockMode {
     /** 分布式Zookeeper */
     ZOOKEEPER;
     
-    public static LockMode getMode(String mode) {
-        if (mode == null || "".equals(mode)) {
-            return null;
-        }
-        String modeName = mode;
-        LockMode[] modes = values();
-        for (LockMode m : modes) {
-            if (modeName.toUpperCase().contains(m.name())) {
-                return m;
-            }
-        }
-        return null;
-    }
-    
 }
