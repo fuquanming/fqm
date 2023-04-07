@@ -34,7 +34,11 @@ spring:
     - cache # 多级缓存
     - file # 分布式文件
     - file-minio # minio存储文件
+    - file-amazons3 # amazons3存储文件
     - job # 分布式任务
     - job-xxl # xxljob
     - job-elastic # elasticjob
     - swagger # 文档接口
+  jpa:
+    hibernate:
+      ddl-auto: update

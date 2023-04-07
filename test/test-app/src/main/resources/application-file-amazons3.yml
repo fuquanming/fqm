@@ -1,0 +1,8 @@
+## amazons3
+amazons3:
+  enabled: true
+  endpoint: http://192.168.86.145:11000
+  accessKey: admin
+  secretKey: 12345678
+  secure: false
+  bucketName: amazon-s3

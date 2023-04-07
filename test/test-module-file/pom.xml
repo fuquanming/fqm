@@ -28,5 +28,6 @@
     </dependencies>
     <modules>
     	<module>test-module-file-minio</module>
+    	<module>test-module-file-amazons3</module>
     </modules>
 </project>
