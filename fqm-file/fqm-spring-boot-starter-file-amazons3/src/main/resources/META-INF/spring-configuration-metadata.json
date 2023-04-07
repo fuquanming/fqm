@@ -1,0 +1,54 @@
+{
+    "groups": [{
+        "name": "amazons3",
+        "type": "com.fqm.framework.file.config.AmazonS3Properties",
+        "description": "AmazonS3 Properties.",
+        "sourceType": "com.fqm.framework.file.config.AmazonS3Properties"
+    }],
+    "properties": [{
+        "name": "amazons3",
+        "type": "com.fqm.framework.file.config.AmazonS3Properties",
+        "description": "AmazonS3配置.",
+        "sourceType": "com.fqm.framework.file.config.AmazonS3Properties"
+    }, {
+        "name": "amazons3.enabled",
+        "type": "java.lang.Boolean",
+        "description": "启用AmazonS3文件服务.",
+        "sourceType": "com.fqm.framework.file.config.AmazonS3Properties",
+        "defaultValue": true
+    }, {
+        "name": "amazons3.endpoint",
+        "type": "java.lang.String",
+        "description": "AmazonS3服务地址.",
+        "sourceType": "com.fqm.framework.file.config.AmazonS3Properties"
+    }, {
+        "name": "amazons3.accessKey",
+        "type": "java.lang.String",
+        "description": "AmazonS3服务访问账号.",
+        "sourceType": "com.fqm.framework.file.config.AmazonS3Properties"
+    }, {
+        "name": "amazons3.secretKey",
+        "type": "java.lang.String",
+        "description": "AmazonS3服务访问密码.",
+        "sourceType": "com.fqm.framework.file.config.AmazonS3Properties"
+    }, {
+        "name": "amazons3.bucketName",
+        "type": "java.lang.String",
+        "description": "AmazonS3服务访问的文件桶.",
+        "sourceType": "com.fqm.framework.file.config.AmazonS3Properties",
+        "defaultValue": "config"
+    }, {
+        "name": "amazons3.region",
+        "type": "java.lang.String",
+        "description": "区域.",
+        "sourceType": "com.fqm.framework.file.config.AmazonS3Properties"
+    }, {
+        "name": "amazons3.accessUrl",
+        "type": "java.lang.String",
+        "description": "代理访问文件服务路径，如：nginx，代理访问minio.",
+        "sourceType": "com.fqm.framework.file.config.AmazonS3Properties"
+    }],
+    "hints": [{
+        "name": ""                     
+    }]
+}

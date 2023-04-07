@@ -68,7 +68,7 @@ public class AmazonS3Service {
                     .disableChunkedEncoding();
             this.client = build.build();
             if (!bucketExists(bucketName)) {
-                throw new ServiceException(404, "通不存在:" + bucketName);
+                throw new ServiceException(404, "桶不存在:" + bucketName);
             }
         } catch (Exception e) {
             e.printStackTrace();

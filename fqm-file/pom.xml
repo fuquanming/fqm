@@ -21,6 +21,7 @@
         <module>fqm-file-amazons3</module>
         <module>fqm-spring-boot-starter-file-minio</module>
         <module>fqm-spring-boot-starter-file</module>
+        <module>fqm-spring-boot-starter-file-amazons3</module>
 	</modules>
 	
 	<licenses>

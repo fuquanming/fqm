@@ -1,0 +1,8 @@
+## 文件服务
+#amazons3:
+#  enabled: true
+#  endpoint: http://127.0.0.1:11000
+#  accessKey: admin
+#  secretKey: 12345678
+#  secure: false
+#  bucketName: amazon-s3
