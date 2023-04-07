@@ -37,14 +37,14 @@ public class MqVerification implements SmartInitializingSingleton {
     @Override
     public void afterSingletonsInstantiated() {
         // 1、校验配置文件
-        MqMode lockMode = mqProperties.getBinder();
+        MqMode mqMode = mqProperties.getBinder();
         mqProperties.getMqs().entrySet().forEach(entry -> {
             String businessName = entry.getKey();
             MqConfigurationProperties mcp = entry.getValue();
 
             MqMode binder = mcp.getBinder();
             if (null == binder) {
-                binder = lockMode;
+                binder = mqMode;
             }
             Assert.notNull(binder, "Please specific [binder] under [mq.mqs." + businessName + "] configuration or [binder] under [mq] configuration.");
             // 校验 MqMode 

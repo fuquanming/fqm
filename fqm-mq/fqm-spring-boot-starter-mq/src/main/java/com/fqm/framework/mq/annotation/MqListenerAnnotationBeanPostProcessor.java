@@ -149,7 +149,7 @@ public class MqListenerAnnotationBeanPostProcessor implements BeanPostProcessor,
     @Override
     public void afterSingletonsInstantiated() {
         MqProperties properties = SpringUtil.getBean(MqProperties.class);
-        // 1、@Lock4j 校验配置文件和属性
+        // 1、@MqListener 校验配置文件和属性，并初始化
         for (ListenerMethod method : listenerMethods) {
             for (MqListener listener : method.mqListener) {
                 buildMqListenerParam(method.bean, method, listener, properties);
