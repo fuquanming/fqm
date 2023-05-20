@@ -86,6 +86,7 @@ public class ElasticJobAutoConfiguration implements SmartInitializingSingleton, 
             JobConfigurationProperties properties) {
         if (!singletonBeanRegistry.containsSingleton(jobName)) {
             String cron = properties.getCron();
+            // overwrite=false，本地配置不覆盖 zk 里的配置
             JobConfiguration jobConfig = JobConfiguration.newBuilder(jobName, 1).cron(cron).overwrite(false).build();
             ElasticJob elasticJob = new ElasticJobListener(v.getBean(), v.getMethod());
             if (StringUtils.hasText(cron)) {
