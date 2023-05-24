@@ -30,7 +30,5 @@
         "type": "com.fqm.framework.job.config.ElasticJobTracingDataSourceProperties",
         "description": "登录数据库的密码.",
         "sourceType": "com.fqm.framework.job.config.ElasticJobTracingDataSourceProperties"
-    }],
-    "hints": [{        
     }]
 }
