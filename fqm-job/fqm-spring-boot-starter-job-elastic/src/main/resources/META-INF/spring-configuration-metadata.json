@@ -1,0 +1,36 @@
+{
+    "groups": [{
+        "name": "elasticjob",
+        "type": "com.fqm.framework.job.config.ElasticJobTracingDataSourceProperties",
+        "description": "elasticjob Properties.",
+        "sourceType": "com.fqm.framework.job.config.ElasticJobTracingDataSourceProperties"
+    }],
+    "properties": [{
+        "name": "elasticjob.tracing.db",
+        "type": "com.fqm.framework.job.config.ElasticJobTracingDataSourceProperties",
+        "description": "事件跟踪数据库连接配置.",
+        "sourceType": "com.fqm.framework.job.config.ElasticJobTracingDataSourceProperties"
+    }, {
+        "name": "elasticjob.tracing.db.driver-class-name",
+        "type": "com.fqm.framework.job.config.ElasticJobTracingDataSourceProperties",
+        "description": "连接数据库的JDBC驱动.",
+        "sourceType": "com.fqm.framework.job.config.ElasticJobTracingDataSourceProperties"
+    }, {
+        "name": "elasticjob.tracing.db.url",
+        "type": "com.fqm.framework.job.config.ElasticJobTracingDataSourceProperties",
+        "description": "连接数据库的JDBC地址.",
+        "sourceType": "com.fqm.framework.job.config.ElasticJobTracingDataSourceProperties"
+    }, {
+        "name": "elasticjob.tracing.db.username",
+        "type": "com.fqm.framework.job.config.ElasticJobTracingDataSourceProperties",
+        "description": "登录数据库的用户名.",
+        "sourceType": "com.fqm.framework.job.config.ElasticJobTracingDataSourceProperties"
+    }, {
+        "name": "elasticjob.tracing.db.password",
+        "type": "com.fqm.framework.job.config.ElasticJobTracingDataSourceProperties",
+        "description": "登录数据库的密码.",
+        "sourceType": "com.fqm.framework.job.config.ElasticJobTracingDataSourceProperties"
+    }],
+    "hints": [{        
+    }]
+}

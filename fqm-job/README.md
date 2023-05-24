@@ -167,8 +167,15 @@ job:
 ## elasticjob 
 elasticjob:
   reg-center:
-    server-lists: 192.168.86.145:2181        # zookeeper地址
-    namespace: elasticjob-1                 # 命名空间  
+    server-lists: 127.0.0.1:2181      # zookeeper地址
+    namespace: elasticjob-1           # 命名空间  
+  tracing:
+    type: RDB                         # 开启事件追踪，读取 spring.datasource 下的配置作为数据源
+    db:                               # 事件追踪数据源配置
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://127.0.0.1:13306/ejob?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+      username: root
+      password: 123456
 ## 通用任务配置，同任务组件下的任务名不能重复
 job:
   enabled: true             # 开启任务
@@ -178,6 +185,21 @@ job:
     ejob:                   # 任务名称，唯一，该值等于自定义注解JobListener.name()
       binder: elasticjob    # 执行任务组件
       cron: 0/5 * * * * ?   # 执行任务时间表达式，对应的管理控台可以修改，elasticjob必填
+~~~
+
+## pom
+
+~~~xml
+<!-- 事务跟踪的数据库配置示例：jdbc、数据库驱动 -->
+<dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+    <scope>runtime</scope>
+</dependency>
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-jdbc</artifactId>
+</dependency>
 ~~~
 
 ## 服务端

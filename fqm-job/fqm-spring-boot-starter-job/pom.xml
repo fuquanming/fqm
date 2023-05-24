@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>io.github.fuquanming</groupId>
 		<artifactId>fqm-job</artifactId>
-		<version>1.0.5</version>
+		<version>1.0.6</version>
 	</parent>
 	<artifactId>fqm-spring-boot-starter-job</artifactId>
 	<description>Starter for JobListener</description>
@@ -14,11 +14,6 @@
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-job-core</artifactId>
             <version>${parent.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.github.fuquanming</groupId>
-            <artifactId>fqm-common-spring</artifactId>
-            <version>1.0.4</version>
         </dependency>
         
         <dependency>
