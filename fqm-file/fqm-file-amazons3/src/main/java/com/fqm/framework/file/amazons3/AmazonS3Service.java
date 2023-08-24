@@ -219,5 +219,9 @@ public class AmazonS3Service {
     public String getEndpoint() {
         return endpoint;
     }
+    
+    public AmazonS3 getClient() {
+        return client;
+    }
 
 }

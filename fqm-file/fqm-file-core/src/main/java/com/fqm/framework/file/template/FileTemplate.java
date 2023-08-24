@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.util.List;
 
 import com.fqm.framework.file.FileMode;
+import com.fqm.framework.file.model.FileUploadRequest;
+import com.fqm.framework.file.model.FileUploadResponse;
 /**
  * 文件模板
  * 
@@ -78,7 +80,7 @@ public interface FileTemplate {
     /**
      * 上传文件
      * @param file      文件
-     * @param fileName  文件名，如：group1/M00/00/00/wKjTgFo7cNGAI8TvAALa-N2N974394.jpg     
+     * @param fileName  上传后的文件名，如：group1/M00/00/00/wKjTgFo7cNGAI8TvAALa-N2N974394.jpg     
      * @return          文件标识，如：group1/M00/00/00/wKjTgFo7cNGAI8TvAALa-N2N974394.jpg
      */
     public String uploadFile(File file, String fileName);
@@ -86,9 +88,40 @@ public interface FileTemplate {
     /**
      * 上传文件，未关闭流，需要自己关闭流
      * @param is        文件流
-     * @param fileName  文件名，如：group1/M00/00/00/wKjTgFo7cNGAI8TvAALa-N2N974394.jpg
+     * @param fileName  上传后的文件名，如：group1/M00/00/00/wKjTgFo7cNGAI8TvAALa-N2N974394.jpg
      * @return          文件标识，如：group1/M00/00/00/wKjTgFo7cNGAI8TvAALa-N2N974394.jpg
      */
     public String uploadFile(InputStream is, String fileName);
+    
+    /**
+     * 上传文件(分片上传)
+     * @param fileUploadRequest 分片上传信息
+     * @param file              文件
+     * @param fileName          上传后的文件名，如：group1/M00/00/00/wKjTgFo7cNGAI8TvAALa-N2N974394.jpg     
+     * @return                  分片上传状态
+     */
+    default FileUploadResponse uploadFile(FileUploadRequest fileUploadRequest, File file, String fileName) {
+        throw new com.fqm.framework.common.core.exception.ServiceException(12, getFileMode() + ":未实现->上传文件(分片上传)");
+    }
+    
+    /**
+     * 上传文件(分片上传)
+     * @param fileUploadRequest 分片上传信息
+     * @param is                文件流
+     * @param fileName          上传后的文件名，如：group1/M00/00/00/wKjTgFo7cNGAI8TvAALa-N2N974394.jpg     
+     * @return                  分片上传状态
+     */
+    default FileUploadResponse uploadFile(FileUploadRequest fileUploadRequest, InputStream is, String fileName) {
+        throw new com.fqm.framework.common.core.exception.ServiceException(12, getFileMode() + ":未实现->上传文件(分片上传)");
+    }
+    
+    /**
+     * 判断是否是分片上传
+     * @param fileUploadRequest
+     * @return
+     */
+    default boolean isFileChunkUpload(FileUploadRequest fileUploadRequest) {
+        return (null != fileUploadRequest && null != fileUploadRequest.getChunk() && null != fileUploadRequest.getChunks());
+    }
     
 }

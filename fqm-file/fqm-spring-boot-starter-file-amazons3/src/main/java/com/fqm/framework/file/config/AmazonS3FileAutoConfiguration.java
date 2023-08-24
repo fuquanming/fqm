@@ -6,6 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.data.redis.core.StringRedisTemplate;
 
 import com.fqm.framework.file.FileFactory;
 import com.fqm.framework.file.amazons3.AmazonS3Service;
@@ -26,17 +27,20 @@ public class AmazonS3FileAutoConfiguration {
     AmazonS3Properties amazonS3Properties() {
         return new AmazonS3Properties();
     }
-
+    
     @Bean
     @ConditionalOnMissingBean
     @Order(200)
-    AmazonS3FileTemplate amazonS3FileTemplate(FileFactory fileFactory, AmazonS3Properties amazonS3Properties) {
+    AmazonS3FileTemplate amazonS3FileTemplate(FileFactory fileFactory, AmazonS3Properties amazonS3Properties
+            , StringRedisTemplate stringRedisTemplate) {
         AmazonS3FileTemplate amazonS3FileTemplate = new AmazonS3FileTemplate(
                 new AmazonS3Service(amazonS3Properties.getEndpoint(), 
                         amazonS3Properties.getAccessKey(), 
                         amazonS3Properties.getSecretKey(), 
                         amazonS3Properties.getBucketName(), 
-                        amazonS3Properties.getRegion()), amazonS3Properties.getAccessUrl());
+                        amazonS3Properties.getRegion()), amazonS3Properties.getAccessUrl()
+                , stringRedisTemplate
+                );
         fileFactory.addFileTemplate(amazonS3FileTemplate);
         return amazonS3FileTemplate;
     }
