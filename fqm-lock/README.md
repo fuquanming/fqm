@@ -1,17 +1,18 @@
-# 简介
-fqm-common-lock 是一个Java分布式锁抽象。提供编程式及Lock4j注释。
+# 锁
+lock 是一个Java分布式锁抽象。提供编程式及Lock4j注释。
 
 目前有4种实现：
 
 单机锁：`SimpleLock`
 
-分布式锁：`RedissonLock`，`ZookeeperLock`，`RestTemplateLock`
+分布式锁：`RedissonLock`，`ZookeeperLock`，`RedisLock`
 
-fqm-common-lock的全部功能：
+Lock 的全部功能：
 
-- 通过一致的锁API操作锁
-- 声明性方法锁，使用带有锁的key、获取锁超时时间等支持的注释 
-- Spring Boot support
+* 阻塞式获取锁 
+* 尝试获取一次锁
+* 指定时间内获取一次锁
+* 释放锁
 
 要求:
 
@@ -19,247 +20,303 @@ fqm-common-lock的全部功能：
 * Spring Framework4.0.8+ (可选)
 * Spring Boot1.1.9+ (可选)
 
-# 入门
+# 版本
 
-## 编程式
+| 锁组件名称                             | 版本号 | 说明     |
+| -------------------------------------- | ------ | -------- |
+| fqm-spring-boot-starter-lock           | 1.0.3  | 单机锁   |
+| fqm-spring-boot-starter-lock-redis     | 1.0.3  | 分布式锁 |
+| fqm-spring-boot-starter-lock-redisson  | 1.0.4  | 分布式锁 |
+| fqm-spring-boot-starter-lock-zookeeper | 1.0.4  | 分布式锁 |
 
-~~~java
-// SimpleLockTemplate, 单机锁，基于ReentrantLock
-// RedissonLockTemplate，分布式锁，基于org.redisson.api.RLock
-// RedisTemplateLockTemplate，分布式锁，基于RedisTemplate
-// ZookeeperLockTemplate，分布式锁，基于org.apache.curator.framework.recipes.locks.InterProcessMutex
+# 快速开始
 
-public void testLock() {
-    LockFactory lockFactory = new LockFactory();
-    lockFactory.addLockTemplate(new SimpleLockTemplate());
+## 1、pom 引入依赖
 
-    LockTemplate<?> lockTemplate = lockFactory.getLockTemplate(SimpleLockTemplate.class);
-    Lock lock = lockTemplate.getLock("123");
-    try {
-        lock.lock();
-        // dosomething...
-    } finally {
-        lock.unlock();
-    }
-}
+`fqm-spring-boot-starter-lock-xxx` ：`xxx` 为 [版本](#版本) 中的消息组件名称
 
-public void testTryLock() {
-    LockFactory lockFactory = new LockFactory();
-    lockFactory.addLockTemplate(new RedissonLockTemplate());
+`latest.version`：为 [版本](#版本) 中的版本号
 
-    LockTemplate<?> lockTemplate = lockFactory.getLockTemplate(RedissonLockTemplate.class);
-    Lock lock = lockTemplate.getLock("123");
-    boolean lockFlag = false;
-    try {
-        lockFlag = lock.tryLock();
-        // lock.tryLock(1000, TimeUtil.MILLISECONDS);
-        // dosomething...
-    } finally {
-        if (!lockFlag) lock.unlock();
-    }
-}
-
-public void testTryLockTime() {
-    LockFactory lockFactory = new LockFactory();
-    lockFactory.addLockTemplate(new ZookeeperLockTemplate());
-
-    LockTemplate<?> lockTemplate = lockFactory.getLockTemplate(ZookeeperLockTemplate.class);
-    Lock lock = lockTemplate.getLock("123");
-    boolean lockFlag = false;
-    try {
-        lockFlag = lock.tryLock(1000, TimeUtil.MILLISECONDS);
-        // dosomething...
-    } finally {
-        if (!lockFlag) lock.unlock();
-    }
-}
-~~~
-
-## 注解式
-
-编码指定LockTemplate：使用lockTemplate 指定class
-
-~~~java
-// block=true：调用lock()，阻塞线程，直到获取到锁为止，默认值为false
-// key：支持表达式及配置文件，基于spring的@Value
-@Lock4j(key = "${lock.user.key}", block = true, lockTemplate = SimpleLockTemplate.class)
-~~~
-
-使用配置文件加载LockTemplate：使用lockMode读取配置文件的枚举值（SIMPLE,REDISSON,REDISTEMPLATE,ZOOKEEPER）
-
-~~~java
-// lockMode：支持表达式及配置文件，基于spring的@Value，枚举值（SIMPLE,REDISSON,REDISTEMPLATE,ZOOKEEPER）
-// 优先级大于lockTemplate 属性
-@Lock4j(key = "${lock.user.key}", block = true, lockMode = "{lock.user.lockMode}")
-@Lock4j(key = "${lock.user.key}", block = true, lockMode = "REDISSON")
-~~~
-
-~~~java
-// 调用tryLock()，尝试获取一次锁
-@Lock4j(key = "userId", lockTemplate = RedissonLockTemplate.class)
-~~~
-
-~~~java
-// 调用tryLock()，尝试获取一次锁
-@Lock4j(key = "userId", lockTemplate = RedisTemplateLockTemplate.class)
-~~~
-
-~~~java
-// 调用tryLock(timeout, TimeUtil.MILLISECONDS)，尝试在指定时间内获取一次锁
-// acquireTimeout：获取锁的超时时间
-@Lock4j(key = "userId", acquireTimeout = 2000, lockTemplate = ZookeeperLockTemplate.class)
-~~~
-
-## Spring Boot 配置
-
-### SimpleLock
-
-pom:
-
-```xml
+~~~xml
 <dependency>
-    <groupId>com.fqm</groupId>
-    <artifactId>fqm-spring-boot-starter-lock</artifactId>
-    <version>${latest.version}</version>
+    <groupId>io.github.fuquanming</groupId>
+    <artifactId>fqm-spring-boot-starter-lock-xxx</artifactId>
+    <version>{latest.version}</version>
 </dependency>
-```
+~~~
 
-App class:
-```java
-@Resource
-LockFactory lockFactory;
+## 2、yml 配置
 
-public User getUser() {
-	LockTemplate<?> lockTemplate = lockFactory.getLockTemplate(SimpleLockTemplate.class);
-    Lock lock = lockTemplate.getLock("123");
-    // 参考上述编程式代码
-    // dosomething...
+连接服务端配置参考文档后面的配置：[simple](#simple)、[redis](#redis)、[redisson](#redisson)、[zookeeper](#zookeeper)
+
+~~~yaml
+# 通用锁配置
+lock:
+  enabled: true
+  verify: true                # 校验加载的锁组件，未校验时则配置错误将导致运行时错误
+  binder: simple              # 锁组件，参考 @LockMode，统一设置锁方式
+  locks:
+    simple:                   # 业务名称，唯一
+      key: user               # 锁的名称
+      binder: simple          # 锁组件，参考 @LockMode，统一设置锁方式
+      block: true             # 阻塞获取锁
+    simple1:                   # 业务名称，唯一
+      key: user               # 锁的名称
+      binder: simple          # 锁组件，参考 @LockMode，统一设置锁方式
+      acquire-timeout: 3000   # 获取锁的超时时间，单位：毫秒
+~~~
+
+## 3、注解式
+
+~~~java
+package com.fqm.test.lock.controller;
+
+import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
+
+import javax.annotation.Resource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.fqm.framework.locks.annotation.Lock4j;
+
+@RestController
+public class SimpleLockController {
+    private Logger logger = LoggerFactory.getLogger(getClass());
+    @Resource
+    SimpleLockUserService lockUserService;
+    // 业务名称：对应配置文件 lock.locks.simple
+	public static final String BUSINESS_NAME = "simple";
+    
+    @GetMapping("/lock4j/simple")
+    public Object lock4j() {
+        logger.info("Thread:{},begin", Thread.currentThread().getName());
+        Object obj = null;
+        try {
+            obj = lockUserService.getUserByLock4jLock();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        logger.info("Thread:{},end,{}", Thread.currentThread().getName(), obj);
+    }
+}    
+
+@Service
+class SimpleLockUserService {
+    @Lock4j(name = SimpleLockController.BUSINESS_NAME)
+    public Object getUserByLock4jLock() {
+        logger.info("Thread:{},SimpleLockUserService", Thread.currentThread().getName());
+        HashMap<String, Object> user = new HashMap<>();
+        try {
+            TimeUnit.SECONDS.sleep(2);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
+}    
+~~~
+
+## 4、编程式
+
+~~~java
+package com.fqm.test.lock.controller;
+
+import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
+
+import javax.annotation.Resource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.fqm.framework.locks.config.LockProducer;
+import com.fqm.framework.locks.config.LockProducer.Lock;
+
+@RestController
+public class SimpleLockController {
+    
+    private Logger logger = LoggerFactory.getLogger(getClass());
+
+    @Resource
+    LockProducer lockProducer;
+    // 业务名称：对应配置文件 lock.locks.simple1
+    public static final String BUSINESS_NAME_1 = "simple1";        
+    
+    @GetMapping("/lock/simple")
+    public Object lockCode() {
+        logger.info("Thread:{},begin", Thread.currentThread().getName());
+        Lock lock = null;
+        boolean flag = false;
+        try {
+            lock = lockProducer.getLock(BUSINESS_NAME_1);
+            flag = lock.lock();
+            if (flag) {
+                logger.info("Thread:{},lock", Thread.currentThread().getName());
+                TimeUnit.SECONDS.sleep(2);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (flag) {
+                flag = lock.unLock();
+                logger.info("Thread:{},unlock", Thread.currentThread().getName());
+            }
+        }                              
+        return new HashMap<>();
+    }
+    
 }
-```
+~~~
 
-### RedissonLock
+# simple
 
-pom:
+基于 ReentrantLock 实现
 
-```xml
-<dependency>
-    <groupId>com.fqm</groupId>
-    <artifactId>fqm-spring-boot-starter-lock-redisson</artifactId>
-    <version>${latest.version}</version>
-</dependency>
-```
+功能：
 
-App class:
+- [x] 阻塞式获取锁
+- [x] 尝试获取一次锁
+- [x] 指定时间内获取一次锁
+- [x] 释放锁
 
-```java
-@Resource
-LockFactory lockFactory;
+## yml 配置
 
-public User getUser() {
-	LockTemplate<?> lockTemplate = lockFactory.getLockTemplate(RedissonLockTemplate.class);
-    Lock lock = lockTemplate.getLock("123");
-    // 参考上述编程式代码
-    // dosomething...
-}
+~~~yaml
+# 通用锁配置
+lock:
+  enabled: true
+  verify: true                # 校验加载的锁组件，未校验时则配置错误将导致运行时错误
+  binder: simple              # 锁组件，参考 @LockMode，统一设置锁方式
+  locks:
+    simple:                   # 业务名称，唯一
+      key: user               # 锁的名称
+      binder: simple          # 锁组件，参考 @LockMode，统一设置锁方式
+      block: true             # 阻塞获取锁
+    simple1:                   # 业务名称，唯一
+      key: user               # 锁的名称
+      binder: simple          # 锁组件，参考 @LockMode，统一设置锁方式
+      acquire-timeout: 3000   # 获取锁的超时时间，单位：毫秒
+~~~
 
-// 可以自定义RedissonClient
-```
+# redis
 
-spring boot application.yml config:
+基于 RedisTemplate 实现
 
-```yaml
-# redis或自定义其他属性
+功能：
+
+- [x] 阻塞式获取锁
+- [x] 尝试获取一次锁
+- [x] 指定时间内获取一次锁
+- [x] 释放锁
+
+## yml 配置
+
+~~~yaml
 spring:
-  redis
+  redis:
     host: 127.0.0.1
-    port: 6379
+    port: 16379
     database: 0
-#    password: 123456
-    timeout: 6000
-```
+    lettuce:
+      pool:
+        max-active: 8
+        max-wait: -1
+        max-idle: 8
+        min-idle: 0
+# 通用锁配置
+lock:
+  enabled: true
+  verify: true                # 校验加载的锁组件，未校验时则配置错误将导致运行时错误
+  binder: simple              # 锁组件，参考 @LockMode，统一设置锁方式
+  locks:
+    redis:
+      key: user               # 锁的名称
+      binder: redis           # 锁组件，参考 @LockMode，统一设置锁方式
+      block: true             # 阻塞获取锁
+    redis1:
+      key: user               # 锁的名称
+      binder: redis           # 锁组件，参考 @LockMode，统一设置锁方式
+      acquire-timeout: 3000   # 获取锁的超时时间，单位：毫秒
+~~~
 
-### RedisTemplateLock
+# redisson
 
-pom:
+基于 RLock 实现
 
-```xml
-<dependency>
-    <groupId>com.fqm</groupId>
-    <artifactId>fqm-spring-boot-starter-lock-redis-template</artifactId>
-    <version>${latest.version}</version>
-</dependency>
-```
+功能：
 
-App class:
+- [x] 阻塞式获取锁
+- [x] 尝试获取一次锁
+- [x] 指定时间内获取一次锁
+- [x] 释放锁
 
-```java
-@Resource
-LockFactory lockFactory;
+## yml 配置
 
-public User getUser() {
-	LockTemplate<?> lockTemplate = lockFactory.getLockTemplate(RedisTemplateLockTemplate.class);
-    Lock lock = lockTemplate.getLock("123");
-    // 参考上述编程式代码
-    // dosomething...
-}
-
-// 可以自定义RedissonClient
-```
-
-spring boot application.yml config:
-
-```yaml
-# redis或自定义其他属性
+~~~yaml
 spring:
-  redis
+  redis:
     host: 127.0.0.1
-    port: 6379
+    port: 16379
     database: 0
-#    password: 123456
-    timeout: 6000
-```
+# 通用锁配置
+lock:
+  enabled: true
+  verify: true                # 校验加载的锁组件，未校验时则配置错误将导致运行时错误
+  binder: simple              # 锁组件，参考 @LockMode，统一设置锁方式
+  locks:
+    redisson:
+      key: user               # 锁的名称
+      binder: redisson        # simple,redisson,redis,zookeeper
+      block: true             # 阻塞获取锁
+    redisson1:
+      key: user               # 锁的名称
+      binder: redisson        # simple,redisson,redis,zookeeper      
+      acquire-timeout: 3000   # 获取锁的超时时间，单位：毫秒
+~~~
 
-### ZookeeperLock：
+# zookeeper
 
-pom:
+基于 InterProcessMutex 实现
 
-```xml
-<dependency>
-    <groupId>com.fqm</groupId>
-    <artifactId>fqm-spring-boot-starter-lock-zookeeper</artifactId>
-    <version>${latest.version}</version>
-</dependency>
-```
+功能：
 
-App class:
+- [x] 阻塞式获取锁
+- [x] 尝试获取一次锁
+- [x] 指定时间内获取一次锁
+- [x] 释放锁
 
-```java
-@Resource
-LockFactory lockFactory;
+## yml 配置
 
-public User getUser() {
-	LockTemplate<?> lockTemplate = lockFactory.getLockTemplate(ZookeeperLockTemplate.class);
-    Lock lock = lockTemplate.getLock("123");
-    // 参考上述编程式代码
-    // dosomething...
-}
-
-// 可以自定义RedissonClient
-```
-
-spring boot application.yml config:
-
-```yaml
-# 共用spring.clound.zookeeper
+~~~yaml
 spring:
   cloud:
     zookeeper: 
       connect-string: 127.0.0.1:2181
-      connection-timeout: 15000 # 必须大于15秒
+      connection-timeout: 15000
       base-sleep-time-ms: 1000
       max-retries: 3
       max-sleep-ms: 10000
-      session-timeout: 30000 
-```
-
-### 
+      session-timeout: 30000
+# 通用锁配置
+lock:
+  enabled: true
+  verify: true                # 校验加载的锁组件，未校验时则配置错误将导致运行时错误
+  binder: simple              # 锁组件，参考 @LockMode，统一设置锁方式
+  locks:
+    zookeeper:
+      key: user               # 锁的名称
+      binder: zookeeper       # 锁组件，参考 @LockMode，统一设置锁方式
+      block: true             # 阻塞获取锁
+    zookeeper1:
+      key: user               # 锁的名称
+      binder: zookeeper       # 锁组件，参考 @LockMode，统一设置锁方式
+      acquire-timeout: 3000   # 获取锁的超时时间，单位：毫秒
+~~~
