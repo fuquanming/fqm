@@ -55,8 +55,9 @@ public class FileController {
         }
         File file = new File("D:\\Documents\\1.jpg");
         System.out.println("uploadFile......");
-        String fileId = fileFactory.getFileTemplate(FileMode.MINIO).uploadFile(file, "2/my.jpg");
-        return Result.ok(fileId);
+//        String fileId = fileFactory.getFileTemplate(FileMode.MINIO).uploadFile(file, "2/my.jpg");
+//        return Result.ok(fileId);
+        return Result.ok();
     }
 
     @GetMapping("/file/download")

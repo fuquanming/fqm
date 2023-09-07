@@ -1,0 +1,23 @@
+# 基础镜像
+FROM  openjdk:8-jre
+# author
+MAINTAINER fqm
+
+# 挂载目录
+VOLUME /home/fqm
+# 创建目录
+RUN mkdir -p /home/fqm
+# 指定路径
+WORKDIR /home/fqm
+# 复制jar文件到路径
+COPY ./target/test-app-1.0.0.jar /home/fqm/test-app-1.0.0.jar
+# 启动服务
+ENTRYPOINT ["java","-jar","test-app-1.0.0.jar"]
+
+# 构建镜像：在dockerfile 所在目录下执行docker build -f dockerfile -t test-app:1.0 .
+# 运行镜像 
+# docker run -d --name test-app -p 38080:58080 \
+# -v /home/docker-testapp/config:/home/fqm/config \
+# -e TZ=Asia/Shanghai \
+# -v /etc/localtime:/etc/localtime \
+# docker_test-app:1.0

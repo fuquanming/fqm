@@ -1,26 +1,51 @@
 package com.fqm.test.file.controller;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.amazonaws.HttpMethod;
+import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
+import com.fqm.framework.common.core.util.JsonUtil;
 import com.fqm.framework.common.core.util.io.IoUtil;
 import com.fqm.framework.common.core.vo.Result;
 import com.fqm.framework.file.FileFactory;
 import com.fqm.framework.file.FileMode;
+import com.fqm.framework.file.model.FileUploadRequest;
+import com.fqm.framework.file.model.FileUploadResponse;
+import com.fqm.framework.locks.LockFactory;
+import com.fqm.framework.locks.config.LockProperties;
 
+import cn.hutool.core.date.DateUtil;
+
+@CrossOrigin
 @RestController
 public class AmazonS3FileController {
 
+    private Logger log = LoggerFactory.getLogger(getClass());
+    
     @Resource
     FileFactory fileFactory;
 
@@ -28,7 +53,26 @@ public class AmazonS3FileController {
     @ResponseBody
     public Result<String> uploadFile() {
         File file = new File("D:\\Documents\\1.jpg");
-        String fileId = fileFactory.getFileTemplate(FileMode.AMAZONS3).uploadFile(file, "2/my.jpg");
+        String fileId = fileFactory.getFileTemplate().uploadFile(file, "a/my.jpg");
+        return Result.ok(fileId);
+    }
+    
+    @GetMapping("/file/s3/upload2")
+    @ResponseBody
+    public Result<String> uploadFile2() {
+        File file = new File("D:\\Documents\\1.jpg");
+        String fileId = "";
+        try (FileInputStream fis = new FileInputStream(file);) {
+            FileUploadResponse fileUploadResponse = fileFactory.getFileTemplate()
+                    .uploadFile(null, fis, "a/my.jpg");
+            fileId = fileUploadResponse.getFileId();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            
+        }
         return Result.ok(fileId);
     }
 
@@ -92,5 +136,86 @@ public class AmazonS3FileController {
     public Result<String> getFileUrl(String fileId) {
         String fileUrl = fileFactory.getFileTemplate(FileMode.AMAZONS3).getFileUrl(fileId);
         return Result.ok(fileUrl);
+    }
+    
+    String bucketName = "config";
+    String objectName = "a/" + "a.md";
+    
+    @Resource
+    LockFactory lockFactory;
+    @Resource
+    LockProperties lockProperties;
+    
+    @PostMapping(value = "/file/s3/chunkUpload")
+    public Result<FileChunksMergeDTO> uploadFile(
+            FileUploadDTO fileUploadDTO,
+            @RequestParam(value = "file", required = false) MultipartFile multipartFile
+            ) throws Exception {
+
+        log.info(JsonUtil.toJsonStr(fileUploadDTO));
+        System.out.println(multipartFile.getName() + "\t" + multipartFile.getSize() + "\t" + multipartFile.getOriginalFilename());
+
+        String md5 = fileUploadDTO.getMd5();
+        String fileMd5Key = "mufi_" + md5;
+        String fileMd5LockKey = fileMd5Key + "_lock";
+        String partResultKey = "partResult";
+        String incrementKey = "increment";
+        
+        
+        objectName = "a/" + multipartFile.getOriginalFilename();
+        
+        try {
+            FileUploadRequest fileUploadRequest = new FileUploadRequest();
+            if (fileUploadDTO.getChunk() != null) {
+                fileUploadRequest.setChunk(fileUploadDTO.getChunk() + 1);
+                fileUploadRequest.setChunks(fileUploadDTO.getChunks());
+            }
+            fileUploadRequest.setMd5(md5);
+            fileUploadRequest.setSize(fileUploadDTO.getSize());
+            
+            FileUploadResponse fileUploadResponse = fileFactory.getFileTemplate()
+                    .uploadFile(fileUploadRequest, multipartFile.getInputStream(), objectName);
+            System.out.println(JsonUtil.toJsonStr(fileUploadResponse));
+            
+            FileChunksMergeDTO mergeDTO = new FileChunksMergeDTO();
+            mergeDTO.setSubmittedFileName(multipartFile.getOriginalFilename());
+            mergeDTO.setMd5(fileUploadDTO.getMd5());
+            mergeDTO.setContextType(fileUploadDTO.getType());
+            mergeDTO.setChunks(fileUploadDTO.getChunks());
+            mergeDTO.setExt(fileUploadDTO.getExt());
+            mergeDTO.setSize(fileUploadDTO.getSize());
+            mergeDTO.setName(fileUploadDTO.getName());
+            if (!fileUploadResponse.isChunkUploadStatus()) {
+                int i = 1 / 0;
+                return Result.fail(mergeDTO);
+            } else {
+                return Result.ok(mergeDTO);
+            }
+        } finally {
+            multipartFile.getInputStream().close();
+        }
+    }
+    
+    @PostMapping(value = "/file/s3/chunkMerge")
+    public Result<?> chunkMerge() throws Exception {
+        return Result.ok();
+    }
+    
+    @GetMapping(value = "/file/s3/chunk/{partNumber}")
+    public Result<?> chunkPartNumber(@PathVariable("partNumber") Integer partNumber) throws Exception {
+        Date currentDate = new Date();
+        Long PRE_SIGN_URL_EXPIRE = 60 * 10 * 1000L;
+        Date expireDate = DateUtil.offsetMillisecond(currentDate, PRE_SIGN_URL_EXPIRE.intValue());
+        GeneratePresignedUrlRequest request = new GeneratePresignedUrlRequest(bucketName, objectName)
+                .withExpiration(expireDate).withMethod(HttpMethod.PUT);
+        Map<String, String> params = new HashMap<>();
+        params.put("partNumber", partNumber.toString());
+        params.put("uploadId", "8ae8e07f-b0d8-4c3e-9657-eecdcccd8106");
+        if (params != null) {
+            params.forEach((key, val) -> request.addRequestParameter(key, val));
+        }
+//        URL preSignedUrl = client.generatePresignedUrl(request);
+//        return Result.ok(preSignedUrl.toString());
+        return Result.ok();
     }
 }

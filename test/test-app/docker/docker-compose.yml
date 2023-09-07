@@ -1,0 +1,13 @@
+version : '3.8'
+services:
+  test-app:
+    container_name: test-app
+    build:
+      context: ./
+      dockerfile: dockerfile
+    ports:
+      - "38080:58080"
+    volumes:
+    - /home/docker-testapp/config:/home/fqm/config
+    environment:
+    - TZ=Asia/Shanghai         #设置时区

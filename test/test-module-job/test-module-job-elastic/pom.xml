@@ -8,7 +8,10 @@
     <artifactId>test-module-job-elastic</artifactId>
     
     <properties>
-        <fqm-spring-boot-starter-job-elastic.version>1.0.5</fqm-spring-boot-starter-job-elastic.version>
+        <fqm-spring-boot-starter-job-elastic.version>1.0.6</fqm-spring-boot-starter-job-elastic.version>
+        
+        <mybatis-plus.version>3.5.2</mybatis-plus.version>
+        <druid.version>1.2.15</druid.version>
     </properties>
     
     <dependencies>
@@ -16,6 +19,23 @@
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-spring-boot-starter-job-elastic</artifactId>
             <version>${fqm-spring-boot-starter-job-elastic.version}</version>
+        </dependency>
+        
+        <!-- 事务跟踪的数据库配置 -->
+		<dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+        <!-- 主数据源使用druid才加载 -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid-spring-boot-starter</artifactId>
+            <version>${druid.version}</version>
         </dependency>
     </dependencies>
 </project>

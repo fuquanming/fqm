@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Arrays;
 
 import com.fqm.framework.file.amazons3.AmazonS3Service;
+import com.fqm.framework.file.model.FileUploadRequest;
 import com.fqm.framework.file.template.AmazonS3FileTemplate;
 
 public class AmazonS3Test {
@@ -46,5 +47,6 @@ public class AmazonS3Test {
 //        
         template.deleteDir("s3/");
     }
+    
     
 }
