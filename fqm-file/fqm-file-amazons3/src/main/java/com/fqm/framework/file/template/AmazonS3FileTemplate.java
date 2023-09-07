@@ -299,10 +299,9 @@ public class AmazonS3FileTemplate implements FileTemplate {
             } finally {
                 // 成功则删除redis缓存数据
                 if (FileUploadStatus.SUCCESS == response.getUploadStatus()) {
-                    logger.error("delete redis->{}", fileKey);
+                    logger.info("delete redis->{}", fileKey);
                     stringRedisTemplate.delete(fileKey);
-                }
-                if (FileUploadStatus.FAIL == response.getUploadStatus()) {
+                } else if (FileUploadStatus.FAIL == response.getUploadStatus()) {
                     String str = JsonUtil.toJsonStr(response);
                     logger.error("File uploadFileChunk s3 chunkFail {}", str);
                 }
