@@ -5,10 +5,10 @@
 	<parent>
 		<groupId>io.github.fuquanming</groupId>
 		<artifactId>fqm-file</artifactId>
-		<version>1.0.6</version>
+		<version>1.0.7</version>
 	</parent>
 	<artifactId>fqm-file-minio</artifactId>
-	<version>1.0.6</version>
+	<version>1.0.7</version>
     <description>Fqm file object implemented by minio</description>
     
     <properties>

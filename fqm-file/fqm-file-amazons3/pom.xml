@@ -5,12 +5,12 @@
 	<parent>
 		<groupId>io.github.fuquanming</groupId>
 		<artifactId>fqm-file</artifactId>
-		<version>1.0.6</version>
+		<version>1.0.7</version>
 	</parent>
 	<artifactId>fqm-file-amazons3</artifactId>
 
 	<properties>
-		<fqm-file-core.version>1.0.6</fqm-file-core.version>
+		<fqm-file-core.version>1.0.7</fqm-file-core.version>
 		<fqm-common-core.version>1.0.5</fqm-common-core.version>
 		<aws-java-sdk-s3.version>1.12.439</aws-java-sdk-s3.version>
 		<fqm-lock-core.version>1.0.3</fqm-lock-core.version>
