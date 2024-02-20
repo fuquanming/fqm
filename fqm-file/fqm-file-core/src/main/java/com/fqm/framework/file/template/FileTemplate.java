@@ -7,6 +7,7 @@ import java.util.List;
 import com.fqm.framework.file.FileMode;
 import com.fqm.framework.file.model.FileUploadRequest;
 import com.fqm.framework.file.model.FileUploadResponse;
+import com.fqm.framework.file.tag.FileTag;
 /**
  * 文件模板
  * 
@@ -124,4 +125,31 @@ public interface FileTemplate {
         return (null != fileUploadRequest && null != fileUploadRequest.getChunk() && null != fileUploadRequest.getChunks());
     }
     
+    /*** 文件标签 ***/
+    /**
+     * 获取文件标签
+     * @param fileId            文件标识  如：group1/M00/00/00/wKjTgFo7cNGAI8TvAALa-N2N974394_181x161.jpg
+     * @return 
+     */
+    default List<FileTag> getFileTag(String fileId) {
+        throw new com.fqm.framework.common.core.exception.ServiceException(12, getFileMode() + ":未实现->获取文件标签");
+    }
+    
+    /**
+     * 设置文件标签（文件的标签会被该集合替换）
+     * @param fileId            文件标识  如：group1/M00/00/00/wKjTgFo7cNGAI8TvAALa-N2N974394_181x161.jpg
+     * @param tagSet            标签集合
+     */
+    default void setFileTag(String fileId, List<FileTag> tagSet) {
+        throw new com.fqm.framework.common.core.exception.ServiceException(12, getFileMode() + ":未实现->设置文件标签");
+    }
+    
+    /**
+     * 删除文件所有标签
+     * @param fileId            文件标识  如：group1/M00/00/00/wKjTgFo7cNGAI8TvAALa-N2N974394_181x161.jpg
+     * @param objectName    文件名
+     */
+    default void deleteFileTag(String fileId) {
+        throw new com.fqm.framework.common.core.exception.ServiceException(12, getFileMode() + ":未实现->删除文件所有标签");
+    }
 }

@@ -8,8 +8,10 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -35,8 +37,7 @@ import com.fqm.framework.file.FileFactory;
 import com.fqm.framework.file.FileMode;
 import com.fqm.framework.file.model.FileUploadRequest;
 import com.fqm.framework.file.model.FileUploadResponse;
-import com.fqm.framework.locks.LockFactory;
-import com.fqm.framework.locks.config.LockProperties;
+import com.fqm.framework.file.tag.FileTag;
 
 import cn.hutool.core.date.DateUtil;
 
@@ -141,11 +142,6 @@ public class AmazonS3FileController {
     String bucketName = "config";
     String objectName = "a/" + "a.md";
     
-    @Resource
-    LockFactory lockFactory;
-    @Resource
-    LockProperties lockProperties;
-    
     @PostMapping(value = "/file/s3/chunkUpload")
     public Result<FileChunksMergeDTO> uploadFile(
             FileUploadDTO fileUploadDTO,
@@ -194,6 +190,25 @@ public class AmazonS3FileController {
         } finally {
             multipartFile.getInputStream().close();
         }
+    }
+    
+    @GetMapping(value = "/file/s3/getTag")
+    public Result<List<FileTag>> getTag(String fileId) throws Exception {
+        return Result.ok(fileFactory.getFileTemplate(FileMode.AMAZONS3).getFileTag(fileId));
+    }
+    
+    @GetMapping(value = "/file/s3/setTag")
+    public Result<Boolean> setTag(String fileId) throws Exception {
+        List<FileTag> fileTags = new ArrayList<>();
+        fileTags.add(new FileTag("tag1", "tag1"));
+        fileFactory.getFileTemplate(FileMode.AMAZONS3).setFileTag(fileId, fileTags);
+        return Result.ok();
+    }
+    
+    @GetMapping(value = "/file/s3/deleteTag")
+    public Result<Boolean> deleteTag(String fileId) throws Exception {
+        fileFactory.getFileTemplate(FileMode.AMAZONS3).deleteFileTag(fileId);
+        return Result.ok();
     }
     
     @PostMapping(value = "/file/s3/chunkMerge")

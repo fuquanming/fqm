@@ -18,13 +18,11 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.core.script.RedisScript;
 
-import com.amazonaws.services.s3.model.CompleteMultipartUploadRequest;
-import com.amazonaws.services.s3.model.InitiateMultipartUploadRequest;
 import com.amazonaws.services.s3.model.InitiateMultipartUploadResult;
 import com.amazonaws.services.s3.model.ListObjectsV2Result;
 import com.amazonaws.services.s3.model.PartETag;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
-import com.amazonaws.services.s3.model.UploadPartRequest;
+import com.amazonaws.services.s3.model.Tag;
 import com.amazonaws.services.s3.model.UploadPartResult;
 import com.fqm.framework.common.core.util.JsonUtil;
 import com.fqm.framework.file.FileMode;
@@ -32,6 +30,7 @@ import com.fqm.framework.file.amazons3.AmazonS3Service;
 import com.fqm.framework.file.enums.FileUploadStatus;
 import com.fqm.framework.file.model.FileUploadRequest;
 import com.fqm.framework.file.model.FileUploadResponse;
+import com.fqm.framework.file.tag.FileTag;
 
 
 /**
@@ -220,6 +219,30 @@ public class AmazonS3FileTemplate implements FileTemplate {
         return null;
     }
     
+    @Override
+    public List<FileTag> getFileTag(String fileId) {
+        List<Tag> objectTagging = service.getObjectTagging(bucketName, fileId);
+        List<FileTag> tags = new ArrayList<>(objectTagging.size());
+        for (Tag tag : objectTagging) {
+            tags.add(new FileTag(tag.getKey(), tag.getValue()));
+        }
+        return tags;
+    }
+    
+    @Override
+    public void setFileTag(String fileId, List<FileTag> tagSet) {
+        List<Tag> tags = new ArrayList<>(tagSet.size());
+        for (FileTag fileTag : tagSet) {
+            tags.add(new Tag(fileTag.getKey(), fileTag.getValue()));
+        }
+        service.setObjectTagging(bucketName, fileId, tags);
+    }
+    
+    @Override
+    public void deleteFileTag(String fileId) {
+        service.deleteObjectTagging(bucketName, fileId);
+    }
+    
     /**
      * 存储分片上传成功时分片信息
      * 1)被删除了uploadId，有分片失败 partList -> -2
@@ -375,7 +398,7 @@ public class AmazonS3FileTemplate implements FileTemplate {
      * @param mapList
      */
     private void multipartUpload(String fileName, String uploadId, List<?> mapList) {
-        // 最后分片上传完成
+        // 最后分片上传完成 或者通过api获取分片信息service.getClient().listParts
         List<PartETag> partList = new ArrayList<>(mapList.size());
         mapList.forEach( str -> {
             Map<?, ?> map = JsonUtil.toMap(str.toString());
@@ -389,10 +412,8 @@ public class AmazonS3FileTemplate implements FileTemplate {
         
         // 4.返回分片上传结果
         // 判断是否最后一个分片，则提交合并请求
-        CompleteMultipartUploadRequest completeMultipartUploadRequest =
-              new CompleteMultipartUploadRequest(bucketName, fileName, uploadId, partList);
         // 完成分片上传。
-        service.getClient().completeMultipartUpload(completeMultipartUploadRequest);
+        service.completeMultipartUpload(bucketName, fileName, uploadId, partList);
     }
 
     /**
@@ -406,18 +427,7 @@ public class AmazonS3FileTemplate implements FileTemplate {
      * @throws IOException
      */
     private UploadPartResult uploadPart(FileUploadRequest fileUploadRequest, InputStream is, String fileName, String uploadId) throws IOException {
-        UploadPartRequest uploadPartRequest = new UploadPartRequest();
-        uploadPartRequest.setBucketName(bucketName);
-        uploadPartRequest.setKey(fileName);
-        uploadPartRequest.setUploadId(uploadId);
-        
-        uploadPartRequest.setInputStream(is);
-        // 设置分片大小。除了最后一个分片没有大小限制，其他的分片最小为10 KB。
-        uploadPartRequest.setPartSize(is.available());
-        // 设置分片号。每一个上传的分片都有一个分片号，取值范围是1~10000，如果超出此范围，OSS将返回InvalidArgument错误码。
-        uploadPartRequest.setPartNumber(fileUploadRequest.getChunk());
-        // 每个分片不需要按顺序上传，甚至可以在不同客户端上传，OSS会按照分片号排序组成完整的文件。
-        return service.getClient().uploadPart(uploadPartRequest);
+        return service.uploadPart(bucketName, fileName, uploadId, is, fileUploadRequest.getChunk());
     }
     
     /**
@@ -439,8 +449,7 @@ public class AmazonS3FileTemplate implements FileTemplate {
         String uploadIdKey = "uploadId";
         String uploadId = boundHashOps.get(uploadIdKey);
         if (uploadId == null) {
-            InitiateMultipartUploadRequest request = new InitiateMultipartUploadRequest(bucketName, fileName);
-            InitiateMultipartUploadResult upresult = service.getClient().initiateMultipartUpload(request);
+            InitiateMultipartUploadResult upresult = service.initiateMultipartUpload(bucketName, fileName);
             uploadId = upresult.getUploadId();
             logger.debug("build UploadId={}", uploadId);
             // redis.call('expire',KEYS[1],60) setex

@@ -1,9 +1,14 @@
 ## 通用任务配置，同任务组件下的任务名不能重复
 job:
-  enabled: true
+  enabled: true             # 开启任务
+  verify: false              # 校验加载的任务组件，未校验时则配置错误将导致运行时错误
+  binder: xxljob            # 执行任务组件，参考 @JobMode，统一设置任务组件
   jobs:
     ejob:                   # 任务名称，唯一，该值等于自定义注解JobListener.name()
+      name: ejob
       binder: elasticjob    # 执行任务组件
       cron: 0/5 * * * * ?   # 执行任务时间表达式，对应的管理控台可以修改，elasticjob必填
     xjob:                   # 任务名称，唯一，该值等于自定义注解JobListener.name()
+      name: xjob
       binder: xxljob        # 执行任务组件
+      cron:

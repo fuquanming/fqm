@@ -41,6 +41,61 @@ public class AmazonS3Properties {
      * 代理访问文件服务路径，如：nginx，代理访问minio
      */
     private String accessUrl;
+    
+    /**
+     * 扩展功能
+     */
+    private Extend extend;
+    
+    /**
+     * 扩展功能
+     * 
+     * @version 
+     * @author 傅泉明
+     */
+    static class Extend {
+        
+        private Expiry expiry;
+
+        public Expiry getExpiry() {
+            return expiry;
+        }
+        public void setExpiry(Expiry expiry) {
+            this.expiry = expiry;
+        }
+        
+    }
+    /**
+     * 过期配置 
+     * @version 
+     * @author 傅泉明
+     */
+    static class Expiry {
+        /**
+         * 文件超时天数，默认7天：文件添加标签，有该标签则上传7天后自动删除
+         */
+        private int expiryDay = 7;
+        /**
+         * 初始化过期策略
+         */
+        private Boolean expiryInitRule = false;
+
+        public int getExpiryDay() {
+            return expiryDay;
+        }
+        public void setExpiryDay(int expiryDay) {
+            if (expiryDay > 0) {
+                this.expiryDay = expiryDay;
+            }
+        }
+        public boolean getExpiryInitRule() {
+            return expiryInitRule;
+        }
+        public void setExpiryInitRule(boolean expiryInitRule) {
+            this.expiryInitRule = expiryInitRule;
+        }
+        
+    }
 
     public Boolean getEnabled() {
         return enabled;
@@ -96,6 +151,14 @@ public class AmazonS3Properties {
 
     public void setAccessUrl(String accessUrl) {
         this.accessUrl = accessUrl;
+    }
+
+    public Extend getExtend() {
+        return extend;
+    }
+
+    public void setExtend(Extend extend) {
+        this.extend = extend;
     }
     
     

@@ -7,18 +7,72 @@
     </parent>
     <artifactId>test-app</artifactId>
     
+    <properties>
+		<mybatis-plus.version>3.5.2</mybatis-plus.version>
+        <druid.version>1.2.15</druid.version>
+	</properties>
+    
     <dependencies>
-        <!-- MQ Start -->
+		<!-- DB -->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <version>${mybatis-plus.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid-spring-boot-starter</artifactId>
+            <version>${druid.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+			<groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-starter-aop</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>io.github.fuquanming</groupId>
+		    <artifactId>fqm-common-spring</artifactId>
+		    <version>1.0.4</version>
+		</dependency>
+		
+
+        <!-- https://mvnrepository.com/artifact/org.ow2.asm/asm -->
+		<dependency>
+		    <groupId>org.ow2.asm</groupId>
+		    <artifactId>asm</artifactId>
+		    <version>9.6</version>
+		</dependency>
+
+		
+		<dependency>
+            <groupId>com.fqm.test</groupId>
+            <artifactId>test-module-file-amazons3</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
+        <dependency>
+		    <groupId>org.apache.commons</groupId>
+		    <artifactId>commons-pool2</artifactId>
+		</dependency>
+        <!-- MQ Start
         <dependency>
             <groupId>com.fqm.test</groupId>
             <artifactId>test-module-mq-emqx</artifactId>
             <version>${parent.version}</version>
-        </dependency>
+        </dependency> 
         <dependency>
             <groupId>com.fqm.test</groupId>
             <artifactId>test-module-mq-kafka</artifactId>
             <version>${parent.version}</version>
-        </dependency>
+        </dependency> 
         <dependency>
             <groupId>com.fqm.test</groupId>
             <artifactId>test-module-mq-rabbit</artifactId>
@@ -28,7 +82,7 @@
             <groupId>com.fqm.test</groupId>
             <artifactId>test-module-mq-redis</artifactId>
             <version>${parent.version}</version>
-        </dependency>
+        </dependency> 
         <dependency>
             <groupId>com.fqm.test</groupId>
             <artifactId>test-module-mq-redisson</artifactId>
@@ -43,48 +97,10 @@
             <groupId>com.fqm.test</groupId>
             <artifactId>test-module-mq-zookeeper</artifactId>
             <version>${parent.version}</version>
-        </dependency> 
-        <!-- MQ End -->
+        </dependency>  -->
+        <!--  MQ End -->
         
-        <!-- Lock Start -->
-        <dependency>
-            <groupId>com.fqm.test</groupId>
-            <artifactId>test-module-lock-simple</artifactId>
-            <version>${parent.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fqm.test</groupId>
-            <artifactId>test-module-lock-redis</artifactId>
-            <version>${parent.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fqm.test</groupId>
-            <artifactId>test-module-lock-redisson</artifactId>
-            <version>${parent.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fqm.test</groupId>
-            <artifactId>test-module-lock-zookeeper</artifactId>
-            <version>${parent.version}</version>
-        </dependency> 
-        <!-- Lock End -->
-        
-        <!-- Cache Start -->
-        <!-- 
-        <dependency>
-            <groupId>com.fqm.test</groupId>
-            <artifactId>test-module-cache-redis</artifactId>
-            <version>${parent.version}</version>
-        </dependency>
-        -->
-        <dependency>
-            <groupId>com.fqm.test</groupId>
-            <artifactId>test-module-cache-redisson</artifactId>
-            <version>${parent.version}</version>
-        </dependency> 
-        <!-- Cache End -->
-        
-        <!-- File Start -->
+        <!-- File Start 
         <dependency>
             <groupId>com.fqm.test</groupId>
             <artifactId>test-module-file-minio</artifactId>
@@ -95,28 +111,91 @@
             <artifactId>okhttp</artifactId>
             <version>4.8.1</version>
         </dependency> 
+        <dependency>
+            <groupId>com.fqm.test</groupId>
+            <artifactId>test-module-file-amazons3</artifactId>
+            <version>${parent.version}</version>
+        </dependency> -->
+        
+        
+        <!-- ftp 
+		<dependency>
+		    <groupId>commons-net</groupId>
+		    <artifactId>commons-net</artifactId>
+		    <version>3.9.0</version>
+		</dependency>
+		-->
+		<!-- sftp 
+		<dependency>
+		    <groupId>com.jcraft</groupId>
+		    <artifactId>jsch</artifactId>
+		    <version>0.1.55</version>
+		</dependency>
+		-->
+		<!-- Lock Start 
+        <dependency>
+            <groupId>com.fqm.test</groupId>
+            <artifactId>test-module-lock-redisson</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fqm.test</groupId>
+            <artifactId>test-module-lock-redis</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fqm.test</groupId>
+            <artifactId>test-module-lock-simple</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fqm.test</groupId>
+            <artifactId>test-module-lock-zookeeper</artifactId>
+            <version>${parent.version}</version>
+        </dependency> -->
+        <!-- Lock End -->
+
         <!-- File End -->
         
-        <!-- Job Start -->
+        <!-- Job Start 
         <dependency>
             <groupId>com.fqm.test</groupId>
             <artifactId>test-module-job-xxl</artifactId>
             <version>${parent.version}</version>
-        </dependency>
-        <dependency>
+        </dependency> -->
+        <!--<dependency>
             <groupId>com.fqm.test</groupId>
             <artifactId>test-module-job-elastic</artifactId>
             <version>${parent.version}</version>
-        </dependency>
+        </dependency>-->
         <!--  Job End -->
         
-        <!-- Dynamic-module Start -->
+        <!-- Lock Start 
+        <dependency>
+            <groupId>com.fqm.test</groupId>
+            <artifactId>test-module-lock-redisson</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fqm.test</groupId>
+            <artifactId>test-module-lock-redis</artifactId>
+            <version>${parent.version}</version>
+        </dependency>-->
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-pool2 
+		<dependency>
+		    <groupId>org.apache.commons</groupId>
+		    <artifactId>commons-pool2</artifactId>
+		</dependency>-->
+
+        <!-- Lock End -->
+        
+        <!-- Dynamic-module Start 
         <dependency>
             <groupId>com.fqm.test</groupId>
             <artifactId>test-module-dynamic-module</artifactId>
             <version>${parent.version}</version>
-        </dependency>
-        <!--  Dynamic-module End -->                                                   
+        </dependency> --> 
+        <!--  Dynamic-module End -->
         <!-- 3.18.0 对应 spring-boot-starter-data-redis 2.7.2，所有redis连接使用redisson -->
 		<!-- 3.15.1 对应 spring-boot-starter-data-redis 2.4.1，所有redis连接使用redisson -->
 		<!--<dependency>
@@ -130,4 +209,21 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
     </dependencies>
+    
+    <build>
+        <plugins>
+            <!-- spring-boot-maven-plugin (提供了直接运行项目的插件：如果是通过parent方式继承spring-boot-starter-parent则不用此插件) -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

@@ -1,9 +1,16 @@
 spring:
   redis:
-    host: 192.168.2.100
+    database: 2
+#    host: 192.168.86.145
+#    port: 16379
+#    password: ZOwEi2AaAPwvCQWP
+    
+#    host: 127.0.0.1
+#    port: 6379    
+
+    host: 172.16.50.105
     port: 6379
-    database: 0
-    timeout: 6000
+    password: FdZfNmL4y5qNeGK6
     lettuce:
       pool:
         max-active: 8

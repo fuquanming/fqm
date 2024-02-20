@@ -22,7 +22,7 @@ public class FileFactory {
     private Map<FileMode, FileTemplate> fileTemplateMap = new ConcurrentHashMap<>();
 
     public FileFactory addFileTemplate(FileTemplate fileTemplate) {
-        logger.info("Init FileTemplate->{}", fileTemplate.getClass());
+        logger.info("--->>> Init FileTemplate->{}", fileTemplate.getClass());
         fileTemplateMap.put(fileTemplate.getFileMode(), fileTemplate);
         return this;
     }

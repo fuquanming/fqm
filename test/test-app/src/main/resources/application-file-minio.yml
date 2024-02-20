@@ -1,9 +1,9 @@
 ## minio
 minio:
   enabled: true
-  endpoint: 192.168.2.100
+  endpoint: 192.168.86.145
   port: 11000
   accessKey: admin
   secretKey: 12345678
   secure: false
-  bucketDefaultName: file 
+  bucketDefaultName: file

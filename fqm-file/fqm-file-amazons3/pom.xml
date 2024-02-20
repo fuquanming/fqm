@@ -8,13 +8,11 @@
 		<version>1.0.7</version>
 	</parent>
 	<artifactId>fqm-file-amazons3</artifactId>
+	<version>1.0.8</version>
 
 	<properties>
 		<fqm-file-core.version>1.0.7</fqm-file-core.version>
-		<fqm-common-core.version>1.0.5</fqm-common-core.version>
 		<aws-java-sdk-s3.version>1.12.439</aws-java-sdk-s3.version>
-		<fqm-lock-core.version>1.0.3</fqm-lock-core.version>
-		<fqm-common-cache-spring.version>1.0.4</fqm-common-cache-spring.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -28,11 +26,6 @@
         </dependency>
 		<dependency>
 			<groupId>io.github.fuquanming</groupId>
-			<artifactId>fqm-common-core</artifactId>
-			<version>${fqm-common-core.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>io.github.fuquanming</groupId>
 			<artifactId>fqm-file-core</artifactId>
 			<version>${fqm-file-core.version}</version>
 		</dependency>
@@ -41,6 +34,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
+        <!-- 缓存依赖对象池 -->
+        <dependency>
+		    <groupId>org.apache.commons</groupId>
+		    <artifactId>commons-pool2</artifactId>
+		</dependency>
         
 	</dependencies>
 </project>

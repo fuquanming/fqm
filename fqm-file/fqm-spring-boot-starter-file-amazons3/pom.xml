@@ -8,6 +8,7 @@
 		<version>1.0.7</version>
 	</parent>
 	<artifactId>fqm-spring-boot-starter-file-amazons3</artifactId>
+	<version>1.0.8</version>
 
 	<properties>
 		<fqm-file-amazons3.version>1.0.7</fqm-file-amazons3.version>

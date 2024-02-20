@@ -1,5 +1,5 @@
 # MQ-emqx
 emqx:
-  connect-string: tcp://127.0.0.1:1883
+  connect-string: tcp://192.168.86.145:1883
   username: admin
   password: admin

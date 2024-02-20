@@ -1,8 +1,33 @@
 ## amazons3
 amazons3:
   enabled: true
-  endpoint: http://192.168.86.145:11000
+#  endpoint: http://192.168.86.145:11000
+#  accessKey: admin
+#  secretKey: 12345678
+#  bucketName: amazon-s3
+#  accessUrl: http://192.168.86.145/wf/
+  
+  endpoint: http://172.16.50.105:11000
   accessKey: admin
-  secretKey: 12345678
-  secure: false
-  bucketName: amazon-s3
+  secretKey: W7GLCvcUnPaeRbeW
+  bucketName: config
+  accessUrl: http://192.168.86.145/wf/
+
+#  endpoint: http://172.16.50.104:9000
+#  accessKey: admin
+#  secretKey: 12345678
+#  bucketName: test
+#  accessUrl: http://192.168.86.145/wf/
+
+#  endpoint: http://127.0.0.1:11000
+#  accessKey: admin
+#  secretKey: W7GLCvcUnPaeRbeW
+#  bucketName: config
+#  accessUrl: http://192.168.86.145/wf/
+
+  extend:
+    expiry:
+      # 文件过期天数
+      expiryDay: 7
+      # 文件过期策略初始化
+      expiryInitRule: true

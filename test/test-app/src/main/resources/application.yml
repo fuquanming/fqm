@@ -18,8 +18,21 @@ server:
 spring:
   application:
     name: test-app
+
+#  datasource:
+#    url: jdbc:mysql://172.16.50.102:13306/ejob?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    username: root
+#    password: TbEmQetvrMrlNBZO
 #  main:
 #    allow-bean-definition-overriding: true
+
+  datasource:
+    url: jdbc:mysql://172.16.50.102:13306/ry-cloud?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: TbEmQetvrMrlNBZO
+
   profiles:
     active: dev
     include: # 加载多个配置
@@ -42,3 +55,11 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+      
+logging:
+  level:
+    com.xxl: debug      
+    
+mybatis-plus:
+  type-aliases-package: com.fqm.test.dao
+  mapper-locations: classpath*:/mapper/*.xml     

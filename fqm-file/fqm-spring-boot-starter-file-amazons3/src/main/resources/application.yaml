@@ -6,3 +6,9 @@
 #  secretKey: 12345678
 #  secure: false
 #  bucketName: amazon-s3
+#  extend:
+#    expriy:
+#      # 文件过期天数
+#      expriyDay: 7
+#      # 文件过期策略初始化
+#      expriyInitRule: true

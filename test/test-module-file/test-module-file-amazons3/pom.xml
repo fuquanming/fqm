@@ -10,7 +10,7 @@
 	<artifactId>test-module-file-amazons3</artifactId>
 
 	<properties>
-        <fqm-spring-boot-starter-file-amazons3.version>1.0.7</fqm-spring-boot-starter-file-amazons3.version>
+        <fqm-spring-boot-starter-file-amazons3.version>1.0.8</fqm-spring-boot-starter-file-amazons3.version>
     </properties>
     
     <dependencies>
@@ -25,14 +25,10 @@
         	<optional>true</optional>
         </dependency>
         
-        <dependency>
+        <!--<dependency>
             <groupId>com.fqm.test</groupId>
             <artifactId>test-module-lock-redisson</artifactId>
             <version>${parent.version}</version>
-        </dependency>
-        <dependency>
-		    <groupId>org.apache.commons</groupId>
-		    <artifactId>commons-pool2</artifactId>
-		</dependency>
+        </dependency>-->
     </dependencies>
 </project>

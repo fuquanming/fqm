@@ -20,18 +20,32 @@ import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.BucketLifecycleConfiguration;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.CompleteMultipartUploadRequest;
+import com.amazonaws.services.s3.model.CompleteMultipartUploadResult;
+import com.amazonaws.services.s3.model.DeleteObjectTaggingRequest;
 import com.amazonaws.services.s3.model.DeleteObjectsRequest;
 import com.amazonaws.services.s3.model.DeleteObjectsRequest.KeyVersion;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.GetObjectTaggingRequest;
+import com.amazonaws.services.s3.model.InitiateMultipartUploadRequest;
+import com.amazonaws.services.s3.model.InitiateMultipartUploadResult;
 import com.amazonaws.services.s3.model.ListObjectsV2Request;
 import com.amazonaws.services.s3.model.ListObjectsV2Result;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.ObjectTagging;
+import com.amazonaws.services.s3.model.PartETag;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.SetObjectTaggingRequest;
+import com.amazonaws.services.s3.model.Tag;
+import com.amazonaws.services.s3.model.UploadPartRequest;
+import com.amazonaws.services.s3.model.UploadPartResult;
 import com.fqm.framework.common.core.exception.ServiceException;
 import com.fqm.framework.common.core.exception.enums.GlobalErrorCodeConstants;
+import com.fqm.framework.file.amazons3.filter.UploadFilter;
 
 /**
  * AmazonS3 协议的文件服务
@@ -47,6 +61,9 @@ public class AmazonS3Service {
 
     private String endpoint;
     private String bucketName;
+    
+    /** 上传过滤器，不用aop拦截、事件发布 */
+    private List<UploadFilter> uploadFilters = new ArrayList<>();
 
     /**
      * 构建客户端
@@ -85,6 +102,16 @@ public class AmazonS3Service {
     public boolean bucketExists(String bucketName) {
         return client.doesBucketExistV2(bucketName);
     }
+    
+    /**
+     * 检查对象是否存在
+     * @param bucketName    桶
+     * @param objectName    对象名称
+     * @return
+     */
+    public boolean objectExists(String bucketName, String objectName) {
+        return client.doesObjectExist(bucketName, objectName);
+    }
 
     /**
      * 上传文件
@@ -97,8 +124,7 @@ public class AmazonS3Service {
         PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, objectName, file);
         // 设置上传对象的 Acl 为公共读
         putObjectRequest.setCannedAcl(CannedAccessControlList.PublicRead);
-        client.putObject(putObjectRequest);
-        return true;
+        return putObject(putObjectRequest);
     }
     
     /**
@@ -115,7 +141,19 @@ public class AmazonS3Service {
         PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, objectName, inputStream, metadata);
         // 设置上传对象的 Acl 为公共读
         putObjectRequest.setCannedAcl(CannedAccessControlList.PublicRead);
-        client.putObject(putObjectRequest);
+        return putObject(putObjectRequest);
+    }
+    
+    /**
+     * 上传文件
+     * @param request   上传文件的对象
+     * @return
+     * @throws IOException
+     */
+    public boolean putObject(PutObjectRequest request) {
+        beforeUploadFilter(request);
+        client.putObject(request);
+        afterUploadFilter(request);
         return true;
     }
 
@@ -212,12 +250,172 @@ public class AmazonS3Service {
         URL url = client.generatePresignedUrl(generatePresignedUrlRequest);
         return url.toString();
     }
+    
+    /***------ 分片上传API 开始 ------***/
+    // initiateMultipartUpload -> uploadPart -> completeMultipartUpload
+    
+    /**
+     * 初始化分片上传请求
+     * @param bucketName    桶
+     * @param objectName    文件名称
+     * @return
+     */
+    public InitiateMultipartUploadResult initiateMultipartUpload(String bucketName, String objectName) {
+        InitiateMultipartUploadRequest request = new InitiateMultipartUploadRequest(bucketName, objectName);
+        return client.initiateMultipartUpload(request);
+    }
+    
+    /**
+     * 分片上传
+     * @param bucketName    桶
+     * @param objectName    文件名称
+     * @param uploadId      分片上传ID
+     * @param is            分片文件流
+     * @param partNumber    第几分片，从1开始，最大10000
+     * @return
+     * @throws IOException
+     */
+    public UploadPartResult uploadPart(String bucketName, String objectName, String uploadId, InputStream is, int partNumber) throws IOException {
+        UploadPartRequest request = new UploadPartRequest();
+        request.setBucketName(bucketName);
+        request.setKey(objectName);
+        request.setUploadId(uploadId);
+        
+        request.setInputStream(is);
+        // 设置分片大小。除了最后一个分片没有大小限制，其他的分片最小为10 KB。
+        request.setPartSize(is.available());
+        // 设置分片号。每一个上传的分片都有一个分片号，取值范围是1~10000，如果超出此范围，OSS将返回InvalidArgument错误码。
+        request.setPartNumber(partNumber);
+        return uploadPart(request);
+    }
+    
+    /**
+     * 分片上传
+     * @param request
+     * @return
+     */
+    public UploadPartResult uploadPart(UploadPartRequest request) {
+        return client.uploadPart(request);
+    }
+    
+    /**
+     * 合并分片
+     * @param bucketName    桶
+     * @param objectName    文件名称           
+     * @param uploadId      分片上传ID
+     * @param partETags     分片列表
+     * @return
+     */
+    public CompleteMultipartUploadResult completeMultipartUpload(String bucketName, String objectName, String uploadId, List<PartETag> partEtags) {
+        CompleteMultipartUploadRequest request = new CompleteMultipartUploadRequest(bucketName, objectName, uploadId, partEtags);
+        return completeMultipartUpload(request);
+    }
+    
+    /**
+     * 合并分片
+     * @param request   合并分片
+     * @return
+     */
+    public CompleteMultipartUploadResult completeMultipartUpload(CompleteMultipartUploadRequest request) {
+        beforeUploadFilter(request);
+        CompleteMultipartUploadResult result = client.completeMultipartUpload(request);
+        afterUploadFilter(request);
+        return result;
+    }
 
+    /***------ 分片上传API 结束 ------***/
+    
+    /**
+     * 获取对象标签
+     * @param bucketName    桶
+     * @param objectName    对象名称
+     */
+    public List<Tag> getObjectTagging(String bucketName, String objectName) {
+        return client.getObjectTagging(new GetObjectTaggingRequest(bucketName, objectName)).getTagSet();
+    }
+    
+    /**
+     * 设置对象标签（对象的标签会被该集合替换）
+     * @param bucketName    桶
+     * @param objectName    对象名称
+     * @param tagSet        标签集合
+     */
+    public void setObjectTagging(String bucketName, String objectName, List<Tag> tagSet) {
+        SetObjectTaggingRequest request = new SetObjectTaggingRequest(bucketName, objectName, new ObjectTagging(tagSet));
+        client.setObjectTagging(request);
+    }
+    
+    /**
+     * 删除对象所有标签
+     * @param bucketName    桶
+     * @param objectName    文件名
+     */
+    public void deleteObjectTagging(String bucketName, String objectName) {
+        DeleteObjectTaggingRequest request = new DeleteObjectTaggingRequest(bucketName, objectName);
+        client.deleteObjectTagging(request);
+    }
+    
+    /**
+     * 获取生命周期策略
+     * @param bucketName    桶
+     * @return
+     */
+    public BucketLifecycleConfiguration getBucketLifecycleConfiguration(String bucketName) {
+        return client.getBucketLifecycleConfiguration(bucketName);
+    }
+    
+    /**
+     * 设置生命周期策略（桶的所有生命周期策略会被该策略替换）
+     * @param bucketName    桶
+     * @param config        生命周期策略
+     */
+    public void setBucketLifecycleConfiguration(String bucketName, BucketLifecycleConfiguration config) {
+        client.setBucketLifecycleConfiguration(bucketName, config);
+    }
+    
+    /**
+     * 执行上传过滤器 
+     * @param obj
+     */
+    private void beforeUploadFilter(Object obj) {
+        if (uploadFilters.isEmpty()) {
+            return;
+        }
+        for (UploadFilter filter : uploadFilters) {
+            if (obj instanceof PutObjectRequest) {
+                filter.beforeUpload((PutObjectRequest) obj);
+            } else if (obj instanceof CompleteMultipartUploadRequest) {
+                filter.beforeUpload((CompleteMultipartUploadRequest) obj);
+            } 
+        }
+    }
+    
+    /**
+     * 执行上传后过滤器 
+     * @param obj
+     */
+    private void afterUploadFilter(Object obj) {
+        if (uploadFilters.isEmpty()) {
+            return;
+        }
+        for (UploadFilter filter : uploadFilters) {
+            if (obj instanceof PutObjectRequest) {
+                filter.afterUpload((PutObjectRequest) obj);
+            } else if (obj instanceof CompleteMultipartUploadRequest) {
+                filter.afterUpload((CompleteMultipartUploadRequest) obj);
+            } 
+        }
+    }
+    
     public String getBucketName() {
         return bucketName;
     }
     public String getEndpoint() {
         return endpoint;
+    }
+    public void addUploadFilter(UploadFilter filter) {
+        this.uploadFilters.add(filter);
+        logger.info("--->>> add UploadFilter:{},order:{}", filter.getClass().getName(), filter.getOrder());
     }
     
     public AmazonS3 getClient() {

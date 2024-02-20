@@ -1,10 +1,20 @@
 spring:
   rabbitmq:
-    host: 192.168.2.100
+#    host: 172.16.50.105
+#    port: 5672
+#    username: guest
+#    password: FdZfNmL4y5qNeGK6
+#    virtual-host: / 
+#    api-port: 15672
+#    host: 192.168.28.99
+    host: 172.16.50.104
     port: 5672
-    username: guest
-    password: guest
-    virtual-host: /
+    username: admin
+    password: admin
+    virtual-host: / 
+    api-port: 15672
+    
+#    virtual-host: /
 #    listener:
 #      simple:
 #        retry:
@@ -17,12 +27,12 @@ spring:
 #    template:
 #      mandatory: true
     # 进入死信不会重试？
-    listener:
-      simple:
-        retry:
-          enabled: true #是否开启消费者重试（为false时关闭消费者重试，这时消费端代码异常会一直重复收到消息）
-          max-attempts: 5 #最大重试次数
-          initial-interval: 5000 #重试间隔时间（单位毫秒） 
-          max-interval: 1200000 #重试最大时间间隔（单位毫秒） 
-          multiplier: 5 #应用于前一重试间隔的乘法器。
+#    listener:
+#      simple:
+#        retry:
+#          enabled: true #是否开启消费者重试（为false时关闭消费者重试，这时消费端代码异常会一直重复收到消息）
+#          max-attempts: 5 #最大重试次数
+#          initial-interval: 5000 #重试间隔时间（单位毫秒） 
+#          max-interval: 1200000 #重试最大时间间隔（单位毫秒） 
+#          multiplier: 5 #应用于前一重试间隔的乘法器。
         

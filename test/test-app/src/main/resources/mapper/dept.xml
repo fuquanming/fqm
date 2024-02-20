@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fqm.test.dao.DeptDao">
+	<resultMap id="deptRes" type="com.fqm.test.model.Dept">
+		<id column="ID" jdbcType="BIGINT" property="id" />
+		<result column="NAME" jdbcType="VARCHAR" property="name" />
+		<result column="CREATE_TIME" jdbcType="DATE" property="createTime" />
+	</resultMap>
+	<select id="getById" resultMap="deptRes">
+		SELECT
+		ID,
+		NAME from dept
+		WHERE
+		ID = #{id}
+	</select>
+</mapper>

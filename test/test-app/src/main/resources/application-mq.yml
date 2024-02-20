@@ -1,6 +1,8 @@
 # 通用消息队列配置
 mq:
   enabled: true
+  verify: false                              # 校验加载的消息组件，未校验时则配置错误将导致运行时错误
+  binder: emqx                              # 消息组件，参考 @MqMode，统一设置消息队列方式
   mqs:
     kafka-topic:                            # 业务名称(唯一)，用 "[]" 处理特殊字符，如. %
       topic: kafka-topic                    # 消息主题
@@ -19,20 +21,20 @@ mq:
       group: my-topic-1.DLT-kafka           # 消费者组，使用 @MqListener时，必填
       binder: kafka                         # 消息组件，参考 @MqMode      
     rabbit-topic:                           # 业务名称(唯一)，用 "[]" 处理特殊字符，如. %
-      topic: rabbit-topic                   # 消息主题
+      topic: test-topic                   # 消息主题
       group: msg-group
       binder: rabbit
     rabbit-topic1:                          # 业务名称(唯一)，用 "[]" 处理特殊字符，如. %
-      topic: rabbit-topic1                  # 消息主题
-      group: msg-group
+      topic: test-topic                  # 消息主题
+      group: msg-group-1
       binder: rabbit
     rabbit-topic-dead:                      # 死信业务名称(唯一)，用 "[]" 处理特殊字符，如. %
-      topic: rabbit-topic.DLQ               # 死信主题：topic + ".DLQ"
-      group: my-topic.DLQ-rabbit
+      topic: test-topic.msg-group.DLQ     # 死信主题：topic + "." + group + ".DLQ"
+      group: my-topic.msg-group.DLQ-rabbit
       binder: rabbit
     rabbit-topic1-dead:                     # 死信业务名称(唯一)，用 "[]" 处理特殊字符，如. %
-      topic: rabbit-topic1.DLQ              # 死信主题：topic + ".DLQ"
-      group: my-topic-1.DLQ-rabbit
+      topic: test-topic.msg-group-1.DLQ  # 死信主题：topic + "." + group + ".DLQ"
+      group: my-topic.msg-group-1.DLQ-rabbit
       binder: rabbit      
     redis-topic:                            # 业务名称(唯一)，用 "[]" 处理特殊字符，如. %
       topic: redis-topic                    # 消息主题
@@ -56,7 +58,7 @@ mq:
       binder: redisson
     redisson-topic1:                        # 业务名称(唯一)，用 "[]" 处理特殊字符，如. %
       topic: redisson-topic1                # 消息主题
-      group: msg-group-redisson
+      group: msg-group-redisson-1
       binder: redisson
     redisson-topic-dead:                    # 死信业务名称(唯一)，用 "[]" 处理特殊字符，如. %
       topic: redisson-topic.DLQ             # 死信主题：topic + ".DLQ"，监听的Topic不能有符号：%
@@ -88,7 +90,7 @@ mq:
       binder: zookeeper  
     zookeeper-topic1:                       # 业务名称(唯一)，用 "[]" 处理特殊字符，如. %
       topic: zookeeper-topic1               # 消息主题
-      group: msg-group
+      group: msg-group-1
       binder: zookeeper  
     zookeeper-topic-dead:                   # 死信业务名称(唯一)，用 "[]" 处理特殊字符，如. %
       topic: zookeeper-topic.DLQ            # 死信主题：topic + ".DLQ"
@@ -101,10 +103,10 @@ mq:
     emqx-topic:                             # 业务名称(唯一)，用 "[]" 处理特殊字符，如. %
       topic: emqx-topic                     # 消息主题
       group: msg-group
-      binder: emqx  
+      binder: emqx
     emqx-topic1:                            # 业务名称(唯一)，用 "[]" 处理特殊字符，如. %
       topic: emqx-topic1                    # 消息主题
-      group: msg-group                      
+      group: msg-group-1                     
       binder: emqx  
     emqx-topic-dead:                        # 死信业务名称(唯一)，用 "[]" 处理特殊字符，如. %
       topic: emqx-topic.DLQ                 # 死信主题：topic + ".DLQ" 
@@ -113,4 +115,4 @@ mq:
     emqx-topic1-dead:                       # 死信业务名称(唯一)，用 "[]" 处理特殊字符，如. %
       topic: emqx-topic1.DLQ                # 死信主题：topic + ".DLQ"
       group: my-topic1.DLQ-zookeeper
-      binder: emqx   
+      binder: emqx
