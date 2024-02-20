@@ -11,7 +11,7 @@
 	<version>1.0.8</version>
 
 	<properties>
-		<fqm-file-core.version>1.0.7</fqm-file-core.version>
+		<fqm-file-core.version>1.0.8</fqm-file-core.version>
 		<aws-java-sdk-s3.version>1.12.439</aws-java-sdk-s3.version>
 	</properties>
 	<dependencies>
