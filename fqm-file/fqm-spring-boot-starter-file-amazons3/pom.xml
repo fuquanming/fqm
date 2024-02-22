@@ -8,10 +8,11 @@
 		<version>1.0.7</version>
 	</parent>
 	<artifactId>fqm-spring-boot-starter-file-amazons3</artifactId>
-	<version>1.0.8</version>
+	<version>1.0.9</version>
 
 	<properties>
-		<fqm-file-amazons3.version>1.0.8</fqm-file-amazons3.version>
+		<fqm-file-amazons3.version>1.0.9</fqm-file-amazons3.version>
+		<fqm-spring-boot-starter-file.version>1.0.9</fqm-spring-boot-starter-file.version>
 	</properties>
 
 	<dependencies>
@@ -36,7 +37,7 @@
 		<dependency>
 			<groupId>io.github.fuquanming</groupId>
 			<artifactId>fqm-spring-boot-starter-file</artifactId>
-			<version>${parent.version}</version>
+			<version>${fqm-spring-boot-starter-file.version}</version>
 		</dependency>
 		
 	</dependencies>

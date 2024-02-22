@@ -8,10 +8,10 @@
 		<version>1.0.7</version>
 	</parent>
 	<artifactId>fqm-file-amazons3</artifactId>
-	<version>1.0.8</version>
+	<version>1.0.9</version>
 
 	<properties>
-		<fqm-file-core.version>1.0.8</fqm-file-core.version>
+		<fqm-file-core.version>1.0.9</fqm-file-core.version>
 		<aws-java-sdk-s3.version>1.12.439</aws-java-sdk-s3.version>
 	</properties>
 	<dependencies>

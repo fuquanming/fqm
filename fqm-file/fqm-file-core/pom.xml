@@ -8,7 +8,7 @@
 		<version>1.0.7</version>
 	</parent>
 	<artifactId>fqm-file-core</artifactId>
-	<version>1.0.8</version>
+	<version>1.0.9</version>
 	
     <description>Fqm file objects library core API and implementation</description>
     <properties>

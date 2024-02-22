@@ -10,6 +10,7 @@
 package com.fqm.framework.file.amazons3.tag;
 
 import com.amazonaws.services.s3.model.Tag;
+import com.fqm.framework.file.tag.FileTagEnum;
 
 /**
  * 对象过期标签
@@ -18,14 +19,11 @@ import com.amazonaws.services.s3.model.Tag;
  */
 public class ExpiryTag {
 
-    private static final String EXPIRY_TAG_KEY = "expiry-key-s3";
-    private static final String EXPIRY_TAG_VALUE = "expiry-value-s3";
-    
     private ExpiryTag() {
     }
     
     public static Tag build() {
-        return new Tag(EXPIRY_TAG_KEY, EXPIRY_TAG_VALUE);
+        return new Tag(FileTagEnum.EXPIRY_TAG_KEY.getValue(), FileTagEnum.EXPIRY_TAG_VALUE.getValue());
     }
     
 }
