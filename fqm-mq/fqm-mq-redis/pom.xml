@@ -8,7 +8,7 @@
 		<version>1.0.3</version>
 	</parent>
 	<artifactId>fqm-mq-redis</artifactId>
-	<version>1.0.6</version>
+	<version>1.0.7</version>
 	
     <description>Message sending and monitoring based on Redis stream</description>
     

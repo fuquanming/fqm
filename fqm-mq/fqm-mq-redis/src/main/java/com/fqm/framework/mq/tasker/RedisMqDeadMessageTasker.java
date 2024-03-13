@@ -91,7 +91,7 @@ public class RedisMqDeadMessageTasker {
             });
         }
         // 1分钟执行一次
-        timer.scheduleWithFixedDelay(new DeadMessageTasker(), 1, 1, TimeUnit.MINUTES);
+        timer.scheduleWithFixedDelay(new DeadMessageTasker(stringRedisTemplate, topics, deadMessageDeliveryCount, deadMessageDeliverySecond), 1, 1, TimeUnit.MINUTES);
     }
     
     public void stop() {
@@ -100,7 +100,24 @@ public class RedisMqDeadMessageTasker {
         }
     }
     
-    class DeadMessageTasker extends TimerTask {
+    private static class DeadMessageTasker extends TimerTask {
+        
+        private Logger logger = LoggerFactory.getLogger(getClass());
+        
+        private StringRedisTemplate stringRedisTemplate;
+        /** 监听的主题 */
+        private Set<String> topics;
+        /** 判断为死信：消息消费次数 */
+        private long deadMessageDeliveryCount;
+        /** 判断为死信：消息消费时间单位秒 */
+        private long deadMessageDeliverySecond;
+        
+        public DeadMessageTasker(StringRedisTemplate stringRedisTemplate, Set<String> topics, long deadMessageDeliveryCount, long deadMessageDeliverySecond) {
+            this.stringRedisTemplate = stringRedisTemplate;
+            this.topics = topics;
+            this.deadMessageDeliveryCount = deadMessageDeliveryCount <= 0 ? 1 : deadMessageDeliveryCount;
+            this.deadMessageDeliverySecond = deadMessageDeliverySecond <= 0 ? 60 : deadMessageDeliveryCount;
+        }
         @Override
         public void run() {
             try {
