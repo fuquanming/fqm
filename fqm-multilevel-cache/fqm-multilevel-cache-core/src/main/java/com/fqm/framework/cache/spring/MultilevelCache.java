@@ -263,7 +263,7 @@ public class MultilevelCache extends AbstractValueAdaptingCache {
         cacheCallMap.put(key, cacheRefresh);
     }
     
-    class CacheRefresh {
+    private static class CacheRefresh {
         /** 缓存调用的方法 */
         private Callable<?> valueLoader;
         /** 获取方法的时间 */

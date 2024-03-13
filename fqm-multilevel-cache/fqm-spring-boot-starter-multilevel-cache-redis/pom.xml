@@ -8,17 +8,19 @@
 		<version>1.0.2</version>
 	</parent>
 	<artifactId>fqm-spring-boot-starter-multilevel-cache-redis</artifactId>
+	<version>1.0.3</version>
 	<description>Starter for multi-level cache based on Caffeine and Redis</description>
 	
 	<properties>
         <fqm-common-cache-redis-spring.version>1.0.4</fqm-common-cache-redis-spring.version>
+		<fqm-multilevel-cache-redis.version>1.0.3</fqm-multilevel-cache-redis.version>
     </properties>
 	
     <dependencies>
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-multilevel-cache-redis</artifactId>
-            <version>${parent.version}</version>
+            <version>${fqm-multilevel-cache-redis.version}</version>
         </dependency>
 
         <dependency>

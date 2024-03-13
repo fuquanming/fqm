@@ -8,6 +8,7 @@
 		<version>1.0.2</version>
 	</parent>
 	<artifactId>fqm-multilevel-cache-core</artifactId>
+	<version>1.0.3</version>
 	<description>Multi-level cache based on spring cache</description>
 	
 	<properties>
