@@ -19,14 +19,9 @@ pom:
 </properties>
 
 <dependency>
-    <groupId>com.fqm</groupId>
-    <artifactId>fqm-spring-boot-starter-file-minio</artifactId>
+    <groupId>io.github.fuquanming</groupId>
+	<artifactId>fqm-spring-boot-starter-file-amazons3</artifactId>
     <version>${latest.version}</version>
-</dependency>
-<dependency>
-    <groupId>com.squareup.okhttp3</groupId>
-    <artifactId>okhttp</artifactId>
-    <version>${okhttp3.version}</version>
 </dependency>
 ```
 

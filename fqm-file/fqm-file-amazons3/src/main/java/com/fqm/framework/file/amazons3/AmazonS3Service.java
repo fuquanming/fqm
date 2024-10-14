@@ -4,13 +4,20 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.amazonaws.ClientConfiguration;
 import com.amazonaws.HttpMethod;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
@@ -81,7 +88,34 @@ public class AmazonS3Service {
 
             AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
             AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
+            
+            // 创建信任所有证书的 TrustManager
+            TrustManager[] trustAllCerts = new TrustManager[]{
+                new X509TrustManager() {
+                    public X509Certificate[] getAcceptedIssuers() {
+                        return null;
+                    }
+
+                    public void checkClientTrusted(X509Certificate[] certs, String authType) {
+                    }
+
+                    public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                    }
+                }
+            };
+            // 创建 SSLContext 并禁用证书校验
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+            // 跳过主机名验证
+            SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslContext, (hostname, session) -> true ); 
+            // 配置 ClientConfiguration 来跳过 SSL 验证
+            ClientConfiguration clientConfig = new ClientConfiguration();
+            // 设置自定义的 SSLContext;
+            clientConfig.getApacheHttpClientConfig().withSslSocketFactory(sslsf);
+            
             AmazonS3ClientBuilder build = AmazonS3Client.builder().withEndpointConfiguration(endpointConfig).withCredentials(credentialsProvider)
+                    // 配置不校验ssl
+                    .withClientConfiguration(clientConfig)
                     .disableChunkedEncoding();
             this.client = build.build();
             if (!bucketExists(bucketName)) {
