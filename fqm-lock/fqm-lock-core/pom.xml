@@ -6,7 +6,7 @@
         <version>1.0.2</version>
     </parent>
     <artifactId>fqm-lock-core</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
     <description>Provide lock factory, lock template, lock type and single machine lock (block lock, try to obtain a lock once, try to obtain a lock, unlock)</description>
     <dependencies>
         <dependency>

@@ -8,13 +8,13 @@
 		<version>1.0.3</version>
 	</parent>
 	<artifactId>fqm-spring-boot-starter-mq-kafka</artifactId>
-	<version>1.0.6</version>
+	<version>1.0.7</version>
 	
 	<description>Starter for kafka message queue</description>
 
 	<properties>
-		<fqm-spring-boot-starter-mq.version>1.0.6</fqm-spring-boot-starter-mq.version>
-		<fqm-mq-kafka.version>1.0.6</fqm-mq-kafka.version>
+		<fqm-spring-boot-starter-mq.version>1.0.7</fqm-spring-boot-starter-mq.version>
+		<fqm-mq-kafka.version>1.0.7</fqm-mq-kafka.version>
     </properties>
 	
 	<dependencies>

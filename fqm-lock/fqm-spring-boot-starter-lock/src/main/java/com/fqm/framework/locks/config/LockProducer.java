@@ -59,7 +59,7 @@ public class LockProducer {
         }
     }
     
-    private LockConfigurationProperties getLockConfigurationProperties(String businessName) {
+    public LockConfigurationProperties getLockConfigurationProperties(String businessName) {
         LockConfigurationProperties lockConfigurationProperties = lockProperties.getLocks().get(businessName);
         if (null == lockConfigurationProperties) {
             throw new ServiceException(new ErrorCode(GlobalErrorCodeConstants.NOT_FOUND.getCode(), "未配置该锁的通道"));

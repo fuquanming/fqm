@@ -8,13 +8,13 @@
 		<version>1.0.3</version>
 	</parent>
 	<artifactId>fqm-spring-boot-starter-mq-rocket</artifactId>
-	<version>1.0.6</version>
+	<version>1.0.7</version>
 	
 	<description>Starter for rocket message queue</description>
 	
 	<properties>
-		<fqm-spring-boot-starter-mq.version>1.0.6</fqm-spring-boot-starter-mq.version>
-		<fqm-mq-rocket.version>1.0.6</fqm-mq-rocket.version>
+		<fqm-spring-boot-starter-mq.version>1.0.7</fqm-spring-boot-starter-mq.version>
+		<fqm-mq-rocket.version>1.0.7</fqm-mq-rocket.version>
     </properties>
 	
 	<dependencies>

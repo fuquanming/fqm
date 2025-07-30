@@ -8,12 +8,12 @@
 		<version>1.0.2</version>
 	</parent>
 	<artifactId>fqm-multilevel-cache-core</artifactId>
-	<version>1.0.3</version>
+	<version>1.0.4</version>
 	<description>Multi-level cache based on spring cache</description>
 	
 	<properties>
         <fqm-common-cache-spring.version>1.0.4</fqm-common-cache-spring.version>
-        <fqm-common-spring.version>1.0.4</fqm-common-spring.version>
+        <fqm-common-spring.version>1.0.5</fqm-common-spring.version>
     </properties>
 	
 	<dependencies>

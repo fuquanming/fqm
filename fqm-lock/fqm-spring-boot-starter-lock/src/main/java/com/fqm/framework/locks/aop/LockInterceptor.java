@@ -4,20 +4,20 @@ import java.util.concurrent.TimeUnit;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.env.ConfigurableEnvironment;
 
 import com.fqm.framework.common.spring.util.ValueUtil;
 import com.fqm.framework.locks.Lock;
 import com.fqm.framework.locks.LockFactory;
 import com.fqm.framework.locks.LockMode;
 import com.fqm.framework.locks.annotation.Lock4j;
+import com.fqm.framework.locks.config.LockConfigurationProperties;
 import com.fqm.framework.locks.config.LockProducer;
-import com.fqm.framework.locks.config.LockProducer.Producer;
 import com.fqm.framework.locks.config.LockProperties;
 import com.fqm.framework.locks.template.LockTemplate;
 
@@ -44,54 +44,64 @@ public class LockInterceptor implements MethodInterceptor {
         if (!cls.equals(invocation.getThis().getClass())) {
             return invocation.proceed();
         }
+        return executeLock(invocation);
+    }
+    
+    /**
+     * 1、@Lock4j 的属性配置会替换配置文件的配置 
+     * @param invocation
+     * @return
+     */
+    private Object executeLock(MethodInvocation invocation) throws Throwable {
         Lock4j lock4j = null;
         ConfigurableBeanFactory factory = (ConfigurableBeanFactory) this.applicationContext.getAutowireCapableBeanFactory();
         LockProperties lockProperties = factory.getBean(LockProperties.class);
         // 默认锁方式
         LockMode lockMode = lockProperties.getBinder();
-
+        // 配置文件
+        LockProducer lockProducer = factory.getBean(LockProducer.class);
+        
         lock4j = invocation.getMethod().getAnnotation(Lock4j.class);
         // 锁的业务名称
         String businessName = lock4j.name();
-        if (StringUtils.isNoneBlank(businessName)) {
-            businessName = ValueUtil.resolveExpression(factory, businessName).toString();
-            return propertiesLock(invocation, businessName);
-        } else {
-            return annotationLock(invocation, lock4j, factory, lockMode);
+        String key = lock4j.key();
+        long acquireTimeout = lock4j.acquireTimeout();
+        
+        // 未配置key
+        if ("".equals(key)) {
+            // 读取配置
+            LockConfigurationProperties lockConfigurationProperties = lockProducer.getLockConfigurationProperties(businessName);
+            lockMode = lockConfigurationProperties.getBinder();
+            key = lockConfigurationProperties.getKey();
         }
-    }
-    /**
-     * 注解获取锁
-     * @param invocation
-     * @param lock4j
-     * @param factory
-     * @param lockMode
-     * @return
-     * @throws Throwable
-     */
-    private Object annotationLock(MethodInvocation invocation, Lock4j lock4j, ConfigurableBeanFactory factory, LockMode lockMode) throws Throwable {
-        // 注解方式
+        // 未配置超时时间
+        if (Long.MAX_VALUE == acquireTimeout) {
+            // 读取配置
+            LockConfigurationProperties lockConfigurationProperties = lockProducer.getLockConfigurationProperties(businessName);
+            boolean block = lockConfigurationProperties.isBlock();
+            acquireTimeout = lockConfigurationProperties.getAcquireTimeout();
+            if (block) {
+                acquireTimeout = -1;
+            }
+        }
+        
+        Lock lock = null;
         // 调用tryLock是否成功
         boolean tryLockStatus = false;
-        Lock lock = null;
-        // 锁的key
-        String key = null;
-        // 是否调用lock
-        boolean block = lock4j.block();
         try {
             LockFactory lockFactory = applicationContext.getBean(LockFactory.class);
             LockTemplate<?> lockTemplate = lockFactory.getLockTemplate(lockMode);
-
+    
             // 获取锁超时时间
-            long acquireTimeout = lock4j.acquireTimeout();
             // 锁的key
-            key = lock4j.key();
-
-            key = ValueUtil.resolveExpression(factory, key).toString();
-
+            key = ValueUtil.resolveExpression(key, invocation.getMethod(), invocation.getArguments(),
+                    invocation.getThis(),
+                    (ConfigurableBeanFactory) applicationContext.getAutowireCapableBeanFactory(),
+                    (ConfigurableEnvironment) applicationContext.getEnvironment());
+    
             lock = lockTemplate.getLock(key);
-
-            if (block) {
+    
+            if (acquireTimeout < 0) {
                 // lock
                 logger.info("lock()->{},{}", lockMode, key);
                 lock.lock();
@@ -99,19 +109,20 @@ public class LockInterceptor implements MethodInterceptor {
                 return invocation.proceed();
             } else {
                 // tryLock
-                if (acquireTimeout <= 0) {
+                if (acquireTimeout == 0) {
                     logger.info("tryLock()->{},{}", lockMode, key);
                     tryLockStatus = lock.tryLock();
                 } else {
-                    logger.info("tryLock({})->{},{}", lock4j.acquireTimeout(), lockMode, key);
-                    tryLockStatus = lock.tryLock(lock4j.acquireTimeout(), TimeUnit.MILLISECONDS);
+                    logger.info("tryLock({})->{},{}", acquireTimeout, lockMode, key);
+                    tryLockStatus = lock.tryLock(acquireTimeout, TimeUnit.MILLISECONDS);
                 }
                 if (tryLockStatus) {
+                    logger.info("Thread:{},tryLock({})->{},{}", Thread.currentThread().getName(), acquireTimeout, lockMode, key);
                     return invocation.proceed();
                 }
             }
         } finally {
-            if (lock != null && block) {
+            if (lock != null && acquireTimeout < 0) {
                 boolean flag = lock.unlock();
                 logger.info("lock->unlock()->{},{},{}", lockMode, key, flag);
             } else if (lock != null && tryLockStatus) {
@@ -121,37 +132,5 @@ public class LockInterceptor implements MethodInterceptor {
         }
         return null;
     }
-
-    /**
-     * 配置文件获取锁
-     * @param invocation
-     * @param key
-     * @param lockMode
-     * @param businessName
-     */
-    private Object propertiesLock(MethodInvocation invocation, String businessName) throws Throwable {
-        boolean lockFlag = false;
-        com.fqm.framework.locks.config.LockProducer.Lock lock = null;
-        String key = null;
-        LockMode lockMode = null;
-        try {
-            LockProducer lockProducer = applicationContext.getBean(LockProducer.class);
-            Producer producer = lockProducer.getProducer(businessName);
-            lock = producer.getLock();
-            key = producer.getKey();
-            lockMode = producer.getLockMode();
-            lockFlag = lock.lock();
-            if (lockFlag) {
-                logger.info("lock()->{},{}", lockMode, key);
-                return invocation.proceed();
-            }
-        } finally {
-            if (null != lock && lockFlag) {
-                boolean flag = lock.unLock();
-                logger.info("lock->unlock()->{},{},{}", lockMode, key, flag);
-            }
-        }
-        return null;
-    }
-
+    
 }

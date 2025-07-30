@@ -17,6 +17,7 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.cache.Cache;
 import org.springframework.cache.support.AbstractCacheManager;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.lang.Nullable;
 
 import com.fqm.framework.common.cache.spring.builder.CacheBuilder;
@@ -106,18 +107,27 @@ public class MultilevelCacheManager extends AbstractCacheManager {
         int length = params.length;
         int expireSecondFlag = 2;
         int refreshSecondFlag = 3;
+        
+//        key = ValueUtil.resolveExpression(key, invocation.getMethod(), invocation.getArguments(),
+//                invocation.getThis(),
+//                (ConfigurableBeanFactory) applicationContext.getAutowireCapableBeanFactory(),
+//                (ConfigurableEnvironment) applicationContext.getEnvironment());
+        
         if (length >= expireSecondFlag) {
             String cacheTime = params[1];
             // 读取配置文件的数据或表达式
-            Object secondObj = ValueUtil.resolveExpression((ConfigurableBeanFactory) this.applicationContext.getAutowireCapableBeanFactory(), cacheTime);
+            Object secondObj = ValueUtil.resolveExpression(cacheTime, null, null, this, (ConfigurableBeanFactory) applicationContext.getAutowireCapableBeanFactory()
+                    , (ConfigurableEnvironment) applicationContext.getEnvironment());
             expireSecond = Integer.valueOf(secondObj.toString());
         }
         if (length > expireSecondFlag) {
-            Object secondObj = ValueUtil.resolveExpression((ConfigurableBeanFactory) this.applicationContext.getAutowireCapableBeanFactory(), params[2]);
+            Object secondObj = ValueUtil.resolveExpression(params[2], null, null, this, (ConfigurableBeanFactory) applicationContext.getAutowireCapableBeanFactory()
+                    , (ConfigurableEnvironment) applicationContext.getEnvironment());
             nullExpireSecond = Integer.valueOf(secondObj.toString());
         }
         if (length > refreshSecondFlag) {
-            Object secondObj = ValueUtil.resolveExpression((ConfigurableBeanFactory) this.applicationContext.getAutowireCapableBeanFactory(), params[3]);
+            Object secondObj = ValueUtil.resolveExpression(params[3], null, null, this, (ConfigurableBeanFactory) applicationContext.getAutowireCapableBeanFactory()
+                    , (ConfigurableEnvironment) applicationContext.getEnvironment());
             refreshSecond = Integer.valueOf(secondObj.toString());
         }
         

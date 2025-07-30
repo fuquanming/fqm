@@ -21,7 +21,7 @@ lock:
       binder: redis           # 锁组件，参考 @LockMode，统一设置锁方式
       acquire-timeout: 3000   # 获取锁的超时时间，单位：毫秒
     redisson:
-      key: user               # 锁的名称
+      key: "'user:' + #testUser.id + '-' + @redissonLockController.testName(#testUser.id) + '-'  + #this.testName + '-' + ${server.port}"               # 锁的名称
       binder: redisson        # simple,redisson,redis,zookeeper
       block: true             # 阻塞获取锁
     redisson1:

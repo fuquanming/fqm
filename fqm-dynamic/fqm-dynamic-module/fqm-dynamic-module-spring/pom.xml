@@ -8,12 +8,12 @@
 		<version>1.0.1</version>
 	</parent>
 	<artifactId>fqm-dynamic-module-spring</artifactId>
-	<version>1.0.2</version>
+	<version>1.0.3</version>
 	
     <description>Dynamically load jar based on spring</description>
     
     <properties>
-        <fqm-common-spring.version>1.0.4</fqm-common-spring.version>
+        <fqm-common-spring.version>1.0.5</fqm-common-spring.version>
     </properties>
     
 	<dependencies>

@@ -22,12 +22,7 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.core.annotation.MergedAnnotation;
 import org.springframework.core.annotation.MergedAnnotations;
 import org.springframework.core.annotation.MergedAnnotations.SearchStrategy;
-import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
-import org.springframework.util.StringUtils;
-
-import com.fqm.framework.common.spring.util.SpringUtil;
-import com.fqm.framework.locks.config.LockProperties;
 
 /**
  * @Lock4j 注解校验对应的配置文件
@@ -78,22 +73,22 @@ public class Lock4jAnnotationBeanPostProcessor implements BeanPostProcessor, Sma
 
     @Override
     public void afterSingletonsInstantiated() {
-        LockProperties lockProperties = SpringUtil.getBean(LockProperties.class);
-        // 1、@Lock4j 校验配置文件和属性
-        for (ListenerMethod method : lock4jMethods) {
-            for (Lock4j lock4j : method.lock4j) {
-                // 锁的业务名称
-                String name = lock4j.name();
-                String key = lock4j.key();
-                if (StringUtils.hasText(name)) {
-                    Assert.isTrue(lockProperties.getLocks().containsKey(name), "@Lock4j attribute name is [" + name + "], not found in the configuration [lock.locks." + name + "],["+ method.className + "->" + method.methodName + "]");
-                } else if (StringUtils.hasText(key)) {
-                    // do nothing
-                } else {
-                    Assert.isTrue(false, "@Lock4j attribute name or key is required,["+ method.className + "->" + method.methodName + "]");
-                }
-            }
-        }
+//        LockProperties lockProperties = SpringUtil.getBean(LockProperties.class);
+//        // 1、@Lock4j 校验配置文件和属性
+//        for (ListenerMethod method : lock4jMethods) {
+//            for (Lock4j lock4j : method.lock4j) {
+//                // 锁的业务名称
+//                String name = lock4j.name();
+//                String key = lock4j.key();
+//                if (StringUtils.hasText(name)) {
+//                    Assert.isTrue(lockProperties.getLocks().containsKey(name), "@Lock4j attribute name is [" + name + "], not found in the configuration [lock.locks." + name + "],["+ method.className + "->" + method.methodName + "]");
+//                } else if (StringUtils.hasText(key)) {
+//                    // do nothing
+//                } else {
+//                    Assert.isTrue(false, "@Lock4j attribute name or key is required,["+ method.className + "->" + method.methodName + "]");
+//                }
+//            }
+//        }
         lock4jMethods.clear();
     }
 

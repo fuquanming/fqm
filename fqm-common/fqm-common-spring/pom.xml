@@ -8,7 +8,7 @@
 		<version>1.0.3</version>
 	</parent>
 	<artifactId>fqm-common-spring</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
     <description>Fqm Common Spring Standard Library</description>
     
 	<dependencies>

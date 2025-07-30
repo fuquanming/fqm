@@ -32,9 +32,13 @@ public class RedissonLockController {
     public static final String BUSINESS_NAME = "redisson";
     public static final String BUSINESS_NAME_1 = "redisson1";
     
+    public String testName(Long a) {
+        return "张三1:" + a;
+    }
+    
     @GetMapping("/lock4j/redisson")
     public Object lock4j() {
-        System.out.println("lock4j");
+        System.out.println("lock4j-1");
         CyclicBarrier cb = new CyclicBarrier(2);
         Thread t1 = new Thread(new Runnable() {
             @Override
@@ -44,13 +48,15 @@ public class RedissonLockController {
                 } catch (InterruptedException | BrokenBarrierException e) {
                     e.printStackTrace();
                 }
-                ThreadUtil.concurrencyTest(3, new Runnable() {
+                ThreadUtil.concurrencyTest(1, new Runnable() {
                     @Override
                     public void run() {
                         logger.info("Thread:{},begin", Thread.currentThread().getName());
                         Object obj = null;
                         try {
-                            obj = lockUserService.getUserByLock4jLock();
+                            TestUser testUser = new TestUser();
+                            testUser.setId(111L);
+                            obj = lockUserService.getUserByLock4jLock(testUser);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -69,13 +75,15 @@ public class RedissonLockController {
                 } catch (InterruptedException | BrokenBarrierException e) {
                     e.printStackTrace();
                 }
-                ThreadUtil.concurrencyTest(3, new Runnable() {
+                ThreadUtil.concurrencyTest(1, new Runnable() {
                     @Override
                     public void run() {
                         logger.info("Thread2:{},begin", Thread.currentThread().getName());
                         Object obj = null;
                         try {
-                            obj = lockUserService.getUserByLock4jLock2();
+                            TestUser testUser = new TestUser();
+                            testUser.setId(111L);
+                            obj = lockUserService.getUserByLock4jLock(testUser);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -92,7 +100,7 @@ public class RedissonLockController {
     @GetMapping("/lock/redisson")
     public Object lockCode() {
         System.out.println("lock/redisson");
-        CyclicBarrier cb = new CyclicBarrier(2);
+        CyclicBarrier cb = new CyclicBarrier(1);
         Thread t1 = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -162,8 +170,6 @@ public class RedissonLockController {
             }
         });
         t2.start();
-        
-        
         return new HashMap<>();
     }
     
@@ -171,24 +177,38 @@ public class RedissonLockController {
 
 @Service
 class RedissonLockUserService {
+    
+    public String testName() {
+        return "userService";
+    }
     private Logger logger = LoggerFactory.getLogger(getClass());
-    @Lock4j(name = RedissonLockController.BUSINESS_NAME)
-    public Object getUserByLock4jLock() {
+//    @Lock4j(name = RedissonLockController.BUSINESS_NAME, key = "#testUser.id")
+    // SpEL 中，${} 通常用于读取外部属性占位符​。引用方法参数时，应使用 #参数名 的语法。因此，正确的表达式应为 #testUser.id（或带前缀的拼接）。
+    // 字符串用 '' 包含
+//    @Lock4j(key = "'user:' + #testUser.id + '---' + ${server.port}")
+    // 
+    @Lock4j(
+            name = "redisson"
+            ,key = "'userQQ:' + #testUser.id + '-' + @redissonLockController.testName(#testUser.id) + '-'  + #this.testName + '-' + ${server.port}"
+            , acquireTimeout = 6000L
+            )
+    public Object getUserByLock4jLock(TestUser testUser) {
         logger.info("Thread:{},RedissonLockUserService", Thread.currentThread().getName());
         HashMap<String, Object> user = new HashMap<>();
         try {
-            TimeUnit.SECONDS.sleep(2);
+            TimeUnit.SECONDS.sleep(5);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         return user;
     }
-    @Lock4j(name = RedissonLockController.BUSINESS_NAME_1)
-    public Object getUserByLock4jLock2() {
+//    @Lock4j(name = RedissonLockController.BUSINESS_NAME_1)
+    @Lock4j(key = "'user1:' + #testUser.id")
+    public Object getUserByLock4jLock2(TestUser testUser) {
         logger.info("Thread2:{},RedissonLockUserService2", Thread.currentThread().getName());
         HashMap<String, Object> user = new HashMap<>();
         try {
-            TimeUnit.SECONDS.sleep(2);
+            TimeUnit.SECONDS.sleep(5);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

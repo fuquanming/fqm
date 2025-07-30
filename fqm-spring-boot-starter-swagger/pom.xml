@@ -10,12 +10,12 @@
         <relativePath>../fqm-dependencies</relativePath>
     </parent>
 	<artifactId>fqm-spring-boot-starter-swagger</artifactId>
-		
+    <version>1.0.2</version>
 	<description>Starter for Swagger3, Knife4j</description>
 	
 	<properties>
 	   <fqm-common-swagger.version>1.0.0</fqm-common-swagger.version>
-	   <fqm-common-spring.version>1.0.4</fqm-common-spring.version>
+	   <fqm-common-spring.version>1.0.5</fqm-common-spring.version>
 	</properties>
 	
 	<dependencies>

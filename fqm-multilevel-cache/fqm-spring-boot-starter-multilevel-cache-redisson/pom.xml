@@ -8,12 +8,12 @@
 		<version>1.0.2</version>
 	</parent>
 	<artifactId>fqm-spring-boot-starter-multilevel-cache-redisson</artifactId>
-	<version>1.0.4</version>
+	<version>1.0.5</version>
 	<description>Starter for multi-level cache based on Caffeine and Redisson</description>
 	
 	<properties>
         <fqm-common-redisson.version>1.0.5</fqm-common-redisson.version>
-		<fqm-spring-boot-starter-multilevel-cache-redis.version>1.0.3</fqm-spring-boot-starter-multilevel-cache-redis.version>
+		<fqm-spring-boot-starter-multilevel-cache-redis.version>1.0.4</fqm-spring-boot-starter-multilevel-cache-redis.version>
     </properties>
 	
     <dependencies>

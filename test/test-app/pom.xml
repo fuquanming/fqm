@@ -53,11 +53,11 @@
 		</dependency>
 
 		
-		<dependency>
+		<!--<dependency>
             <groupId>com.fqm.test</groupId>
             <artifactId>test-module-file-amazons3</artifactId>
             <version>${parent.version}</version>
-        </dependency>
+        </dependency>-->
         <dependency>
 		    <groupId>org.apache.commons</groupId>
 		    <artifactId>commons-pool2</artifactId>
@@ -170,13 +170,13 @@
         </dependency>-->
         <!--  Job End -->
         
-        <!-- Lock Start 
+        <!-- Lock Start -->
         <dependency>
             <groupId>com.fqm.test</groupId>
             <artifactId>test-module-lock-redisson</artifactId>
             <version>${parent.version}</version>
         </dependency>
-        <dependency>
+        <!-- <dependency>
             <groupId>com.fqm.test</groupId>
             <artifactId>test-module-lock-redis</artifactId>
             <version>${parent.version}</version>
