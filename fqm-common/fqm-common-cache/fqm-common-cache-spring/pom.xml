@@ -5,10 +5,10 @@
 	<parent>
 		<groupId>io.github.fuquanming</groupId>
 		<artifactId>fqm-common-cache</artifactId>
-		<version>1.0.3</version>
+		<version>1.1.0</version>
 	</parent>
 	<artifactId>fqm-common-cache-spring</artifactId>
-	<version>1.0.4</version>
+	<name>${project.artifactId}</name>
 	<description>Fqm Common Spring Cache Standard Library</description>
 	
 	<dependencies>

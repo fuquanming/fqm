@@ -3,16 +3,11 @@
     <parent>
         <groupId>io.github.fuquanming</groupId>
         <artifactId>fqm-common</artifactId>
-        <version>1.0.3</version>
+        <version>1.1.0</version>
     </parent>
     <artifactId>fqm-common-swagger</artifactId>
-    <version>1.0.0</version>
+    <name>${project.artifactId}</name>
     <description>Fqm Common Swagger Standard Library</description>
-    
-    <properties>
-        <springfox.version>3.0.0</springfox.version><!-- 3.0.0:swagger3 -->
-        <knife4j.version>3.0.3</knife4j.version><!-- 3.0.3:swagger3 2.0.9:swagger2 -->
-    </properties>
     
     <dependencies>
         <dependency>
@@ -30,13 +25,11 @@
         <dependency>
             <groupId>com.github.xiaoymin</groupId>
             <artifactId>knife4j-spring-boot-starter</artifactId>
-            <version>${knife4j.version}</version>
         </dependency>
         <!-- Swagger3,不引用则无swagger原来访问界面 -->
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-boot-starter</artifactId>
-            <version>${springfox.version}</version>
         </dependency> 
     </dependencies>    
 </project>

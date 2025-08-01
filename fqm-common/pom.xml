@@ -5,28 +5,38 @@
     <parent>
         <groupId>io.github.fuquanming</groupId>
         <artifactId>fqm-dependencies</artifactId>
-        <version>1.0.1</version>
+        <version>1.0.2</version>
         <relativePath>../fqm-dependencies</relativePath>
     </parent>
     
+    <properties>
+        <fqm-common.version>1.1.0</fqm-common.version>
+    
+        <!-- fqm-common-core -->
+        <commons-io.version>2.11.0</commons-io.version>
+        <guava.version>31.1-jre</guava.version>
+        <swagger-annotations.version>1.6.9</swagger-annotations.version><!-- api文档注解 -->
+        <hibernate-validator.version>6.2.5.Final</hibernate-validator.version>
+        <!-- fqm-common-redisson -->
+        <redisson.version>3.18.0</redisson.version><!-- 支持springboot2.4.1 -->
+        <!-- fqm-common-swagger -->
+        <springfox.version>3.0.0</springfox.version><!-- 3.0.0:swagger3 -->
+        <knife4j.version>3.0.3</knife4j.version><!-- 3.0.3:swagger3 2.0.9:swagger2 -->
+        
+        <!-- 内部依赖版本 -->
+        <!-- fqm-common-http -->
+        <fqm-common-core.version>${fqm-common.version}</fqm-common-core.version>
+        <!-- fqm-common-cache-redis-spring -->
+        <fqm-common-cache-spring.version>${fqm-common.version}</fqm-common-cache-spring.version>
+    </properties>
+    
     <artifactId>fqm-common</artifactId>
-    <version>1.0.3</version>
+    <version>${fqm-common.version}</version>
     <packaging>pom</packaging>
 
     <name>${project.artifactId}</name>
     <description>Fqm Common Standard Library</description>
     <url>https://github.com/fuquanming/fqm</url>
-
-    <modules>
-        <module>fqm-common-core</module>
-        <module>fqm-common-cache</module>
-        <module>fqm-common-http</module>
-        <module>fqm-common-redis</module>
-        <module>fqm-common-redisson</module>
-        <module>fqm-common-spring</module>
-        <module>fqm-common-zookeeper</module>
-        <module>fqm-common-swagger</module>
-    </modules>
 
     <licenses>
         <license>
@@ -48,4 +58,80 @@
             <email>67837343@qq.com</email>
         </developer>
     </developers>
+    
+    <modules>
+        <module>fqm-common-core</module>
+        <module>fqm-common-cache</module>
+        <module>fqm-common-http</module>
+        <module>fqm-common-redis</module>
+        <module>fqm-common-redisson</module>
+        <module>fqm-common-spring</module>
+        <module>fqm-common-zookeeper</module>
+        <module>fqm-common-swagger</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- fqm-common-core -->
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons-io.version}</version>
+            </dependency>
+            <!-- guava -->
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+            <!-- Swagger3，Bean字段注解 -->
+            <dependency>
+                <groupId>io.swagger</groupId>
+                <artifactId>swagger-annotations</artifactId>
+                <version>${swagger-annotations.version}</version>
+                <scope>compile</scope>
+            </dependency>
+            <!-- 校验框架 -->
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>${hibernate-validator.version}</version>
+            </dependency>
+            
+            <!-- fqm-common-redisson -->
+            <dependency>
+                <groupId>org.redisson</groupId>
+                <artifactId>redisson</artifactId>
+                <version>${redisson.version}</version>
+            </dependency>
+            
+            <!-- fqm-common-swagger -->
+            <!-- knife4j -->
+            <!-- knife4j-springdoc-ui 可以适配 -->
+            <dependency>
+                <groupId>com.github.xiaoymin</groupId>
+                <artifactId>knife4j-spring-boot-starter</artifactId>
+                <version>${knife4j.version}</version>
+            </dependency>
+            <!-- Swagger3,不引用则无swagger原来访问界面 -->
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-boot-starter</artifactId>
+                <version>${springfox.version}</version>
+            </dependency> 
+        
+            <!-- 内部版本 -->
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-common-core</artifactId>
+                <version>${fqm-common-core.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-common-cache-spring</artifactId>
+                <version>${fqm-common-cache-spring.version}</version>
+            </dependency>
+        </dependencies>   
+    </dependencyManagement>
 </project>

@@ -6,20 +6,14 @@
 	<parent>
 		<groupId>io.github.fuquanming</groupId>
 		<artifactId>fqm-common</artifactId>
-		<version>1.0.3</version>
+		<version>1.1.0</version>
 	</parent>
+	
 	<artifactId>fqm-common-core</artifactId>
-	<version>1.0.5</version>
+	<name>${project.artifactId}</name>
 	
 	<description>Fqm Common Standard Library</description>
     <url>https://github.com/fuquanming/fqm</url>
-    
-    <properties>
-        <commons-io.version>2.11.0</commons-io.version>
-        <guava.version>31.1-jre</guava.version>
-        <swagger-annotations.version>1.6.9</swagger-annotations.version><!-- api文档注解 -->
-        <hibernate-validator.version>6.2.5.Final</hibernate-validator.version>
-    </properties>
     
     <dependencies>
 
@@ -45,45 +39,40 @@
             <artifactId>commons-lang3</artifactId>
         </dependency>
         
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>${commons-io.version}</version>
-        </dependency>
-        
         <!-- commons-collections4 --> 
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
         </dependency>
         
+        <!-- 日志 -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        
+        <!-- 如下自定义版本 -->
+        <!-- fqm-common-core -->
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
         <!-- guava -->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>${guava.version}</version>
         </dependency>
-        
         <!-- Swagger3，Bean字段注解 -->
         <dependency>
-			<groupId>io.swagger</groupId>
-			<artifactId>swagger-annotations</artifactId>
-			<version>${swagger-annotations.version}</version>
-			<scope>compile</scope>
-		</dependency>
-
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <scope>compile</scope>
+        </dependency>
         <!-- 校验框架 -->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
-            <version>${hibernate-validator.version}</version>
         </dependency>
     
-        <!-- 日志 -->
-		<dependency>
-		    <groupId>org.slf4j</groupId>
-		    <artifactId>slf4j-api</artifactId>
-		</dependency>
-		        
     </dependencies>
 </project>

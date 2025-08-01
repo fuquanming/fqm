@@ -6,16 +6,11 @@
 	<parent>
 		<groupId>io.github.fuquanming</groupId>
 		<artifactId>fqm-common</artifactId>
-		<version>1.0.3</version>
+		<version>1.1.0</version>
 	</parent>
 	<artifactId>fqm-common-http</artifactId>
-    <version>1.0.4</version>
-    
+    <name>${project.artifactId}</name>
     <description>Fqm Common Http Standard Library</description>
-    
-    <properties>
-        <fqm-common-core.version>1.0.4</fqm-common-core.version>
-    </properties>
     
 	<dependencies>
 		
@@ -34,10 +29,10 @@
             <artifactId>httpmime</artifactId>
         </dependency>
 		
+		<!-- 如下自定义版本 -->
 		<dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-common-core</artifactId>
-            <version>${fqm-common-core.version}</version>
         </dependency>
 		
 	</dependencies>
