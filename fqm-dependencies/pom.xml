@@ -6,7 +6,7 @@
 	
 	<groupId>io.github.fuquanming</groupId>
     <artifactId>fqm-dependencies</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <packaging>pom</packaging>
 
 	<name>${project.artifactId}</name>
@@ -60,6 +60,8 @@
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
         <maven-deploy-plugin.version>2.8.2</maven-deploy-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
+        
+        <central-publishing-maven-plugin.version>0.7.0</central-publishing-maven-plugin.version>
     </properties>
     
     <dependencyManagement>
@@ -156,31 +158,50 @@
                             </execution>
                         </executions>
                     </plugin>
-                    <plugin>
+                            <!-- 与 setting.xml 的 server 配置中 id 对应-->
+                    <!--<plugin>
                         <groupId>org.sonatype.plugins</groupId>
                         <artifactId>nexus-staging-maven-plugin</artifactId>
                         <version>${nexus-staging-maven-plugin.version}</version>
                         <extensions>true</extensions>
                         <configuration>
-                            <!-- 与 setting.xml 的 server 配置中 id 对应-->
                             <serverId>ossrh</serverId>
                             <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
                             <autoReleaseAfterClose>true</autoReleaseAfterClose>
                         </configuration>
+                    </plugin>-->
+                    <!-- 发布到maven仓库中心插件，插件是必须的 -->
+                    <!-- publishing to central server plugin -->
+                    <!-- https://central.sonatype.com/artifact/org.sonatype.central/central-publishing-maven-plugin -->
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>${central-publishing-maven-plugin.version}</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <!-- 注意：这类必须要和Maven配置环境中的server id对应上 -->
+                            <publishingServerId>central</publishingServerId>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
-            <distributionManagement>
+            <!--<distributionManagement>
                 <snapshotRepository>
-                    <!-- 与 setting.xml 的 server 配置中 id 对应-->
+                     与 setting.xml 的 server 配置中 id 对应
                     <id>ossrh</id>
                     <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
                 </snapshotRepository>
                 <repository>
-                    <!-- 与 setting.xml 的 server 配置中 id 对应-->
+                     与 setting.xml 的 server 配置中 id 对应
                     <id>ossrh</id>
                     <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
                 </repository>
+            </distributionManagement>-->
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>central</id>
+                    <url>https://central.sonatype.com/</url>
+                </snapshotRepository>
             </distributionManagement>
         </profile>
     </profiles>
