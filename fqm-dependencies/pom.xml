@@ -6,7 +6,7 @@
 	
 	<groupId>io.github.fuquanming</groupId>
     <artifactId>fqm-dependencies</artifactId>
-    <version>1.0.2</version>
+    <version>1.1.0</version>
     <packaging>pom</packaging>
 
 	<name>${project.artifactId}</name>
