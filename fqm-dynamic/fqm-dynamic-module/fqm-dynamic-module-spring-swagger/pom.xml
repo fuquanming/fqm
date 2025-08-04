@@ -3,40 +3,33 @@
     <parent>
         <groupId>io.github.fuquanming</groupId>
         <artifactId>fqm-dynamic-module</artifactId>
-        <version>1.0.1</version>
+        <version>1.1.0</version>
     </parent>
     <artifactId>fqm-dynamic-module-spring-swagger</artifactId>
-    <version>1.0.3</version>
+    <name>${project.artifactId}</name>
     
     <description>Dynamically Load Jar Based On Spring Swagger</description>
     
-    <properties>
-        <fqm-common-swagger.version>1.0.0</fqm-common-swagger.version>
-    	<fqm-dynamic-module-spring.version>1.0.3</fqm-dynamic-module-spring.version>
-    </properties>
-    
     <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+    
+        <!-- 如下自定义版本 -->
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-dynamic-module-core</artifactId>
-            <version>${parent.version}</version>
         </dependency>
         
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-dynamic-module-spring</artifactId>
-            <version>${fqm-dynamic-module-spring.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-common-swagger</artifactId>
-            <version>${fqm-common-swagger.version}</version>
         </dependency>
     </dependencies>
 </project>

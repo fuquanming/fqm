@@ -5,21 +5,39 @@
 	<parent>
 		<groupId>io.github.fuquanming</groupId>
 		<artifactId>fqm-dynamic</artifactId>
-		<version>1.0.1</version>
+		<version>1.1.0</version>
 	</parent>
+	
+	<properties>
+        <fqm-dynamic-module.version>1.1.0</fqm-dynamic-module.version>
+    
+        <!-- fqm-dynamic-module-mybatis -->
+        <mybatis.version>3.5.11</mybatis.version>
+        <!-- fqm-dynamic-module-mybatis-plus -->
+        <mybatis-plus.version>3.5.2</mybatis-plus.version><!-- 对应mybatis 3.5.10,mybatis-spring 2.0.6 -->
+        <!-- fqm-dynamic-module-spring-mybatis -->
+        <mybatis-spring.version>3.0.0</mybatis-spring.version><!-- 对应mybatis 3.5.10,mybatis-spring 2.0.6 -->
+        
+        <!-- 内部依赖版本 -->
+        <!-- fqm-dynamic-module-mybatis -->
+        <fqm-dynamic-module-core.version>${fqm-dynamic-module.version}</fqm-dynamic-module-core.version>
+        <!-- fqm-dynamic-module-mybatis-plus -->
+        <fqm-dynamic-module-mybatis.version>${fqm-dynamic-module.version}</fqm-dynamic-module-mybatis.version>
+        <!-- fqm-dynamic-module-spring -->
+        <fqm-common-spring.version>${fqm-dynamic-module.version}</fqm-common-spring.version>
+        <!-- fqm-dynamic-module-spring-mybatis -->
+        <fqm-dynamic-module-spring.version>${fqm-dynamic-module.version}</fqm-dynamic-module-spring.version>
+        <!-- fqm-dynamic-module-spring-swagger -->
+        <fqm-common-swagger.version>${fqm-dynamic-module.version}</fqm-common-swagger.version>
+    </properties>
+	
 	<artifactId>fqm-dynamic-module</artifactId>
+	<version>${fqm-dynamic-module.version}</version>
+	<name>${project.artifactId}</name>
 	<packaging>pom</packaging>
 	<description>Fqm Dynamic Module Standard Library</description>
 	
 	<url>https://github.com/fuquanming/fqm.git</url>
-	<modules>
-		<module>fqm-dynamic-module-core</module>
-		<module>fqm-dynamic-module-mybatis</module>
-		<module>fqm-dynamic-module-spring</module>
-		<module>fqm-dynamic-module-spring-mybatis</module>
-		<module>fqm-dynamic-module-mybatis-plus</module>
-		<module>fqm-dynamic-module-spring-swagger</module>
-	</modules>
 	
 	<licenses>
         <license>
@@ -41,5 +59,68 @@
             <email>67837343@qq.com</email>
         </developer>
     </developers>
+    
+    <modules>
+        <module>fqm-dynamic-module-core</module>
+        <module>fqm-dynamic-module-mybatis</module>
+        <module>fqm-dynamic-module-spring</module>
+        <module>fqm-dynamic-module-spring-mybatis</module>
+        <module>fqm-dynamic-module-mybatis-plus</module>
+        <module>fqm-dynamic-module-spring-swagger</module>
+    </modules>
+    
+    <dependencyManagement>
+        <dependencies>
+            <!-- fqm-dynamic-module-mybatis -->
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis</artifactId>
+                <version>${mybatis.version}</version>
+            </dependency>
+            <!-- fqm-dynamic-module-mybatis-plus -->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+            <!-- fqm-dynamic-module-spring-mybatis -->
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis-spring</artifactId>
+                <version>${mybatis-spring.version}</version>
+            </dependency>
+            
+            <!-- 如下自定义版本 -->
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-dynamic-module-core</artifactId>
+                <version>${fqm-dynamic-module-core.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-dynamic-module-mybatis</artifactId>
+                <version>${fqm-dynamic-module-mybatis.version}</version>
+            </dependency>
+    
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-common-spring</artifactId>
+                <version>${fqm-common-spring.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-dynamic-module-spring</artifactId>
+                <version>${fqm-dynamic-module-spring.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-common-swagger</artifactId>
+                <version>${fqm-common-swagger.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 </project>

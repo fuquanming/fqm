@@ -3,18 +3,22 @@
     <parent>
         <groupId>io.github.fuquanming</groupId>
         <artifactId>fqm-dependencies</artifactId>
-        <version>1.0.1</version>
+        <version>1.1.0</version>
         <relativePath>../fqm-dependencies</relativePath>
     </parent>
+    
+    <properties>
+        <fqm-dynamic.version>1.1.0</fqm-dynamic.version>
+    </properties>
+    
     <artifactId>fqm-dynamic</artifactId>
+    <version>${fqm-dynamic.version}</version>
     <packaging>pom</packaging>
-    <name>fqm-dynamic</name>
+    <name>${project.artifactId}</name>
     <description>Fqm Dynamic Standard Library</description>
     
-    <url>https://github.com/fuquanming/fqm.git</url>
-    <modules>
-        <module>fqm-dynamic-module</module>
-    </modules>
+    <url>https://github.com/fuquanming/fqm</url>
+    
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
@@ -35,4 +39,9 @@
             <email>67837343@qq.com</email>
         </developer>
     </developers>
+    
+    <modules>
+        <module>fqm-dynamic-module</module>
+    </modules>
+    
 </project>

@@ -5,32 +5,28 @@
 	<parent>
 		<groupId>io.github.fuquanming</groupId>
 		<artifactId>fqm-dynamic-module</artifactId>
-		<version>1.0.1</version>
+		<version>1.1.0</version>
 	</parent>
 	<artifactId>fqm-dynamic-module-mybatis-plus</artifactId>
+	<name>${project.artifactId}</name>
 	<description>Dynamically load jar based on mybatis plus</description>
 	
-	<properties>
-        <mybatis-plus.version>3.5.2</mybatis-plus.version><!-- 对应mybatis 3.5.10,mybatis-spring 2.0.6 -->
-    </properties>
-	
 	<dependencies>
-        <dependency>
-            <groupId>io.github.fuquanming</groupId>
-            <artifactId>fqm-dynamic-module-core</artifactId>
-            <version>${parent.version}</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>io.github.fuquanming</groupId>
-            <artifactId>fqm-dynamic-module-mybatis</artifactId>
-            <version>${parent.version}</version>
-        </dependency>
-
         <dependency>
 		    <groupId>com.baomidou</groupId>
 		    <artifactId>mybatis-plus</artifactId>
 		    <version>${mybatis-plus.version}</version>
 		</dependency>
+		
+		<!-- 如下自定义版本 -->
+		<dependency>
+            <groupId>io.github.fuquanming</groupId>
+            <artifactId>fqm-dynamic-module-core</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>io.github.fuquanming</groupId>
+            <artifactId>fqm-dynamic-module-mybatis</artifactId>
+        </dependency>
     </dependencies>
 </project>
