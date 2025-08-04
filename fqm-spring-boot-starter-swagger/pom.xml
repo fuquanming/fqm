@@ -6,17 +6,21 @@
 	<parent>
         <groupId>io.github.fuquanming</groupId>
         <artifactId>fqm-dependencies</artifactId>
-        <version>1.0.1</version>
+        <version>1.1.0</version>
         <relativePath>../fqm-dependencies</relativePath>
     </parent>
+    
+    <properties>
+        <fqm-spring-boot-starter-swagger.version>1.1.0</fqm-spring-boot-starter-swagger.version>
+        
+        <fqm-common-swagger.version>1.1.0</fqm-common-swagger.version>
+        <fqm-common-spring.version>1.1.0</fqm-common-spring.version>
+    </properties>
+    
 	<artifactId>fqm-spring-boot-starter-swagger</artifactId>
-    <version>1.0.2</version>
+    <version>${fqm-spring-boot-starter-swagger.version}</version>
+    <name>${project.artifactId}</name>
 	<description>Starter for Swagger3, Knife4j</description>
-	
-	<properties>
-	   <fqm-common-swagger.version>1.0.0</fqm-common-swagger.version>
-	   <fqm-common-spring.version>1.0.5</fqm-common-spring.version>
-	</properties>
 	
 	<dependencies>
         <!-- Spring 核心 -->
