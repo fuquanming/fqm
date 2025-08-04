@@ -8,7 +8,7 @@
     <artifactId>test-module-lock-zookeeper</artifactId>
     
     <properties>
-        <fqm-spring-boot-starter-lock-zookeeper.version>1.0.4</fqm-spring-boot-starter-lock-zookeeper.version>
+        <fqm-spring-boot-starter-lock-zookeeper.version>1.1.0</fqm-spring-boot-starter-lock-zookeeper.version>
     </properties>
     
     <dependencies>

@@ -8,7 +8,7 @@
     <artifactId>test-module-lock-redisson</artifactId>
     
     <properties>
-        <fqm-spring-boot-starter-lock-redisson.version>1.0.5</fqm-spring-boot-starter-lock-redisson.version>
+        <fqm-spring-boot-starter-lock-redisson.version>1.1.0</fqm-spring-boot-starter-lock-redisson.version>
     </properties>
     
     <dependencies>

@@ -32,6 +32,10 @@ public class RedisLockController {
     public static final String BUSINESS_NAME = "redis";
     public static final String BUSINESS_NAME_1 = "redis1";
     
+    public String testName(Long a) {
+        return "张三1:" + a;
+    }
+    
     @GetMapping("/lock4j/redis")
     public Object lock4j() {
         System.out.println("lock4j");
@@ -50,7 +54,9 @@ public class RedisLockController {
                         logger.info("Thread:{},begin", Thread.currentThread().getName());
                         Object obj = null;
                         try {
-                            obj = lockUserService.getUserByLock4jLock();
+                            TestUser testUser = new TestUser();
+                            testUser.setId(111L);
+                            obj = lockUserService.getUserByLock4jLock(testUser);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -75,7 +81,9 @@ public class RedisLockController {
                         logger.info("Thread2:{},begin", Thread.currentThread().getName());
                         Object obj = null;
                         try {
-                            obj = lockUserService.getUserByLock4jLock2();
+                            TestUser testUser = new TestUser();
+                            testUser.setId(111L);
+                            obj = lockUserService.getUserByLock4jLock(testUser);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -172,23 +180,31 @@ public class RedisLockController {
 @Service
 class RedisLockUserService {
     private Logger logger = LoggerFactory.getLogger(getClass());
-    @Lock4j(name = RedisLockController.BUSINESS_NAME)
-    public Object getUserByLock4jLock() {
+    public String testName() {
+        return "userService";
+    }
+//    @Lock4j(name = RedisLockController.BUSINESS_NAME)
+    @Lock4j(
+            name = "redisson"
+            ,key = "'userQQ:' + #testUser.id + '-' + @redissonLockController.testName(#testUser.id) + '-'  + #this.testName + '-' + ${server.port}"
+            , acquireTimeout = 6000L
+            )
+    public Object getUserByLock4jLock(TestUser testUser) {
         logger.info("Thread:{},RedisLockUserService", Thread.currentThread().getName());
         HashMap<String, Object> user = new HashMap<>();
         try {
-            TimeUnit.SECONDS.sleep(2);
+            TimeUnit.SECONDS.sleep(5);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         return user;
     }
     @Lock4j(name = RedisLockController.BUSINESS_NAME_1)
-    public Object getUserByLock4jLock2() {
+    public Object getUserByLock4jLock2(TestUser testUser) {
         logger.info("Thread2:{},RedisLockUserService2", Thread.currentThread().getName());
         HashMap<String, Object> user = new HashMap<>();
         try {
-            TimeUnit.SECONDS.sleep(2);
+            TimeUnit.SECONDS.sleep(5);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

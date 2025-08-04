@@ -7,7 +7,7 @@
     </parent>
     <artifactId>test-module-file-minio</artifactId>
     <properties>
-        <fqm-spring-boot-starter-file-minio.version>1.0.8</fqm-spring-boot-starter-file-minio.version>
+        <fqm-spring-boot-starter-file-minio.version>1.1.0</fqm-spring-boot-starter-file-minio.version>
     </properties>
     
     <dependencies>

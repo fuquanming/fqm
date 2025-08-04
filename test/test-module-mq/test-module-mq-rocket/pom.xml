@@ -8,7 +8,7 @@
     <artifactId>test-module-mq-rocket</artifactId>
     
     <properties>
-        <fqm-spring-boot-starter-mq-rocket.version>1.0.6</fqm-spring-boot-starter-mq-rocket.version>
+        <fqm-spring-boot-starter-mq-rocket.version>1.1.0</fqm-spring-boot-starter-mq-rocket.version>
     </properties>
     
     <dependencies>

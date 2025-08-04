@@ -17,7 +17,7 @@
         <mybatis-plus.version>3.5.2</mybatis-plus.version>
         <druid.version>1.2.15</druid.version>
         
-        <fqm-spring-boot-starter-swagger.version>1.0.1</fqm-spring-boot-starter-swagger.version>
+        <fqm-spring-boot-starter-swagger.version>1.1.0</fqm-spring-boot-starter-swagger.version>
     </properties>
     
     <dependencies>
