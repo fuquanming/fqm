@@ -3,25 +3,35 @@
     <parent>
         <groupId>io.github.fuquanming</groupId>
         <artifactId>fqm-dependencies</artifactId>
-        <version>1.0.1</version>
+        <version>1.1.0</version>
         <relativePath>../fqm-dependencies</relativePath>
     </parent>
+    
+    <properties>
+        <fqm-lock.version>1.1.0</fqm-lock.version>
+    
+        <!-- 内部依赖版本 -->
+        <fqm-lock-core.version>${fqm-lock.version}</fqm-lock-core.version>
+        <fqm-common-redis.version>${fqm-lock.version}</fqm-common-redis.version>
+        <fqm-common-redisson.version>${fqm-lock.version}</fqm-common-redisson.version>
+        <fqm-common-zookeeper.version>${fqm-lock.version}</fqm-common-zookeeper.version>
+        
+        <fqm-common-spring.version>${fqm-lock.version}</fqm-common-spring.version>
+        <fqm-common-core.version>${fqm-lock.version}</fqm-common-core.version>
+        <fqm-spring-boot-starter-lock.version>${fqm-lock.version}</fqm-spring-boot-starter-lock.version>
+        <fqm-lock-redis.version>${fqm-lock.version}</fqm-lock-redis.version>
+        <fqm-lock-redisson.version>${fqm-lock.version}</fqm-lock-redisson.version>
+        <fqm-lock-zookeeper.version>${fqm-lock.version}</fqm-lock-zookeeper.version>
+    </properties>
+    
     <artifactId>fqm-lock</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.2</version>
+    <version>${fqm-lock.version}</version>
+    <name>${project.artifactId}</name>
     
     <description>The implementation of distributed locks includes RedisTemplate, Redisson and Zookeeper</description>
     <url>https://github.com/fuquanming/fqm.git</url>
-    <modules>
-        <module>fqm-lock-core</module>
-        <module>fqm-lock-redis</module>
-        <module>fqm-lock-redisson</module>
-        <module>fqm-lock-zookeeper</module>
-        <module>fqm-spring-boot-starter-lock</module>
-        <module>fqm-spring-boot-starter-lock-redis</module>
-        <module>fqm-spring-boot-starter-lock-redisson</module>
-        <module>fqm-spring-boot-starter-lock-zookeeper</module>
-    </modules>
+    
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
@@ -42,4 +52,77 @@
             <email>67837343@qq.com</email>
         </developer>
     </developers>
+    
+    <modules>
+        <module>fqm-lock-core</module>
+        <module>fqm-lock-redis</module>
+        <module>fqm-lock-redisson</module>
+        <module>fqm-lock-zookeeper</module>
+        <module>fqm-spring-boot-starter-lock</module>
+        <module>fqm-spring-boot-starter-lock-redis</module>
+        <module>fqm-spring-boot-starter-lock-redisson</module>
+        <module>fqm-spring-boot-starter-lock-zookeeper</module>
+    </modules>
+    
+    <dependencyManagement>
+        <dependencies>
+            <!-- 内部版本 -->
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-common-redis</artifactId>
+                <version>${fqm-common-redis.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-lock-core</artifactId>
+                <version>${fqm-lock-core.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-common-redisson</artifactId>
+                <version>${fqm-common-redisson.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-common-zookeeper</artifactId>
+                <version>${fqm-common-zookeeper.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-common-spring</artifactId>
+                <version>${fqm-common-spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-common-core</artifactId>
+                <version>${fqm-common-core.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-lock-redis</artifactId>
+                <version>${fqm-lock-redis.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-spring-boot-starter-lock</artifactId>
+                <version>${fqm-spring-boot-starter-lock.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-lock-redisson</artifactId>
+                <version>${fqm-lock-redisson.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-lock-zookeeper</artifactId>
+                <version>${fqm-lock-zookeeper.version}</version>
+            </dependency>
+        </dependencies>            
+    </dependencyManagement>
 </project>

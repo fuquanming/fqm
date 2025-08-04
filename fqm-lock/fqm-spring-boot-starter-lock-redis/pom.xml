@@ -3,27 +3,21 @@
     <parent>
         <groupId>io.github.fuquanming</groupId>
         <artifactId>fqm-lock</artifactId>
-        <version>1.0.2</version>
+        <version>1.1.0</version>
     </parent>
     <artifactId>fqm-spring-boot-starter-lock-redis</artifactId>
-    <version>1.0.4</version>
+    <name>${project.artifactId}</name>
     <description>Starter for RedisTemplateLock</description>
     
-    <properties>
-		<fqm-lock-redis.version>1.0.3</fqm-lock-redis.version>
-		<fqm-spring-boot-starter-lock.version>1.0.4</fqm-spring-boot-starter-lock.version>
-    </properties>
-    
     <dependencies>
+        <!-- 如下自定义版本 -->
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-lock-redis</artifactId>
-            <version>${fqm-lock-redis.version}</version>
         </dependency>
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-spring-boot-starter-lock</artifactId>
-            <version>${fqm-spring-boot-starter-lock.version}</version>
         </dependency>
     </dependencies>
 </project>

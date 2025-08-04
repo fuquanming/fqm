@@ -3,32 +3,27 @@
     <parent>
         <groupId>io.github.fuquanming</groupId>
         <artifactId>fqm-lock</artifactId>
-        <version>1.0.2</version>
+        <version>1.1.0</version>
     </parent>
     <artifactId>fqm-spring-boot-starter-lock-zookeeper</artifactId>
-    <version>1.0.5</version>
+    <name>${project.artifactId}</name>
     <description>Starter for ZookeeperLock</description>
     
-    <properties>
-        <fqm-lock-zookeeper.version>1.0.4</fqm-lock-zookeeper.version>
-    	<fqm-spring-boot-starter-lock.version>1.0.4</fqm-spring-boot-starter-lock.version>
-    </properties>
-    
     <dependencies>
-        <dependency>
-            <groupId>io.github.fuquanming</groupId>
-            <artifactId>fqm-spring-boot-starter-lock</artifactId>
-            <version>${fqm-spring-boot-starter-lock.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.github.fuquanming</groupId>
-            <artifactId>fqm-lock-zookeeper</artifactId>
-            <version>${fqm-lock-zookeeper.version}</version>
-        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
+        </dependency>
+        
+        <!-- 如下自定义版本 -->
+        <dependency>
+            <groupId>io.github.fuquanming</groupId>
+            <artifactId>fqm-spring-boot-starter-lock</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.fuquanming</groupId>
+            <artifactId>fqm-lock-zookeeper</artifactId>
         </dependency>
     </dependencies>
 </project>

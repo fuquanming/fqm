@@ -3,30 +3,13 @@
     <parent>
         <groupId>io.github.fuquanming</groupId>
         <artifactId>fqm-lock</artifactId>
-        <version>1.0.2</version>
+        <version>1.1.0</version>
     </parent>
     <artifactId>fqm-lock-redis</artifactId>
-    <version>1.0.4</version>
+    <name>${project.artifactId}</name>
     <description>Redis distributed locks are implemented based on RedisTemplate (blocking locks, trying to acquire locks once, trying to acquire locks, and unlocking)</description>
     
-    <properties>
-		<fqm-lock-core.version>1.0.4</fqm-lock-core.version>
-        <fqm-common-redis.version>1.0.4</fqm-common-redis.version>
-    </properties>
-    
     <dependencies>
-        <!-- redis监听事件 -->
-        <dependency>
-            <groupId>io.github.fuquanming</groupId>
-            <artifactId>fqm-common-redis</artifactId>
-            <version>${fqm-common-redis.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.github.fuquanming</groupId>
-            <artifactId>fqm-lock-core</artifactId>
-            <version>${fqm-lock-core.version}</version>
-        </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
@@ -40,6 +23,17 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
+        </dependency>
+        
+        <!-- 如下自定义版本 -->
+        <!-- redis监听事件 -->
+        <dependency>
+            <groupId>io.github.fuquanming</groupId>
+            <artifactId>fqm-common-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.fuquanming</groupId>
+            <artifactId>fqm-lock-core</artifactId>
         </dependency>
     </dependencies>
 </project>
