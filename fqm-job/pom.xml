@@ -5,21 +5,33 @@
 	<parent>
         <groupId>io.github.fuquanming</groupId>
         <artifactId>fqm-dependencies</artifactId>
-        <version>1.0.1</version>
+        <version>1.1.0</version>
         <relativePath>../fqm-dependencies</relativePath>
     </parent>
+    
+    <properties>
+        <fqm-job.version>1.1.0</fqm-job.version>
+    
+        <!-- fqm-job-elastic -->
+        <elastic-job.version>3.0.3</elastic-job.version>
+        <!-- fqm-job-xxl -->
+        <xxl-job.version>2.4.0</xxl-job.version>
+        
+        <!-- 内部依赖版本 -->
+        <!-- fqm-job-core -->
+        <fqm-job-core.version>${fqm-job.version}</fqm-job-core.version>
+        <fqm-job-xxl.version>${fqm-job.version}</fqm-job-xxl.version>
+        <!-- fqm-spring-boot-starter-job-elastic -->
+        <fqm-job-elastic.version>${fqm-job.version}</fqm-job-elastic.version>
+        <fqm-spring-boot-starter-job.version>${fqm-job.version}</fqm-spring-boot-starter-job.version>
+    </properties>
+    
 	<artifactId>fqm-job</artifactId>
+	<name>${project.artifactId}</name>
 	<packaging>pom</packaging>
-	<version>1.0.6</version>
+	<version>${fqm-job.version}</version>
 	<description>Parent project for fqm job objects</description>
-	<modules>
-        <module>fqm-job-core</module>
-        <module>fqm-job-xxl</module>
-        <module>fqm-job-elastic</module>
-        <module>fqm-spring-boot-starter-job</module>
-        <module>fqm-spring-boot-starter-job-xxl</module>
-        <module>fqm-spring-boot-starter-job-elastic</module>
-    </modules>
+	<url>https://github.com/fuquanming/fqm</url>
 	
 	<licenses>
         <license>
@@ -41,5 +53,62 @@
             <email>67837343@qq.com</email>
         </developer>
     </developers>
+    
+    <modules>
+        <module>fqm-job-core</module>
+        <module>fqm-job-xxl</module>
+        <module>fqm-job-elastic</module>
+        <module>fqm-spring-boot-starter-job</module>
+        <module>fqm-spring-boot-starter-job-xxl</module>
+        <module>fqm-spring-boot-starter-job-elastic</module>
+    </modules>
+    
+    <dependencyManagement>
+        <dependencies>
+            <!-- fqm-job-elastic -->
+            <dependency>
+                <groupId>org.apache.shardingsphere.elasticjob</groupId>
+                <artifactId>elasticjob-lite-spring-core</artifactId>
+                <version>${elastic-job.version}</version>
+            </dependency>
+        
+            <!-- fqm-job-xxl -->
+            <dependency>
+                <groupId>com.xuxueli</groupId>
+                <artifactId>xxl-job-core</artifactId>
+                <version>${xxl-job.version}</version>
+            </dependency>
+            
+            <!-- fqm-spring-boot-starter-job-elastic -->
+            <dependency>
+                <groupId>org.apache.shardingsphere.elasticjob</groupId>
+                <artifactId>elasticjob-lite-spring-boot-starter</artifactId>
+                <version>${elastic-job.version}</version>
+            </dependency>
+            
+            <!-- 内部版本 -->
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-job-core</artifactId>
+                <version>${fqm-job-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-job-xxl</artifactId>
+                <version>${fqm-job-xxl.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-job-elastic</artifactId>
+                <version>${fqm-job-elastic.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-spring-boot-starter-job</artifactId>
+                <version>${fqm-spring-boot-starter-job.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 	
 </project>

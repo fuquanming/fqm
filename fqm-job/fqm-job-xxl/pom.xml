@@ -5,25 +5,23 @@
 	<parent>
 		<groupId>io.github.fuquanming</groupId>
 		<artifactId>fqm-job</artifactId>
-		<version>1.0.6</version>
+		<version>1.1.0</version>
 	</parent>
+	
 	<artifactId>fqm-job-xxl</artifactId>
+	<name>${project.artifactId}</name>
 	<description>Fqm job object implemented by xxljob</description>
-	<properties>
-	   <xxl-job.version>2.4.0</xxl-job.version>
-	</properties>
 	
 	<dependencies>
         <dependency>
-            <groupId>io.github.fuquanming</groupId>
-            <artifactId>fqm-job-core</artifactId>
-            <version>${parent.version}</version>
-        </dependency>
-        
-        <dependency>
             <groupId>com.xuxueli</groupId>
             <artifactId>xxl-job-core</artifactId>
-            <version>${xxl-job.version}</version>
+        </dependency>
+        
+        <!-- 如下自定义版本 -->
+        <dependency>
+            <groupId>io.github.fuquanming</groupId>
+            <artifactId>fqm-job-core</artifactId>
         </dependency>
     </dependencies>
 </project>

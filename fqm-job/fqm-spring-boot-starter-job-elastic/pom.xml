@@ -5,34 +5,32 @@
 	<parent>
 		<groupId>io.github.fuquanming</groupId>
 		<artifactId>fqm-job</artifactId>
-		<version>1.0.6</version>
+		<version>1.1.0</version>
 	</parent>
 	<artifactId>fqm-spring-boot-starter-job-elastic</artifactId>
+	<name>${project.artifactId}</name>
     <description>Starter for elasticjob listener</description>
-    <properties>
-       	<elastic-job.version>3.0.3</elastic-job.version>
-    </properties>
 
 	<dependencies>
+        <dependency>
+            <groupId>org.apache.shardingsphere.elasticjob</groupId>
+            <artifactId>elasticjob-lite-spring-boot-starter</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-configuration-processor</artifactId>
 			<optional>true</optional>
 		</dependency>
+		
+		<!-- 如下自定义版本 -->
 		<dependency>
 			<groupId>io.github.fuquanming</groupId>
 			<artifactId>fqm-spring-boot-starter-job</artifactId>
-			<version>${parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>io.github.fuquanming</groupId>
 			<artifactId>fqm-job-elastic</artifactId>
-			<version>${parent.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.shardingsphere.elasticjob</groupId>
-			<artifactId>elasticjob-lite-spring-boot-starter</artifactId>
-			<version>${elastic-job.version}</version>
-		</dependency>
+		
 	</dependencies>
 </project>

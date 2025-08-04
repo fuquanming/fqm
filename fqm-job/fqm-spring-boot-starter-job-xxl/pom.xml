@@ -5,25 +5,27 @@
 	<parent>
 		<groupId>io.github.fuquanming</groupId>
 		<artifactId>fqm-job</artifactId>
-		<version>1.0.6</version>
+		<version>1.1.0</version>
 	</parent>
 	<artifactId>fqm-spring-boot-starter-job-xxl</artifactId>
+	<name>${project.artifactId}</name>
 	<description>Starter for xxljob listener</description>
+	
 	<dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
         </dependency>
+        
+        <!-- 如下自定义版本 -->
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-spring-boot-starter-job</artifactId>
-            <version>${parent.version}</version>
         </dependency>
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-job-xxl</artifactId>
-            <version>${parent.version}</version>
         </dependency>
     </dependencies>
 </project>
