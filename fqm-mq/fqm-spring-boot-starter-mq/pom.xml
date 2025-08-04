@@ -5,31 +5,14 @@
 	<parent>
 		<groupId>io.github.fuquanming</groupId>
 		<artifactId>fqm-mq</artifactId>
-		<version>1.0.3</version>
+		<version>1.1.0</version>
 	</parent>
 	<artifactId>fqm-spring-boot-starter-mq</artifactId>
-	<version>1.0.7</version>
+	<name>${project.artifactId}</name>
 	
 	<description>Starter for message queue factory,message listener</description>
 	
-	<properties>
-		<fqm-mq-core.version>1.0.7</fqm-mq-core.version>
-        <fqm-common-spring.version>1.0.5</fqm-common-spring.version>
-    </properties>
-	
 	<dependencies>
-        <dependency>
-            <groupId>io.github.fuquanming</groupId>
-            <artifactId>fqm-mq-core</artifactId>
-            <version>${fqm-mq-core.version}</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>io.github.fuquanming</groupId>
-            <artifactId>fqm-common-spring</artifactId>
-            <version>${fqm-common-spring.version}</version>
-        </dependency>
-        
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
@@ -38,6 +21,16 @@
         	<groupId>org.springframework.boot</groupId>
         	<artifactId>spring-boot-configuration-processor</artifactId>
         	<optional>true</optional>
+        </dependency>
+        
+        <dependency>
+            <groupId>io.github.fuquanming</groupId>
+            <artifactId>fqm-mq-core</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>io.github.fuquanming</groupId>
+            <artifactId>fqm-common-spring</artifactId>
         </dependency>
 	</dependencies>
 </project>

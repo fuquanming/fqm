@@ -5,26 +5,22 @@
 	<parent>
 		<groupId>io.github.fuquanming</groupId>
 		<artifactId>fqm-mq</artifactId>
-		<version>1.0.3</version>
+		<version>1.1.0</version>
 	</parent>
 	<artifactId>fqm-mq-kafka</artifactId>
-	<version>1.0.7</version>
+	<name>${project.artifactId}</name>
 	
 	<description>Message sending and monitoring based on kafkaTemplate</description>
-	<properties>
-		<fqm-mq-core.version>1.0.7</fqm-mq-core.version>
-    </properties>
 	
 	<dependencies>
         <dependency>
-            <groupId>io.github.fuquanming</groupId>
-            <artifactId>fqm-mq-core</artifactId>
-            <version>${fqm-mq-core.version}</version>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
         </dependency>
         
         <dependency>
-            <groupId>org.springframework.kafka</groupId>
-            <artifactId>spring-kafka</artifactId>
+            <groupId>io.github.fuquanming</groupId>
+            <artifactId>fqm-mq-core</artifactId>
         </dependency>
     </dependencies>
 </project>

@@ -5,29 +5,22 @@
 	<parent>
 		<groupId>io.github.fuquanming</groupId>
 		<artifactId>fqm-mq</artifactId>
-		<version>1.0.3</version>
+		<version>1.1.0</version>
 	</parent>
 	<artifactId>fqm-mq-redisson</artifactId>
-	<version>1.0.6</version>
+	<name>${project.artifactId}</name>
 	
 	<description>Message sending and monitoring based on Redisson</description>
-	
-	<properties>
-		<fqm-mq-core.version>1.0.6</fqm-mq-core.version>
-        <fqm-common-redisson.version>1.0.5</fqm-common-redisson.version>
-    </properties>
 	
 	<dependencies>
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-mq-core</artifactId>
-            <version>${fqm-mq-core.version}</version>
         </dependency>
 
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-common-redisson</artifactId>
-            <version>${fqm-common-redisson.version}</version>
         </dependency>
     </dependencies>
 </project>

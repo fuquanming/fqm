@@ -3,33 +3,43 @@
     <parent>
         <groupId>io.github.fuquanming</groupId>
         <artifactId>fqm-dependencies</artifactId>
-        <version>1.0.1</version>
+        <version>1.1.0</version>
         <relativePath>../fqm-dependencies</relativePath>
     </parent>
+    
+    <properties>
+        <fqm-mq.version>1.1.0</fqm-mq.version>
+    
+        <emqx.version>1.2.5</emqx.version>
+        <rocketmq-spring-boot-starter.version>2.2.1</rocketmq-spring-boot-starter.version>
+        
+        <!-- 内部依赖版本 -->
+        <fqm-common-core.version>${fqm-mq.version}</fqm-common-core.version>
+        <fqm-mq-core.version>${fqm-mq.version}</fqm-mq-core.version>
+        <fqm-common-spring.version>${fqm-mq.version}</fqm-common-spring.version>
+        <fqm-common-http.version>${fqm-mq.version}</fqm-common-http.version>
+        <fqm-common-redis.version>${fqm-mq.version}</fqm-common-redis.version>
+        <fqm-common-redisson.version>${fqm-mq.version}</fqm-common-redisson.version>
+        <fqm-lock-core.version>${fqm-mq.version}</fqm-lock-core.version>
+        <fqm-common-zookeeper.version>${fqm-mq.version}</fqm-common-zookeeper.version>
+        
+        <fqm-spring-boot-starter-mq.version>${fqm-mq.version}</fqm-spring-boot-starter-mq.version>
+        <fqm-mq-emqx.version>${fqm-mq.version}</fqm-mq-emqx.version>
+        <fqm-mq-kafka.version>${fqm-mq.version}</fqm-mq-kafka.version>
+        <fqm-mq-rabbit.version>${fqm-mq.version}</fqm-mq-rabbit.version>
+        <fqm-mq-redis.version>${fqm-mq.version}</fqm-mq-redis.version>
+        <fqm-mq-redisson.version>${fqm-mq.version}</fqm-mq-redisson.version>
+        <fqm-mq-rocket.version>${fqm-mq.version}</fqm-mq-rocket.version>
+        <fqm-mq-zookeeper.version>${fqm-mq.version}</fqm-mq-zookeeper.version>
+    </properties>
+    
     <artifactId>fqm-mq</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.3</version>
-    <name>fqm-mq</name>
+    <version>${fqm-mq.version}</version>
+    <name>${project.artifactId}</name>
     <description>The implementation of distributed message queue includes Kafka, RabbitMq, Redis, Redison, RocketMq and Zookeeper</description>
     <url>https://github.com/fuquanming/fqm.git</url>
-    <modules>
-        <module>fqm-mq-core</module>
-        <module>fqm-mq-kafka</module>
-        <module>fqm-mq-rabbit</module>
-        <module>fqm-mq-redis</module>
-        <module>fqm-mq-redisson</module>
-        <module>fqm-mq-rocket</module>
-        <module>fqm-mq-zookeeper</module>
-        <module>fqm-mq-emqx</module>
-        <module>fqm-spring-boot-starter-mq</module>
-        <module>fqm-spring-boot-starter-mq-kafka</module>
-        <module>fqm-spring-boot-starter-mq-rabbit</module>
-        <module>fqm-spring-boot-starter-mq-redis</module>
-        <module>fqm-spring-boot-starter-mq-redisson</module>
-        <module>fqm-spring-boot-starter-mq-rocket</module>
-        <module>fqm-spring-boot-starter-mq-zookeeper</module>
-        <module>fqm-spring-boot-starter-mq-emqx</module>
-    </modules>
+    
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
@@ -50,4 +60,132 @@
             <email>67837343@qq.com</email>
         </developer>
     </developers>
+    
+    <modules>
+        <module>fqm-mq-core</module>
+        <module>fqm-mq-kafka</module>
+        <module>fqm-mq-rabbit</module>
+        <module>fqm-mq-redis</module>
+        <module>fqm-mq-redisson</module>
+        <module>fqm-mq-rocket</module>
+        <module>fqm-mq-zookeeper</module>
+        <module>fqm-mq-emqx</module>
+        <module>fqm-spring-boot-starter-mq</module>
+        <module>fqm-spring-boot-starter-mq-kafka</module>
+        <module>fqm-spring-boot-starter-mq-rabbit</module>
+        <module>fqm-spring-boot-starter-mq-redis</module>
+        <module>fqm-spring-boot-starter-mq-redisson</module>
+        <module>fqm-spring-boot-starter-mq-rocket</module>
+        <module>fqm-spring-boot-starter-mq-zookeeper</module>
+        <module>fqm-spring-boot-starter-mq-emqx</module>
+    </modules>
+    
+    <dependencyManagement>
+        <dependencies>
+            <!--mqtt相关依赖-->
+            <dependency>
+                <groupId>org.eclipse.paho</groupId>
+                <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
+                <version>${emqx.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.apache.rocketmq</groupId>
+                <artifactId>rocketmq-spring-boot-starter</artifactId>
+                <version>${rocketmq-spring-boot-starter.version}</version>
+            </dependency>
+            
+            <!-- 内部版本 -->
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-mq-core</artifactId>
+                <version>${fqm-mq-core.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-common-core</artifactId>
+                <version>${fqm-common-core.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-common-spring</artifactId>
+                <version>${fqm-common-spring.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-common-http</artifactId>
+                <version>${fqm-common-http.version}</version>
+            </dependency>
+            
+            <!-- 监听key过期 -->
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-common-redis</artifactId>
+                <version>${fqm-common-redis.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-common-redisson</artifactId>
+                <version>${fqm-common-redisson.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-lock-core</artifactId>
+                <version>${fqm-lock-core.version}</version>
+            </dependency> 
+            
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-common-zookeeper</artifactId>
+                <version>${fqm-common-zookeeper.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-spring-boot-starter-mq</artifactId>
+                <version>${fqm-spring-boot-starter-mq.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-mq-emqx</artifactId>
+                <version>${fqm-mq-emqx.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-mq-kafka</artifactId>
+                <version>${fqm-mq-kafka.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-mq-rabbit</artifactId>
+                <version>${fqm-mq-rabbit.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-mq-redis</artifactId>
+                <version>${fqm-mq-redis.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-mq-redisson</artifactId>
+                <version>${fqm-mq-redisson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-mq-rocket</artifactId>
+                <version>${fqm-mq-rocket.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-mq-zookeeper</artifactId>
+                <version>${fqm-mq-zookeeper.version}</version>
+            </dependency>
+        </dependencies>            
+    </dependencyManagement>
+    
 </project>

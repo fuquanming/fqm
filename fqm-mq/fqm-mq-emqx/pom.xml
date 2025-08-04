@@ -3,28 +3,22 @@
     <parent>
         <groupId>io.github.fuquanming</groupId>
         <artifactId>fqm-mq</artifactId>
-        <version>1.0.3</version>
+        <version>1.1.0</version>
     </parent>
     <artifactId>fqm-mq-emqx</artifactId>
-    <version>1.0.7</version>
+    <name>${project.artifactId}</name>
     
     <description>Message sending and monitoring based on emqx</description>
-    <properties>
-		<fqm-mq-core.version>1.0.7</fqm-mq-core.version>
-        <emqx.version>1.2.5</emqx.version>
-    </properties>
 
     <dependencies>
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-mq-core</artifactId>
-            <version>${fqm-mq-core.version}</version>
         </dependency>
         <!--mqtt相关依赖-->
         <dependency>
             <groupId>org.eclipse.paho</groupId>
             <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
-            <version>${emqx.version}</version>
         </dependency>
     </dependencies>
 </project>

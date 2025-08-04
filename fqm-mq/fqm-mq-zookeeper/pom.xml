@@ -5,36 +5,26 @@
 	<parent>
 		<groupId>io.github.fuquanming</groupId>
 		<artifactId>fqm-mq</artifactId>
-		<version>1.0.3</version>
+		<version>1.1.0</version>
 	</parent>
 	<artifactId>fqm-mq-zookeeper</artifactId>
-	<version>1.0.7</version>
+	<name>${project.artifactId}</name>
 	
 	<description>Message sending and monitoring based on Zookeeper</description>
-	
-	<properties>
-		<fqm-mq-core.version>1.0.7</fqm-mq-core.version>
-        <fqm-lock-core.version>1.0.4</fqm-lock-core.version>
-        <fqm-common-zookeeper.version>1.0.5</fqm-common-zookeeper.version>
-    </properties>
 	
 	<dependencies>
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-mq-core</artifactId>
-            <version>${fqm-mq-core.version}</version>
         </dependency>
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-lock-core</artifactId>
-            <version>${fqm-lock-core.version}</version>
-        </dependency> 
+        </dependency>
         
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-common-zookeeper</artifactId>
-            <version>${fqm-common-zookeeper.version}</version>
         </dependency> 
-              
     </dependencies>
 </project>

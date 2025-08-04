@@ -5,31 +5,14 @@
 	<parent>
 		<groupId>io.github.fuquanming</groupId>
 		<artifactId>fqm-mq</artifactId>
-		<version>1.0.3</version>
+		<version>1.1.0</version>
 	</parent>
 	<artifactId>fqm-mq-redis</artifactId>
-	<version>1.0.8</version>
+	<name>${project.artifactId}</name>
 	
     <description>Message sending and monitoring based on Redis stream</description>
     
-    <properties>
-		<fqm-mq-core.version>1.0.7</fqm-mq-core.version>
-        <fqm-common-redis.version>1.0.4</fqm-common-redis.version>
-    </properties>
-    
 	<dependencies>
-        <dependency>
-            <groupId>io.github.fuquanming</groupId>
-            <artifactId>fqm-mq-core</artifactId>
-            <version>${fqm-mq-core.version}</version>
-        </dependency>
-        <!-- 监听key过期 -->
-        <dependency>
-            <groupId>io.github.fuquanming</groupId>
-            <artifactId>fqm-common-redis</artifactId>
-            <version>${fqm-common-redis.version}</version>
-        </dependency>
-        
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
@@ -38,6 +21,16 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-pool2</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>io.github.fuquanming</groupId>
+            <artifactId>fqm-mq-core</artifactId>
+        </dependency>
+        <!-- 监听key过期 -->
+        <dependency>
+            <groupId>io.github.fuquanming</groupId>
+            <artifactId>fqm-common-redis</artifactId>
         </dependency>
     </dependencies>
 </project>
