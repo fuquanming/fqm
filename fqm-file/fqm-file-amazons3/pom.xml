@@ -5,15 +5,11 @@
 	<parent>
 		<groupId>io.github.fuquanming</groupId>
 		<artifactId>fqm-file</artifactId>
-		<version>1.0.7</version>
+		<version>1.1.0</version>
 	</parent>
 	<artifactId>fqm-file-amazons3</artifactId>
-	<version>1.0.10</version>
+	<name>${project.artifactId}</name>
 
-	<properties>
-		<fqm-file-core.version>1.0.9</fqm-file-core.version>
-		<aws-java-sdk-s3.version>1.12.439</aws-java-sdk-s3.version>
-	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -22,13 +18,8 @@
 		<dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-s3</artifactId>
-            <version>${aws-java-sdk-s3.version}</version>
         </dependency>
-		<dependency>
-			<groupId>io.github.fuquanming</groupId>
-			<artifactId>fqm-file-core</artifactId>
-			<version>${fqm-file-core.version}</version>
-		</dependency>
+		
 		<!-- 文件分片上传缓存分片信息 -->
 		<dependency>
             <groupId>org.springframework.boot</groupId>
@@ -39,6 +30,12 @@
 		    <groupId>org.apache.commons</groupId>
 		    <artifactId>commons-pool2</artifactId>
 		</dependency>
+		
+		<!-- 如下自定义版本 -->
+		<dependency>
+            <groupId>io.github.fuquanming</groupId>
+            <artifactId>fqm-file-core</artifactId>
+        </dependency>
         
 	</dependencies>
 </project>

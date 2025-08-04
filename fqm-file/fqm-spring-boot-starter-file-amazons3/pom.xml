@@ -5,15 +5,10 @@
 	<parent>
 		<groupId>io.github.fuquanming</groupId>
 		<artifactId>fqm-file</artifactId>
-		<version>1.0.7</version>
+		<version>1.1.0</version>
 	</parent>
 	<artifactId>fqm-spring-boot-starter-file-amazons3</artifactId>
-	<version>1.0.10</version>
-
-	<properties>
-		<fqm-file-amazons3.version>1.0.10</fqm-file-amazons3.version>
-		<fqm-spring-boot-starter-file.version>1.0.9</fqm-spring-boot-starter-file.version>
-	</properties>
+	<name>${project.artifactId}</name>
 
 	<dependencies>
 		<!-- Spring 核心 -->
@@ -32,12 +27,10 @@
 		<dependency>
 			<groupId>io.github.fuquanming</groupId>
 			<artifactId>fqm-file-amazons3</artifactId>
-			<version>${fqm-file-amazons3.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>io.github.fuquanming</groupId>
 			<artifactId>fqm-spring-boot-starter-file</artifactId>
-			<version>${fqm-spring-boot-starter-file.version}</version>
 		</dependency>
 		
 	</dependencies>

@@ -5,15 +5,11 @@
 	<parent>
 		<groupId>io.github.fuquanming</groupId>
 		<artifactId>fqm-file</artifactId>
-		<version>1.0.7</version>
+		<version>1.1.0</version>
 	</parent>
 	<artifactId>fqm-spring-boot-starter-file-minio</artifactId>
-	<version>1.0.8</version>
+	<name>${project.artifactId}</name>
     <description>Starter for MinioFileTemplate</description>
-    
-    <properties>
-        <fqm-file-minio.version>1.0.7</fqm-file-minio.version>
-    </properties>
     
 	<dependencies>
         <!-- Spring 核心 -->
@@ -32,12 +28,10 @@
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-file-minio</artifactId>
-            <version>${fqm-file-minio.version}</version>
         </dependency>
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-spring-boot-starter-file</artifactId>
-            <version>${parent.version}</version>
         </dependency>
     </dependencies>
 </project>

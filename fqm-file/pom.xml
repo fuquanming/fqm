@@ -6,23 +6,38 @@
 	<parent>
         <groupId>io.github.fuquanming</groupId>
         <artifactId>fqm-dependencies</artifactId>
-        <version>1.0.1</version>
+        <version>1.1.0</version>
         <relativePath>../fqm-dependencies</relativePath>
     </parent>
     
+    <properties>
+        <fqm-file.version>1.1.0</fqm-file.version>
+    
+        <!-- fqm-file-amazons3 -->
+        <aws-java-sdk-s3.version>1.12.439</aws-java-sdk-s3.version>
+        <!-- fqm-file-minio -->
+        <minio.version>8.4.6</minio.version>
+        
+        <!-- 内部依赖版本 -->
+        <!-- fqm-file-core -->
+        <fqm-common-core.version>${fqm-file.version}</fqm-common-core.version>
+        <!-- fqm-file-amazons3 -->
+        <fqm-file-core.version>${fqm-file.version}</fqm-file-core.version>
+        <!-- fqm-spring-boot-starter-file-amazons3 -->
+        <fqm-file-amazons3.version>${fqm-file.version}</fqm-file-amazons3.version>
+        <fqm-spring-boot-starter-file.version>${fqm-file.version}</fqm-spring-boot-starter-file.version>
+        <!-- fqm-spring-boot-starter-file-minio -->
+        <fqm-file-minio.version>${fqm-file.version}</fqm-file-minio.version>
+        
+    </properties>
+    
 	<artifactId>fqm-file</artifactId>
-	<version>1.0.7</version>
+	<version>${fqm-file.version}</version>
 	<packaging>pom</packaging>
-	<description>Parent project for fqm file objects</description>
 	
-	<modules>
-        <module>fqm-file-core</module>
-        <module>fqm-file-minio</module>
-        <module>fqm-file-amazons3</module>
-        <module>fqm-spring-boot-starter-file-minio</module>
-        <module>fqm-spring-boot-starter-file</module>
-        <module>fqm-spring-boot-starter-file-amazons3</module>
-	</modules>
+	<name>{project.artifactId}</name>
+	<description>Parent project for fqm file objects</description>
+	<url>https://github.com/fuquanming/fqm</url>
 	
 	<licenses>
         <license>
@@ -44,4 +59,60 @@
             <email>67837343@qq.com</email>
         </developer>
     </developers>
+    
+    <modules>
+        <module>fqm-file-core</module>
+        <module>fqm-file-minio</module>
+        <module>fqm-file-amazons3</module>
+        <module>fqm-spring-boot-starter-file-minio</module>
+        <module>fqm-spring-boot-starter-file</module>
+        <module>fqm-spring-boot-starter-file-amazons3</module>
+    </modules>
+    
+    <dependencyManagement>
+        <dependencies>
+            <!-- fqm-file-amazons3 -->
+            <dependency>
+                <groupId>com.amazonaws</groupId>
+                <artifactId>aws-java-sdk-s3</artifactId>
+                <version>${aws-java-sdk-s3.version}</version>
+            </dependency>
+            <!-- fqm-file-minio -->
+            <dependency>
+                <groupId>io.minio</groupId>
+                <artifactId>minio</artifactId>
+                <version>${minio.version}</version>
+            </dependency>
+        
+            <!-- 内部版本 -->
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-common-core</artifactId>
+                <version>${fqm-common-core.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-file-core</artifactId>
+                <version>${fqm-file-core.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-file-amazons3</artifactId>
+                <version>${fqm-file-amazons3.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-spring-boot-starter-file</artifactId>
+                <version>${fqm-spring-boot-starter-file.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-file-minio</artifactId>
+                <version>${fqm-file-minio.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>
