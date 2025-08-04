@@ -5,24 +5,35 @@
 	<parent>
         <groupId>io.github.fuquanming</groupId>
         <artifactId>fqm-dependencies</artifactId>
-        <version>1.0.1</version>
+        <version>1.1.0</version>
         <relativePath>../fqm-dependencies</relativePath>
     </parent>
+    
+    <properties>
+        <fqm-multilevel-cache.version>1.1.0</fqm-multilevel-cache.version>
+    
+        <!-- 内部依赖版本 -->
+        <fqm-common-cache-spring.version>${fqm-multilevel-cache.version}</fqm-common-cache-spring.version>
+        <fqm-common-spring.version>${fqm-multilevel-cache.version}</fqm-common-spring.version>
+        
+        <fqm-multilevel-cache-core.version>${fqm-multilevel-cache.version}</fqm-multilevel-cache-core.version>
+        <fqm-common-redis.version>${fqm-multilevel-cache.version}</fqm-common-redis.version>
+        
+        <fqm-multilevel-cache-redis.version>${fqm-multilevel-cache.version}</fqm-multilevel-cache-redis.version>
+        <fqm-common-cache-redis-spring.version>${fqm-multilevel-cache.version}</fqm-common-cache-redis-spring.version>
+        
+        <fqm-common-redisson.version>${fqm-multilevel-cache.version}</fqm-common-redisson.version>
+        <fqm-spring-boot-starter-multilevel-cache-redis.version>${fqm-multilevel-cache.version}</fqm-spring-boot-starter-multilevel-cache-redis.version>
+    </properties>
+    
 	<artifactId>fqm-multilevel-cache</artifactId>
 	<packaging>pom</packaging>
-	<version>1.0.2</version>
+	<version>${fqm-multilevel-cache.version}</version>
 	
-	<name>fqm-multilevel-cache</name>
+    <name>${project.artifactId}</name>
 	<description>Multi-level cache based on spring cache</description>
-	<url>https://github.com/fuquanming/fqm.git</url>
+	<url>https://github.com/fuquanming/fqm</url>
 
-	<modules>
-		<module>fqm-multilevel-cache-core</module>
-		<module>fqm-multilevel-cache-redis</module>
-		<module>fqm-spring-boot-starter-multilevel-cache-redis</module>
-		<module>fqm-spring-boot-starter-multilevel-cache-redisson</module>
-	</modules>
-	
 	<licenses>
         <license>
             <name>Apache License, Version 2.0</name>
@@ -43,4 +54,65 @@
             <email>67837343@qq.com</email>
         </developer>
     </developers>
+    
+    <modules>
+        <module>fqm-multilevel-cache-core</module>
+        <module>fqm-multilevel-cache-redis</module>
+        <module>fqm-spring-boot-starter-multilevel-cache-redis</module>
+        <module>fqm-spring-boot-starter-multilevel-cache-redisson</module>
+    </modules>
+    
+    <dependencyManagement>
+        <dependencies>
+            <!-- 内部版本 -->
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-common-cache-spring</artifactId>
+                <version>${fqm-common-cache-spring.version}</version>
+            </dependency>
+            
+            <!-- @Value功能 -->
+            <dependency> 
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-common-spring</artifactId>
+                <version>${fqm-common-spring.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-multilevel-cache-core</artifactId>
+                <version>${fqm-multilevel-cache-core.version}</version>
+            </dependency>
+    
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-common-redis</artifactId>
+                <version>${fqm-common-redis.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-multilevel-cache-redis</artifactId>
+                <version>${fqm-multilevel-cache-redis.version}</version>
+            </dependency>
+    
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-common-cache-redis-spring</artifactId>
+                <version>${fqm-common-cache-redis-spring.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-spring-boot-starter-multilevel-cache-redis</artifactId>
+                <version>${fqm-spring-boot-starter-multilevel-cache-redis.version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>io.github.fuquanming</groupId>
+                <artifactId>fqm-common-redisson</artifactId>
+                <version>${fqm-common-redisson.version}</version>
+            </dependency>
+        </dependencies>            
+    </dependencyManagement>
 </project>

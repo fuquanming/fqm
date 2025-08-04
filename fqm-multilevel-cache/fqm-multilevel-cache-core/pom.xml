@@ -5,30 +5,22 @@
 	<parent>
 		<groupId>io.github.fuquanming</groupId>
 		<artifactId>fqm-multilevel-cache</artifactId>
-		<version>1.0.2</version>
+		<version>1.1.0</version>
 	</parent>
 	<artifactId>fqm-multilevel-cache-core</artifactId>
-	<version>1.0.4</version>
+	<name>${project.artifactId}</name>
 	<description>Multi-level cache based on spring cache</description>
-	
-	<properties>
-        <fqm-common-cache-spring.version>1.0.4</fqm-common-cache-spring.version>
-        <fqm-common-spring.version>1.0.5</fqm-common-spring.version>
-    </properties>
 	
 	<dependencies>
         <dependency>
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-common-cache-spring</artifactId>
-            <version>${fqm-common-cache-spring.version}</version>
         </dependency>
         
         <!-- @Value功能 -->
         <dependency> 
             <groupId>io.github.fuquanming</groupId>
             <artifactId>fqm-common-spring</artifactId>
-            <version>${fqm-common-spring.version}</version>
         </dependency>
     </dependencies>
-	
 </project>
