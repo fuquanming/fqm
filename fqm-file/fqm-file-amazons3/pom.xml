@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>io.github.fuquanming</groupId>
 		<artifactId>fqm-file</artifactId>
-		<version>1.1.0</version>
+		<version>1.1.1</version>
 	</parent>
 	<artifactId>fqm-file-amazons3</artifactId>
 	<name>${project.artifactId}</name>

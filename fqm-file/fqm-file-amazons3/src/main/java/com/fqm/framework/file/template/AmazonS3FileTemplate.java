@@ -10,6 +10,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import javax.validation.constraints.NotNull;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +30,7 @@ import com.fqm.framework.common.core.util.JsonUtil;
 import com.fqm.framework.file.FileMode;
 import com.fqm.framework.file.amazons3.AmazonS3Service;
 import com.fqm.framework.file.enums.FileUploadStatus;
+import com.fqm.framework.file.model.FileObjectMetadata;
 import com.fqm.framework.file.model.FileUploadRequest;
 import com.fqm.framework.file.model.FileUploadResponse;
 import com.fqm.framework.file.tag.FileTag;
@@ -189,7 +192,25 @@ public class AmazonS3FileTemplate implements FileTemplate {
     
     @Override
     public String uploadFile(File file, String fileName) {
-        boolean flag = service.putObject(bucketName, fileName, file);
+        boolean flag = false;
+        try {
+            flag = service.putObject(bucketName, fileName, file);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new com.fqm.framework.common.core.exception.ServiceException(12, e.getMessage());
+        }
+        return flag ? fileName : null;
+    }
+    
+    @Override
+    public String uploadFile(File file, String fileName, @NotNull FileObjectMetadata fileObjectMetadata) {
+        boolean flag = false;
+        try {
+            flag = service.putObject(bucketName, fileName, file, fileObjectMetadata);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new com.fqm.framework.common.core.exception.ServiceException(12, e.getMessage());
+        }
         return flag ? fileName : null;
     }
 
@@ -206,9 +227,21 @@ public class AmazonS3FileTemplate implements FileTemplate {
     }
     
     @Override
-    public FileUploadResponse uploadFile(FileUploadRequest fileUploadRequest, File file, String fileName) {
+    public String uploadFile(InputStream is, String fileName, FileObjectMetadata fileObjectMetadata) {
+        try {
+            boolean flag = service.putObject(bucketName, fileName, is, fileObjectMetadata);
+            return flag ? fileName : null;
+        } catch (IOException e) {
+            e.printStackTrace();
+            logger.error("File upload s3 IOException", e);
+        }
+        return null;
+    }
+    
+    @Override
+    public FileUploadResponse uploadFile(FileUploadRequest fileUploadRequest, File file, String fileName, @NotNull FileObjectMetadata fileObjectMetadata) {
         try (InputStream is = new FileInputStream(file)) {
-            return uploadFile(fileUploadRequest, is, fileName);
+            return uploadFile(fileUploadRequest, is, fileName, fileObjectMetadata);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             logger.error("File upload s3 FileNotFoundException", e);
@@ -284,7 +317,7 @@ public class AmazonS3FileTemplate implements FileTemplate {
      *
      */
     @Override
-    public FileUploadResponse uploadFile(FileUploadRequest fileUploadRequest, InputStream is, String fileName) {
+    public FileUploadResponse uploadFile(FileUploadRequest fileUploadRequest, InputStream is, String fileName, @NotNull FileObjectMetadata fileObjectMetadata) {
         FileUploadResponse response = new FileUploadResponse();
         if (isFileChunkUpload(fileUploadRequest)) {
             response.setChunk(fileUploadRequest.getChunk());
@@ -301,7 +334,7 @@ public class AmazonS3FileTemplate implements FileTemplate {
                 }
                 fileKey = "mufi_" + key;
                 // 1.获取uploadId
-                String uploadId = getUploadIdByFileChunk(fileKey, fileName);
+                String uploadId = getUploadIdByFileChunk(fileKey, fileName, fileObjectMetadata);
                 // 2.上传分片
                 if (StringUtils.isBlank(uploadId)) {
                     return getErrorResponse(response, "生成uploadId异常");
@@ -331,7 +364,7 @@ public class AmazonS3FileTemplate implements FileTemplate {
             }
             return response;
         }
-        String fileId = uploadFile(is, fileName);
+        String fileId = uploadFile(is, fileName, fileObjectMetadata);
         response.setFileId(fileId);
         response.setUploadStatus(fileId == null ? FileUploadStatus.FAIL : FileUploadStatus.SUCCESS);
         response.setChunkUploadStatus(null != fileId);
@@ -346,9 +379,10 @@ public class AmazonS3FileTemplate implements FileTemplate {
      * @param fileKey
      * @param uploadId
      * @param partTagJson
+     * @throws IOException 
      */
     private FileUploadResponse uploadPartToCache(FileUploadRequest fileUploadRequest, String fileName, FileUploadResponse response, String fileKey, String uploadId,
-            String partTagJson) {
+            String partTagJson) throws IOException {
         // 3.分片信息存储到缓存，最后一个分片上传完成后，返回所有分片信息
         // map[i] 是key map[i + 1] 是value
         // 推送到redis及，最后分片上传时返回分片列表。
@@ -396,8 +430,9 @@ public class AmazonS3FileTemplate implements FileTemplate {
      * @param fileName
      * @param uploadId
      * @param mapList
+     * @throws IOException 
      */
-    private void multipartUpload(String fileName, String uploadId, List<?> mapList) {
+    private void multipartUpload(String fileName, String uploadId, List<?> mapList) throws IOException {
         // 最后分片上传完成 或者通过api获取分片信息service.getClient().listParts
         List<PartETag> partList = new ArrayList<>(mapList.size());
         mapList.forEach( str -> {
@@ -442,14 +477,15 @@ public class AmazonS3FileTemplate implements FileTemplate {
      * 1.获取uploadId,分片上传（获取文件上传ID）60秒上传5M数据
      * @param fileUploadRequest
      * @return
+     * @throws IOException 
      */
-    private String getUploadIdByFileChunk(String fileMd5Key, String fileName) {
+    private String getUploadIdByFileChunk(String fileMd5Key, String fileName, @NotNull FileObjectMetadata fileObjectMetadata) throws IOException {
         // 获取缓存的uploadId
         BoundHashOperations<String, String, String> boundHashOps = stringRedisTemplate.boundHashOps(fileMd5Key);
         String uploadIdKey = "uploadId";
         String uploadId = boundHashOps.get(uploadIdKey);
         if (uploadId == null) {
-            InitiateMultipartUploadResult upresult = service.initiateMultipartUpload(bucketName, fileName);
+            InitiateMultipartUploadResult upresult = service.initiateMultipartUpload(bucketName, fileName, fileObjectMetadata);
             uploadId = upresult.getUploadId();
             logger.debug("build UploadId={}", uploadId);
             // redis.call('expire',KEYS[1],60) setex
@@ -462,6 +498,14 @@ public class AmazonS3FileTemplate implements FileTemplate {
         return uploadId;
     }
     
+    public AmazonS3Service getService() {
+        return service;
+    }
+
+    public void setService(AmazonS3Service service) {
+        this.service = service;
+    }
+
     private boolean isJson(String str) {
         if (StringUtils.isBlank(str)) {
             return false;

@@ -4,7 +4,10 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 
+import javax.validation.constraints.NotNull;
+
 import com.fqm.framework.file.FileMode;
+import com.fqm.framework.file.model.FileObjectMetadata;
 import com.fqm.framework.file.model.FileUploadRequest;
 import com.fqm.framework.file.model.FileUploadResponse;
 import com.fqm.framework.file.tag.FileTag;
@@ -85,6 +88,17 @@ public interface FileTemplate {
      * @return          文件标识，如：group1/M00/00/00/wKjTgFo7cNGAI8TvAALa-N2N974394.jpg
      */
     public String uploadFile(File file, String fileName);
+    
+    /**
+     * 上传文件
+     * @param file                  文件
+     * @param fileName              上传后的文件名，如：group1/M00/00/00/wKjTgFo7cNGAI8TvAALa-N2N974394.jpg  
+     * @param fileObjectMetadata    文件对象用户提供的元数据，接收的标准 HTTP 标头：设置ContentType、ContentLength等 
+     * @return          文件标识，如：group1/M00/00/00/wKjTgFo7cNGAI8TvAALa-N2N974394.jpg
+     */
+    default String uploadFile(File file, String fileName, @NotNull FileObjectMetadata fileObjectMetadata) {
+        throw new com.fqm.framework.common.core.exception.ServiceException(12, getFileMode() + ":未实现->上传文件");
+    }
 
     /**
      * 上传文件，未关闭流，需要自己关闭流
@@ -95,24 +109,35 @@ public interface FileTemplate {
     public String uploadFile(InputStream is, String fileName);
     
     /**
+     * 上传文件，未关闭流，需要自己关闭流
+     * @param is                    文件流
+     * @param fileName              上传后的文件名，如：group1/M00/00/00/wKjTgFo7cNGAI8TvAALa-N2N974394.jpg  
+     * @param fileObjectMetadata    文件对象用户提供的元数据，接收的标准 HTTP 标头：设置ContentType、ContentLength等 
+     * @return          文件标识，如：group1/M00/00/00/wKjTgFo7cNGAI8TvAALa-N2N974394.jpg
+     */
+    default String uploadFile(InputStream is, String fileName, @NotNull FileObjectMetadata fileObjectMetadata) {
+        throw new com.fqm.framework.common.core.exception.ServiceException(12, getFileMode() + ":未实现->上传文件");
+    }
+    
+    /**
      * 上传文件(分片上传)
      * @param fileUploadRequest 分片上传信息
-     * @param file              文件
+     * @param file              分片的文件
      * @param fileName          上传后的文件名，如：group1/M00/00/00/wKjTgFo7cNGAI8TvAALa-N2N974394.jpg     
      * @return                  分片上传状态
      */
-    default FileUploadResponse uploadFile(FileUploadRequest fileUploadRequest, File file, String fileName) {
+    default FileUploadResponse uploadFile(FileUploadRequest fileUploadRequest, File file, String fileName, @NotNull FileObjectMetadata fileObjectMetadata) {
         throw new com.fqm.framework.common.core.exception.ServiceException(12, getFileMode() + ":未实现->上传文件(分片上传)");
     }
     
     /**
      * 上传文件(分片上传)
      * @param fileUploadRequest 分片上传信息
-     * @param is                文件流
+     * @param is                分片的文件流
      * @param fileName          上传后的文件名，如：group1/M00/00/00/wKjTgFo7cNGAI8TvAALa-N2N974394.jpg     
      * @return                  分片上传状态
      */
-    default FileUploadResponse uploadFile(FileUploadRequest fileUploadRequest, InputStream is, String fileName) {
+    default FileUploadResponse uploadFile(FileUploadRequest fileUploadRequest, InputStream is, String fileName, @NotNull FileObjectMetadata fileObjectMetadata) {
         throw new com.fqm.framework.common.core.exception.ServiceException(12, getFileMode() + ":未实现->上传文件(分片上传)");
     }
     

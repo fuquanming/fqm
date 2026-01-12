@@ -10,6 +10,7 @@
 package com.fqm.framework.file.amazons3.filter;
 
 import com.amazonaws.services.s3.model.CompleteMultipartUploadRequest;
+import com.amazonaws.services.s3.model.InitiateMultipartUploadRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 
 /**
@@ -35,13 +36,13 @@ public interface UploadFilter extends Comparable<UploadFilter> {
     }
     
     /**
-     * 上传前处理上传对象分片合并
-     * @param request   上传的对象分片合并
+     * 上传分片前处理上传对象
+     * @param request   上传的对象
      * @return
      */
-    default boolean beforeUpload(CompleteMultipartUploadRequest request) {
+    default boolean beforeUpload(InitiateMultipartUploadRequest request) {
         return true;
-    }
+    }    
     
     /**
      * 上传后处理上传对象

@@ -11,7 +11,7 @@
     </parent>
     
     <properties>
-        <fqm-file.version>1.1.0</fqm-file.version>
+        <fqm-file.version>1.1.1</fqm-file.version>
     
         <!-- fqm-file-amazons3 -->
         <aws-java-sdk-s3.version>1.12.439</aws-java-sdk-s3.version>
@@ -20,7 +20,7 @@
         
         <!-- 内部依赖版本 -->
         <!-- fqm-file-core -->
-        <fqm-common-core.version>${fqm-file.version}</fqm-common-core.version>
+        <fqm-common-core.version>1.1.0</fqm-common-core.version>
         <!-- fqm-file-amazons3 -->
         <fqm-file-core.version>${fqm-file.version}</fqm-file-core.version>
         <!-- fqm-spring-boot-starter-file-amazons3 -->

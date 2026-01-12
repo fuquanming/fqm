@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -35,6 +36,7 @@ import com.fqm.framework.common.core.util.io.IoUtil;
 import com.fqm.framework.common.core.vo.Result;
 import com.fqm.framework.file.FileFactory;
 import com.fqm.framework.file.FileMode;
+import com.fqm.framework.file.model.FileObjectMetadata;
 import com.fqm.framework.file.model.FileUploadRequest;
 import com.fqm.framework.file.model.FileUploadResponse;
 import com.fqm.framework.file.tag.FileTag;
@@ -53,20 +55,37 @@ public class AmazonS3FileController {
     @GetMapping("/file/s3/upload")
     @ResponseBody
     public Result<String> uploadFile() {
-        File file = new File("D:\\Documents\\1.jpg");
-        String fileId = fileFactory.getFileTemplate().uploadFile(file, "a/my.jpg");
+        File file = new File("C:\\Users\\fqm\\Pictures\\Saved Pictures\\1.png");
+        file = new File("C:\\迅雷下载\\1850520260107153131A044.pdf");
+        String fileId = fileFactory.getFileTemplate().uploadFile(file, "a/" + file.getName());
         return Result.ok(fileId);
     }
     
     @GetMapping("/file/s3/upload2")
     @ResponseBody
     public Result<String> uploadFile2() {
-        File file = new File("D:\\Documents\\1.jpg");
+        File file = new File("C:\\Users\\fqm\\Pictures\\Saved Pictures\\1.png");
+        file = new File("C:\\迅雷下载\\1850520260107153131A044.pdf");
         String fileId = "";
         try (FileInputStream fis = new FileInputStream(file);) {
-            FileUploadResponse fileUploadResponse = fileFactory.getFileTemplate()
-                    .uploadFile(null, fis, "a/my.jpg");
-            fileId = fileUploadResponse.getFileId();
+//            FileUploadResponse fileUploadResponse = fileFactory.getFileTemplate()
+//                    .uploadFile(null, fis, "a/" + file.getName(), 
+//                    new FileObjectMetadata()
+//                    .setContentType(Files.probeContentType(file.toPath()))
+//                    .setCacheControl("setCacheControl")
+//                    .setContentDisposition("setContentDisposition")
+//                    .setContentEncoding("setContentEncoding")
+//                            );
+//            fileId = fileUploadResponse.getFileId();
+            
+            fileId = fileFactory.getFileTemplate()
+                    .uploadFile(fis, "a/" + file.getName(), 
+                    new FileObjectMetadata()
+                    .setContentType(Files.probeContentType(file.toPath()))
+                    .setCacheControl("setCacheControl")
+                    .setContentDisposition("setContentDisposition")
+                    .setContentEncoding("setContentEncoding")
+                            );
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -147,9 +166,9 @@ public class AmazonS3FileController {
             FileUploadDTO fileUploadDTO,
             @RequestParam(value = "file", required = false) MultipartFile multipartFile
             ) throws Exception {
-
         log.info(JsonUtil.toJsonStr(fileUploadDTO));
-        System.out.println(multipartFile.getName() + "\t" + multipartFile.getSize() + "\t" + multipartFile.getOriginalFilename());
+        System.out.println(multipartFile.getName() + "\t" + multipartFile.getSize() + "\t" + multipartFile.getOriginalFilename()
+         + "\t" + multipartFile.getContentType());
 
         String md5 = fileUploadDTO.getMd5();
         String fileMd5Key = "mufi_" + md5;
@@ -169,8 +188,21 @@ public class AmazonS3FileController {
             fileUploadRequest.setMd5(md5);
             fileUploadRequest.setSize(fileUploadDTO.getSize());
             
+            FileObjectMetadata fileObjectMetadata = new FileObjectMetadata();
+            if (fileUploadDTO.getChunk() != null) {
+                // 分片
+                fileObjectMetadata.setContentLength(fileUploadDTO.getSize())
+                .setContentType(fileUploadDTO.getType());
+            } else {
+                // 非分片
+                fileObjectMetadata.setContentLength(multipartFile.getSize())
+                .setContentType(multipartFile.getContentType());
+            }
+            
             FileUploadResponse fileUploadResponse = fileFactory.getFileTemplate()
-                    .uploadFile(fileUploadRequest, multipartFile.getInputStream(), objectName);
+                    .uploadFile(fileUploadRequest, multipartFile.getInputStream(), objectName, 
+                            fileObjectMetadata
+                            );
             System.out.println(JsonUtil.toJsonStr(fileUploadResponse));
             
             FileChunksMergeDTO mergeDTO = new FileChunksMergeDTO();
@@ -182,7 +214,7 @@ public class AmazonS3FileController {
             mergeDTO.setSize(fileUploadDTO.getSize());
             mergeDTO.setName(fileUploadDTO.getName());
             if (!fileUploadResponse.isChunkUploadStatus()) {
-                int i = 1 / 0;
+//                int i = 1 / 0;
                 return Result.fail(mergeDTO);
             } else {
                 return Result.ok(mergeDTO);

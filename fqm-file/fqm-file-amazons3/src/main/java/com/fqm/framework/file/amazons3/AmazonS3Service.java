@@ -3,7 +3,9 @@ package com.fqm.framework.file.amazons3;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.net.URL;
+import java.nio.file.Files;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,10 +14,12 @@ import java.util.List;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import javax.validation.constraints.NotNull;
 
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.ReflectionUtils;
 
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.HttpMethod;
@@ -53,6 +57,7 @@ import com.amazonaws.services.s3.model.UploadPartResult;
 import com.fqm.framework.common.core.exception.ServiceException;
 import com.fqm.framework.common.core.exception.enums.GlobalErrorCodeConstants;
 import com.fqm.framework.file.amazons3.filter.UploadFilter;
+import com.fqm.framework.file.model.FileObjectMetadata;
 
 /**
  * AmazonS3 协议的文件服务
@@ -153,9 +158,42 @@ public class AmazonS3Service {
      * @param objectName    文件名
      * @param file          要上传的文件
      * @return
+     * @throws IOException 
      */
-    public boolean putObject(String bucketName, String objectName, File file) {
+    public boolean putObject(String bucketName, String objectName, File file) throws IOException {
         PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, objectName, file);
+        // 设置上传对象的 Acl 为公共读
+        putObjectRequest.setCannedAcl(CannedAccessControlList.PublicRead);
+        return putObject(putObjectRequest);
+    }
+    
+    /**
+     * 上传文件
+     * @param bucketName    桶
+     * @param objectName    文件名
+     * @param file          要上传的文件
+     * @return
+     * @throws IOException 
+     */
+    public boolean putObject(String bucketName, String objectName, File file, FileObjectMetadata fileObjectMetadata) throws IOException {
+        PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, objectName, file);
+        putObjectRequest.setMetadata(buildObjectMetadata(fileObjectMetadata));
+        // 设置上传对象的 Acl 为公共读
+        putObjectRequest.setCannedAcl(CannedAccessControlList.PublicRead);
+        return putObject(putObjectRequest);
+    }
+    
+    /**
+     * 上传文件
+     * @param bucketName    桶
+     * @param objectName    文件名
+     * @param inputStream   上传的文件流
+     * @return
+     * @throws IOException 
+     */
+    public boolean putObject(String bucketName, String objectName, InputStream inputStream, FileObjectMetadata fileObjectMetadata) throws IOException {
+        ObjectMetadata metadata = buildObjectMetadata(fileObjectMetadata);
+        PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, objectName, inputStream, metadata);
         // 设置上传对象的 Acl 为公共读
         putObjectRequest.setCannedAcl(CannedAccessControlList.PublicRead);
         return putObject(putObjectRequest);
@@ -184,7 +222,7 @@ public class AmazonS3Service {
      * @return
      * @throws IOException
      */
-    public boolean putObject(PutObjectRequest request) {
+    public boolean putObject(PutObjectRequest request) throws IOException {
         beforeUploadFilter(request);
         client.putObject(request);
         afterUploadFilter(request);
@@ -293,10 +331,25 @@ public class AmazonS3Service {
      * @param bucketName    桶
      * @param objectName    文件名称
      * @return
+     * @throws IOException 
      */
-    public InitiateMultipartUploadResult initiateMultipartUpload(String bucketName, String objectName) {
-        InitiateMultipartUploadRequest request = new InitiateMultipartUploadRequest(bucketName, objectName);
-        return client.initiateMultipartUpload(request);
+    public InitiateMultipartUploadResult initiateMultipartUpload(String bucketName, String objectName, @NotNull FileObjectMetadata fileObjectMetadata) throws IOException {
+        InitiateMultipartUploadRequest request = new InitiateMultipartUploadRequest(bucketName, objectName, buildObjectMetadata(fileObjectMetadata));
+        return initiateMultipartUpload(request, fileObjectMetadata);
+    }
+    
+    /**
+     * 初始化分片上传请求
+     * @param request
+     * @param fileObjectMetadata
+     * @return
+     * @throws IOException 
+     */
+    public InitiateMultipartUploadResult initiateMultipartUpload(InitiateMultipartUploadRequest request, @NotNull FileObjectMetadata fileObjectMetadata) throws IOException {
+        beforeUploadFilter(request);
+        InitiateMultipartUploadResult result = client.initiateMultipartUpload(request);
+        afterUploadFilter(request);
+        return result;
     }
     
     /**
@@ -339,8 +392,9 @@ public class AmazonS3Service {
      * @param uploadId      分片上传ID
      * @param partETags     分片列表
      * @return
+     * @throws IOException 
      */
-    public CompleteMultipartUploadResult completeMultipartUpload(String bucketName, String objectName, String uploadId, List<PartETag> partEtags) {
+    public CompleteMultipartUploadResult completeMultipartUpload(String bucketName, String objectName, String uploadId, List<PartETag> partEtags) throws IOException {
         CompleteMultipartUploadRequest request = new CompleteMultipartUploadRequest(bucketName, objectName, uploadId, partEtags);
         return completeMultipartUpload(request);
     }
@@ -349,8 +403,9 @@ public class AmazonS3Service {
      * 合并分片
      * @param request   合并分片
      * @return
+     * @throws IOException 
      */
-    public CompleteMultipartUploadResult completeMultipartUpload(CompleteMultipartUploadRequest request) {
+    public CompleteMultipartUploadResult completeMultipartUpload(CompleteMultipartUploadRequest request) throws IOException {
         beforeUploadFilter(request);
         CompleteMultipartUploadResult result = client.completeMultipartUpload(request);
         afterUploadFilter(request);
@@ -410,17 +465,49 @@ public class AmazonS3Service {
     /**
      * 执行上传过滤器 
      * @param obj
+     * @throws IOException 
      */
-    private void beforeUploadFilter(Object obj) {
-        if (uploadFilters.isEmpty()) {
-            return;
-        }
+    private void beforeUploadFilter(Object obj) throws IOException {        
         for (UploadFilter filter : uploadFilters) {
             if (obj instanceof PutObjectRequest) {
                 filter.beforeUpload((PutObjectRequest) obj);
-            } else if (obj instanceof CompleteMultipartUploadRequest) {
-                filter.beforeUpload((CompleteMultipartUploadRequest) obj);
+            } else if (obj instanceof InitiateMultipartUploadRequest) {
+                filter.beforeUpload((InitiateMultipartUploadRequest) obj);
             } 
+        }
+        // 设置文件用户提供的元数据，以及 Amazon S3 发送和接收的标准 HTTP 标头
+        ObjectMetadata metadata = null;
+        if (obj instanceof PutObjectRequest) {
+            PutObjectRequest request = ((PutObjectRequest) obj);
+            metadata = request.getMetadata();
+            if (metadata == null) {
+                metadata = new ObjectMetadata();
+            }
+            request.setMetadata(metadata);
+            
+            if (metadata.getContentType() == null) {
+                File file = request.getFile();
+                if (request.getFile() != null) {
+                    metadata.setContentType(Files.probeContentType(file.toPath()));
+                }
+            }
+            if (metadata.getContentLength() <= 0) {
+                File file = request.getFile();
+                if (request.getFile() != null) {
+                    metadata.setContentLength(file.length());
+                }
+                if (request.getInputStream() != null) {
+                    metadata.setContentLength(request.getInputStream().available());
+                }
+            }
+            
+        } else if (obj instanceof InitiateMultipartUploadRequest) {
+            InitiateMultipartUploadRequest request = (InitiateMultipartUploadRequest) obj;
+            metadata = request.getObjectMetadata();
+            if (metadata == null) {
+                metadata = new ObjectMetadata();
+            }
+            request.setObjectMetadata(metadata);           
         }
     }
     
@@ -429,9 +516,6 @@ public class AmazonS3Service {
      * @param obj
      */
     private void afterUploadFilter(Object obj) {
-        if (uploadFilters.isEmpty()) {
-            return;
-        }
         for (UploadFilter filter : uploadFilters) {
             if (obj instanceof PutObjectRequest) {
                 filter.afterUpload((PutObjectRequest) obj);
@@ -451,9 +535,17 @@ public class AmazonS3Service {
         this.uploadFilters.add(filter);
         logger.info("--->>> add UploadFilter:{},order:{}", filter.getClass().getName(), filter.getOrder());
     }
-    
     public AmazonS3 getClient() {
         return client;
+    }
+    public ObjectMetadata buildObjectMetadata(FileObjectMetadata fileObjectMetadata) {
+        ObjectMetadata metadata = new ObjectMetadata();
+        if (fileObjectMetadata != null) {
+            Field field = ReflectionUtils.findField(ObjectMetadata.class, "metadata");
+            ReflectionUtils.makeAccessible(field);
+            ReflectionUtils.setField(field, metadata, fileObjectMetadata.getMetadata());
+        }
+        return metadata;
     }
 
 }
